@@ -1,0 +1,648 @@
+/* ============================================================
+   LP Furniture — Payment Pages CSS
+   Covers: Stripe, GCash, Order Confirmed
+   ============================================================ */
+
+   .payment-wrap {
+    background: var(--cream);
+    min-height: calc(100vh - 64px);
+    padding: 48px 60px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  
+  .payment-container {
+    width: 100%;
+    max-width: 760px;
+  }
+  
+  /* ── PAYMENT HEADER ── */
+  .payment-header {
+    margin-bottom: 32px;
+  }
+  
+  .payment-title {
+    font-family: var(--font-display);
+    font-size: 30px;
+    color: var(--brown-deep);
+    margin-bottom: 6px;
+  }
+  
+  .payment-subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+  
+  /* ── ORDER REFERENCE BAR ── */
+  .payment-ref-bar {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .payment-ref-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+  }
+  
+  .payment-ref-value {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--brown-deep);
+    font-family: var(--font-body);
+    letter-spacing: .5px;
+  }
+  
+  .payment-ref-amount {
+    text-align: right;
+  }
+  
+  .payment-ref-amount-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+  }
+  
+  .payment-ref-amount-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold);
+    font-family: var(--font-body);
+    letter-spacing: -0.5px;
+  }
+  
+  /* ── STRIPE CARD ── */
+  .stripe-card {
+    background: var(--warm-white);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  
+  .stripe-card-header {
+    background: #635BFF;
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  
+  .stripe-card-header-text h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  
+  .stripe-card-header-text p {
+    font-size: 12px;
+    color: rgba(255,255,255,.7);
+  }
+  
+  .stripe-badge {
+    margin-left: auto;
+    background: rgba(255,255,255,.15);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  
+  .stripe-card-body {
+    padding: 28px;
+  }
+  
+  /* Card type icons */
+  .stripe-card-icons {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .card-icon {
+    height: 24px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+  }
+  
+  .card-icon.visa   { color: #1A1F71; }
+  .card-icon.master { color: #EB001B; }
+  .card-icon.amex   { color: #007BC1; }
+  
+  /* Pay button */
+  .btn-pay-stripe {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 16px 24px;
+    background: #635BFF;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .25s;
+  }
+  
+  .btn-pay-stripe:hover {
+    background: #5147E5;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(99,91,255,.35);
+  }
+  
+  .btn-pay-stripe:disabled {
+    background: var(--border);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  /* Stripe security notice */
+  .stripe-security {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 14px;
+  }
+  
+  /* ── GCASH CARD ── */
+  .gcash-card {
+    background: var(--warm-white);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  
+  .gcash-card-header {
+    background: #007DFF;
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  
+  .gcash-card-header-text h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  
+  .gcash-card-header-text p {
+    font-size: 12px;
+    color: rgba(255,255,255,.7);
+  }
+  
+  .gcash-card-body {
+    padding: 28px;
+  }
+  
+  /* Instructions */
+  .gcash-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 28px;
+  }
+  
+  .gcash-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .gcash-step:last-child { border-bottom: none; }
+  
+  .gcash-step-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #007DFF;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  
+  .gcash-step-text {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    flex: 1;
+  }
+  
+  .gcash-step-text strong {
+    color: var(--brown-deep);
+  }
+  
+  /* QR + account info layout */
+  .gcash-qr-layout {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 24px;
+    align-items: start;
+    background: var(--cream);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+  }
+  
+  /* QR code box */
+  .gcash-qr-box {
+    width: 140px;
+    height: 140px;
+    border-radius: 12px;
+    background: #fff;
+    border: 3px solid #007DFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 8px;
+  }
+  
+  /* Security hash badge */
+  .gcash-hash-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #D1FAE5;
+    color: var(--success);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  
+  /* Account info rows */
+  .gcash-account-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .gcash-info-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  .gcash-info-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+  }
+  
+  .gcash-info-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--brown-deep);
+  }
+  
+  .gcash-info-value.amount {
+    font-size: 22px;
+    color: #007DFF;
+    letter-spacing: -0.5px;
+  }
+  
+  /* Receipt upload zone */
+  .gcash-upload-section {
+    margin-bottom: 20px;
+  }
+  
+  .gcash-upload-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    display: block;
+  }
+  
+  .gcash-upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 14px;
+    padding: 28px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .25s;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .gcash-upload-zone:hover {
+    border-color: #007DFF;
+    background: #F0F7FF;
+  }
+  
+  .gcash-upload-zone.uploaded {
+    border-style: solid;
+    border-color: var(--success);
+    background: #F0FDF4;
+  }
+  
+  .gcash-upload-file-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .gcash-upload-icon {
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .gcash-upload-zone.uploaded .gcash-upload-icon {
+    color: var(--success);
+  }
+  
+  .gcash-upload-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  
+  .gcash-upload-hint {
+    font-size: 11px;
+    color: var(--border);
+  }
+  
+  /* Receipt preview */
+  .gcash-receipt-preview {
+    display: none;
+    width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .gcash-upload-zone.uploaded .gcash-receipt-preview {
+    display: block;
+  }
+  
+  /* Reference number field */
+  .gcash-ref-field {
+    margin-bottom: 20px;
+  }
+  
+  /* Submit receipt button */
+  .btn-submit-gcash {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 16px 24px;
+    background: #007DFF;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .25s;
+  }
+  
+  .btn-submit-gcash:hover:not(:disabled) {
+    background: #0060CC;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(0,125,255,.35);
+  }
+  
+  .btn-submit-gcash:disabled {
+    background: var(--border);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  /* Warning banner */
+  .gcash-warning {
+    background: #FFF8EC;
+    border: 1px solid rgba(200,150,62,.3);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 12.5px;
+    color: var(--brown-mid);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.5;
+  }
+  
+  /* ── ORDER CONFIRMED PAGE ── */
+  .confirmed-wrap {
+    background: var(--cream);
+    min-height: calc(100vh - 64px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+  }
+  
+  .confirmed-card {
+    background: var(--warm-white);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    padding: 48px 40px;
+    max-width: 560px;
+    width: 100%;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .confirmed-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #D1FAE5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    color: var(--success);
+  }
+  
+  .confirmed-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--brown-deep);
+    margin-bottom: 10px;
+  }
+  
+  .confirmed-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+  
+  .confirmed-ref-box {
+    background: var(--cream);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 28px;
+    border: 1px solid var(--border);
+  }
+  
+  .confirmed-ref-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  
+  .confirmed-ref-num {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--brown-deep);
+    letter-spacing: 1px;
+    font-family: monospace;
+  }
+  
+  .confirmed-what-next {
+    text-align: left;
+    margin-bottom: 28px;
+  }
+  
+  .confirmed-what-next-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--brown-deep);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 12px;
+  }
+  
+  .confirmed-next-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  
+  .confirmed-next-step:last-child { border-bottom: none; }
+  
+  .confirmed-next-icon {
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  
+  .confirmed-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  /* ── AUTH INFO BOX (used on stripe page) ── */
+  .auth-info-box {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  
+  /* ── RESPONSIVE ── */
+  @media (max-width: 680px) {
+    .payment-wrap { padding: 32px 20px; }
+    .gcash-qr-layout {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+    .gcash-qr-box { margin: 0 auto; }
+    .gcash-hash-badge { justify-content: center; }
+  }
+  
+  @media (max-width: 480px) {
+    .payment-wrap { padding: 24px 16px; }
+    .stripe-field-row { grid-template-columns: 1fr; }
+    .confirmed-card { padding: 32px 20px; }
+    .confirmed-ref-num { font-size: 17px; }
+  }
+
+  /* ══════════════════════════════════════════
+   STRIPE PAGE — visible back button
+══════════════════════════════════════════ */
+.stripe-back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 12px 24px;
+  background: var(--warm-white);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--brown-deep);
+  text-decoration: none;
+  transition: all .2s;
+}
+
+.stripe-back-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: #fff;
+}
