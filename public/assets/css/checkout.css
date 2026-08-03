@@ -1878,18 +1878,7 @@
     padding: 22px;
   }
 
-  /* Add a proper section title back for desktop, since the
-     mobile header (which showed it) is hidden here */
-  .checkout-screen::before {
-    content: attr(data-desktop-title);
-    display: block;
-    font-family: var(--font-display);
-    font-size: 18px;
-    color: var(--brown-deep);
-    margin-bottom: 16px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid var(--border);
-  }
+
 
   .checkout-notes-textarea {
     width: 100%;
@@ -2070,3 +2059,960 @@
     display: none !important;
   }
 }
+
+
+/* ══════════════════════════════════════════
+   HARD-LEFT NUMBERED ACCORDION SECTIONS
+   Desktop only. Mobile keeps its existing
+   full-screen wizard completely untouched.
+══════════════════════════════════════════ */
+
+
+@media (min-width: 769px) {
+
+  .ckn-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  /* Hard-left number gutter */
+  .ckn-num-col {
+    width: 40px;
+    flex-shrink: 0;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--gold);
+    padding-top: 14px;
+  }
+
+  .ckn-content-col {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Clickable header row — always visible, toggles the section */
+  .ckn-row-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    padding: 10px 0 14px;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .ckn-section-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--brown-deep);
+    font-weight: 400;
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  .ckn-optional-tag {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--cream);
+    padding: 2px 9px;
+    border-radius: 20px;
+    margin-left: 8px;
+  }
+
+  .ckn-row-summary {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: right;
+    padding-right: 8px;
+  }
+
+  .ckn-chevron {
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: transform .25s;
+  }
+
+  .checkout-screen.ckn-active .ckn-chevron {
+    transform: rotate(180deg);
+  }
+
+  .checkout-screen.ckn-active .ckn-row-header {
+    border-bottom-color: var(--gold);
+  }
+
+  .checkout-screen.ckn-active .ckn-section-title {
+    color: var(--gold);
+  }
+
+  /* Collapse/expand the body */
+  .checkout-screen-body {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 !important;
+    transition: max-height .35s ease, padding .35s ease;
+    box-sizing: border-box;
+  }
+
+  .checkout-screen.ckn-active .checkout-screen-body {
+    max-height: 900px;
+    padding: 20px 0 4px !important;
+  }
+
+  /* Horizontal row of option cards within an active section */
+  .cx-cards-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .cx-cards-row .delivery-option-card,
+  .cx-cards-row .payment-type-card,
+  .cx-cards-row .payment-method-card {
+    flex: 1;
+    min-width: 240px;
+  }
+
+  .checkout-screen {
+    margin-bottom: 8px;
+  }
+}
+
+@media (min-width: 769px) {
+  .ckn-continue-wrap {
+    margin-top: 16px;
+  }
+
+  .ckn-continue-btn {
+    padding: 11px 22px;
+    background: var(--gold);
+    color: var(--brown-deep);
+    border: none;
+    border-radius: 10px;
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+  }
+
+  .ckn-continue-btn:hover {
+    background: var(--gold-light);
+    transform: translateY(-1px);
+  }
+}
+
+/* ══════════════════════════════════════════
+   5-ROW CHECKOUT — icon boxes, review card,
+   sidebar enhancements, help panel
+══════════════════════════════════════════ */
+
+@media (min-width: 769px) {
+
+  /* ── ROW LAYOUT WITH ICON BOX ── */
+  .ckn-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .ckn-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--cream);
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 8px;
+  }
+
+  .checkout-screen.ckn-active .ckn-icon-box {
+    background: var(--gold);
+    color: #fff;
+  }
+
+  .ckn-content-col {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ckn-row-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .checkout-screen.ckn-active .ckn-row-header {
+    border-bottom-color: var(--gold);
+  }
+
+  .ckn-row-titles {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  .ckn-section-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--brown-deep);
+    font-weight: 400;
+    margin: 0;
+  }
+
+  .ckn-row-caption {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .ckn-optional-tag {
+    font-family: var(--font-body);
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--cream);
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-left: 6px;
+  }
+
+  .ckn-row-summary {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ckn-edit-pill {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brown-deep);
+    background: #fff;
+    border: 1.5px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .ckn-chevron {
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: transform .25s;
+  }
+
+  .checkout-screen.ckn-active .ckn-chevron {
+    transform: rotate(180deg);
+  }
+
+  .checkout-screen-body {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 !important;
+    transition: max-height .35s ease, padding .35s ease;
+    box-sizing: border-box;
+  }
+
+  .checkout-screen.ckn-active .checkout-screen-body {
+    max-height: 1400px;
+    padding: 20px 0 4px !important;
+  }
+
+  .cx-cards-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .cx-cards-row .delivery-option-card,
+  .cx-cards-row .payment-type-card,
+  .cx-cards-row .payment-method-card {
+    flex: 1;
+    min-width: 240px;
+  }
+
+  .checkout-screen {
+    margin-bottom: 4px;
+  }
+
+  .ckn-continue-wrap {
+    margin-top: 16px;
+  }
+
+  .ckn-continue-btn {
+    padding: 11px 22px;
+    background: var(--gold);
+    color: var(--brown-deep);
+    border: none;
+    border-radius: 10px;
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+  }
+
+  .ckn-continue-btn:hover {
+    background: var(--gold-light);
+    transform: translateY(-1px);
+  }
+
+  /* ── PRODUCT REVIEW CARD ── */
+  .ckn-product-card {
+    display: flex;
+    gap: 16px;
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .ckn-product-img {
+    width: 96px;
+    height: 96px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--cream);
+    flex-shrink: 0;
+  }
+
+  .ckn-product-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .ckn-product-details {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ckn-product-name {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--brown-deep);
+    margin-bottom: 6px;
+  }
+
+  .ckn-product-meta-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  .ckn-product-meta-row span:not(:last-child)::after {
+    content: '·';
+    margin-left: 10px;
+    color: var(--border);
+  }
+
+  .ckn-product-bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .ckn-product-qty {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ckn-edit-in-cart {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--gold);
+    text-decoration: underline;
+  }
+
+  .ckn-product-price {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--brown-deep);
+  }
+
+  .ckn-product-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .ckn-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--cream);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .ckn-tag-available {
+    color: var(--success);
+    background: #F0FDF4;
+  }
+
+  /* ── SPECIFICATIONS / SERVICES INFO GRID ── */
+  .ckn-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .ckn-info-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+
+  .ckn-info-card-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  .ckn-info-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12.5px;
+    color: var(--brown-deep);
+    padding: 3px 0;
+  }
+
+  .ckn-info-row span {
+    color: var(--text-muted);
+  }
+
+  .ckn-service-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--brown-deep);
+    padding: 3px 0;
+  }
+
+  .ckn-service-item svg {
+    color: var(--success);
+    flex-shrink: 0;
+  }
+
+  /* ── REASSURANCE PANEL ── */
+  .ckn-reassurance-panel {
+    background: var(--cream);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 8px;
+  }
+
+  .ckn-reassurance-title {
+    font-family: var(--font-display);
+    font-size: 14px;
+    color: var(--brown-deep);
+    margin-bottom: 8px;
+  }
+
+  .ckn-reassurance-list {
+    margin: 0;
+    padding-left: 18px;
+  }
+
+  .ckn-reassurance-list li {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  /* ── HELP PANEL ── */
+  .ckn-help-panel {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-top: 16px;
+  }
+
+  .ckn-help-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .ckn-help-text {
+    flex: 1;
+  }
+
+  .ckn-help-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    color: var(--brown-deep);
+  }
+
+  .ckn-help-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .ckn-help-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--brown-deep);
+    flex-shrink: 0;
+  }
+
+  .ckn-help-contact div {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ckn-help-contact svg {
+    color: var(--gold);
+  }
+
+  /* ── SIDEBAR ADDITIONS ── */
+  .ckn-mini-topbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-end;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+
+  .ckn-mini-topbar svg {
+    color: var(--gold);
+    vertical-align: middle;
+    margin-right: 4px;
+  }
+
+  .ckn-mini-topbar strong {
+    color: var(--brown-deep);
+    font-family: var(--font-body);
+    font-size: 15px;
+  }
+
+  .ckn-mini-divider {
+    color: var(--border);
+  }
+
+  .ckn-savings-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #F0FDF4;
+    border: 1px solid #86EFAC;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin: 16px 0;
+    color: var(--success);
+  }
+
+  .ckn-savings-title {
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .ckn-savings-sub {
+    font-size: 11.5px;
+    color: #15803D;
+  }
+
+  .ckn-trust-badges {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 18px 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .ckn-trust-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    text-align: center;
+  }
+
+  .ckn-trust-badge svg {
+    color: var(--gold);
+  }
+
+  .ckn-trust-badge span {
+    font-size: 9.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    line-height: 1.2;
+  }
+
+  .ckn-charge-note {
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin: 8px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .ckn-help-panel,
+  .ckn-mini-topbar,
+  .ckn-savings-banner,
+  .ckn-trust-badges {
+    display: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .checkout-layout > div:last-child {
+    margin-top: -64px;
+  }
+}
+
+/* ══════════════════════════════════════════
+   MOBILE — proper styling for the new Review
+   Order elements + hide desktop-only accordion
+   chrome cleanly. This is the definitive fix.
+══════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Hide ONLY the desktop accordion controls —
+     mobile already has its own header via
+     .checkout-screen-header (back arrow + step count) */
+  .ckn-icon-box,
+  .ckn-row-header {
+    display: none !important;
+  }
+
+  /* Product review card */
+  .ckn-product-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  .ckn-product-img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--cream);
+    margin-bottom: 12px;
+  }
+
+  .ckn-product-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .ckn-product-name {
+    font-family: var(--font-display);
+    font-size: 17px;
+    color: var(--brown-deep);
+    margin-bottom: 6px;
+  }
+
+  .ckn-product-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  .ckn-product-meta-row span:not(:last-child)::after {
+    content: '·';
+    margin-left: 6px;
+    color: var(--border);
+  }
+
+  .ckn-product-bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .ckn-product-qty {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ckn-edit-in-cart {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--gold);
+    text-decoration: underline;
+  }
+
+  .ckn-product-price {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--brown-deep);
+  }
+
+  .ckn-product-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .ckn-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--cream);
+    padding: 4px 9px;
+    border-radius: 20px;
+  }
+
+  .ckn-tag-available {
+    color: var(--success);
+    background: #F0FDF4;
+  }
+
+  /* Specs + services stack to one column on mobile */
+  .ckn-info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .ckn-info-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+
+  .ckn-info-card-title {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .ckn-info-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--brown-deep);
+    padding: 3px 0;
+  }
+
+  .ckn-info-row span {
+    color: var(--text-muted);
+  }
+
+  .ckn-service-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--brown-deep);
+    padding: 3px 0;
+  }
+
+  .ckn-service-item svg {
+    color: var(--success);
+    flex-shrink: 0;
+  }
+
+  .ckn-reassurance-panel {
+    background: var(--cream);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+  }
+
+  .ckn-reassurance-title {
+    font-family: var(--font-display);
+    font-size: 13.5px;
+    color: var(--brown-deep);
+    margin-bottom: 8px;
+  }
+
+  .ckn-reassurance-list {
+    margin: 0;
+    padding-left: 16px;
+  }
+
+  .ckn-reassurance-list li {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .ckn-continue-wrap {
+    margin-top: 14px;
+  }
+
+  .ckn-continue-btn {
+    display: block;
+    width: 100%;
+    padding: 13px;
+    background: var(--gold);
+    color: var(--brown-deep);
+    border: none;
+    border-radius: 12px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+}
+
+/* ══════════════════════════════════════════
+   MOBILE FIX — restore scrolling
+   The .ckn-row / .ckn-content-col wrappers we
+   added for desktop's icon-box layout were
+   breaking mobile's scroll chain. display:contents
+   makes them invisible to the box model on mobile,
+   so .checkout-screen-body scrolls exactly like
+   it did before we added these wrappers.
+══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .ckn-row,
+  .ckn-content-col {
+    display: contents;
+  }
+}
+
+/* Mobile already has its own fixed footer Next/Back buttons —
+   hide the newer inline "Continue" buttons so there's only ONE
+   button per step on mobile, not two. */
+   @media (max-width: 768px) {
+    .ckn-continue-wrap {
+      display: none !important;
+    }
+  }
+
+
+  @media (max-width: 768px) {
+
+    /* Bigger, unmissable product image */
+    .ckn-product-img {
+      aspect-ratio: 1/1;
+      margin-bottom: 14px;
+    }
+  
+    .ckn-product-name {
+      font-size: 19px;
+    }
+  
+    .ckn-product-meta-row {
+      font-size: 13px;
+    }
+  
+    .ckn-product-price {
+      font-size: 18px;
+    }
+  
+    /* Tighten excess whitespace between sections */
+    .checkout-screen-body {
+      gap: 14px;
+    }
+  
+    .ckn-info-grid,
+    .ckn-reassurance-panel {
+      margin-bottom: 12px;
+    }
+  
+    /* Make "Edit in Cart" read as a real, clear action —
+       not a tiny buried link */
+    .ckn-edit-in-cart {
+      display: inline-block;
+      padding: 5px 12px;
+      background: var(--cream);
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+  
+    /* Shrink the progress indicator's footprint on mobile —
+       it shouldn't compete with the product for attention */
+    .checkout-steps {
+      padding: 8px 16px;
+      gap: 4px;
+    }
+  
+    .checkout-step-num {
+      width: 24px;
+      height: 24px;
+      font-size: 11px;
+    }
+  
+    .checkout-step-label {
+      font-size: 10px;
+    }
+  }

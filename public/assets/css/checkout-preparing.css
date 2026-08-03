@@ -1,0 +1,163 @@
+/* ============================================================
+   CHECKOUT — "Preparing Your Order" loading screen
+   Mobile only. Now a TRUE full-viewport fixed panel (like the
+   wizard screens), so it always covers 100% of the screen —
+   no gaps where the underlying page can show through, at any
+   point during load or during the transition to Review.
+   ============================================================ */
+
+   .ckn-preparing {
+    display: none;
+  }
+  
+  @media (max-width: 768px) {
+  
+    .ckn-preparing {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: fixed;
+      inset: 0;
+      background: var(--cream);
+      z-index: 600;
+      padding: 40px 24px;
+    }
+  
+    .ckn-preparing-spinner {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 4px solid var(--border);
+      border-top-color: var(--gold);
+      animation: cknPreparingSpin 0.9s linear infinite;
+      margin-bottom: 24px;
+    }
+  
+    @keyframes cknPreparingSpin {
+      to { transform: rotate(360deg); }
+    }
+  
+    .ckn-preparing-text {
+      font-family: var(--font-display);
+      font-size: 19px;
+      color: var(--brown-deep);
+      margin-bottom: 6px;
+    }
+  
+    .ckn-preparing-subtext {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      max-width: 260px;
+    }
+  
+    .ckn-preparing.ckn-preparing-done .ckn-preparing-spinner {
+      display: none;
+    }
+  
+    .ckn-preparing-check {
+      display: none;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--success);
+      color: #fff;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      animation: cknCheckPop 0.35s ease;
+    }
+  
+    .ckn-preparing.ckn-preparing-done .ckn-preparing-check {
+      display: flex;
+    }
+  
+    @keyframes cknCheckPop {
+      from { transform: scale(0.6); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+  
+    .ckn-preparing-next {
+      display: none;
+      width: 100%;
+      max-width: 300px;
+      padding: 15px;
+      background: var(--gold);
+      color: var(--brown-deep);
+      border: none;
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-size: 14.5px;
+      font-weight: 700;
+      cursor: pointer;
+      animation: cknFadeUp 0.3s ease;
+    }
+  
+    .ckn-preparing.ckn-preparing-done .ckn-preparing-next {
+      display: block;
+    }
+  
+    @keyframes cknFadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  
+    /* ============================================================
+       PUSH TRANSITION — native-app style "move forward" effect.
+       Generic classes so this works for ANY screen-to-screen
+       transition (Preparing→Review, Review→Delivery, Delivery→
+       Payment Type, etc.) — not just the initial handoff. Both
+       screens are always full-viewport fixed panels, so 100% of
+       the screen is covered at every instant — no gap is ever
+       possible for the page behind to show through.
+       ============================================================ */
+    .ckn-preparing,
+    .checkout-screen.open {
+      transition: transform .3s ease;
+    }
+  
+    /* The screen currently leaving — slides fully off to the left.
+       Given a higher z-index so it visibly sits on top while it
+       slides away, revealing the incoming screen underneath. */
+    .ckn-preparing.ckn-preparing-push-out,
+    .checkout-screen.ckn-push-out {
+      transform: translateX(-100%);
+      z-index: 620 !important;
+    }
+  
+    /* The incoming screen: snapped instantly to just off the right
+       edge (transition:none so this jump isn't animated), THEN — */
+    .checkout-screen.ckn-push-target {
+      transform: translateX(100%);
+      transition: none;
+    }
+  
+    /* — animated sliding in to fill the center */
+    .checkout-screen.ckn-push-in {
+      transform: translateX(0);
+      transition: transform .3s ease;
+    }
+  
+    /* ============================================================
+       REVERSE PUSH — for "Back" buttons. Mirror image of the
+       forward push: the current screen slides OUT to the right,
+       the previous screen slides IN from the left. Matches real
+       app back-navigation behavior.
+       ============================================================ */
+    .checkout-screen.ckn-push-out-back {
+      transform: translateX(100%);
+      z-index: 620 !important;
+    }
+  
+    .checkout-screen.ckn-push-target-back {
+      transform: translateX(-100%);
+      transition: none;
+    }
+  
+    .checkout-screen.ckn-push-in-back {
+      transform: translateX(0);
+      transition: transform .3s ease;
+    }
+  }

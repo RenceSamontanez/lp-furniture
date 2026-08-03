@@ -26,3 +26,6 @@ Thumbs.db
 # LP Furniture project-specific additions
 /public/images/ai-designs/*
 !/public/images/ai-designs/.gitignore
+
+
+/database_backup/
