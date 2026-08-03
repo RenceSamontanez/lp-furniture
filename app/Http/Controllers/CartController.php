@@ -11,6 +11,11 @@ class CartController extends Controller
 {
     public function index()
     {
+        // Visiting the real cart page means the customer is back
+        // in normal cart mode — discard any leftover "Order Now"
+        // intent so it can never bleed into a later checkout.
+        session()->forget('buy_now');
+
         $cartItems = CartItem::with('product')
             ->where('user_id', Auth::id())
             ->get();
@@ -23,14 +28,14 @@ class CartController extends Controller
     public function add(Request $request, $id)
     {
         $product = Product::available()->findOrFail($id);
-    
+
         $request->validate([
             'quantity' => 'sometimes|integer|min:1|max:' . $product->stock_quantity,
         ]);
-    
+
         $existing = CartItem::where('user_id', Auth::id())
             ->where('product_id', $id)->first();
-    
+
         if ($existing) {
             $existing->quantity += $request->input('quantity', 1);
             $existing->note      = $request->input('note', $existing->note);
@@ -43,15 +48,39 @@ class CartController extends Controller
                 'note'       => $request->input('note'),
             ]);
         }
-    
-        // If Order Now was clicked, redirect straight to checkout
-        if ($request->input('redirect_to') === 'checkout') {
-            return redirect()->route('checkout')
-                ->with('success', $product->product_name . ' ready for checkout!');
-        }
-    
+
         return back()->with('success', $product->product_name . ' added to cart!');
     }
+
+    /* ════════════════════════════════
+       ORDER NOW — completely isolated from
+       the persistent cart. Stores just this
+       one product+quantity+note in the SESSION
+       only. Checkout will detect this session
+       flag and show ONLY this single item,
+       regardless of whatever is sitting in the
+       customer's real cart_items table.
+    ════════════════════════════════ */
+    public function orderNow(Request $request, $id)
+    {
+        $product = Product::available()->findOrFail($id);
+
+        $request->validate([
+            'quantity' => 'sometimes|integer|min:1|max:' . $product->stock_quantity,
+        ]);
+
+        session([
+            'buy_now' => [
+                'product_id' => $product->id,
+                'quantity'   => $request->input('quantity', 1),
+                'note'       => $request->input('note'),
+            ],
+        ]);
+
+        return redirect()->route('checkout')
+            ->with('success', $product->product_name . ' ready for checkout!');
+    }
+
     public function update(Request $request, $id)
     {
         $item = CartItem::where('user_id', Auth::id())->findOrFail($id);

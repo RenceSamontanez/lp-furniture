@@ -223,18 +223,16 @@
               </button>
             </form>
 
-            
-            {{-- Order Now: adds to cart then immediately goes to checkout --}}
-<form method="POST" action="{{ route('cart.add', $product->id) }}" id="order-now-form">
-  @csrf
-  <input type="hidden" name="quantity" id="order-qty" value="1"/>
-  <input type="hidden" name="note" id="order-note" value=""/>
-  <input type="hidden" name="redirect_to" value="checkout"/>
-  <button type="button" class="btn-order-now" onclick="orderNowFromDetail()" style="width:100%;border:none;cursor:pointer;">
-    Order Now →
-  </button>
-</form>
-     
+            {{-- Order Now: isolated buy-now flow, does NOT touch the cart --}}
+            <form method="POST" action="{{ route('cart.orderNow', $product->id) }}" id="order-now-form">
+              @csrf
+              <input type="hidden" name="quantity" id="order-qty" value="1"/>
+              <input type="hidden" name="note" id="order-note" value=""/>
+              <button type="button" class="btn-order-now" onclick="orderNowFromDetail()" style="width:100%;border:none;cursor:pointer;">
+                Order Now →
+              </button>
+            </form>
+
           @endauth
         </div>
       @else
@@ -372,14 +370,7 @@ function addToCartFromDetail() {
   document.getElementById('cart-form').submit();
 }
 
-/* ── ORDER NOW (direct) ── */
-function prepareDirectOrder(e) {
-  // Cart form submits normally via route,
-  // then checkout handles the redirect.
-  // For now just navigate to checkout.
-  // Full direct-order flow wired in checkout page.
-}
-
+/* ── ORDER NOW (direct, isolated from cart) ── */
 function orderNowFromDetail() {
   const qty  = document.getElementById('qty-input')?.value || 1;
   const note = document.getElementById('customization-note')?.value || '';

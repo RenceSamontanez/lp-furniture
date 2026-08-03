@@ -7,6 +7,7 @@ use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\Delivery;
 use App\Models\CartItem;
+use App\Models\Product;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,27 @@ class OrderController extends Controller
     // ── SHOW CHECKOUT PAGE ──
     public function checkout()
     {
+        // If "Order Now" was used, a buy_now session exists —
+        // show ONLY that single product, completely ignoring
+        // whatever is sitting in the customer's real cart.
+        if (session()->has('buy_now')) {
+            $cartItems = $this->getBuyNowItems();
+
+            if ($cartItems->isEmpty()) {
+                // The product became unavailable between clicking
+                // Order Now and reaching checkout — clear the stale
+                // session and fall back gracefully.
+                session()->forget('buy_now');
+                return redirect()->route('catalog')
+                    ->with('error', 'That product is no longer available.');
+            }
+
+            $subtotal = $cartItems->sum(fn($item) => $item->product->price * $item->quantity);
+
+            return view('checkout', compact('cartItems', 'subtotal'));
+        }
+
+        // Normal cart-based checkout (unchanged from before)
         $cartItems = CartItem::with('product')
             ->where('user_id', Auth::id())
             ->paginate(10);
@@ -43,13 +65,19 @@ class OrderController extends Controller
             'customization_note'  => 'nullable|string',
         ]);
 
-        $cartItems = CartItem::with('product')
-            ->where('user_id', Auth::id())
-            ->get();
+        $isBuyNow = session()->has('buy_now');
+
+        // Pull items from the buy_now session if that's the active
+        // flow, otherwise fall back to the normal persistent cart —
+        // these two sources never mix.
+        $cartItems = $isBuyNow
+            ? $this->getBuyNowItems()
+            : CartItem::with('product')->where('user_id', Auth::id())->get();
 
         if ($cartItems->isEmpty()) {
+            session()->forget('buy_now');
             return redirect()->route('cart.index')
-                ->with('error', 'Your cart is empty.');
+                ->with('error', $isBuyNow ? 'That product is no longer available.' : 'Your cart is empty.');
         }
 
         $subtotal     = $cartItems->sum(fn($item) => $item->product->price * $item->quantity);
@@ -58,7 +86,7 @@ class OrderController extends Controller
 
         $order = null;
 
-        DB::transaction(function () use ($request, $cartItems, $subtotal, $deliveryFee, $total, &$order) {
+        DB::transaction(function () use ($request, $cartItems, $subtotal, $deliveryFee, $total, $isBuyNow, &$order) {
 
             // Generate unique order number
             $orderNumber = 'LP-' . date('Y') . '-' . str_pad(
@@ -78,7 +106,10 @@ class OrderController extends Controller
                 'order_status'        => 'pending',
             ]);
 
-            // Create order items from cart
+            // Create order items (works identically whether the
+            // source was the buy_now session or the real cart,
+            // since both produce the same $item->product /
+            // $item->quantity shape)
             foreach ($cartItems as $item) {
                 OrderItem::create([
                     'order_id'   => $order->id,
@@ -90,7 +121,7 @@ class OrderController extends Controller
             }
 
             // Create payment record
-            $payment = Payment::create([
+            Payment::create([
                 'order_id'       => $order->id,
                 'user_id'        => Auth::id(),
                 'amount'         => $total,
@@ -109,8 +140,14 @@ class OrderController extends Controller
                 ]);
             }
 
-            // Clear the cart
-            CartItem::where('user_id', Auth::id())->delete();
+            // Only clear the REAL cart if this was a normal cart
+            // checkout. A buy-now purchase must never touch the
+            // customer's actual persistent cart items.
+            if ($isBuyNow) {
+                session()->forget('buy_now');
+            } else {
+                CartItem::where('user_id', Auth::id())->delete();
+            }
 
             // Create notification
             Notification::create([
@@ -136,16 +173,16 @@ class OrderController extends Controller
             ->with('success', 'Order placed successfully! Reference: ' . $order->order_number);
     }
 
-   // ── VIEW ALL ORDERS ──
-   public function index()
-   {
-       $orders = Order::with(['items.product', 'payment', 'delivery'])
-           ->where('user_id', Auth::id())
-           ->latest()
-           ->paginate(10);
-   
-       return view('orders.index', compact('orders'));
-   }
+    // ── VIEW ALL ORDERS ──
+    public function index()
+    {
+        $orders = Order::with(['items.product', 'payment', 'delivery'])
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->paginate(10);
+
+        return view('orders.index', compact('orders'));
+    }
 
     // ── VIEW SINGLE ORDER ──
     public function show($id)
@@ -156,5 +193,35 @@ class OrderController extends Controller
             ->firstOrFail();
 
         return view('orders.show', compact('order'));
+    }
+
+    /* ════════════════════════════════
+       Builds a cart-shaped collection from the buy_now session
+       data, so the exact same checkout/place-order code that
+       already works for real cart items also works unchanged
+       for a buy-now purchase — no duplicated logic, no risk of
+       the two flows drifting out of sync with each other.
+    ════════════════════════════════ */
+    private function getBuyNowItems()
+    {
+        $buyNow = session('buy_now');
+
+        $product = Product::available()->find($buyNow['product_id'] ?? null);
+
+        if (!$product) {
+            return collect();
+        }
+
+        // A lightweight object mimicking the shape of a real
+        // CartItem (->product, ->quantity, ->product_id) so the
+        // rest of the checkout/order code needs zero special-casing.
+        $fakeItem = (object) [
+            'product_id' => $product->id,
+            'product'    => $product,
+            'quantity'   => $buyNow['quantity'] ?? 1,
+            'note'       => $buyNow['note'] ?? null,
+        ];
+
+        return collect([$fakeItem]);
     }
 }
