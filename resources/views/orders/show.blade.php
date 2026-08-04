@@ -98,15 +98,15 @@
         <div class="order-panel-body">
           @foreach($order->items as $item)
             <div class="order-item-row">
-              <div class="order-item-img">
+            <div class="order-item-img">
                 <img
-                  src="{{ $item->product->image_url ?? asset('images/products/placeholder.jpg') }}"
-                  alt="{{ $item->product->product_name ?? 'Product' }}"
+                  src="{{ $item->product->image_url ?? ($item->product_image ? asset('images/products/'.$item->product_image) : asset('images/products/placeholder.jpg')) }}"
+                  alt="{{ $item->product->product_name ?? $item->product_name ?? 'Product' }}"
                   onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"
                 />
               </div>
               <div class="order-item-info">
-                <div class="order-item-name">{{ $item->product->product_name ?? 'Product Unavailable' }}</div>
+                <div class="order-item-name">{{ $item->product->product_name ?? $item->product_name ?? 'Product Unavailable' }}</div>
                 <div class="order-item-qty">Qty: {{ $item->quantity }} × ₱{{ number_format($item->unit_price, 2) }}</div>
               </div>
               <div class="order-item-subtotal">₱{{ number_format($item->subtotal, 2) }}</div>

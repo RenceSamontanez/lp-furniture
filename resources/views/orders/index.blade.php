@@ -50,11 +50,11 @@
           </div>
 
           <div class="order-card-items">
-            @foreach($order->items->take(4) as $item)
+          @foreach($order->items->take(4) as $item)
               <div class="order-card-thumb">
                 <img
-                  src="{{ $item->product->image_url ?? asset('images/products/placeholder.jpg') }}"
-                  alt="{{ $item->product->product_name ?? 'Product' }}"
+                  src="{{ $item->product->image_url ?? ($item->product_image ? asset('images/products/'.$item->product_image) : asset('images/products/placeholder.jpg')) }}"
+                  alt="{{ $item->product->product_name ?? $item->product_name ?? 'Product' }}"
                   onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"
                 />
               </div>

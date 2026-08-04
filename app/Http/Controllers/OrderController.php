@@ -88,76 +88,98 @@ class OrderController extends Controller
 
         DB::transaction(function () use ($request, $cartItems, $subtotal, $deliveryFee, $total, $isBuyNow, &$order) {
 
-            // Generate unique order number
-            $orderNumber = 'LP-' . date('Y') . '-' . str_pad(
-                Order::count() + 1, 5, '0', STR_PAD_LEFT
-            );
+        // Re-check stock INSIDE the transaction, with a row
+        // lock, right before committing to the order. This
+        // protects against two customers checking out the
+        // same low-stock item at nearly the same moment —
+        // whichever transaction gets here first wins, the
+        // second one fails cleanly instead of overselling.
+        foreach ($cartItems as $item) {
+            $product = Product::where('id', $item->product_id)
+                ->lockForUpdate()
+                ->first();
 
-            // Create the order
-            $order = Order::create([
-                'user_id'             => Auth::id(),
-                'order_number'        => $orderNumber,
-                'total_amount'        => $total,
-                'delivery_option'     => $request->delivery_option,
-                'delivery_address'    => $request->delivery_address,
-                'delivery_fee'        => $deliveryFee,
-                'customization_note'  => $request->customization_note,
-                'production_status'   => 'pending',
-                'order_status'        => 'pending',
+            if (!$product || $product->stock_quantity < $item->quantity) {
+                throw new \Exception(
+                    'Sorry, "' . ($product->product_name ?? 'this item') . '" no longer has enough stock (only ' .
+                    ($product->stock_quantity ?? 0) . ' left). Please update your cart and try again.'
+                );
+            }
+        }
+
+        // Generate unique order number
+        $orderNumber = 'LP-' . date('Y') . '-' . str_pad(
+            Order::count() + 1, 5, '0', STR_PAD_LEFT
+        );
+
+        // Create the order
+        $order = Order::create([
+            'user_id'             => Auth::id(),
+            'order_number'        => $orderNumber,
+            'total_amount'        => $total,
+            'delivery_option'     => $request->delivery_option,
+            'delivery_address'    => $request->delivery_address,
+            'delivery_fee'        => $deliveryFee,
+            'customization_note'  => $request->customization_note,
+            'production_status'   => 'pending',
+            'order_status'        => 'pending',
+        ]);
+
+        // Create order items from cart, and decrement stock
+        // for each one now that we've confirmed it's available
+        foreach ($cartItems as $item) {
+            OrderItem::create([
+                'order_id'      => $order->id,
+                'product_id'    => $item->product_id,
+                'product_name'  => $item->product->product_name,
+                'product_image' => $item->product->product_image,
+                'quantity'      => $item->quantity,
+                'unit_price'    => $item->product->price,
+                'subtotal'      => $item->product->price * $item->quantity,
             ]);
 
-            // Create order items (works identically whether the
-            // source was the buy_now session or the real cart,
-            // since both produce the same $item->product /
-            // $item->quantity shape)
-            foreach ($cartItems as $item) {
-                OrderItem::create([
-                    'order_id'   => $order->id,
-                    'product_id' => $item->product_id,
-                    'quantity'   => $item->quantity,
-                    'unit_price' => $item->product->price,
-                    'subtotal'   => $item->product->price * $item->quantity,
-                ]);
-            }
+            Product::where('id', $item->product_id)
+                ->decrement('stock_quantity', $item->quantity);
+        }
 
-            // Create payment record
-            Payment::create([
-                'order_id'       => $order->id,
-                'user_id'        => Auth::id(),
-                'amount'         => $total,
-                'payment_method' => $request->payment_method,
-                'payment_type'   => $request->payment_type,
-                'payment_status' => 'pending',
+        // Create payment record
+        Payment::create([
+            'order_id'       => $order->id,
+            'user_id'        => Auth::id(),
+            'amount'         => $total,
+            'payment_method' => $request->payment_method,
+            'payment_type'   => $request->payment_type,
+            'payment_status' => 'pending',
+        ]);
+
+        // Create delivery record if delivery option chosen
+        if ($request->delivery_option === 'delivery') {
+            Delivery::create([
+                'order_id'         => $order->id,
+                'delivery_address' => $request->delivery_address,
+                'contact_number'   => Auth::user()->phone_number,
+                'status'           => 'waiting_for_courier',
             ]);
+        }
 
-            // Create delivery record if delivery option chosen
-            if ($request->delivery_option === 'delivery') {
-                Delivery::create([
-                    'order_id'         => $order->id,
-                    'delivery_address' => $request->delivery_address,
-                    'contact_number'   => Auth::user()->phone_number,
-                    'status'           => 'waiting_for_courier',
-                ]);
-            }
+        // Only clear the REAL cart if this was a normal cart
+        // checkout. A buy-now purchase must never touch the
+        // customer's actual persistent cart items.
+        if ($isBuyNow) {
+            session()->forget('buy_now');
+        } else {
+            CartItem::where('user_id', Auth::id())->delete();
+        }
 
-            // Only clear the REAL cart if this was a normal cart
-            // checkout. A buy-now purchase must never touch the
-            // customer's actual persistent cart items.
-            if ($isBuyNow) {
-                session()->forget('buy_now');
-            } else {
-                CartItem::where('user_id', Auth::id())->delete();
-            }
-
-            // Create notification
-            Notification::create([
-                'user_id' => Auth::id(),
-                'title'   => 'Order Placed',
-                'message' => "Your order {$orderNumber} has been placed and is pending confirmation.",
-                'type'    => 'order_update',
-                'url'     => route('orders.show', $order->id),
-            ]);
-        });
+        // Create notification
+        Notification::create([
+            'user_id' => Auth::id(),
+            'title'   => 'Order Placed',
+            'message' => "Your order {$orderNumber} has been placed and is pending confirmation.",
+            'type'    => 'order_update',
+            'url'     => route('orders.show', $order->id),
+        ]);
+    });
 
         // Redirect based on payment method chosen
         if ($request->payment_method === 'stripe') {
