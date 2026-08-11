@@ -36,6 +36,12 @@
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;">Reviewed On</div>
           <div style="font-size:14px;color:var(--brown-deep);">{{ $validation->reviewed_at->format('M d, Y · h:i A') }}</div>
         </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;">Reviewed By</div>
+          <div style="font-size:14px;color:var(--brown-deep);">
+            {{ $validation->reviewer ? $validation->reviewer->first_name . ' ' . $validation->reviewer->last_name : '—' }}
+          </div>
+        </div>
       @endif
     </div>
 

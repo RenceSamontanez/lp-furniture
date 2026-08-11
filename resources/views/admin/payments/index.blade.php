@@ -58,6 +58,12 @@
                       ✕ Reject
                     </button>
                   </div>
+                @elseif($payment->verifier)
+                  <div style="font-size:11.5px;color:var(--text-muted);line-height:1.5;">
+                    {{ $payment->payment_status === 'paid' ? 'Verified' : 'Rejected' }} by
+                    <strong style="color:var(--brown-deep);">{{ $payment->verifier->first_name }} {{ $payment->verifier->last_name }}</strong>
+                    <br>{{ $payment->verified_at?->format('M d, Y · h:i A') }}
+                  </div>
                 @else
                   <span style="color:var(--text-muted);font-size:12px;">—</span>
                 @endif

@@ -120,7 +120,7 @@ class AdminController extends Controller
 
     public function validationShow($id)
     {
-        $validation = UserValidation::with('user')->findOrFail($id);
+        $validation = UserValidation::with('user', 'reviewer')->findOrFail($id);
         return view('admin.validations.show', compact('validation'));
     }
 
@@ -208,7 +208,7 @@ class AdminController extends Controller
 
     public function orderShow($id)
     {
-        $order = Order::with('user', 'items.product')->findOrFail($id);
+        $order = Order::with('user', 'items.product', 'statusUpdatedBy')->findOrFail($id);
         return view('admin.orders.show', compact('order'));
     }
 
@@ -219,7 +219,11 @@ class AdminController extends Controller
         ]);
 
         $order = Order::findOrFail($id);
-        $order->update(['order_status' => $request->order_status]);
+        $order->update([
+            'order_status'      => $request->order_status,
+            'status_updated_by' => Auth::guard('admin')->id(),
+            'status_updated_at' => now(),
+        ]);
 
         $statusLabels = [
             'confirmed'        => 'Your order has been confirmed and will begin production soon.',
@@ -283,7 +287,7 @@ class AdminController extends Controller
     {
         $status = $request->get('status', 'pending');
 
-        $payments = Payment::with('order.user')
+        $payments = Payment::with('order.user', 'verifier')
             ->where('payment_method', 'gcash')
             ->when($status !== 'all', fn($q) => $q->where('payment_status', $status))
             ->latest()
@@ -298,9 +302,15 @@ class AdminController extends Controller
         $payment->update([
             'payment_status' => 'paid',
             'paid_at'        => now(),
+            'verified_by'    => Auth::guard('admin')->id(),
+            'verified_at'    => now(),
         ]);
 
-        $payment->order->update(['order_status' => 'confirmed']);
+        $payment->order->update([
+            'order_status'      => 'confirmed',
+            'status_updated_by' => Auth::guard('admin')->id(),
+            'status_updated_at' => now(),
+        ]);
 
         Notification::create([
             'user_id' => $payment->user_id,
@@ -321,7 +331,11 @@ class AdminController extends Controller
         ]);
 
         $payment = Payment::findOrFail($id);
-        $payment->update(['payment_status' => 'failed']);
+        $payment->update([
+            'payment_status' => 'failed',
+            'verified_by'    => Auth::guard('admin')->id(),
+            'verified_at'    => now(),
+        ]);
 
         Notification::create([
             'user_id' => $payment->user_id,

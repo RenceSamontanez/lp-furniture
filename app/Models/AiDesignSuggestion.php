@@ -14,6 +14,7 @@ class AiDesignSuggestion extends Model
         'ai_model_used',
         'prompt_used',
         'is_selected',
+        'is_favorited',
         'customer_notes',
         'generated_at',
     ];

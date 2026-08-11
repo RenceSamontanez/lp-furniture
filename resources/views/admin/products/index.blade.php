@@ -83,12 +83,10 @@
               <td data-label="Actions">
                 <div style="display:flex;gap:6px;flex-wrap:wrap;">
                   <a href="{{ route('admin.products.edit', $product->id) }}" class="admin-btn admin-btn-outline">Edit</a>
-                  <form method="POST" action="{{ route('admin.products.destroy', $product->id) }}"
-                        onsubmit="return confirm('Delete this product permanently? This cannot be undone.')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="admin-btn admin-btn-danger">Delete</button>
-                  </form>
+                  <button type="button" class="admin-btn admin-btn-danger"
+                          onclick="openDeleteProductModal(@js(route('admin.products.destroy', $product->id)), @js($product->product_name), {{ (int) $product->order_items_count }})">
+                    Delete
+                  </button>
                 </div>
               </td>
             </tr>
@@ -101,4 +99,78 @@
 
 <div style="margin-top:16px;">{{ $products->appends(request()->query())->links() }}</div>
 
+{{-- ══════════════════════════════════════════
+     DELETE PRODUCT MODAL — variant (warning/danger)
+     is set at open time by openDeleteProductModal()
+═══════════════════════════════════════════ --}}
+<div class="admin-modal-overlay" id="delete-product-modal-overlay" onclick="closeDeleteProductModalOnBackdrop(event)">
+  <div class="admin-modal admin-modal-centered">
+    <div class="admin-modal-body">
+      <div class="admin-modal-icon" id="delete-product-modal-icon">
+        <svg id="delete-product-modal-icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"></svg>
+      </div>
+      <h3 class="admin-modal-title-centered" id="delete-product-modal-title"></h3>
+      <p class="admin-modal-desc" id="delete-product-modal-desc" style="text-align:center;"></p>
+
+      <form method="POST" id="delete-product-form">
+        @csrf
+        @method('DELETE')
+        <div class="admin-modal-footer">
+          <button type="button" class="admin-btn admin-btn-outline" onclick="closeDeleteProductModal()">Cancel</button>
+          <button type="submit" class="admin-btn admin-btn-danger">Delete Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 @endsection
+
+@push('scripts')
+<script>
+/* ══════════════════════════════════════════
+   DELETE PRODUCT MODAL
+   Two visual variants depending on whether the
+   product has order history:
+   - order history exists → amber/warning treatment,
+     mentions the exact order count (deletion is safe,
+     orders keep their own snapshot — just informing)
+   - no order history → red/danger treatment
+     (no safety net, plain irreversible delete)
+══════════════════════════════════════════ */
+function openDeleteProductModal(actionUrl, productName, orderCount) {
+  const form  = document.getElementById('delete-product-form');
+  const icon  = document.getElementById('delete-product-modal-icon');
+  const svg   = document.getElementById('delete-product-modal-icon-svg');
+  const title = document.getElementById('delete-product-modal-title');
+  const desc  = document.getElementById('delete-product-modal-desc');
+
+  form.action = actionUrl;
+  title.textContent = `Delete "${productName}"?`;
+
+  if (orderCount > 0) {
+    icon.classList.remove('admin-modal-icon--danger');
+    icon.classList.add('admin-modal-icon--warning');
+    svg.innerHTML = '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>';
+    desc.textContent = `This product has ${orderCount} past order${orderCount === 1 ? '' : 's'}. Deleting it will remove it from the catalog, but existing orders will keep their own record of it.`;
+  } else {
+    icon.classList.remove('admin-modal-icon--warning');
+    icon.classList.add('admin-modal-icon--danger');
+    svg.innerHTML = '<polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2 0 01-2,2H7a2,2 0 01-2-2V6m3,0V4a2,2 0 012-2h4a2,2 0 012,2v2"/>';
+    desc.textContent = 'This will permanently delete the product from the catalog. This action cannot be undone.';
+  }
+
+  document.getElementById('delete-product-modal-overlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDeleteProductModal() {
+  document.getElementById('delete-product-modal-overlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+function closeDeleteProductModalOnBackdrop(e) {
+  if (e.target.id === 'delete-product-modal-overlay') closeDeleteProductModal();
+}
+</script>
+@endpush

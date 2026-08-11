@@ -601,6 +601,179 @@
     color: var(--text-muted);
     line-height: 1.6;
   }
+
+  /* ── PAYMENT FAILURE NOTICE (Stripe + GCash) ──
+     Replaces the old generic .auth-errors markup, which relied on
+     classes only defined in auth.css (never loaded on either
+     payment page) — it rendered completely unstyled. This is
+     purpose-built instead, with a warmer, clearer failure message
+     and reassurance that no charge went through. Shared by both
+     stripe.blade.php and gcash-paymongo.blade.php so a failed
+     payment looks and feels consistent regardless of method. */
+  .payment-fail-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: #FDF2F2;
+    border: 1px solid #F3C6C6;
+    border-left: 4px solid var(--danger);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+  }
+
+  .payment-fail-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #F8DADA;
+    color: var(--danger);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .payment-fail-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    color: var(--brown-deep);
+    margin-bottom: 4px;
+  }
+
+  .payment-fail-message {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .payment-fail-reassure {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  /* ── GCASH → PAYMONGO REDIRECT TRANSITION ──
+     Full-viewport overlay shown the instant the customer clicks
+     Pay, so the handoff to PayMongo's external domain has a
+     moment of on-brand context instead of feeling like a jarring
+     jump. Two panels, only one visible at a time:
+       - #gcash-redirect-confirm: the customer must actively choose
+         "Continue to GCash" — this is the deliberate point where
+         they can still back out (via the same Back link used
+         everywhere else on payment pages) before anything happens.
+       - #gcash-redirect-processing: shown only after they've
+         committed, while the real create-intent request is in
+         flight. No back option here — this mirrors every other
+         "processing, please wait" state on the site once a
+         real request is underway.
+     Hidden by default; JS adds .visible on Pay click. */
+  .gcash-redirect-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--cream);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+  }
+
+  .gcash-redirect-overlay.visible {
+    display: flex;
+  }
+
+  .gcash-redirect-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .gcash-redirect-spinner {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 4px solid var(--border);
+    border-top-color: #007DFF;
+    animation: gcashRedirectSpin 0.9s linear infinite;
+    margin-bottom: 24px;
+  }
+
+  @keyframes gcashRedirectSpin {
+    to { transform: rotate(360deg); }
+  }
+
+  .gcash-redirect-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #E7F2FF;
+    color: #007DFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  .gcash-redirect-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--brown-deep);
+    margin-bottom: 10px;
+  }
+
+  .gcash-redirect-text {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    max-width: 380px;
+  }
+
+  .gcash-redirect-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .gcash-redirect-actions .btn-submit-gcash {
+    width: 100%;
+  }
+
+  /* ── SHARED "BACK" LINK ──
+     Same visual pattern as .orders-back-link elsewhere on the
+     site — small muted arrow-link. Used identically across every
+     pre-payment page (Stripe, GCash/PayMongo, manual GCash
+     upload) and inside the GCash redirect confirm panel, so it's
+     always recognizable as "the way out" regardless of context. */
+  .payment-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-bottom: 20px;
+    transition: color .2s;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-body);
+  }
+
+  .payment-back-link:hover {
+    color: var(--brown-deep);
+  }
+
+  .gcash-redirect-actions .payment-back-link {
+    margin-bottom: 0;
+  }
   
   /* ── RESPONSIVE ── */
   @media (max-width: 680px) {

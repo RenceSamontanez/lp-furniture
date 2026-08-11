@@ -25,21 +25,19 @@
     <div class="auth-success" style="margin-bottom:20px;">{{ session('success') }}</div>
   @endif
 
-  @if($errors->any())
-    <div class="auth-errors" style="margin-bottom:20px;">
-      @foreach($errors->all() as $error)
-        <div class="auth-error-item">{{ $error }}</div>
-      @endforeach
-    </div>
-  @endif
-
   <div class="cd-layout">
 
     {{-- ═══════════════════════════════════
          LEFT: Form panel
     ═══════════════════════════════════ --}}
     <div class="cd-form-panel">
-      <h1 class="cd-form-title">Custom Design</h1>
+      <div class="cd-form-title-row">
+        <h1 class="cd-form-title">Custom Design</h1>
+        <button type="button" class="cd-howitworks-btn" onclick="openCdHowItWorks()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 2-3 4"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          How it works
+        </button>
+      </div>
 
       <form method="POST" action="{{ route('design.submit') }}" enctype="multipart/form-data" id="cd-form">
         @csrf
@@ -73,6 +71,14 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>
           Generate
         </button>
+
+        <p class="cd-daily-limit-note">
+          @if($dailyUsed >= $dailyLimit)
+            You've used all {{ $dailyLimit }} designs for today — your limit resets at midnight.
+          @else
+            {{ $dailyLimit - $dailyUsed }} of {{ $dailyLimit }} designs left today.
+          @endif
+        </p>
 
         <input type="hidden" name="furniture_type" id="cd-hidden-furniture-type" value="{{ old('furniture_type') }}"/>
         <input type="hidden" name="preferred_material" id="cd-hidden-material" value="{{ old('preferred_material', 'No Preference') }}"/>
@@ -205,7 +211,95 @@
     </div>
   </div>
 
+  @include('design._validation_error_modal')
+
+  {{-- ══════════════════════════════════════════
+       HOW IT WORKS — friendly tutorial modal
+  ═══════════════════════════════════════════ --}}
+  <div class="cd-modal-overlay" id="cd-howitworks-overlay" onclick="closeCdHowItWorksOnBackdrop(event)">
+    <div class="cd-modal cd-howitworks-modal">
+      <div class="cd-modal-header">
+        <span class="cd-modal-title">How It Works</span>
+        <button type="button" class="cd-modal-close" onclick="closeCdHowItWorks()">✕</button>
+      </div>
+
+      <div class="cd-modal-body">
+        <p class="cd-howitworks-intro">
+          Tell us the piece you're picturing, and our AI will sketch a few concepts for you to
+          choose from — no design experience needed. The more specific you are, the closer the
+          first draft will be to what's in your head.
+        </p>
+
+        <div class="cd-howitworks-tips">
+          <div class="cd-howitworks-tip">
+            <div class="cd-howitworks-tip-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+            </div>
+            <div>
+              <strong>Name the piece</strong>
+              <span>A dining table, a bookshelf, a bed frame — start with what it actually is.</span>
+            </div>
+          </div>
+          <div class="cd-howitworks-tip">
+            <div class="cd-howitworks-tip-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </div>
+            <div>
+              <strong>Mention a material</strong>
+              <span>Narra, oak, mahogany, rattan — wood type changes the whole look and feel.</span>
+            </div>
+          </div>
+          <div class="cd-howitworks-tip">
+            <div class="cd-howitworks-tip-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.5-.7 1.5-1.5 0-.4-.2-.8-.4-1.1-.3-.3-.4-.6-.4-1 0-.8.7-1.5 1.5-1.5H16c3.3 0 6-2.7 6-6 0-4.4-4-8-10-8z"/></svg>
+            </div>
+            <div>
+              <strong>Describe the style</strong>
+              <span>Rustic, modern minimalist, farmhouse, mid-century — pick a mood.</span>
+            </div>
+          </div>
+          <div class="cd-howitworks-tip">
+            <div class="cd-howitworks-tip-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 6H3M21 12H3M21 18H3"/></svg>
+            </div>
+            <div>
+              <strong>Add size if it matters</strong>
+              <span>"Seats six," "fits a small apartment" — scale helps us get proportions right.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cd-howitworks-examples">
+          <div class="cd-howitworks-examples-label">A few good examples</div>
+
+          <div class="cd-howitworks-example cd-howitworks-example--good">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            <span>"A rustic oak dining table with turned legs and a distressed finish, seats six."</span>
+          </div>
+          <div class="cd-howitworks-example cd-howitworks-example--good">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            <span>"A modern minimalist bookshelf in walnut, floor-to-ceiling, open-back shelving."</span>
+          </div>
+          <div class="cd-howitworks-example cd-howitworks-example--good">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            <span>"A cozy mid-century armchair in a warm mahogany frame with tan leather upholstery."</span>
+          </div>
+
+          <div class="cd-howitworks-example cd-howitworks-example--vague">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <span>"A table" — technically valid, but too vague for the AI to work with well.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cd-modal-footer">
+        <button type="button" class="cd-modal-save-btn" onclick="closeCdHowItWorks()">Got it, let's design</button>
+      </div>
+    </div>
+  </div>
+
   @include('design._preview_modal')
+  @include('design._favorite_js')
 
 </div>
 @endsection
@@ -231,6 +325,21 @@ function closeCdOptionalOnBackdrop(e) {
   if (e.target.id === 'cd-optional-overlay') closeCdOptionalPanel();
 }
 
+/* ── HOW IT WORKS ── */
+function openCdHowItWorks() {
+  document.getElementById('cd-howitworks-overlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCdHowItWorks() {
+  document.getElementById('cd-howitworks-overlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+function closeCdHowItWorksOnBackdrop(e) {
+  if (e.target.id === 'cd-howitworks-overlay') closeCdHowItWorks();
+}
+
 function saveCdOptionalPanel() {
   const type = document.getElementById('cd-modal-furniture-type-select').value;
   const material = document.querySelector('input[name="cd_modal_material"]:checked')?.value || 'No Preference';
@@ -250,6 +359,8 @@ function saveCdOptionalPanel() {
   closeCdOptionalPanel();
 }
 
-document.addEventListener('DOMContentLoaded', updateCdPromptCount);
+document.addEventListener('DOMContentLoaded', function () {
+  updateCdPromptCount();
+});
 </script>
 @endpush

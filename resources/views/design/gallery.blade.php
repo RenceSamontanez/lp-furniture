@@ -87,6 +87,8 @@
   @endif
 
   @include('design._preview_modal')
+  @include('design._favorite_js')
+  @include('design._validation_error_modal')
 
 </div>
 @endsection

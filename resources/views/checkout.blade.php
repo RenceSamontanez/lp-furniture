@@ -43,8 +43,35 @@
     </div>
   @endif
 
+  @if(session('stock_error'))
+    <div class="stock-error-banner">
+      <div class="stock-error-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <div class="stock-error-text">
+        <strong>Not Enough Stock</strong>
+        <p>
+          "{{ session('stock_error')['product_name'] }}" only has
+          {{ session('stock_error')['available'] }}
+          {{ Str::plural('unit', session('stock_error')['available']) }} left,
+          but your order needs {{ session('stock_error')['requested'] }}.
+          Please update the quantity and try again.
+        </p>
+      </div>
+      <a href="{{ route('cart.index') }}" class="stock-error-btn">Update Cart</a>
+    </div>
+  @endif
+
   <form method="POST" action="{{ route('order.place') }}" id="checkout-form">
     @csrf
+
+    @if($buyNow)
+      <input type="hidden" name="buy_now_product_id" value="{{ $buyNow['product_id'] }}"/>
+      <input type="hidden" name="buy_now_quantity" value="{{ $buyNow['quantity'] }}"/>
+      <input type="hidden" name="buy_now_note" value="{{ $buyNow['note'] }}"/>
+    @endif
 
     <div class="checkout-layout">
 
@@ -297,18 +324,30 @@
                     <input type="radio" name="payment_type" value="installment" onchange="selectPaymentType('installment')"/>
                     <div class="payment-type-info">
                       <div class="payment-type-title">Installment Plan</div>
-                      <div class="payment-type-desc">Split your payment over time. Subject to admin approval within 24 hours.</div>
+                      <div class="payment-type-desc">Pay 50% now, split the rest into payments you choose.</div>
 
                       <div class="installment-period-wrap" id="installment-period-wrap">
-                        <div style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Choose installment period:</div>
+                        <div class="installment-group-label">Duration</div>
                         <div class="installment-grid">
-                          @foreach(['7 days','15 days','1 month','2 months','3 months','6 months'] as $period)
-                            <label class="installment-chip {{ $period === '1 month' ? 'selected' : '' }}">
-                              <input type="radio" name="installment_period" value="{{ $period }}" {{ $period === '1 month' ? 'checked' : '' }} onchange="selectInstallmentChip(this)"/>
-                              {{ $period }}
+                          @foreach([1 => '1 Month', 2 => '2 Months', 3 => '3 Months'] as $months => $label)
+                            <label class="installment-chip {{ $months === 1 ? 'selected' : '' }}">
+                              <input type="radio" name="installment_duration" value="{{ $months }}" {{ $months === 1 ? 'checked' : '' }} onchange="selectInstallmentChip(this)"/>
+                              {{ $label }}
                             </label>
                           @endforeach
                         </div>
+
+                        <div class="installment-group-label" style="margin-top:14px;">Payment Frequency</div>
+                        <div class="installment-grid">
+                          @foreach([15 => 'Every 15 Days', 30 => 'Every 1 Month (30 Days)'] as $days => $label)
+                            <label class="installment-chip {{ $days === 15 ? 'selected' : '' }}">
+                              <input type="radio" name="installment_frequency" value="{{ $days }}" {{ $days === 15 ? 'checked' : '' }} onchange="selectInstallmentChip(this)"/>
+                              {{ $label }}
+                            </label>
+                          @endforeach
+                        </div>
+
+                        <div class="installment-summary-box" id="installment-summary-box"></div>
                       </div>
                     </div>
                   </label>
@@ -363,6 +402,17 @@
                     <div class="payment-method-info">
                       <div class="payment-method-title">Credit / Debit Card (Stripe)</div>
                       <div class="payment-method-desc">Visa, Mastercard, and more. Processed securely by Stripe.</div>
+                    </div>
+                  </label>
+
+                  <label class="payment-method-card" id="label-gcash">
+                    <input type="radio" name="payment_method" value="gcash" onchange="selectPaymentMethod('gcash')"/>
+                    <div class="payment-method-icon gcash">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    </div>
+                    <div class="payment-method-info">
+                      <div class="payment-method-title">GCash</div>
+                      <div class="payment-method-desc">Pay securely with your GCash account, powered by PayMongo.</div>
                     </div>
                   </label>
 
@@ -603,7 +653,7 @@
 
           <button type="submit" class="btn-place-order" id="place-order-btn">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-            Place Order
+            <span id="place-order-btn-label">Place Order</span>
           </button>
           <p class="ckn-charge-note">You won't be charged yet.</p>
           <a href="{{ route('cart.index') }}" class="checkout-back-link">← Back to Cart</a>
@@ -673,17 +723,78 @@ function selectPaymentType(type) {
   document.getElementById('label-full').classList.toggle('selected', type === 'full');
   document.getElementById('label-installment').classList.toggle('selected', type === 'installment');
   document.getElementById('installment-period-wrap').classList.toggle('visible', type === 'installment');
+  if (type === 'installment') updateInstallmentSummary();
   updateSectionSummaries();
+}
+
+function installmentPlanLabel() {
+  const durationInput = document.querySelector('input[name="installment_duration"]:checked');
+  const frequencyInput = document.querySelector('input[name="installment_frequency"]:checked');
+  if (!durationInput || !frequencyInput) return '';
+  const months = durationInput.value;
+  const freqLabel = frequencyInput.value === '15' ? 'Every 15 Days' : 'Every 1 Month';
+  return months + (months === '1' ? ' Month' : ' Months') + ' · ' + freqLabel;
 }
 
 function selectInstallmentChip(input) {
-  document.querySelectorAll('.installment-chip').forEach(c => c.classList.remove('selected'));
+  // Scoped to the SAME radio group's grid only — Duration and
+  // Frequency are two separate chip groups on the page now, so
+  // clearing .selected page-wide would wrongly clear the other group.
+  const grid = input.closest('.installment-grid');
+  grid.querySelectorAll('.installment-chip').forEach(c => c.classList.remove('selected'));
   input.closest('.installment-chip').classList.add('selected');
+  updateInstallmentSummary();
   updateSectionSummaries();
 }
 
+/* ── INSTALLMENT SUMMARY ──
+   Mirrors the server's split logic exactly (same 30-day-month
+   basis, same "last payment absorbs the rounding remainder" rule)
+   so the number shown here always matches what actually gets
+   created at checkout — never just an approximation. */
+function computeInstallmentPlan(total, durationMonths, frequencyDays) {
+  const downpayment = Math.round(total * 0.5 * 100) / 100;
+  const remaining = Math.round((total - downpayment) * 100) / 100;
+  const numPayments = Math.round((durationMonths * 30) / frequencyDays);
+  const baseAmount = Math.floor((remaining / numPayments) * 100) / 100;
+
+  const amounts = [];
+  let runningTotal = 0;
+  for (let i = 1; i <= numPayments; i++) {
+    const isLast = i === numPayments;
+    const amount = isLast ? Math.round((remaining - runningTotal) * 100) / 100 : baseAmount;
+    runningTotal += amount;
+    amounts.push(amount);
+  }
+
+  return { downpayment, remaining, numPayments, amounts };
+}
+
+function updateInstallmentSummary() {
+  const box = document.getElementById('installment-summary-box');
+  if (!box) return;
+
+  const durationInput = document.querySelector('input[name="installment_duration"]:checked');
+  const frequencyInput = document.querySelector('input[name="installment_frequency"]:checked');
+  if (!durationInput || !frequencyInput) return;
+
+  const fee = currentDelivery === 'delivery' ? DELIVERY_FEE : 0;
+  const total = SUBTOTAL + fee;
+  const duration = parseInt(durationInput.value, 10);
+  const frequency = parseInt(frequencyInput.value, 10);
+  const frequencyLabel = frequency === 15 ? '15 days' : 'month';
+
+  const plan = computeInstallmentPlan(total, duration, frequency);
+  const fmt = n => '₱' + n.toLocaleString('en-PH', { minimumFractionDigits: 2 });
+
+  box.innerHTML = `
+    <div class="installment-summary-row"><span>Pay now (50% downpayment)</span><strong>${fmt(plan.downpayment)}</strong></div>
+    <div class="installment-summary-row"><span>Then every ${frequencyLabel}, ${plan.numPayments} payment${plan.numPayments === 1 ? '' : 's'}</span><strong>${fmt(plan.amounts[0])}${plan.numPayments > 1 ? ' each' : ''}</strong></div>
+  `;
+}
+
 function selectPaymentMethod(method) {
-  ['stripe', 'onsite'].forEach(m => document.getElementById('label-' + m)?.classList.remove('selected'));
+  ['stripe', 'gcash', 'onsite'].forEach(m => document.getElementById('label-' + m)?.classList.remove('selected'));
   document.getElementById('label-' + method)?.classList.add('selected');
   updateSectionSummaries();
 }
@@ -713,6 +824,11 @@ function updateTotal() {
 
   const rTotalEl = document.getElementById('review-total');
   if (rTotalEl) rTotalEl.textContent = formatted;
+
+  // Delivery option affects the total, which affects the 50%
+  // downpayment and per-payment amounts — keep the summary in sync.
+  const installmentChecked = document.querySelector('input[name="payment_type"]:checked')?.value === 'installment';
+  if (installmentChecked) updateInstallmentSummary();
 }
 
 function updateSectionSummaries() {
@@ -728,14 +844,13 @@ function updateSectionSummaries() {
     if (payTypeChecked.value === 'full') {
       if (el) el.textContent = 'Full Payment';
     } else {
-      const period = document.querySelector('input[name="installment_period"]:checked');
-      if (el) el.textContent = 'Installment · ' + (period ? period.value : '');
+      if (el) el.textContent = 'Installment · ' + installmentPlanLabel();
     }
   }
 
   const payMethodChecked = document.querySelector('input[name="payment_method"]:checked');
   if (payMethodChecked) {
-    const labels = { stripe: 'Card (Stripe)', onsite: 'Cash' };
+    const labels = { stripe: 'Card (Stripe)', gcash: 'GCash', onsite: 'Cash' };
     const el = document.getElementById('ckn-summary-paymethod');
     if (el) el.textContent = labels[payMethodChecked.value] || '';
   }
@@ -790,15 +905,14 @@ function updateReviewScreen() {
     if (payTypeChecked.value === 'full') {
       payTypeEl.textContent = 'Full Payment';
     } else {
-      const period = document.querySelector('input[name="installment_period"]:checked');
-      payTypeEl.textContent = 'Installment Plan · ' + (period ? period.value : '');
+      payTypeEl.textContent = 'Installment Plan · ' + installmentPlanLabel();
     }
   }
 
   const payMethodChecked = document.querySelector('input[name="payment_method"]:checked');
   const payMethodEl = document.getElementById('review-paymethod-value');
   if (payMethodChecked) {
-    const labels = { stripe: 'Credit / Debit Card (Stripe)', onsite: 'Cash on Pickup / Delivery' };
+    const labels = { stripe: 'Credit / Debit Card (Stripe)', gcash: 'GCash', onsite: 'Cash on Pickup / Delivery' };
     payMethodEl.textContent = labels[payMethodChecked.value] || '';
   }
 
@@ -827,6 +941,21 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.style.overflow = '';
     }
   });
+});
+
+/* ── DOUBLE-SUBMIT GUARD ──
+   Both "Place Order" buttons (desktop sidebar + mobile review
+   screen) submit this same form. Disabling on the form's submit
+   event — rather than each button's click — catches either one,
+   and disabling doesn't cancel the submission already in flight. */
+document.getElementById('checkout-form').addEventListener('submit', function () {
+  this.querySelectorAll('button[type="submit"]').forEach(btn => btn.disabled = true);
+
+  const iconLabel = document.getElementById('place-order-btn-label');
+  if (iconLabel) iconLabel.textContent = 'Placing Order...';
+
+  const reviewBtn = document.querySelector('.checkout-place-order-btn');
+  if (reviewBtn) reviewBtn.textContent = 'Placing Order...';
 });
 </script>
 @endpush

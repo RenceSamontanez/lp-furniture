@@ -11,13 +11,19 @@ class Payment extends Model
         'amount',
         'payment_method',
         'payment_type',
+        'installment_duration_months',
+        'installment_frequency_days',
         'stripe_payment_intent_id',
         'stripe_client_secret',
         'stripe_charge_id',
         'stripe_customer_id',
         'gcash_reference_number',
+        'paymongo_payment_intent_id',
+        'paymongo_payment_method_id',
         'receipt_image_path',
         'payment_status',
+        'verified_by',
+        'verified_at',
         'qr_hash',
         'qr_is_active',
         'paid_at',
@@ -27,6 +33,7 @@ class Payment extends Model
         'amount'       => 'decimal:2',
         'qr_is_active' => 'boolean',
         'paid_at'      => 'datetime',
+        'verified_at'  => 'datetime',
     ];
 
     // Belongs to an order
@@ -39,6 +46,12 @@ class Payment extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // Admin who approved/rejected this payment
+    public function verifier()
+    {
+        return $this->belongsTo(User::class, 'verified_by');
     }
 
     // Has many installment schedules

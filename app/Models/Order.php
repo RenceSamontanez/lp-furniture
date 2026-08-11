@@ -16,18 +16,27 @@ class Order extends Model
         'customization_note',
         'production_status',
         'order_status',
+        'status_updated_by',
+        'status_updated_at',
         'notes',
     ];
 
     protected $casts = [
-        'total_amount' => 'decimal:2',
-        'delivery_fee' => 'decimal:2',
+        'total_amount'      => 'decimal:2',
+        'delivery_fee'      => 'decimal:2',
+        'status_updated_at' => 'datetime',
     ];
 
     // Belongs to a user
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // Admin who last updated order_status
+    public function statusUpdatedBy()
+    {
+        return $this->belongsTo(User::class, 'status_updated_by');
     }
 
     // Has many order items

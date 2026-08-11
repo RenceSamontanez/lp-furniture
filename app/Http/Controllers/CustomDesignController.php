@@ -5,11 +5,29 @@ namespace App\Http\Controllers;
 use App\Jobs\GenerateAiDesign;
 use App\Models\AiDesignSuggestion;
 use App\Models\CustomDesignRequest;
+use App\Rules\FurnitureTopic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CustomDesignController extends Controller
 {
+    // Counted against CustomDesignRequest rows created today, not a
+    // separate tracking table — every submit() call creates exactly
+    // one row and dispatches exactly one generation job, so the rows
+    // themselves are already an accurate, already-existing record of
+    // "generations used today." Resets at midnight in the app's
+    // configured timezone (Asia/Manila) — server time, per-visitor
+    // browser timezone isn't tracked anywhere in this schema and
+    // would be disproportionate to add just for this.
+    private const DAILY_GENERATION_LIMIT = 3;
+
+    private function generationsUsedToday(): int
+    {
+        return CustomDesignRequest::where('user_id', Auth::id())
+            ->whereDate('created_at', today())
+            ->count();
+    }
+
     public function index()
     {
         $myRequests = CustomDesignRequest::where('user_id', Auth::id())
@@ -36,15 +54,28 @@ class CustomDesignController extends Controller
 
         $totalWithImages = $myRequests->filter(fn($r) => $r->suggestions->count() > 0)->count();
 
+        $dailyUsed  = $this->generationsUsedToday();
+        $dailyLimit = self::DAILY_GENERATION_LIMIT;
+
         return view('design.index', compact(
-            'myRequests', 'latestWithImages', 'latestImage', 'historyThumbs', 'totalWithImages'
+            'myRequests', 'latestWithImages', 'latestImage', 'historyThumbs', 'totalWithImages',
+            'dailyUsed', 'dailyLimit'
         ));
     }
 
     public function submit(Request $request)
     {
+        // Daily generation cap — checked before validation/dispatch
+        // so an over-limit request never reaches the queue, same
+        // reasoning as the furniture-topic check.
+        if ($this->generationsUsedToday() >= self::DAILY_GENERATION_LIMIT) {
+            return back()->withInput()->withErrors([
+                'prompt' => "You've used all " . self::DAILY_GENERATION_LIMIT . " AI design generations for today. Your limit resets at midnight — come back tomorrow for more!",
+            ]);
+        }
+
         $request->validate([
-            'prompt'             => 'required|string|min:15|max:1000',
+            'prompt'             => ['required', 'string', 'min:15', 'max:1000', new FurnitureTopic()],
             'furniture_type'     => 'nullable|string|max:100',
             'preferred_material' => 'nullable|string|max:100',
             'dimensions'         => 'nullable|string|max:200',

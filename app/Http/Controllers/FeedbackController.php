@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Feedback;
 use App\Models\Order;
+use App\Rules\NoInappropriateTerms;
+use App\Rules\NoLinks;
+use Blaspsoft\Blasp\Rules\Profanity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,7 +42,12 @@ class FeedbackController extends Controller
         $request->validate([
             'order_id' => 'required|exists:orders,id',
             'rating'   => 'required|integer|min:1|max:5',
-            'comment'  => 'required|string|min:10|max:1000',
+            'comment'  => [
+                'required', 'string', 'min:10', 'max:1000',
+                new NoLinks(),
+                Profanity::make(),
+                new NoInappropriateTerms(),
+            ],
         ]);
 
         // Confirm this order belongs to the logged-in user and is completed

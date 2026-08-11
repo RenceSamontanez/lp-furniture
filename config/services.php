@@ -35,6 +35,30 @@ return [
         'webhook' => env('STRIPE_WEBHOOK_SECRET'),
     ],
 
+    // Real GCash payments via PayMongo's Payment Intent API (test mode
+    // — pk_test_/sk_test_ keys). No official-SDK dependency: PayMongo's
+    // own PHP library is unversioned (v0.0.0) with a community fork
+    // that exists specifically to fix its compatibility issues, so
+    // this integration calls the REST API directly via Http, matching
+    // this app's existing convention for other external APIs (recaptcha,
+    // the AI design providers) rather than adding a fragile dependency.
+    'paymongo' => [
+        'public_key'     => env('PAYMONGO_PUBLIC_KEY'),
+        'secret_key'     => env('PAYMONGO_SECRET_KEY'),
+        'webhook_secret' => env('PAYMONGO_WEBHOOK_SECRET'),
+    ],
+
+    // Manual/offline flow — no GCash API integration. account_name/
+    // account_number are shown as-is on the GCash payment page, and
+    // qr_image (a filename under public/images/) is shown if present,
+    // otherwise a placeholder icon. All null until set in .env —
+    // real payment destination details, not something to fabricate.
+    'gcash' => [
+        'account_name'   => env('GCASH_ACCOUNT_NAME'),
+        'account_number' => env('GCASH_ACCOUNT_NUMBER'),
+        'qr_image'       => env('GCASH_QR_IMAGE'),
+    ],
+
     'openai' => [
         'api_key'      => env('OPENAI_API_KEY'),
         'organization' => env('OPENAI_ORGANIZATION'),

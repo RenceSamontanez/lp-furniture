@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Models\ProductImage;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Rules\NoInappropriateTerms;
+use App\Rules\NoLinks;
+use Blaspsoft\Blasp\Rules\Profanity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -19,6 +22,7 @@ class ProductController extends Controller
         $category = $request->get('category', 'all');
 
         $products = Product::query()
+            ->withCount('orderItems')
             ->when($search, fn($q) => $q->where('product_name', 'like', "%{$search}%"))
             ->when($category !== 'all', fn($q) => $q->where('category', $category))
             ->latest()
@@ -34,7 +38,10 @@ class ProductController extends Controller
     ════════════════════════════════ */
     public function create()
     {
-        return view('admin.products.form', ['product' => new Product()]);
+        return view('admin.products.form', array_merge(
+            ['product' => new Product(), 'lengthVal' => null, 'widthVal' => null, 'heightVal' => null],
+            $this->dropdownOptions()
+        ));
     }
 
     /* ════════════════════════════════
@@ -75,7 +82,12 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = Product::findOrFail($id);
-        return view('admin.products.form', compact('product'));
+        [$lengthVal, $widthVal, $heightVal] = $this->parseDimensions($product->dimensions);
+
+        return view('admin.products.form', array_merge(
+            compact('product', 'lengthVal', 'widthVal', 'heightVal'),
+            $this->dropdownOptions()
+        ));
     }
 
     /* ════════════════════════════════
@@ -193,26 +205,109 @@ class ProductController extends Controller
     }
 
     /* ════════════════════════════════
+       DROPDOWN OPTIONS — distinct existing values for the
+       Category / Material / Finish "select + add new" fields
+    ════════════════════════════════ */
+    private function dropdownOptions(): array
+    {
+        return [
+            'categories' => Product::select('category')->distinct()->whereNotNull('category')->pluck('category'),
+            'materials'  => Product::select('material')->distinct()->whereNotNull('material')->pluck('material'),
+            'finishes'   => Product::select('finish')->distinct()->whereNotNull('finish')->pluck('finish'),
+        ];
+    }
+
+    /* ════════════════════════════════
+       DIMENSIONS PARSE / FORMAT
+       Single `dimensions` column stays a plain "L x W x H cm"
+       string — these just convert to/from the 3-field form UI.
+    ════════════════════════════════ */
+    private function parseDimensions(?string $dimensions): array
+    {
+        if ($dimensions && preg_match('/^\s*([\d.]+)\s*[x×*]\s*([\d.]+)\s*[x×*]\s*([\d.]+)\s*(?:cm)?\s*$/i', $dimensions, $m)) {
+            return [$m[1], $m[2], $m[3]];
+        }
+
+        return [null, null, null];
+    }
+
+    private function formatDimensions($length, $width, $height): string
+    {
+        $fmt = fn($n) => rtrim(rtrim(number_format((float) $n, 2, '.', ''), '0'), '.');
+
+        return "{$fmt($length)} x {$fmt($width)} x {$fmt($height)} cm";
+    }
+
+    /* ════════════════════════════════
        VALIDATION RULES
        Matches the confirmed products table schema exactly:
        no on_sale / discount_percent columns exist — those are
        computed accessors on the Product model, derived from
        sale_price, not stored fields.
+
+       Category/material/finish come from a dropdown; "__new__"
+       is the sentinel for the "+ Add New" option, resolved below
+       from the paired new_category/new_material/new_finish input.
+       Those "Add New" inputs get the same NoLinks + Profanity
+       checks as the free-text fields, per the same requirement.
     ════════════════════════════════ */
     private function validateProduct(Request $request): array
     {
-        return $request->validate([
-            'product_name'   => 'required|string|max:255',
-            'category'       => 'nullable|string|max:100',
-            'description'    => 'nullable|string|max:2000',
-            'price'          => 'required|numeric|min:0',
-            'sale_price'     => 'nullable|numeric|min:0|lt:price',
-            'stock_quantity' => 'required|integer|min:0',
-            'material'       => 'nullable|string|max:100',
-            'finish'         => 'nullable|string|max:100',
-            'dimensions'     => 'nullable|string|max:150',
-            'product_status' => 'required|in:available,unavailable',
-            'product_image'  => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+        $noLinks = new NoLinks();
+
+        $validated = $request->validate([
+            'product_name'   => ['required', 'string', 'max:255', $noLinks, Profanity::make(), new NoInappropriateTerms()],
+            'description'    => ['nullable', 'string', 'max:2000', $noLinks, Profanity::make(), new NoInappropriateTerms()],
+
+            'category'       => ['required', 'string', 'max:100'],
+            'new_category'   => ['required_if:category,__new__', 'nullable', 'string', 'max:100', $noLinks, Profanity::make()],
+
+            'material'       => ['required', 'string', 'max:100'],
+            'new_material'   => ['required_if:material,__new__', 'nullable', 'string', 'max:100', $noLinks, Profanity::make()],
+
+            'finish'         => ['required', 'string', 'max:100'],
+            'new_finish'     => ['required_if:finish,__new__', 'nullable', 'string', 'max:100', $noLinks, Profanity::make()],
+
+            'price'          => ['required', 'numeric', 'min:0', 'max:999999'],
+            'sale_price'     => ['nullable', 'numeric', 'min:0', 'max:999999', 'lt:price'],
+            'stock_quantity' => ['required', 'integer', 'min:0'],
+
+            'dimensions_length' => ['nullable', 'numeric', 'min:0', 'max:9999'],
+            'dimensions_width'  => ['nullable', 'numeric', 'min:0', 'max:9999'],
+            'dimensions_height' => ['nullable', 'numeric', 'min:0', 'max:9999'],
+
+            'product_status' => ['required', 'in:available,unavailable'],
+            'product_image'  => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120'],
+        ], [
+            'new_category.required_if' => 'Please enter a name for the new category.',
+            'new_material.required_if' => 'Please enter a name for the new material.',
+            'new_finish.required_if'   => 'Please enter a name for the new finish.',
+            'price.max'                => 'Price cannot exceed ₱999,999.',
+            'sale_price.max'           => 'Sale price cannot exceed ₱999,999.',
+            'sale_price.lt'            => 'Sale price must be less than the regular price.',
+        ], [
+            'product_name' => 'product name',
+            'new_category' => 'new category',
+            'new_material' => 'new material',
+            'new_finish'   => 'new finish',
         ]);
+
+        // Resolve the "+ Add New" sentinel into the actual value to store
+        $validated['category'] = $validated['category'] === '__new__' ? $validated['new_category'] : $validated['category'];
+        $validated['material'] = $validated['material'] === '__new__' ? $validated['new_material'] : $validated['material'];
+        $validated['finish']   = $validated['finish'] === '__new__' ? $validated['new_finish'] : $validated['finish'];
+        unset($validated['new_category'], $validated['new_material'], $validated['new_finish']);
+
+        // Combine the 3 split fields back into the single stored column
+        $length = $validated['dimensions_length'] ?? null;
+        $width  = $validated['dimensions_width'] ?? null;
+        $height = $validated['dimensions_height'] ?? null;
+        unset($validated['dimensions_length'], $validated['dimensions_width'], $validated['dimensions_height']);
+
+        $validated['dimensions'] = ($length !== null && $width !== null && $height !== null)
+            ? $this->formatDimensions($length, $width, $height)
+            : null;
+
+        return $validated;
     }
 }

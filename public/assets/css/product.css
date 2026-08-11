@@ -496,7 +496,14 @@
   .detail-notice a:hover {
     color: var(--gold);
   }
-  
+
+  /* Informational variant — explanation, not an action-needed alert */
+  .detail-notice--info {
+    background: var(--cream);
+    border-color: var(--border);
+    font-weight: 400;
+  }
+
   /* ── RESPONSIVE ── */
   @media (max-width: 900px) {
     .detail-layout {

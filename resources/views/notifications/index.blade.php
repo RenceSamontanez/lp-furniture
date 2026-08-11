@@ -7,22 +7,28 @@
 
   <div class="notif-container">
 
-    <div class="notif-header">
+  <div class="notif-header">
       <div>
         <p class="gallery-eyebrow" style="margin-bottom:6px;">Your Updates</p>
         <h1 class="notif-title">Notifications</h1>
       </div>
-      @if($notifications->count() > 0)
-        <form method="POST" action="{{ route('notifications.readAll') }}">
-          @csrf
-          @method('PATCH')
-          <button type="submit" class="notif-markall-btn">
-            Mark all as read
-          </button>
-        </form>
-      @endif
+      <div class="notif-header-actions">
+        <a href="{{ route('orders.index') }}" class="notif-history-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+          Order History
+        </a>
+        @if($notifications->count() > 0)
+          <form method="POST" action="{{ route('notifications.readAll') }}">
+            @csrf
+            @method('PATCH')
+            <button type="submit" class="notif-markall-btn">
+              Mark all as read
+            </button>
+          </form>
+        @endif
+      </div>
     </div>
-
+    
     @if($notifications->isEmpty())
       <div class="notif-empty">
         <div class="notif-empty-icon">
@@ -60,9 +66,6 @@
               <div class="notif-message">{{ $notif->message }}</div>
               <div class="notif-meta">
                 <span class="notif-time">{{ $notif->created_at->diffForHumans() }}</span>
-                @if($notif->url)
-                  <a href="{{ $notif->url }}" class="notif-view-btn">View →</a>
-                @endif
                 @if(!$notif->is_read)
                   <form method="POST" action="{{ route('notifications.read', $notif->id) }}" style="display:inline;">
                     @csrf
@@ -71,6 +74,23 @@
                   </form>
                 @endif
               </div>
+
+              {{-- Clear, unambiguous action row — replaces the old
+                   single "View →" button that confusingly always
+                   landed on the full Order History list instead of
+                   the specific order the notification was about. --}}
+                   @if($notif->url)
+                <div class="notif-action-bar">
+                  <div class="notif-action-context">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+                    <span>Related Order</span>
+                  </div>
+                  <a href="{{ $notif->url }}" class="notif-action-cta">
+                    View Details
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="notif-action-arrow"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </a>
+                </div>
+              @endif
             </div>
 
           </div>
@@ -130,6 +150,35 @@
 .notif-markall-btn:hover {
   border-color: var(--gold);
   color: var(--gold);
+}
+
+.notif-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.notif-history-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1.5px solid var(--gold);
+  background: var(--gold);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all .2s;
+  white-space: nowrap;
+}
+
+.notif-history-btn:hover {
+  background: var(--gold-light);
+  color: #fff;
 }
 
 /* Empty state */
@@ -246,23 +295,6 @@
   color: var(--text-muted);
 }
 
-/* View button — visible and styled */
-.notif-view-btn {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--warm-white);
-  background: var(--gold);
-  padding: 5px 14px;
-  border-radius: 20px;
-  text-decoration: none;
-  transition: background .2s;
-}
-
-.notif-view-btn:hover {
-  background: var(--gold-light);
-  color: var(--brown-deep);
-}
-
 /* Mark read button */
 .notif-read-btn {
   font-size: 12px;
@@ -280,10 +312,119 @@
   color: var(--brown-mid);
 }
 
+/* ── NEW: 3-option action row (View This Order / Order History / Home) ── */
+.notif-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.notif-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  color: var(--text-muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all .2s;
+}
+
+.notif-action-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.notif-action-primary {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #fff;
+}
+
+.notif-action-primary:hover {
+  background: var(--gold-light);
+  color: #fff;
+}
+
+/* ── ENHANCED ACTION BAR — replaces the plain button ── */
+.notif-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #FFF8EA 0%, #FFFBF4 100%);
+  border: 1px solid rgba(200,150,62,.25);
+  border-radius: 12px;
+}
+
+.notif-action-context {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold);
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+
+.notif-action-context svg {
+  flex-shrink: 0;
+}
+
+.notif-action-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  border-radius: 9px;
+  background: var(--gold);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(200,150,62,.3);
+  transition: all .2s;
+  flex-shrink: 0;
+}
+
+.notif-action-cta:hover {
+  background: var(--gold-light);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(200,150,62,.4);
+}
+
+.notif-action-arrow {
+  transition: transform .2s;
+}
+
+.notif-action-cta:hover .notif-action-arrow {
+  transform: translateX(3px);
+}
+
 /* ── MOBILE ── */
 @media (max-width: 640px) {
   .notif-wrap {
     padding: 24px 16px;
+  }
+
+  .notif-header-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .notif-history-btn,
+  .notif-markall-btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .notif-title {
@@ -307,6 +448,21 @@
   .notif-empty {
     padding: 40px 20px;
   }
+
+  .notif-actions {
+    flex-direction: column;
+  }
+
+  .notif-action-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .notif-action-cta {
+    justify-content: center;
+  }
 }
+
 </style>
 @endsection

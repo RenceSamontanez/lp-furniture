@@ -199,6 +199,13 @@
   box-shadow: 0 6px 20px rgba(200,150,62,.3);
 }
 
+.cd-daily-limit-note {
+  text-align: center;
+  font-size: 11.5px;
+  color: #8A7B6C;
+  margin-top: 10px;
+}
+
 /* ── RIGHT: PREVIEW PANEL ── */
 .cd-preview-panel {
   display: flex;
@@ -467,6 +474,219 @@
   cursor: pointer;
 }
 
+/* ── CENTERED-ICON MODAL VARIANT — same visual pattern as the
+   admin validation-error modal (admin.css .admin-modal-icon /
+   .admin-modal-title-centered / .admin-modal-error-list /
+   .admin-modal-countdown), ported here since design/* views use
+   layouts.app, not layouts.admin, so admin.css isn't loaded.
+   Same colors/structure/behavior — one consistent modal style
+   across the site, just under this page's own class prefix. ── */
+.cd-modal-centered {
+  max-width: 420px;
+}
+
+.cd-modal-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px auto 16px;
+}
+
+.cd-modal-icon--danger {
+  background: #FBE0E0;
+  color: #C0392B;
+}
+
+.cd-modal-title-centered {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--brown-deep);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.cd-modal-error-list {
+  text-align: left;
+  font-size: 13px;
+  color: #6B5D52;
+  line-height: 1.6;
+  margin: 0 0 18px;
+  padding-left: 18px;
+}
+
+.cd-modal-error-list li {
+  margin-bottom: 4px;
+}
+
+.cd-modal-footer-plain {
+  padding: 0 20px 20px;
+}
+
+.cd-modal-ok-btn {
+  display: block;
+  width: 100%;
+  padding: 11px;
+  background: var(--gold);
+  color: var(--brown-deep);
+  border: none;
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: background .2s;
+}
+
+.cd-modal-ok-btn:hover {
+  background: #C99A3D;
+}
+
+.cd-modal-countdown {
+  font-size: 11.5px;
+  color: #A69A8A;
+  text-align: center;
+  margin-top: 10px;
+  padding-bottom: 20px;
+}
+
+/* ── HOW IT WORKS ── */
+.cd-form-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.cd-form-title-row .cd-form-title {
+  margin-bottom: 0;
+}
+
+.cd-howitworks-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--cream);
+  color: var(--brown-mid);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .2s;
+}
+
+.cd-howitworks-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.cd-howitworks-modal {
+  max-width: 520px;
+}
+
+.cd-howitworks-intro {
+  font-size: 13.5px;
+  color: #5C4C3E;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.cd-howitworks-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.cd-howitworks-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.cd-howitworks-tip-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(200,150,62,.15);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cd-howitworks-tip strong {
+  display: block;
+  font-size: 13.5px;
+  color: var(--brown-deep);
+  margin-bottom: 2px;
+}
+
+.cd-howitworks-tip span {
+  font-size: 12.5px;
+  color: #6B5D52;
+  line-height: 1.5;
+}
+
+.cd-howitworks-examples {
+  background: var(--cream);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.cd-howitworks-examples-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  color: var(--brown-mid);
+  margin-bottom: 12px;
+}
+
+.cd-howitworks-example {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  padding: 8px 0;
+}
+
+.cd-howitworks-example + .cd-howitworks-example {
+  border-top: 1px solid var(--border);
+}
+
+.cd-howitworks-example--good svg {
+  color: var(--success);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.cd-howitworks-example--good span {
+  color: var(--brown-deep);
+}
+
+.cd-howitworks-example--vague svg {
+  color: var(--danger);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.cd-howitworks-example--vague span {
+  color: #8A7B6C;
+  font-style: italic;
+}
+
 .ai-field-group {
   margin-bottom: 18px;
 }
@@ -716,60 +936,28 @@
 .ai-generating-card {
   max-width: 480px;
   margin: 40px auto;
-  background: var(--warm-white);
+  background: var(--cream);
   border-radius: 20px;
   border: 1px solid var(--border);
   padding: 56px 32px;
   text-align: center;
 }
 
-.ai-progress-circle {
-  position: relative;
-  width: 110px;
-  height: 110px;
+/* Same spinner as the checkout "Preparing Your Order" screen
+   (.ckn-preparing-spinner) — a plain gold-topped spinning ring,
+   for one consistent loading-spinner look across the site. */
+.ai-generating-spinner {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 4px solid var(--border);
+  border-top-color: var(--gold);
+  animation: aiGeneratingSpin 0.9s linear infinite;
   margin: 0 auto 24px;
 }
 
-.ai-progress-svg {
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-}
-
-.ai-progress-track {
-  fill: none;
-  stroke: var(--border);
-  stroke-width: 6;
-}
-
-.ai-progress-fill {
-  fill: none;
-  stroke: var(--gold);
-  stroke-width: 6;
-  stroke-linecap: round;
-  stroke-dasharray: 276;
-  stroke-dashoffset: 100;
-  animation: aiProgressSpin 2.4s ease-in-out infinite;
-}
-
-@keyframes aiProgressSpin {
-  0%   { stroke-dashoffset: 260; transform: rotate(0deg); }
-  50%  { stroke-dashoffset: 60;  transform: rotate(180deg); }
-  100% { stroke-dashoffset: 260; transform: rotate(360deg); }
-}
-
-.ai-progress-icon {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: aiIconPulse 1.6s ease-in-out infinite;
-}
-
-@keyframes aiIconPulse {
-  0%, 100% { opacity: .6; transform: scale(.9); }
-  50%      { opacity: 1;  transform: scale(1.05); }
+@keyframes aiGeneratingSpin {
+  to { transform: rotate(360deg); }
 }
 
 .ai-generating-status {

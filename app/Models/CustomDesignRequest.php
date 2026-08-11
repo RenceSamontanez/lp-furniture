@@ -21,6 +21,11 @@ class CustomDesignRequest extends Model
         'ai_prompt',
         'status',
         'admin_notes',
+        'admin_contacted_at',
+    ];
+
+    protected $casts = [
+        'admin_contacted_at' => 'datetime',
     ];
 
     public function user()

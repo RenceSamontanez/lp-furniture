@@ -134,20 +134,30 @@
         </div>
       @endif
 
-      {{-- Stock status --}}
+      {{-- Production availability status --}}
       <div class="detail-stock">
         @if($product->stock_quantity > 10)
           <div class="stock-dot in-stock"></div>
-          <span style="color:var(--success);">In Stock</span>
-          <span style="color:var(--text-muted);">· {{ $product->stock_quantity }} units available</span>
+          <span style="color:var(--success);">Available to Order</span>
+          <span style="color:var(--text-muted);">· {{ $product->stock_quantity }} available to build</span>
         @elseif($product->stock_quantity > 0)
           <div class="stock-dot low-stock"></div>
-          <span style="color:#E8A020;">Low Stock</span>
-          <span style="color:var(--text-muted);">· Only {{ $product->stock_quantity }} left</span>
+          <span style="color:#E8A020;">Limited Availability This Month</span>
+          <span style="color:var(--text-muted);">· Only {{ $product->stock_quantity }} left to build this month</span>
         @else
           <div class="stock-dot out"></div>
-          <span style="color:var(--danger);">Out of Stock</span>
+          <span style="color:var(--danger);">Currently at Capacity</span>
         @endif
+      </div>
+
+      {{-- Made-to-order explanation --}}
+      <div class="detail-notice detail-notice--info">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+        </svg>
+        <span>
+          <strong>Handcrafted to Order.</strong> Every piece is built specifically for you after your order is placed, shaped from solid Philippine wood by hand — not pulled off a warehouse shelf.
+        </span>
       </div>
 
       {{-- Auth / Validation notices --}}

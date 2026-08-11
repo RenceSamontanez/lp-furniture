@@ -64,13 +64,17 @@ class AuthController extends Controller
             // Just log and continue
         }
 
-        $key = 'login_attempts_' . $request->ip();
-    
-        // Check if this IP is locked out
+        // Keyed on the account being attempted, not the caller's IP —
+        // an IP-based key lets one shared network's failed attempts
+        // lock out everyone behind it, and does nothing to stop an
+        // account being attacked from many different IPs.
+        $key = 'login_attempts_' . strtolower(trim($request->email));
+
+        // Check if this account is locked out
         if (cache()->has($key . '_lockout')) {
             $seconds = cache()->get($key . '_lockout_time', 60);
             return back()->withErrors([
-                'email' => "Too many failed login attempts. Please wait {$seconds} seconds before trying again.",
+                'email' => "Too many failed login attempts for this account. Please wait {$seconds} seconds before trying again.",
             ])->withInput($request->only('email', 'remember'));
         }
     
@@ -96,7 +100,7 @@ class AuthController extends Controller
             cache()->put($key . '_lockout', true, now()->addMinutes(1));
             cache()->put($key . '_lockout_time', 60, now()->addMinutes(1));
             return back()->withErrors([
-                'email' => 'Too many failed attempts. Please wait 60 seconds before trying again.',
+                'email' => 'Too many failed attempts for this account. Please wait 60 seconds before trying again.',
             ])->withInput($request->only('email', 'remember'));
         }
     

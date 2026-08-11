@@ -9,6 +9,7 @@ use App\Models\Delivery;
 use App\Models\CartItem;
 use App\Models\Product;
 use App\Models\Notification;
+use App\Models\InstallmentSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -18,27 +19,21 @@ class OrderController extends Controller
     // ── SHOW CHECKOUT PAGE ──
     public function checkout()
     {
-        // If "Order Now" was used, a buy_now session exists —
-        // show ONLY that single product, completely ignoring
-        // whatever is sitting in the customer's real cart.
         if (session()->has('buy_now')) {
             $cartItems = $this->getBuyNowItems();
 
             if ($cartItems->isEmpty()) {
-                // The product became unavailable between clicking
-                // Order Now and reaching checkout — clear the stale
-                // session and fall back gracefully.
                 session()->forget('buy_now');
                 return redirect()->route('catalog')
                     ->with('error', 'That product is no longer available.');
             }
 
             $subtotal = $cartItems->sum(fn($item) => $item->product->price * $item->quantity);
+            $buyNow   = session('buy_now');
 
-            return view('checkout', compact('cartItems', 'subtotal'));
+            return view('checkout', compact('cartItems', 'subtotal', 'buyNow'));
         }
 
-        // Normal cart-based checkout (unchanged from before)
         $cartItems = CartItem::with('product')
             ->where('user_id', Auth::id())
             ->paginate(10);
@@ -49,29 +44,31 @@ class OrderController extends Controller
         }
 
         $subtotal = $cartItems->sum(fn($item) => $item->product->price * $item->quantity);
+        $buyNow = null;
 
-        return view('checkout', compact('cartItems', 'subtotal'));
+        return view('checkout', compact('cartItems', 'subtotal', 'buyNow'));
     }
 
     // ── PLACE ORDER ──
     public function placeOrder(Request $request)
     {
         $request->validate([
-            'delivery_option'     => 'required|in:pickup,delivery',
-            'delivery_address'    => 'required_if:delivery_option,delivery|nullable|string',
-            'payment_type'        => 'required|in:full,installment',
-            'installment_period'  => 'required_if:payment_type,installment|nullable|string',
-            'payment_method'      => 'required|in:stripe,gcash,onsite',
-            'customization_note'  => 'nullable|string',
+            'delivery_option'        => 'required|in:pickup,delivery',
+            'delivery_address'       => 'required_if:delivery_option,delivery|nullable|string',
+            'payment_type'           => 'required|in:full,installment',
+            // Duration (months) and frequency (days between payments)
+            // are picked independently and combined to determine the
+            // number of installment payments — see createInstallmentSchedule().
+            'installment_duration'   => 'required_if:payment_type,installment|nullable|integer|in:1,2,3',
+            'installment_frequency'  => 'required_if:payment_type,installment|nullable|integer|in:15,30',
+            'payment_method'         => 'required|in:stripe,gcash,onsite',
+            'customization_note'     => 'nullable|string',
         ]);
 
-        $isBuyNow = session()->has('buy_now');
+        $isBuyNow = $request->filled('buy_now_product_id');
 
-        // Pull items from the buy_now session if that's the active
-        // flow, otherwise fall back to the normal persistent cart —
-        // these two sources never mix.
         $cartItems = $isBuyNow
-            ? $this->getBuyNowItems()
+            ? $this->getBuyNowItemsFromRequest($request)
             : CartItem::with('product')->where('user_id', Auth::id())->get();
 
         if ($cartItems->isEmpty()) {
@@ -84,115 +81,240 @@ class OrderController extends Controller
         $deliveryFee  = $request->delivery_option === 'delivery' ? 500 : 0;
         $total        = $subtotal + $deliveryFee;
 
-        $order = null;
+        // Double-submit guard: if this exact user just created an
+        // identical order (same total + same items) in the last few
+        // seconds, treat this as a duplicate click/resubmit rather
+        // than a genuine second order — redirect to the first one
+        // instead of creating a new order and double-decrementing
+        // stock. Runs before the transaction so a caught duplicate
+        // never touches the stock row-lock or does any writes.
+        $duplicate = $this->findRecentDuplicateOrder(Auth::id(), $total, $cartItems);
+        if ($duplicate) {
+            return $this->redirectForOrder($duplicate);
+        }
 
-        DB::transaction(function () use ($request, $cartItems, $subtotal, $deliveryFee, $total, $isBuyNow, &$order) {
+        $order      = null;
+        $stockError = null;
 
-        // Re-check stock INSIDE the transaction, with a row
-        // lock, right before committing to the order. This
-        // protects against two customers checking out the
-        // same low-stock item at nearly the same moment —
-        // whichever transaction gets here first wins, the
-        // second one fails cleanly instead of overselling.
-        foreach ($cartItems as $item) {
-            $product = Product::where('id', $item->product_id)
-                ->lockForUpdate()
-                ->first();
+        try {
+            DB::transaction(function () use ($request, $cartItems, $subtotal, $deliveryFee, $total, $isBuyNow, &$order, &$stockError) {
+                $isInstallment = $request->payment_type === 'installment';
+                // 50% down now, the rest split into the schedule below.
+                // Derived by subtraction (not computed independently)
+                // so downpayment + remaining always sum exactly to $total.
+                $downpayment = $isInstallment ? round($total * 0.5, 2) : $total;
 
-            if (!$product || $product->stock_quantity < $item->quantity) {
-                throw new \Exception(
-                    'Sorry, "' . ($product->product_name ?? 'this item') . '" no longer has enough stock (only ' .
-                    ($product->stock_quantity ?? 0) . ' left). Please update your cart and try again.'
+                // Re-check stock INSIDE the transaction, with a row
+                // lock, right before committing to the order. This
+                // protects against two customers checking out the
+                // same low-stock item at nearly the same moment —
+                // whichever transaction gets here first wins, the
+                // second one fails cleanly instead of overselling.
+                foreach ($cartItems as $item) {
+                    $product = Product::where('id', $item->product_id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$product || $product->stock_quantity < $item->quantity) {
+                        $stockError = [
+                            'product_name' => $product->product_name ?? $item->product->product_name ?? 'This item',
+                            'available'    => $product->stock_quantity ?? 0,
+                            'requested'    => $item->quantity,
+                        ];
+                        throw new \RuntimeException('insufficient_stock');
+                    }
+                }
+
+                // Generate unique order number
+                $orderNumber = 'LP-' . date('Y') . '-' . str_pad(
+                    Order::count() + 1, 5, '0', STR_PAD_LEFT
                 );
+
+                // Create the order
+                $order = Order::create([
+                    'user_id'             => Auth::id(),
+                    'order_number'        => $orderNumber,
+                    'total_amount'        => $total,
+                    'delivery_option'     => $request->delivery_option,
+                    'delivery_address'    => $request->delivery_address,
+                    'delivery_fee'        => $deliveryFee,
+                    'customization_note'  => $request->customization_note,
+                    'production_status'   => 'pending',
+                    'order_status'        => 'pending',
+                ]);
+
+                // Create order items from cart, and decrement stock
+                // for each one now that we've confirmed it's available
+                foreach ($cartItems as $item) {
+                    OrderItem::create([
+                        'order_id'      => $order->id,
+                        'product_id'    => $item->product_id,
+                        'product_name'  => $item->product->product_name,
+                        'product_image' => $item->product->product_image,
+                        'quantity'      => $item->quantity,
+                        'unit_price'    => $item->product->price,
+                        'subtotal'      => $item->product->price * $item->quantity,
+                    ]);
+
+                    Product::where('id', $item->product_id)
+                        ->decrement('stock_quantity', $item->quantity);
+                }
+
+                // Create payment record — amount is the downpayment
+                // (50%) for installment orders, the full total otherwise.
+                // This is the single source of truth PaymentController
+                // reads from for what to actually charge right now.
+                $payment = Payment::create([
+                    'order_id' => $order->id,
+                    'user_id' => Auth::id(),
+                    'amount' => $downpayment,
+                    'payment_method' => $request->payment_method,
+                    'payment_type' => $request->payment_type,
+                    'installment_duration_months' => $isInstallment ? $request->installment_duration : null,
+                    'installment_frequency_days' => $isInstallment ? $request->installment_frequency : null,
+                    'payment_status' => 'pending',
+                ]);
+
+                if ($isInstallment) {
+                    $this->createInstallmentSchedule(
+                        $payment,
+                        $order,
+                        $total - $downpayment,
+                        (int) $request->installment_duration,
+                        (int) $request->installment_frequency
+                    );
+                }
+
+                // Create delivery record if delivery option chosen
+                if ($request->delivery_option === 'delivery') {
+                    Delivery::create([
+                        'order_id'         => $order->id,
+                        'delivery_address' => $request->delivery_address,
+                        'contact_number'   => Auth::user()->phone_number,
+                        'status'           => 'waiting_for_courier',
+                    ]);
+                }
+
+                // Only clear the REAL cart if this was a normal cart
+                // checkout. A buy-now purchase must never touch the
+                // customer's actual persistent cart items.
+                if ($isBuyNow) {
+                    session()->forget('buy_now');
+                } else {
+                    CartItem::where('user_id', Auth::id())->delete();
+                }
+
+                // Create notification
+                Notification::create([
+                    'user_id' => Auth::id(),
+                    'title'   => 'Order Placed',
+                    'message' => "Your order {$orderNumber} has been placed and is pending confirmation.",
+                    'type'    => 'order_update',
+                    'url'     => route('orders.show', $order->id),
+                ]);
+            });
+        } catch (\RuntimeException $e) {
+            if ($stockError) {
+                return back()->withInput()->with('stock_error', $stockError);
             }
+            return back()->withInput()->with('error', 'Something went wrong placing your order. Please try again.');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Something went wrong placing your order. Please try again.');
         }
 
-        // Generate unique order number
-        $orderNumber = 'LP-' . date('Y') . '-' . str_pad(
-            Order::count() + 1, 5, '0', STR_PAD_LEFT
-        );
+        return $this->redirectForOrder($order);
+    }
 
-        // Create the order
-        $order = Order::create([
-            'user_id'             => Auth::id(),
-            'order_number'        => $orderNumber,
-            'total_amount'        => $total,
-            'delivery_option'     => $request->delivery_option,
-            'delivery_address'    => $request->delivery_address,
-            'delivery_fee'        => $deliveryFee,
-            'customization_note'  => $request->customization_note,
-            'production_status'   => 'pending',
-            'order_status'        => 'pending',
-        ]);
+    // ── Redirect target for a placed order, based on its payment
+    //    method — shared by both the normal success path and the
+    //    double-submit guard, so a duplicate redirect behaves
+    //    identically to a fresh order redirect. ──
+    private function redirectForOrder(Order $order)
+    {
+        $paymentMethod = $order->payment->payment_method ?? null;
 
-        // Create order items from cart, and decrement stock
-        // for each one now that we've confirmed it's available
-        foreach ($cartItems as $item) {
-            OrderItem::create([
-                'order_id'      => $order->id,
-                'product_id'    => $item->product_id,
-                'product_name'  => $item->product->product_name,
-                'product_image' => $item->product->product_image,
-                'quantity'      => $item->quantity,
-                'unit_price'    => $item->product->price,
-                'subtotal'      => $item->product->price * $item->quantity,
-            ]);
-
-            Product::where('id', $item->product_id)
-                ->decrement('stock_quantity', $item->quantity);
-        }
-
-        // Create payment record
-        Payment::create([
-            'order_id'       => $order->id,
-            'user_id'        => Auth::id(),
-            'amount'         => $total,
-            'payment_method' => $request->payment_method,
-            'payment_type'   => $request->payment_type,
-            'payment_status' => 'pending',
-        ]);
-
-        // Create delivery record if delivery option chosen
-        if ($request->delivery_option === 'delivery') {
-            Delivery::create([
-                'order_id'         => $order->id,
-                'delivery_address' => $request->delivery_address,
-                'contact_number'   => Auth::user()->phone_number,
-                'status'           => 'waiting_for_courier',
-            ]);
-        }
-
-        // Only clear the REAL cart if this was a normal cart
-        // checkout. A buy-now purchase must never touch the
-        // customer's actual persistent cart items.
-        if ($isBuyNow) {
-            session()->forget('buy_now');
-        } else {
-            CartItem::where('user_id', Auth::id())->delete();
-        }
-
-        // Create notification
-        Notification::create([
-            'user_id' => Auth::id(),
-            'title'   => 'Order Placed',
-            'message' => "Your order {$orderNumber} has been placed and is pending confirmation.",
-            'type'    => 'order_update',
-            'url'     => route('orders.show', $order->id),
-        ]);
-    });
-
-        // Redirect based on payment method chosen
-        if ($request->payment_method === 'stripe') {
+        if ($paymentMethod === 'stripe') {
             return redirect()->route('payment.stripe', $order->id);
         }
 
-        if ($request->payment_method === 'gcash') {
-            return redirect()->route('payment.gcash', $order->id);
+        if ($paymentMethod === 'gcash') {
+            // Real PayMongo gateway is the default now — the manual
+            // receipt-upload flow (route('payment.gcash', ...)) is
+            // kept intact and still directly reachable as a fallback,
+            // just no longer where checkout sends GCash orders.
+            return redirect()->route('payment.gcash.paymongo', $order->id);
         }
 
         // Onsite/cash — order is placed, no online payment needed yet
         return redirect()->route('orders.show', $order->id)
             ->with('success', 'Order placed successfully! Reference: ' . $order->order_number);
+    }
+
+    // ── Double-submit guard: find a same-user order created in the
+    //    last few seconds with the same total AND the same items
+    //    (product_id + quantity), to distinguish a genuine duplicate
+    //    click from a coincidentally-identical total. ──
+    private function findRecentDuplicateOrder(int $userId, float $total, $cartItems): ?Order
+    {
+        $signature = $cartItems
+            ->map(fn($item) => $item->product_id . ':' . $item->quantity)
+            ->sort()
+            ->values()
+            ->all();
+
+        return Order::where('user_id', $userId)
+            ->where('total_amount', $total)
+            ->where('created_at', '>=', now()->subSeconds(10))
+            ->with('items')
+            ->latest()
+            ->get()
+            ->first(function ($candidate) use ($signature) {
+                $candidateSignature = $candidate->items
+                    ->map(fn($item) => $item->product_id . ':' . $item->quantity)
+                    ->sort()
+                    ->values()
+                    ->all();
+
+                return $candidateSignature === $signature;
+            });
+    }
+
+    // ── Build the installment_schedules rows for the remaining
+    //    balance (after the 50% downpayment). Duration (months) and
+    //    frequency (days between payments) combine to determine the
+    //    number of payments — always a clean integer across the 6
+    //    allowed combinations (1/2/3 months × 15/30 days), using
+    //    30-day months, e.g. 3 months / every 15 days = 6 payments.
+    //    Amounts are split evenly with the LAST payment absorbing
+    //    any rounding remainder, so the schedule always sums to
+    //    exactly $remaining — never a phantom cent over or under. ──
+    private function createInstallmentSchedule(
+        Payment $payment,
+        Order $order,
+        float $remaining,
+        int $durationMonths,
+        int $frequencyDays
+    ): void {
+        $numPayments = (int) round(($durationMonths * 30) / $frequencyDays);
+
+        $baseAmount = floor(($remaining / $numPayments) * 100) / 100;
+        $runningTotal = 0.0;
+
+        for ($i = 1; $i <= $numPayments; $i++) {
+            $isLast = $i === $numPayments;
+            $amountDue = $isLast ? round($remaining - $runningTotal, 2) : $baseAmount;
+            $runningTotal += $amountDue;
+
+            InstallmentSchedule::create([
+                'payment_id'      => $payment->id,
+                'order_id'        => $order->id,
+                'user_id'         => $order->user_id,
+                'installment_no'  => $i,
+                'amount_due'      => $amountDue,
+                'due_date'        => $order->created_at->copy()->addDays($frequencyDays * $i),
+                'status'          => 'pending',
+            ]);
+        }
     }
 
     // ── VIEW ALL ORDERS ──
@@ -217,6 +339,68 @@ class OrderController extends Controller
         return view('orders.show', compact('order'));
     }
 
+    // ── CHANGE PAYMENT METHOD ──
+    // Lets a customer switch Stripe/GCash/Cash on an order that
+    // hasn't been paid yet, without going back through checkout
+    // (which can't work anyway — the cart/buy-now session is
+    // already cleared by the time this page exists). Only ever
+    // UPDATEs the existing Payment row — never creates a new
+    // Order or Payment, so there's no duplicate-order risk here.
+    //
+    // amount/payment_type/installment_* are deliberately left
+    // untouched: payment_method has no bearing on what's owed
+    // (see placeOrder() — amount is derived from payment_type
+    // alone), so switching method never needs a recalculation.
+    public function updatePaymentMethod(Request $request, $id)
+    {
+        $request->validate([
+            'payment_method' => 'required|in:stripe,gcash,onsite',
+        ]);
+
+        $order = Order::where('user_id', Auth::id())
+            ->where('id', $id)
+            ->firstOrFail();
+
+        // order_status (not just payment_status) is checked
+        // deliberately: onsite/cash payment_status never becomes
+        // 'paid' through any existing flow, so payment_status
+        // alone can't tell us whether this order is still "open"
+        // for a method switch once an admin has moved it along.
+        if (!$order->payment || $order->order_status !== 'pending' || $order->payment->payment_status === 'paid') {
+            abort(403);
+        }
+
+        // Null out every OTHER method's gateway-tracking fields.
+        // This isn't just tidiness — it closes a real race: e.g. a
+        // customer starts a GCash attempt, authorizes it in the
+        // GCash app, then switches to Stripe before the PayMongo
+        // webhook arrives. The webhook looks the payment up by
+        // paymongo_payment_intent_id; if that column still held
+        // the stale ID, a late webhook would wrongly mark this
+        // order paid via GCash even though it's now set to Stripe.
+        // With the ID cleared, the same webhook safely finds no
+        // matching payment and no-ops (see paymongoWebhook()).
+        Payment::where('order_id', $order->id)->update([
+            'payment_method'             => $request->payment_method,
+            'payment_status'             => 'pending',
+            'stripe_payment_intent_id'   => null,
+            'stripe_client_secret'       => null,
+            'stripe_charge_id'           => null,
+            'stripe_customer_id'         => null,
+            'paymongo_payment_intent_id' => null,
+            'paymongo_payment_method_id' => null,
+            'gcash_reference_number'     => null,
+            'receipt_image_path'         => null,
+            'verified_by'                => null,
+            'verified_at'                => null,
+            'qr_hash'                    => null,
+            'qr_is_active'               => false,
+        ]);
+
+        return $this->redirectForOrder($order->fresh(['payment']))
+            ->with('success', 'Payment method updated.');
+    }
+
     /* ════════════════════════════════
        Builds a cart-shaped collection from the buy_now session
        data, so the exact same checkout/place-order code that
@@ -234,14 +418,29 @@ class OrderController extends Controller
             return collect();
         }
 
-        // A lightweight object mimicking the shape of a real
-        // CartItem (->product, ->quantity, ->product_id) so the
-        // rest of the checkout/order code needs zero special-casing.
         $fakeItem = (object) [
             'product_id' => $product->id,
             'product'    => $product,
             'quantity'   => $buyNow['quantity'] ?? 1,
             'note'       => $buyNow['note'] ?? null,
+        ];
+
+        return collect([$fakeItem]);
+    }
+
+    private function getBuyNowItemsFromRequest(Request $request)
+    {
+        $product = Product::available()->find($request->input('buy_now_product_id'));
+
+        if (!$product) {
+            return collect();
+        }
+
+        $fakeItem = (object) [
+            'product_id' => $product->id,
+            'product'    => $product,
+            'quantity'   => $request->input('buy_now_quantity', 1),
+            'note'       => $request->input('buy_now_note'),
         ];
 
         return collect([$fakeItem]);

@@ -10,6 +10,14 @@
 <div class="payment-wrap">
   <div class="payment-container">
 
+    {{-- Back --}}
+    <a href="{{ route('orders.show', $order->id) }}" class="payment-back-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      Back to My Order
+    </a>
+
     {{-- Header --}}
     <div class="payment-header">
       <p class="gallery-eyebrow" style="margin-bottom:6px;">Secure Payment</p>
@@ -24,17 +32,30 @@
         <div class="payment-ref-value">{{ $order->order_number }}</div>
       </div>
       <div class="payment-ref-amount">
-        <div class="payment-ref-amount-label">Amount Due</div>
-        <div class="payment-ref-amount-value">₱{{ number_format($order->total_amount, 2) }}</div>
+        <div class="payment-ref-amount-label">{{ $order->payment->payment_type === 'installment' ? 'Downpayment Due (50%)' : 'Amount Due' }}</div>
+        <div class="payment-ref-amount-value">₱{{ number_format($order->payment->amount, 2) }}</div>
       </div>
     </div>
 
-    {{-- Errors --}}
+    @if($order->payment->payment_type === 'installment')
+      <div class="auth-info-box" style="margin-bottom:20px;">
+        This order total is ₱{{ number_format($order->total_amount, 2) }}. You're paying the 50% downpayment now — the remaining balance is split into installments you can review on your order page.
+      </div>
+    @endif
+
+    {{-- Payment failure notice --}}
     @if($errors->any())
-      <div class="auth-errors" style="margin-bottom:20px;">
-        @foreach($errors->all() as $error)
-          <div class="auth-error-item">⚠ {{ $error }}</div>
-        @endforeach
+      <div class="payment-fail-card">
+        <div class="payment-fail-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </div>
+        <div class="payment-fail-text">
+          <div class="payment-fail-title">Payment Not Completed</div>
+          @foreach($errors->all() as $error)
+            <p class="payment-fail-message">{{ $error }}</p>
+          @endforeach
+          <p class="payment-fail-reassure">No charge was made to your account. You're welcome to try again below.</p>
+        </div>
       </div>
     @endif
 
@@ -73,7 +94,7 @@
               <rect x="3" y="11" width="18" height="11" rx="2"/>
               <path d="M7 11V7a5 5 0 0110 0v4"/>
             </svg>
-            Pay ₱{{ number_format($order->total_amount, 2) }} Securely
+            Pay ₱{{ number_format($order->payment->amount, 2) }} Securely
           </button>
         </form>
 

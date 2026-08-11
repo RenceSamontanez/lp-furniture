@@ -68,11 +68,24 @@ function openDesignModal(requestId, suggestionId, imageUrl, furnitureType, descr
   document.getElementById('cd-modal-order-form').action = '/design/' + requestId + '/select';
   document.getElementById('cd-modal-view-all-link').href = '/design/' + requestId;
 
+  // Read the CURRENT favorited state from the on-page button for this
+  // suggestion (kept live by _favorite_js.blade.php's click handler)
+  // instead of trusting the isFavorited argument — that value is
+  // baked into this onclick attribute at page-render time and goes
+  // stale the moment the button is toggled without a full reload,
+  // which made the modal's heart appear to "revert" on reopen.
+  const sourceBtn = document.querySelector(
+    '.js-save-heart[data-suggestion-id="' + suggestionId + '"]:not(#cd-modal-heart-btn)'
+  );
+  const liveFavorited = sourceBtn
+    ? sourceBtn.classList.contains(sourceBtn.dataset.stateClass || 'saved')
+    : !!isFavorited;
+
   const saveBtn = document.getElementById('cd-modal-heart-btn');
   saveBtn.dataset.suggestionId = suggestionId;
-  saveBtn.classList.toggle('saved', !!isFavorited);
-  document.getElementById('cd-modal-heart-icon').setAttribute('fill', isFavorited ? 'currentColor' : 'none');
-  saveBtn.querySelector('.cd-save-btn-text').textContent = isFavorited ? 'Saved' : 'Save';
+  saveBtn.classList.toggle('saved', liveFavorited);
+  document.getElementById('cd-modal-heart-icon').setAttribute('fill', liveFavorited ? 'currentColor' : 'none');
+  saveBtn.querySelector('.cd-save-btn-text').textContent = liveFavorited ? 'Saved' : 'Save';
 
   document.getElementById('cd-preview-modal-overlay').classList.add('show');
   document.body.style.overflow = 'hidden';

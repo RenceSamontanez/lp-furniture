@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\ChatbotIntentController;
+use App\Http\Controllers\Admin\DesignRequestController;
 
 
 
@@ -127,6 +128,8 @@ Route::middleware('auth')->group(function () {
              ->name('orders.index');
         Route::get('/orders/{id}', [OrderController::class, 'show'])
              ->name('orders.show');
+        Route::post('/orders/{id}/payment-method', [OrderController::class, 'updatePaymentMethod'])
+             ->name('orders.paymentMethod.update');
 
         // ── STRIPE (Checkout Session flow) ──
         Route::get('/payment/stripe/{orderId}', [PaymentController::class, 'stripeForm'])
@@ -136,7 +139,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/payment/stripe/{orderId}/success', [PaymentController::class, 'stripeSuccess'])
              ->name('payment.stripe.success');
 
-        // ── GCASH ──
+        // ── GCASH VIA PAYMONGO (real payment gateway — new default) ──
+        Route::get('/payment/gcash/paymongo/{orderId}', [PaymentController::class, 'paymongoForm'])
+             ->name('payment.gcash.paymongo');
+        Route::post('/payment/gcash/paymongo/{orderId}/checkout', [PaymentController::class, 'paymongoCreateIntent'])
+             ->name('payment.gcash.paymongo.checkout');
+        Route::get('/payment/gcash/paymongo/{orderId}/success', [PaymentController::class, 'paymongoSuccess'])
+             ->name('payment.gcash.paymongo.success');
+
+        // ── GCASH — manual receipt upload (kept as a fallback, no
+        //    longer the default entry point from checkout) ──
         Route::get('/payment/gcash/{orderId}', [PaymentController::class, 'gcashForm'])
              ->name('payment.gcash');
         Route::post('/payment/gcash/upload', [PaymentController::class, 'uploadReceipt'])
@@ -166,11 +178,15 @@ Route::get('/design-gallery', [CustomDesignController::class, 'gallery'])->name(
 });
 
 // ============================================================
-// STRIPE WEBHOOK (no auth — Stripe calls this directly)
+// PAYMENT WEBHOOKS (no auth — the providers' servers call these
+// directly, not a logged-in browser)
 // ============================================================
 
 Route::post('/webhook/stripe', [PaymentController::class, 'handleWebhook'])
      ->name('webhook.stripe');
+
+Route::post('/webhook/paymongo', [PaymentController::class, 'paymongoWebhook'])
+     ->name('webhook.paymongo');
 
 // ============================================================
 // ADMIN ROUTES
@@ -203,6 +219,13 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/orders',              [AdminController::class, 'ordersIndex'])->name('orders.index'); // List all orders
     Route::get('/orders/{id}',          [AdminController::class, 'orderShow'])->name('orders.show'); // Show a specific order
     Route::post('/orders/{id}/status',  [AdminController::class, 'orderUpdateStatus'])->name('orders.updateStatus'); // Update order status
+
+    // ────────────────
+    // AI Custom Design Requests
+    // ────────────────
+    Route::get('/design-requests',                  [DesignRequestController::class, 'index'])->name('design-requests.index'); // List design requests awaiting follow-up
+    Route::post('/design-requests/{id}/contacted',   [DesignRequestController::class, 'markContacted'])->name('design-requests.contacted'); // Mark as contacted
+    Route::post('/design-requests/{id}/reject',      [DesignRequestController::class, 'reject'])->name('design-requests.reject'); // Decline a request
 
     // ────────────────
     // Customer Reviews (Feedback Moderation)

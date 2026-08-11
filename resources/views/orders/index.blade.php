@@ -9,6 +9,13 @@
 @section('content')
 <div class="orders-wrap">
 
+<a href="{{ route('home') }}" class="orders-back-link">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+    Back to Home
+  </a>
+
   <div class="orders-header">
     <p class="gallery-eyebrow" style="margin-bottom:6px;">Track Your Purchases</p>
     <h1 class="orders-title">My Orders</h1>
@@ -44,9 +51,15 @@
               <div class="order-card-ref">{{ $order->order_number }}</div>
               <div class="order-card-date">{{ $order->created_at->format('M d, Y · h:i A') }}</div>
             </div>
-            <span class="order-status-pill {{ $order->order_status }}">
-              {{ str_replace('_', ' ', $order->order_status) }}
-            </span>
+            @if($order->payment && $order->payment->payment_method === 'stripe' && $order->payment->payment_status === 'pending' && $order->order_status !== 'cancelled')
+              <span class="order-status-pill" style="background:#FFF3CD;color:#856404;">
+                Payment Pending
+              </span>
+            @else
+              <span class="order-status-pill {{ $order->order_status }}">
+                {{ str_replace('_', ' ', $order->order_status) }}
+              </span>
+            @endif
           </div>
 
           <div class="order-card-items">

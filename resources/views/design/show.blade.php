@@ -28,30 +28,36 @@
   @if($designRequest->status === 'pending')
 
     {{-- ═══════════════════════════════════
-         GENERATING SCREEN
+         GENERATING SCREEN — spinner style matches the checkout
+         "Preparing Your Order" screen (warm cream card, gold
+         ring spinner) for a consistent loading feel site-wide.
     ═══════════════════════════════════ --}}
     <div class="ai-generating-card">
-      <div class="ai-progress-circle">
-        <svg viewBox="0 0 100 100" class="ai-progress-svg">
-          <circle cx="50" cy="50" r="44" class="ai-progress-track"/>
-          <circle cx="50" cy="50" r="44" class="ai-progress-fill"/>
-        </svg>
-        <div class="ai-progress-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>
-        </div>
-      </div>
-      <div class="ai-generating-status" id="ai-generating-status">Reading Prompt</div>
-      <p class="ai-generating-hint">This usually takes about a minute. Please don't close this page.</p>
+      <div class="ai-generating-spinner"></div>
+      <div class="ai-generating-status" id="ai-generating-status">Analyzing your request...</div>
+      <p class="ai-generating-hint">This can take a minute or two. Please don't close this page.</p>
     </div>
 
     <script>
-      const statusMessages = ['Reading Prompt', 'Thinking', 'Creating Concept', 'Almost Done'];
+      // 6 messages at a 2.5s cycle = 15s for a full pass — the
+      // reload interval below is set to let one full pass finish
+      // before refreshing, so every message actually gets seen
+      // instead of the page reloading (and resetting back to
+      // message 0) before later messages ever get a turn.
+      const statusMessages = [
+        'Analyzing your request...',
+        'Sketching initial concepts...',
+        'Selecting materials & finishes...',
+        'Rendering details...',
+        'Adding finishing touches...',
+        'Almost done...',
+      ];
       let statusIndex = 0;
       setInterval(() => {
         statusIndex = (statusIndex + 1) % statusMessages.length;
         document.getElementById('ai-generating-status').textContent = statusMessages[statusIndex];
-      }, 3500);
-      setTimeout(() => window.location.reload(), 8000);
+      }, 2500);
+      setTimeout(() => window.location.reload(), 15000);
     </script>
 
   @elseif($designRequest->status === 'rejected')
@@ -90,6 +96,39 @@
       </div>
     </div>
 
+  @elseif($designRequest->status === 'declined')
+
+    {{-- ═══════════════════════════════════
+         ADMIN DECLINED — distinct from the AI-generation-failed
+         screen above. This was a deliberate decision on a design
+         that generated successfully, not a technical hiccup, so
+         it shouldn't suggest retrying the same prompt will help.
+    ═══════════════════════════════════ --}}
+    <div class="ai-results-card cd-failure-card">
+      <div class="cd-failure-icon">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+
+      <h3 class="cd-failure-title">We're Not Able to Take This On</h3>
+
+      <p class="cd-failure-reason">
+        @if($designRequest->admin_notes)
+          {{ $designRequest->admin_notes }}
+        @else
+          After review, our team isn't able to produce this particular design. Feel free to try a
+          different idea, or reach out if you'd like to discuss it further.
+        @endif
+      </p>
+
+      <div class="cd-failure-actions">
+        <a href="{{ route('design.index') }}" class="ai-action-btn ai-action-primary" style="flex:1;text-decoration:none;">
+          Start New Prompt
+        </a>
+      </div>
+    </div>
+
   @elseif($designRequest->suggestions->count() > 0)
 
     {{-- ═══════════════════════════════════
@@ -117,8 +156,8 @@
                data-src="{{ $suggestion->image_path }}">
             <img src="{{ $suggestion->image_path }}" alt="Concept" onclick="selectConcept(this.closest('.ai-concept-thumb'))"
                  onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
-            <button type="button" class="ai-concept-heart js-favorite-heart {{ $suggestion->is_favorited ? 'favorited' : '' }}"
-                    data-suggestion-id="{{ $suggestion->id }}">
+            <button type="button" class="ai-concept-heart js-save-heart {{ $suggestion->is_favorited ? 'favorited' : '' }}"
+                    data-suggestion-id="{{ $suggestion->id }}" data-state-class="favorited">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="{{ $suggestion->is_favorited ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="2">
                 <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
               </svg>
@@ -166,6 +205,9 @@
       <p style="color:#5C4C3E;">No design concepts generated yet.</p>
     </div>
   @endif
+
+  @include('design._favorite_js')
+  @include('design._validation_error_modal')
 
 </div>
 @endsection

@@ -1,5 +1,7 @@
 @extends('layouts.admin')
 
+@php($hideGlobalErrorToast = true)
+
 @section('title', ($product->exists ? 'Edit' : 'Add') . ' Product — Admin')
 @section('page-title', ($product->exists ? 'Edit' : 'Add') . ' Product')
 
@@ -9,17 +11,10 @@
   ← Back to Products
 </a>
 
-@if($errors->any())
-  <div class="admin-toast admin-toast-error" style="margin:0 0 20px;">
-    @foreach($errors->all() as $error)
-      <div>{{ $error }}</div>
-    @endforeach
-  </div>
-@endif
-
 <form method="POST"
       action="{{ $product->exists ? route('admin.products.update', $product->id) : route('admin.products.store') }}"
-      enctype="multipart/form-data">
+      enctype="multipart/form-data"
+      onsubmit="stripPriceCommasOnSubmit(this)">
   @csrf
   @if($product->exists) @method('PUT') @endif
 
@@ -38,11 +33,20 @@
           </div>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+            {{-- CATEGORY: dropdown + "Add New" --}}
             <div>
               <label class="form-label">Category</label>
-              <input type="text" name="category" class="form-input" maxlength="100"
-                     placeholder="e.g. Table, Chair, Cabinet"
-                     value="{{ old('category', $product->category) }}"/>
+              <select name="category" id="category-select" class="form-select" required onchange="toggleAddNew('category')">
+                @foreach($categories as $cat)
+                  <option value="{{ $cat }}" {{ old('category', $product->category) === $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                @endforeach
+                <option value="__new__" {{ old('category') === '__new__' ? 'selected' : '' }}>+ Add New Category</option>
+              </select>
+              <div id="category-new-wrap" style="margin-top:8px;display:none;">
+                <input type="text" name="new_category" class="form-input" maxlength="100"
+                       placeholder="Enter new category name"
+                       value="{{ old('new_category') }}"/>
+              </div>
             </div>
             <div>
               <label class="form-label">Status</label>
@@ -58,24 +62,65 @@
             <textarea name="description" class="form-input" rows="4" maxlength="2000">{{ old('description', $product->description) }}</textarea>
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+            {{-- MATERIAL: dropdown + "Add New" --}}
             <div>
               <label class="form-label">Material</label>
-              <input type="text" name="material" class="form-input" maxlength="100"
-                     placeholder="e.g. Narra, Mahogany"
-                     value="{{ old('material', $product->material) }}"/>
+              <select name="material" id="material-select" class="form-select" required onchange="toggleAddNew('material')">
+                @foreach($materials as $mat)
+                  <option value="{{ $mat }}" {{ old('material', $product->material) === $mat ? 'selected' : '' }}>{{ $mat }}</option>
+                @endforeach
+                <option value="__new__" {{ old('material') === '__new__' ? 'selected' : '' }}>+ Add New Material</option>
+              </select>
+              <div id="material-new-wrap" style="margin-top:8px;display:none;">
+                <input type="text" name="new_material" class="form-input" maxlength="100"
+                       placeholder="Enter new material name"
+                       value="{{ old('new_material') }}"/>
+              </div>
             </div>
+
+            {{-- FINISH: dropdown + "Add New" --}}
             <div>
               <label class="form-label">Finish</label>
-              <input type="text" name="finish" class="form-input" maxlength="100"
-                     placeholder="e.g. Natural varnish"
-                     value="{{ old('finish', $product->finish) }}"/>
+              <select name="finish" id="finish-select" class="form-select" required onchange="toggleAddNew('finish')">
+                @foreach($finishes as $fin)
+                  <option value="{{ $fin }}" {{ old('finish', $product->finish) === $fin ? 'selected' : '' }}>{{ $fin }}</option>
+                @endforeach
+                <option value="__new__" {{ old('finish') === '__new__' ? 'selected' : '' }}>+ Add New Finish</option>
+              </select>
+              <div id="finish-new-wrap" style="margin-top:8px;display:none;">
+                <input type="text" name="new_finish" class="form-input" maxlength="100"
+                       placeholder="Enter new finish name"
+                       value="{{ old('new_finish') }}"/>
+              </div>
             </div>
-            <div>
-              <label class="form-label">Dimensions</label>
-              <input type="text" name="dimensions" class="form-input" maxlength="150"
-                     placeholder="e.g. 180 x 90 x 75 cm"
-                     value="{{ old('dimensions', $product->dimensions) }}"/>
+          </div>
+
+          {{-- DIMENSIONS: split into Width / Depth / Height —
+               positional (1st/2nd/3rd value), matching how
+               parseDimensions()/formatDimensions() read the
+               combined string; only the labels changed here. --}}
+          <div>
+            <label class="form-label">Dimensions</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+              <div>
+                <input type="number" name="dimensions_length" step="0.1" min="0" class="form-input"
+                       placeholder="Width (cm)"
+                       value="{{ old('dimensions_length', $lengthVal) }}"/>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Width (cm)</div>
+              </div>
+              <div>
+                <input type="number" name="dimensions_width" step="0.1" min="0" class="form-input"
+                       placeholder="Depth (cm)"
+                       value="{{ old('dimensions_width', $widthVal) }}"/>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Depth (cm)</div>
+              </div>
+              <div>
+                <input type="number" name="dimensions_height" step="0.1" min="0" class="form-input"
+                       placeholder="Height (cm)"
+                       value="{{ old('dimensions_height', $heightVal) }}"/>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Height (cm)</div>
+              </div>
             </div>
           </div>
 
@@ -83,24 +128,31 @@
       </div>
 
       <div class="admin-panel">
-        <div class="admin-panel-header"><div class="admin-panel-title">Pricing &amp; Stock</div></div>
+        <div class="admin-panel-header"><div class="admin-panel-title">Pricing &amp; Production</div></div>
         <div class="admin-panel-body">
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
             <div>
               <label class="form-label">Regular Price (₱)</label>
-              <input type="number" name="price" step="0.01" min="0" class="form-input" required
+              <input type="text" inputmode="decimal" name="price" id="price-input" class="form-input price-formatted" required
+                     oninput="formatPriceInput(this)"
                      value="{{ old('price', $product->price) }}"/>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Max ₱999,999</div>
             </div>
             <div>
               <label class="form-label">Sale Price (₱) <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
-              <input type="number" name="sale_price" step="0.01" min="0" class="form-input"
+              <input type="text" inputmode="decimal" name="sale_price" id="sale-price-input" class="form-input price-formatted"
+                     oninput="formatPriceInput(this)"
                      placeholder="Leave blank if not on sale"
                      value="{{ old('sale_price', $product->sale_price) }}"/>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Must be less than regular price</div>
             </div>
             <div>
-              <label class="form-label">Stock Quantity</label>
+              <label class="form-label">Units Available to Build</label>
               <input type="number" name="stock_quantity" min="0" class="form-input" required
                      value="{{ old('stock_quantity', $product->stock_quantity ?? 0) }}"/>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">
+                Current production capacity — every piece is handcrafted to order, this isn't warehouse stock.
+              </div>
             </div>
           </div>
         </div>
@@ -152,6 +204,31 @@
   </div>
 </form>
 
+{{-- ══════════════════════════════════════════
+     VALIDATION ERROR MODAL — generic: works for any
+     validation failure on this form (links, profanity,
+     price cap, required fields, ...). Auto-opens on load
+     when $errors is non-empty; auto-dismisses after 5s.
+═══════════════════════════════════════════ --}}
+<div class="admin-modal-overlay" id="validation-error-modal-overlay" onclick="closeValidationErrorModalOnBackdrop(event)">
+  <div class="admin-modal admin-modal-centered">
+    <div class="admin-modal-body">
+      <div class="admin-modal-icon admin-modal-icon--danger">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <h3 class="admin-modal-title-centered">Please fix the following</h3>
+      <ul class="admin-modal-error-list" id="validation-error-modal-list"></ul>
+
+      <div class="admin-modal-footer">
+        <button type="button" class="admin-btn admin-btn-gold" style="flex:1;" onclick="closeValidationErrorModal()">OK</button>
+      </div>
+      <div class="admin-modal-countdown" id="validation-error-modal-countdown"></div>
+    </div>
+  </div>
+</div>
+
 @endsection
 
 @push('scripts')
@@ -164,6 +241,90 @@ function previewProductImage(input) {
     document.getElementById('image-preview').src = e.target.result;
   };
   reader.readAsDataURL(file);
+}
+
+/* ── CATEGORY / MATERIAL / FINISH — "select + add new" ── */
+function toggleAddNew(field) {
+  const select = document.getElementById(field + '-select');
+  const wrap   = document.getElementById(field + '-new-wrap');
+  const input  = wrap.querySelector('input');
+  const isNew  = select.value === '__new__';
+  wrap.style.display = isNew ? 'block' : 'none';
+  if (!isNew) input.value = '';
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  ['category', 'material', 'finish'].forEach(toggleAddNew);
+
+  // Apply comma formatting to whatever value was rendered server-side
+  // (existing product price, or an old() value after a failed submit)
+  document.querySelectorAll('.price-formatted').forEach(formatPriceInput);
+
+  @if($errors->any())
+    openValidationErrorModal(@json($errors->all()));
+  @endif
+});
+
+/* ── VALIDATION ERROR MODAL ── */
+let validationErrorTimer = null;
+let validationErrorCountdownInterval = null;
+
+function openValidationErrorModal(messages) {
+  const list = document.getElementById('validation-error-modal-list');
+  list.innerHTML = '';
+  messages.forEach(msg => {
+    const li = document.createElement('li');
+    li.textContent = msg;
+    list.appendChild(li);
+  });
+
+  document.getElementById('validation-error-modal-overlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+
+  let secondsLeft = 5;
+  const countdown = document.getElementById('validation-error-modal-countdown');
+  countdown.textContent = `Auto-closing in ${secondsLeft}s`;
+
+  validationErrorCountdownInterval = setInterval(() => {
+    secondsLeft -= 1;
+    if (secondsLeft > 0) {
+      countdown.textContent = `Auto-closing in ${secondsLeft}s`;
+    }
+  }, 1000);
+
+  validationErrorTimer = setTimeout(closeValidationErrorModal, 5000);
+}
+
+function closeValidationErrorModal() {
+  document.getElementById('validation-error-modal-overlay').classList.remove('show');
+  document.body.style.overflow = '';
+  clearTimeout(validationErrorTimer);
+  clearInterval(validationErrorCountdownInterval);
+}
+
+function closeValidationErrorModalOnBackdrop(e) {
+  if (e.target.id === 'validation-error-modal-overlay') closeValidationErrorModal();
+}
+
+/* ── PRICE / SALE PRICE — live comma formatting ── */
+function formatPriceInput(input) {
+  let raw = input.value.replace(/[^0-9.]/g, '');
+
+  // Keep only the first decimal point
+  const firstDot = raw.indexOf('.');
+  if (firstDot !== -1) {
+    raw = raw.slice(0, firstDot + 1) + raw.slice(firstDot + 1).replace(/\./g, '');
+  }
+
+  const [intPart, decPart] = raw.split('.');
+  const formattedInt = intPart ? Number(intPart).toLocaleString('en-US') : '';
+  input.value = decPart !== undefined ? formattedInt + '.' + decPart : formattedInt;
+}
+
+function stripPriceCommasOnSubmit(form) {
+  form.querySelectorAll('.price-formatted').forEach(input => {
+    input.value = input.value.replace(/,/g, '');
+  });
 }
 </script>
 @endpush

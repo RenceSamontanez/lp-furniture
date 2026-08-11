@@ -103,6 +103,12 @@
     <div class="admin-panel">
       <div class="admin-panel-header"><div class="admin-panel-title">Update Status</div></div>
       <div class="admin-panel-body">
+        @if($order->statusUpdatedBy)
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+            Last updated by <strong style="color:var(--brown-deep);">{{ $order->statusUpdatedBy->first_name }} {{ $order->statusUpdatedBy->last_name }}</strong>
+            on {{ $order->status_updated_at?->format('M d, Y · h:i A') }}
+          </div>
+        @endif
         <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}">
           @csrf
           <select name="order_status" class="form-input" style="margin-bottom:12px;">

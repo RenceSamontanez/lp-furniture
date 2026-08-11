@@ -74,6 +74,12 @@
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
         Customers
       </a>
+      <a href="{{ route('admin.design-requests.index') }}" class="admin-nav-link {{ request()->routeIs('admin.design-requests.*') ? 'active' : '' }}">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>
+        AI Design Requests
+        @php $designPendingCount = \App\Models\CustomDesignRequest::where('status','approved')->count(); @endphp
+        @if($designPendingCount > 0)<span class="admin-nav-badge">{{ $designPendingCount }}</span>@endif
+      </a>
 
 
       <div class="admin-nav-group-label">Staff</div>
@@ -128,7 +134,7 @@
     @if(session('success'))
       <div class="admin-toast admin-toast-success">{{ session('success') }}</div>
     @endif
-    @if($errors->any())
+    @if($errors->any() && !($hideGlobalErrorToast ?? false))
       <div class="admin-toast admin-toast-error">{{ $errors->first() }}</div>
     @endif
 
