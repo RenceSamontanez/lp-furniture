@@ -118,4 +118,20 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Idle Session Timeout
+    |--------------------------------------------------------------------------
+    |
+    | The admin panel handles sensitive data (KYC documents, payment
+    | verification, payment method changes), so it logs an idle admin
+    | out sooner than a regular customer session. This is layered on
+    | top of the shared SESSION_LIFETIME (config/session.php) via
+    | CheckAdminTimeout — it does not change the underlying session's
+    | own lifetime, which customer ('web' guard) sessions still use.
+    |
+    */
+
+    'admin_idle_timeout' => (int) env('ADMIN_SESSION_TIMEOUT', 30),
+
 ];

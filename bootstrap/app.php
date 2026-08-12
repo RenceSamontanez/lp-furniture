@@ -16,8 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'validated' => \App\Http\Middleware\CheckValidated::class,
-            'admin'     => \App\Http\Middleware\CheckAdmin::class,
+            'validated'     => \App\Http\Middleware\CheckValidated::class,
+            'admin'         => \App\Http\Middleware\CheckAdmin::class,
+            'admin.timeout' => \App\Http\Middleware\CheckAdminTimeout::class,
         ]);
 
         // Webhooks are POSTed by the payment providers' own servers,

@@ -196,8 +196,9 @@ Route::post('/webhook/paymongo', [PaymentController::class, 'paymongoWebhook'])
 Route::get('/admin/login',  [AdminController::class, 'showLogin'])->name('admin.login');
 Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.post');
 
-// Admin Protected Routes — uses 'admin' middleware only (which checks the admin guard internally)
-Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
+// Admin Protected Routes — 'admin' confirms identity, 'admin.timeout'
+// enforces the shorter idle-logout (see CheckAdminTimeout)
+Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->group(function () {
     Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 

@@ -37,6 +37,15 @@
       <div class="auth-success">{{ session('success') }}</div>
     @endif
 
+    {{-- Bounced here from a protected route (auth middleware's
+         redirect()->guest() sets url.intended) — could mean the
+         session expired, or they just tried a protected page
+         without ever logging in. Can't tell which, so the
+         message stays neutral and honest either way. --}}
+    @if(session()->has('url.intended') && !$errors->any())
+      <div class="auth-notice">Please log in to continue.</div>
+    @endif
+
     @if($errors->any())
       <div class="auth-errors">
         @foreach($errors->all() as $error)
