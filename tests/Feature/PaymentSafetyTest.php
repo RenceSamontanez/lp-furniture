@@ -455,6 +455,66 @@ class PaymentSafetyTest extends TestCase
         $this->assertSame('cancelled', $order->fresh()->order_status);
     }
 
+    /* ───────────── pending -> confirmed only ───────────── */
+
+    public static function nonPendingStatuses(): array
+    {
+        return [
+            'confirmed'        => ['confirmed'],
+            'in_production'    => ['in_production'],
+            'ready'            => ['ready'],
+            'out_for_delivery' => ['out_for_delivery'],
+            'completed'        => ['completed'],
+        ];
+    }
+
+    /** @dataProvider nonPendingStatuses */
+    #[\PHPUnit\Framework\Attributes\DataProvider('nonPendingStatuses')]
+    public function test_stripe_payment_never_changes_an_order_that_is_past_pending(string $status): void
+    {
+        $order = $this->placeCatalogOrder($this->makeCustomer(), 'stripe', 'full');
+        DB::table('orders')->where('id', $order->id)->update(['order_status' => $status]);
+
+        $this->stripeWebhook('evt_adv_' . $status, $this->stripeSession($order, 'cs_adv_' . $status))->assertOk();
+
+        $order->refresh();
+        $this->assertSame($status, $order->order_status, 'order status must not change');
+        $this->assertSame('paid', $order->payment->payment_status, 'the payment is still recorded');
+        $this->assertNotNull($order->payment->paid_at);
+        $this->assertSame(0, $this->paidNotifications($order), 'no "confirmed" notification');
+    }
+
+    /** @dataProvider nonPendingStatuses */
+    #[\PHPUnit\Framework\Attributes\DataProvider('nonPendingStatuses')]
+    public function test_gcash_payment_never_changes_an_order_that_is_past_pending(string $status): void
+    {
+        $user  = $this->makeCustomer();
+        $order = $this->placeCatalogOrder($user, 'gcash', 'full');
+        $order->payment->update(['paymongo_payment_intent_id' => 'pi_adv_' . $status]);
+        DB::table('orders')->where('id', $order->id)->update(['order_status' => $status]);
+        $this->fakePaymongoIntent('pi_adv_' . $status, 100000);
+
+        $this->actingAs($user)
+            ->get(route('payment.gcash.paymongo.success', $order->id))
+            ->assertRedirect(route('payment.confirmed', $order->id));
+
+        $order->refresh();
+        $this->assertSame($status, $order->order_status);
+        $this->assertSame('paid', $order->payment->payment_status);
+        $this->assertSame(0, $this->paidNotifications($order));
+    }
+
+    public function test_pending_order_is_still_confirmed_and_notified_once(): void
+    {
+        $order = $this->placeCatalogOrder($this->makeCustomer(), 'stripe', 'full');
+        $this->assertSame('pending', $order->order_status);
+
+        $this->stripeWebhook('evt_pending_ok', $this->stripeSession($order, 'cs_pending_ok'))->assertOk();
+
+        $this->assertConfirmedAndPaid($order);
+        $this->assertSame(1, $this->paidNotifications($order));
+    }
+
     /* ───────────── Stage 0 #4: amount checks unchanged ───────────── */
 
     public function test_stripe_amount_mismatch_is_still_refused(): void

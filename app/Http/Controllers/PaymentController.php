@@ -23,6 +23,7 @@ class PaymentController extends Controller
     private const PAID_CONFIRMED       = 'confirmed';        // this call flipped the payment to paid and confirmed the order
     private const PAID_ALREADY         = 'already_paid';     // another path got there first - nothing more to do
     private const PAID_ORDER_CANCELLED = 'order_cancelled';  // money arrived, but the order was already cancelled
+    private const PAID_ORDER_ADVANCED  = 'order_advanced';   // money arrived, but the order had already moved past pending
 
     /* ════════════════════════════════
        SHOW STRIPE PAYMENT PAGE
@@ -241,6 +242,15 @@ class PaymentController extends Controller
             if ($order->order_status === 'cancelled') {
                 \Log::warning("{$logLabel}: payment arrived for order {$order->id} ({$order->order_number}), which is cancelled. Payment recorded as paid; order left cancelled — needs manual refund/review.");
                 return self::PAID_ORDER_CANCELLED;
+            }
+
+            // A payment may only move an order pending -> confirmed. An order
+            // that has already moved on (confirmed, in_production, ready,
+            // out_for_delivery, completed) keeps its status and gets no
+            // "confirmed" notification; the payment itself is still recorded.
+            if ($order->order_status !== 'pending') {
+                \Log::info("{$logLabel}: payment recorded for order {$order->id} ({$order->order_number}), already '{$order->order_status}'; order status left unchanged.");
+                return self::PAID_ORDER_ADVANCED;
             }
 
             $order->update(['order_status' => 'confirmed']);
