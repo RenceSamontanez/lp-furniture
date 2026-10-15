@@ -42,13 +42,23 @@ class AdminController extends Controller
             ])->withInput($request->only('email'));
         }
 
-        if (Auth::guard('admin')->attempt($request->only('email', 'password'))) {
-            if (Auth::guard('admin')->user()->role !== 'admin') {
-                Auth::guard('admin')->logout();
-                return back()->withErrors(['email' => 'This account does not have admin access.']);
-            }
-
+        // role is matched as part of the same credential check (not a
+        // separate branch after login) so a correct email/password on a
+        // non-admin account fails exactly like a wrong password — no
+        // separate error message that would tell an attacker the
+        // credentials were valid, and the admin guard's session is never
+        // established for a non-admin account in the first place.
+        if (Auth::guard('admin')->attempt([
+            'email'    => $request->email,
+            'password' => $request->password,
+            'role'     => 'admin',
+        ])) {
             cache()->forget($key);
+
+            // One identity per browser: an admin session replaces any
+            // customer session already active in this browser.
+            Auth::guard('web')->logout();
+
             $request->session()->regenerate();
 
             return redirect()->route('admin.dashboard')

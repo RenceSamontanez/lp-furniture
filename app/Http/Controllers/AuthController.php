@@ -78,16 +78,27 @@ class AuthController extends Controller
             ])->withInput($request->only('email', 'remember'));
         }
     
-        if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
+        // Looked up and password-checked manually (rather than
+        // Auth::attempt()) so an admin-role account is excluded from the
+        // match entirely — it falls through to the same generic failure
+        // as a wrong password below, instead of a separate branch after
+        // a successful attempt() that would reveal the credentials were
+        // actually valid.
+        $user = User::where('email', $request->email)->first();
+
+        if ($user && $user->role !== 'admin' && Hash::check($request->password, $user->password)) {
+            Auth::login($user, $request->boolean('remember'));
+
             // Clear failed attempt count on success
             cache()->forget($key);
             cache()->forget($key . '_lockout');
+
+            // One identity per browser: a customer session replaces any
+            // admin session already active in this browser.
+            Auth::guard('admin')->logout();
+
             $request->session()->regenerate();
-    
-            if (Auth::user()->role === 'admin') {
-                return redirect()->route('home')->with('success', 'Welcome back, Admin.');
-            }
-    
+
             return redirect()->route('home')
                 ->with('success', 'Welcome back, ' . Auth::user()->first_name . '!');
         }
@@ -344,22 +355,49 @@ return redirect()->route('verification.notice')
         $firstName = $nameParts[0] ?? 'User';
         $lastName  = $nameParts[1] ?? '';
 
-        // Find existing user or create a new one
-        $user = User::updateOrCreate(
-            ['email' => $googleUser->getEmail()],
-            [
-                'first_name'     => $firstName,
-                'last_name'      => $lastName,
-                'google_id'      => $googleUser->getId(),
-                'google_token'   => $googleUser->token,
-                'password'       => null, // Google users have no password
-                'role'           => 'customer',
-                'account_status' => 'active',
+        $existingUser = User::where('email', $googleUser->getEmail())->first();
+
+        if ($existingUser) {
+            // Admin accounts never authenticate via Google — refuse
+            // rather than silently demoting them to customer below.
+            if ($existingUser->role === 'admin') {
+                return redirect()->route('login')
+                    ->withErrors(['email' => 'This account cannot sign in with Google.']);
+            }
+
+            // Only attach the Google identity to the existing account —
+            // role, password, and account_status are account state that
+            // a Google sign-in has no authority to change. The previous
+            // updateOrCreate() here overwrote all of them on every
+            // login, which also meant a re-authenticated Google user's
+            // password silently got nulled out and status forced back
+            // to "active" every time.
+            $existingUser->update([
+                'google_id'    => $googleUser->getId(),
+                'google_token' => $googleUser->token,
+            ]);
+
+            $user = $existingUser;
+        } else {
+            $user = User::create([
+                'first_name'        => $firstName,
+                'last_name'         => $lastName,
+                'email'             => $googleUser->getEmail(),
+                'google_id'         => $googleUser->getId(),
+                'google_token'      => $googleUser->token,
+                'password'          => null, // Google users have no password
+                'role'              => 'customer',
+                'account_status'    => 'active',
                 'email_verified_at' => now(),
-            ]
-        );
+            ]);
+        }
 
         Auth::login($user, true);
+
+        // One identity per browser: a customer session replaces any
+        // admin session already active in this browser.
+        Auth::guard('admin')->logout();
+
         request()->session()->regenerate();
 
         // New Google users go to validation, existing go to home
