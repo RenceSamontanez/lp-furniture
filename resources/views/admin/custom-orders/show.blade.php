@@ -5,6 +5,7 @@
 
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/admin-custom-orders.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/custom-orders.css') }}"/>
 @endpush
 
 @section('content')
@@ -189,29 +190,11 @@
       </div>
     @endif
 
-    {{-- Timeline --}}
+    {{-- Timeline: everything, with who and when (Asia/Manila) --}}
     <div class="admin-panel">
       <div class="admin-panel-header"><div class="admin-panel-title">Timeline</div></div>
       <div class="admin-panel-body">
-        <ul class="co-timeline">
-          @foreach($events as $e)
-            @php $d = $e->data ?? []; @endphp
-            <li>
-              <div>
-                {{ $eventLabels[$e->type] ?? ucfirst(str_replace('_', ' ', $e->type)) }}
-                @if($e->type === 'call_logged')
-                  (attempt {{ $d['attempt_no'] ?? '?' }}, {{ !empty($d['answered']) ? 'answered' : 'no answer' }})
-                @endif
-              </div>
-              @if(!empty($d['note']))<div class="co-log-meta">"{{ $d['note'] }}"</div>@endif
-              @if(!empty($d['reason']))<div class="co-log-meta">Reason: {{ $d['reason'] }}</div>@endif
-              <div class="co-timeline-when">
-                {{ $e->occurred_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}
-                · {{ $e->actor_type === 'admin' ? ($actors[$e->actor_id]->first_name ?? 'Admin') : ucfirst($e->actor_type) }}
-              </div>
-            </li>
-          @endforeach
-        </ul>
+        @include('agreements._timeline', ['entries' => $timeline])
       </div>
     </div>
   </div>

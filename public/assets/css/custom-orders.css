@@ -373,3 +373,20 @@
 .co-decline-form textarea { width: 100%; }
 
 .co-status-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+
+/* ============================================================
+   CUSTOM ORDER TIMELINE (Stage 10), shared customer + admin
+============================================================ */
+
+.co-tl { list-style: none; margin: 0; padding: 0 0 0 16px; border-left: 2px solid #E8DFD0; }
+.co-tl li { position: relative; padding: 0 0 16px 14px; font-size: 13px; color: #3D3129; }
+.co-tl li:last-child { padding-bottom: 0; }
+.co-tl li::before {
+  content: ""; position: absolute; left: -22px; top: 5px;
+  width: 10px; height: 10px; border-radius: 50%; background: #C9A24A;
+}
+.co-tl li.co-tl-closed::before { background: #B7A99A; }
+.co-tl li.co-tl-alert::before { background: #C0392B; }
+.co-tl-title { font-weight: 500; }
+.co-tl-detail { font-size: 12.5px; color: #6B5D52; margin-top: 2px; overflow-wrap: anywhere; }
+.co-tl-when { font-size: 11.5px; color: #8A7B6D; margin-top: 2px; }

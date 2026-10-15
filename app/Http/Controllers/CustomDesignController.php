@@ -200,7 +200,11 @@ class CustomDesignController extends Controller
             ? $designRequest->agreements()->orderByDesc('id')->first()
             : null;
 
-        return view('design.show', compact('designRequest', 'quote', 'agreement'));
+        $timeline = $designRequest->pipeline_status !== null
+            ? app(\App\Support\CustomOrderTimeline::class)->forCustomer($designRequest)
+            : [];
+
+        return view('design.show', compact('designRequest', 'quote', 'agreement', 'timeline'));
     }
 
     /* ════════════════════════════════

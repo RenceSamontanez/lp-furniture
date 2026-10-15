@@ -221,13 +221,17 @@ class AdminController extends Controller
     public function ordersIndex(Request $request)
     {
         $status = $request->get('status', 'all');
+        $type   = in_array($request->get('type'), ['customized', 'catalog'], true) ? $request->get('type') : 'all';
 
         $orders = Order::with('user', 'items.product', 'designRequest', 'payment')
             ->when($status !== 'all', fn($q) => $q->where('order_status', $status))
+            ->when($type === 'customized', fn($q) => $q->whereNotNull('design_agreement_id'))
+            ->when($type === 'catalog', fn($q) => $q->whereNull('design_agreement_id'))
             ->latest()
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
-        return view('admin.orders.index', compact('orders', 'status'));
+        return view('admin.orders.index', compact('orders', 'status', 'type'));
     }
 
     public function orderShow($id)
@@ -425,7 +429,20 @@ class AdminController extends Controller
             ->take(5)
             ->get();
 
+        // Catalog vs customized split: a separate figure set, the totals above are unchanged.
+        $orderSplit = [];
+        foreach (['catalog' => false, 'customized' => true] as $label => $custom) {
+            $base = Order::query()->where('order_status', '!=', 'cancelled')
+                ->when($custom, fn($q) => $q->whereNotNull('design_agreement_id'), fn($q) => $q->whereNull('design_agreement_id'));
+            $orderSplit[$label] = [
+                'orders'  => (clone $base)->count(),
+                'revenue' => (float) (clone $base)->sum('total_amount'),
+                'paid'    => (float) (clone $base)->sum('amount_paid'),
+            ];
+        }
+
         return view('admin.reports', compact(
+            'orderSplit',
             'revenueByMonth',
             'totalRevenue',
             'thisMonthRevenue',

@@ -301,7 +301,13 @@ class OrderController extends Controller
             ->where('id', $id)
             ->firstOrFail();
 
-        return view('orders.show', compact('order'));
+        $timeline = [];
+        if ($order->design_request_id) {
+            $designRequest = \App\Models\CustomDesignRequest::where('user_id', Auth::id())->find($order->design_request_id);
+            $timeline = $designRequest ? app(\App\Support\CustomOrderTimeline::class)->forCustomer($designRequest) : [];
+        }
+
+        return view('orders.show', compact('order', 'timeline'));
     }
 
     // ── CHANGE PAYMENT METHOD ──

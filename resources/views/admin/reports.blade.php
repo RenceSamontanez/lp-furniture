@@ -58,6 +58,30 @@
   {{-- LEFT COLUMN --}}
   <div>
 
+    {{-- Catalog vs customized (new figures only; the totals elsewhere on this page are unchanged) --}}
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <div class="admin-panel-title">Catalog vs Customized orders</div>
+        <a href="{{ route('admin.orders.index', ['type' => 'customized']) }}" class="admin-btn admin-btn-outline">View customized</a>
+      </div>
+      <div class="admin-panel-body" style="padding:0;">
+        <table class="admin-table">
+          <thead><tr><th>Type</th><th>Orders</th><th>Order value</th><th>Received</th></tr></thead>
+          <tbody>
+            @foreach(['catalog' => 'Catalog', 'customized' => 'Customized'] as $key => $label)
+              <tr>
+                <td data-label="Type">{{ $label }}</td>
+                <td data-label="Orders">{{ $orderSplit[$key]['orders'] }}</td>
+                <td data-label="Order value">₱{{ number_format($orderSplit[$key]['revenue'], 2) }}</td>
+                <td data-label="Received">₱{{ number_format($orderSplit[$key]['paid'], 2) }}</td>
+              </tr>
+            @endforeach
+          </tbody>
+        </table>
+        <p style="font-size:11.5px;color:var(--text-muted);margin:0;padding:10px 20px;">Cancelled orders are excluded, like the revenue figures on this page.</p>
+      </div>
+    </div>
+
     {{-- Revenue Bar Chart --}}
     <div class="admin-panel">
       <div class="admin-panel-header"><div class="admin-panel-title">Monthly Revenue (Last 6 Months)</div></div>

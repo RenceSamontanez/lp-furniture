@@ -337,6 +337,13 @@
     </div>
   @endif
 
+  @if(!empty($timeline))
+    <div class="co-card" style="margin-top:20px;">
+      <div class="co-action-title" style="margin-bottom:14px;">What has happened so far</div>
+      @include('agreements._timeline', ['entries' => $timeline])
+    </div>
+  @endif
+
   {{-- Contact fallback — shown in every state so the customer can always
        reach the team about this request. Values come from Admin → Contact Settings. --}}
   @php $contact = \App\Models\BusinessSetting::current(); @endphp

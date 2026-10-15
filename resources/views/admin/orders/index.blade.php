@@ -5,6 +5,12 @@
 
 @section('content')
 
+<div class="admin-filter-tabs" style="margin-bottom:10px;">
+  <a href="{{ route('admin.orders.index', ['status'=>$status, 'type'=>'all']) }}" class="admin-filter-tab {{ $type==='all'?'active':'' }}">All orders</a>
+  <a href="{{ route('admin.orders.index', ['status'=>$status, 'type'=>'catalog']) }}" class="admin-filter-tab {{ $type==='catalog'?'active':'' }}">Catalog</a>
+  <a href="{{ route('admin.orders.index', ['status'=>$status, 'type'=>'customized']) }}" class="admin-filter-tab {{ $type==='customized'?'active':'' }}">Customized</a>
+</div>
+
 <div class="admin-filter-tabs">
   <a href="{{ route('admin.orders.index', ['status'=>'all']) }}" class="admin-filter-tab {{ $status==='all'?'active':'' }}">All</a>
   <a href="{{ route('admin.orders.index', ['status'=>'pending']) }}" class="admin-filter-tab {{ $status==='pending'?'active':'' }}">Pending</a>

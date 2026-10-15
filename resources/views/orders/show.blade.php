@@ -4,6 +4,7 @@
 
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/orders.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/custom-orders.css') }}"/>
 @endpush
 
 @section('content')
@@ -132,6 +133,13 @@
               <div style="margin-top:6px;color:var(--text-muted);">Expected ready date: about {{ \Illuminate\Support\Carbon::parse($order->expected_ready_date)->format('M d, Y') }}</div>
             @endif
           </div>
+        </div>
+      @endif
+
+      @if(!empty($timeline))
+        <div class="order-panel">
+          <div class="order-panel-header"><div class="order-panel-title">What has happened so far</div></div>
+          <div class="order-panel-body">@include('agreements._timeline', ['entries' => $timeline])</div>
         </div>
       @endif
 
