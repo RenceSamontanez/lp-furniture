@@ -42,6 +42,7 @@ class CustomDesignRequest extends Model
     protected $casts = [
         'admin_contacted_at' => 'datetime',
         'submitted_at'       => 'datetime',
+        'payment_due_at'     => 'datetime',
     ];
 
     // Customer-facing labels; keys match the preferred_call_window ENUM.

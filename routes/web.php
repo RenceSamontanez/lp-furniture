@@ -11,6 +11,9 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ValidationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CustomDesignController;
+use App\Http\Controllers\CustomAgreementController;
+use App\Http\Controllers\Admin\AgreementController as AdminAgreementController;
+use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\EmployeeController;
@@ -173,6 +176,15 @@ Route::middleware(['auth', 'validated'])->group(function () {
     Route::post('/design/{id}/send',   [CustomDesignController::class, 'sendToTeam'])->name('design.sendToTeam');
     Route::post('/design/{id}/favorite', [CustomDesignController::class, 'toggleFavorite'])->name('design.favorite');
 Route::get('/design-gallery', [CustomDesignController::class, 'gallery'])->name('design.gallery');
+
+    // Review and Accept, and the immutable agreement record (Stage 6).
+    // There is deliberately no update or delete route for an agreement.
+    Route::get('/design/{id}/quotes/{quote}',          [CustomAgreementController::class, 'review'])->name('design.quote.review')->whereNumber(['id', 'quote']);
+    Route::post('/design/{id}/quotes/{quote}/accept',  [CustomAgreementController::class, 'accept'])->name('design.quote.accept')->whereNumber(['id', 'quote']);
+    Route::post('/design/{id}/quotes/{quote}/decline', [CustomAgreementController::class, 'decline'])->name('design.quote.decline')->whereNumber(['id', 'quote']);
+    Route::get('/agreements/{agreement}',        [CustomAgreementController::class, 'show'])->name('design.agreement')->whereNumber('agreement');
+    Route::get('/agreements/{agreement}/print',  [CustomAgreementController::class, 'printView'])->name('design.agreement.print')->whereNumber('agreement');
+    Route::get('/agreements/{agreement}/image',  [CustomAgreementController::class, 'image'])->name('design.agreement.image')->whereNumber('agreement');
 });
 
 // ============================================================
@@ -237,6 +249,15 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     Route::post('/custom-orders/{id}/quotes/{quote}/delete',     [CustomOrderController::class, 'quoteDelete'])->name('custom-orders.quotes.delete')->whereNumber(['id', 'quote']);
     Route::get('/custom-orders/{id}/quotes/{quote}/confirm',     [CustomOrderController::class, 'quoteConfirm'])->name('custom-orders.quotes.confirm')->whereNumber(['id', 'quote']);
     Route::post('/custom-orders/{id}/quotes/{quote}/send',       [CustomOrderController::class, 'quoteSend'])->name('custom-orders.quotes.send')->whereNumber(['id', 'quote']);
+
+    // Agreement records (read only) and the admin's own notifications (Stage 6)
+    Route::get('/agreements/{id}',       [AdminAgreementController::class, 'show'])->name('agreements.show')->whereNumber('id');
+    Route::get('/agreements/{id}/print', [AdminAgreementController::class, 'printView'])->name('agreements.print')->whereNumber('id');
+    Route::get('/agreements/{id}/image', [AdminAgreementController::class, 'image'])->name('agreements.image')->whereNumber('id');
+
+    Route::get('/notifications',            [AdminNotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read-all',  [AdminNotificationController::class, 'markAllRead'])->name('notifications.readAll');
+    Route::post('/notifications/{id}/read', [AdminNotificationController::class, 'markRead'])->name('notifications.read')->whereNumber('id');
 
     // ────────────────
     // AI Custom Design Requests

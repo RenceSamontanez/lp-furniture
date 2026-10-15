@@ -88,6 +88,8 @@ class CustomOrderController extends Controller
         $actors = \App\Models\User::whereIn('id', $events->where('actor_type', 'admin')->pluck('actor_id')->filter()->unique())
             ->get()->keyBy('id');
 
+        $agreement = \App\Models\DesignAgreement::where('request_id', $designRequest->id)->orderByDesc('id')->first();
+
         return view('admin.custom-orders.show', [
             'hideGlobalErrorToast' => true, // errors are shown inline on this page
             'designRequest' => $designRequest,
@@ -97,6 +99,8 @@ class CustomOrderController extends Controller
             'isOpen'        => in_array($designRequest->pipeline_status, CustomOrderPipeline::OPEN, true),
             'quotes'        => CustomQuote::where('request_id', $designRequest->id)->with(['sender', 'creator'])->orderByDesc('version')->get(),
             'quoteBlocker'  => $this->quoteBlocker($designRequest),
+            'agreement'     => $agreement,
+            'hashOk'        => $agreement ? \App\Support\AgreementIntegrity::check($agreement) : null,
         ]);
     }
 

@@ -1,0 +1,51 @@
+{{-- Every agreed term, rendered from a terms array (AgreementTerms::fromQuote
+     or a stored terms_snapshot). Used by the review page, the agreement page,
+     the print view and the admin view. Optional: $paymentDue (Y-m-d H:i:s, Manila). --}}
+@php
+  $fmt = fn ($s, $f = 'M d, Y h:i A') => \Illuminate\Support\Carbon::parse($s, 'Asia/Manila')->format($f);
+  $dim = fn ($n) => rtrim(rtrim(number_format((float) $n, 2, '.', ''), '0'), '.');
+  $peso = fn ($n) => '₱' . number_format((float) $n, 2);
+  $q = $terms['quote']; $m = $terms['money']; $d = $terms['delivery']; $p = $terms['production'];
+@endphp
+<dl class="co-quote-list">
+  <div><dt>Design</dt><dd>{{ $terms['design']['title'] }}</dd></div>
+  <div><dt>Description</dt><dd style="white-space:pre-line;">{{ $q['description'] }}</dd></div>
+  <div><dt>Size</dt><dd>{{ $dim($q['width_cm']) }} x {{ $dim($q['depth_cm']) }} x {{ $dim($q['height_cm']) }} cm</dd></div>
+  <div><dt>Material and finish</dt><dd>{{ $q['material'] }}@if($q['finish']), {{ $q['finish'] }}@endif</dd></div>
+  @if($q['modifications'])
+    <div><dt>Modifications</dt><dd style="white-space:pre-line;">{{ $q['modifications'] }}</dd></div>
+  @endif
+  <div><dt>{{ $d['option'] === 'delivery' ? 'Delivery to' : 'Pickup' }}</dt><dd>{{ $d['option'] === 'delivery' ? $d['address'] : 'Pick up at our shop' }}</dd></div>
+  <div><dt>Production time</dt><dd>{{ $p['days'] }} working days (Monday to Saturday), ready about {{ $fmt($p['ready_about'], 'M d, Y') }}, counted from {{ $fmt($p['counted_from'], 'M d, Y') }}</dd></div>
+  <div><dt>Price</dt><dd>{{ $peso($m['price']) }}</dd></div>
+  @if($d['option'] === 'delivery')
+    <div><dt>Delivery fee</dt><dd>{{ $peso($m['delivery_fee']) }}</dd></div>
+  @endif
+  <div class="co-quote-total"><dt>Total</dt><dd>{{ $peso($m['total']) }}</dd></div>
+  <div>
+    <dt>{{ $m['payment_terms'] === 'deposit' ? 'Deposit due first' : 'Payment' }}</dt>
+    <dd>{{ $peso($m['upfront']) }}{{ $m['payment_terms'] === 'full' ? ', paid in full' : '' }}</dd>
+  </div>
+  @if(!empty($terms['schedule']))
+    <div>
+      <dt>Balance</dt>
+      <dd>
+        {{ $peso($m['balance']) }} in {{ count($terms['schedule']) }} payments:
+        <ul class="co-schedule">
+          @foreach($terms['schedule'] as $row)
+            <li>Payment {{ $row['no'] }}: {{ $peso($row['amount']) }}, {{ $row['day_offset'] }} days after your first payment</li>
+          @endforeach
+        </ul>
+      </dd>
+    </div>
+  @endif
+  <div><dt>Quote version</dt><dd>Version {{ $q['version'] }}, sent {{ $fmt($q['sent_at']) }}, valid until {{ $fmt($q['expires_at']) }}</dd></div>
+  @isset($paymentDue)
+    <div><dt>Payment must be started by</dt><dd>{{ $fmt($paymentDue) }}</dd></div>
+  @endisset
+</dl>
+
+<div class="co-policy">
+  <div class="co-policy-title">{{ $terms['policy']['title'] }} (version {{ $terms['policy']['version'] }})</div>
+  <div class="co-policy-body">{{ $terms['policy']['text'] }}</div>
+</div>

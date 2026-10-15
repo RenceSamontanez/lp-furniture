@@ -192,7 +192,13 @@ class CustomDesignController extends Controller
                 ->first();
         }
 
-        return view('design.show', compact('designRequest', 'quote'));
+        // The agreement record, once the customer has accepted. Owner-scoped
+        // through the request lookup above.
+        $agreement = in_array($designRequest->pipeline_status, ['accepted', 'ordered'], true)
+            ? $designRequest->agreements()->orderByDesc('id')->first()
+            : null;
+
+        return view('design.show', compact('designRequest', 'quote', 'agreement'));
     }
 
     /* ════════════════════════════════

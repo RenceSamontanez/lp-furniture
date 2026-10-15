@@ -1,0 +1,59 @@
+@extends('layouts.app')
+
+@section('title', 'Review and Accept — LP Furniture')
+
+@push('styles')
+  <link rel="stylesheet" href="{{ asset('assets/css/design.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/custom-orders.css') }}"/>
+@endpush
+
+@section('content')
+<div class="cd-wrap">
+  <div class="cd-top-bar">
+    <a href="{{ route('design.show', $designRequest->id) }}" class="cd-back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to your design
+    </a>
+  </div>
+
+  <div class="co-card co-review">
+    <div class="co-head">
+      <h1 class="co-title">Review and accept your agreement</h1>
+      <p class="co-lead">
+        Please read every term below. Nothing is agreed until you tick the box and press
+        "Accept agreement". This quote is valid until
+        {{ $quote->expires_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}.
+      </p>
+    </div>
+
+    @if($errors->any())
+      <div class="co-error" role="alert">{{ $errors->first() }}</div>
+    @endif
+
+    @include('agreements._terms', ['terms' => $terms])
+
+    <p class="co-hint">
+      If you accept now, you must start your payment by
+      <strong>{{ $dueIfAccepted->timezone('Asia/Manila')->format('M d, Y h:i A') }}</strong>.
+      Payment is not set up yet; we will let you know when it is ready.
+    </p>
+
+    <form method="POST" action="{{ route('design.quote.accept', [$designRequest->id, $quote->id]) }}" class="co-agree-form">
+      @csrf
+      <label class="co-agree">
+        <input type="checkbox" name="agree" value="1" required/>
+        <span>I have read and agree to these terms</span>
+      </label>
+      <button type="submit" class="ai-action-btn ai-action-primary">Accept agreement</button>
+    </form>
+
+    <form method="POST" action="{{ route('design.quote.decline', [$designRequest->id, $quote->id]) }}" class="co-decline-form"
+          onsubmit="return confirm('Decline this quote? You can still contact us afterwards.')">
+      @csrf
+      <div class="co-action-title">Not for you?</div>
+      <textarea name="reason" class="form-input" rows="2" maxlength="1000" placeholder="Reason (optional)"></textarea>
+      <button type="submit" class="ai-action-btn ai-action-secondary">Decline this quote</button>
+    </form>
+  </div>
+</div>
+@endsection

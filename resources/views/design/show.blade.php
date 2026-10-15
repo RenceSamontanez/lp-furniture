@@ -29,8 +29,38 @@
     <div class="co-flash-info">{{ session('info') }}</div>
   @endif
 
+  @if($errors->has('quote'))
+    <div class="co-error" role="alert" style="max-width:680px;margin:0 auto 20px;">{{ $errors->first('quote') }}</div>
+  @endif
+
   @if(isset($quote) && $quote)
     @include('design._quote-summary', ['quote' => $quote])
+  @endif
+
+  @if($designRequest->pipeline_status === 'accepted' && isset($agreement) && $agreement)
+    <div class="co-status">
+      <svg class="co-status-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+      <div>
+        <div class="co-status-title">Agreed on {{ $agreement->accepted_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}, next step is payment.</div>
+        <div class="co-status-text">
+          Agreement {{ $agreement->agreement_number }}. Payment step coming soon.
+          @if($designRequest->payment_due_at)
+            Please be ready to start payment by {{ $designRequest->payment_due_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}.
+          @endif
+        </div>
+        <div class="co-status-actions">
+          <a href="{{ route('design.agreement', $agreement->id) }}" class="ai-action-btn ai-action-secondary" style="text-decoration:none;">View agreement</a>
+        </div>
+      </div>
+    </div>
+  @elseif($designRequest->pipeline_status === 'declined_by_customer')
+    <div class="co-status">
+      <svg class="co-status-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      <div>
+        <div class="co-status-title">You declined this quote.</div>
+        <div class="co-status-text">Nothing is due. Contact us if you would like a new quote.</div>
+      </div>
+    </div>
   @endif
 
   @if($designRequest->pipeline_status === 'submitted' && $designRequest->status === 'approved')

@@ -35,7 +35,9 @@
   @if($isSent)
     <div class="co-status-text">
       Valid until {{ $quote->expires_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}.
-      Review and accept is coming next.
+    </div>
+    <div class="co-status-actions">
+      <a href="{{ route('design.quote.review', [$quote->request_id, $quote->id]) }}" class="ai-action-btn ai-action-primary" style="text-decoration:none;">Review and accept</a>
     </div>
   @else
     <div class="co-status-text">Contact us if you'd still like to proceed.</div>

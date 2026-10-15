@@ -1,0 +1,84 @@
+/* ============================================================
+   AGREEMENT PRINT VIEW: standalone page, no site layout.
+   Screen: a plain centred sheet. Print: black on white, no chrome.
+============================================================ */
+
+* { box-sizing: border-box; }
+
+.ag-body {
+  margin: 0;
+  background: #f4efe7;
+  color: #2b2118;
+  font-family: 'DM Sans', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.ag-toolbar {
+  max-width: 780px;
+  margin: 16px auto 0;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ag-toolbar a { color: #5c4630; text-decoration: none; font-size: 13px; }
+.ag-toolbar button {
+  padding: 8px 18px;
+  border: 1px solid #5c4630;
+  background: #fff;
+  color: #5c4630;
+  border-radius: 8px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.ag-sheet {
+  max-width: 780px;
+  margin: 16px auto 40px;
+  padding: 40px 48px;
+  background: #fff;
+  border: 1px solid #e3d9c9;
+}
+
+.ag-head { text-align: center; margin-bottom: 24px; }
+.ag-brand { font-family: 'Playfair Display', Georgia, serif; font-size: 15px; letter-spacing: 0.08em; color: #5c4630; }
+.ag-head h1 { font-family: 'Playfair Display', Georgia, serif; font-size: 26px; margin: 6px 0; }
+.ag-number { font-size: 15px; letter-spacing: 0.04em; }
+
+.ag-meta { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+.ag-meta th, .ag-meta td { text-align: left; padding: 6px 0; border-bottom: 1px solid #eee5d6; vertical-align: top; }
+.ag-meta th { width: 160px; font-weight: 500; color: #6b5a47; }
+
+.ag-image { text-align: center; margin: 0 0 20px; }
+.ag-image img { max-width: 100%; max-height: 320px; border: 1px solid #e3d9c9; }
+
+/* the shared terms partial */
+.ag-sheet .co-quote-list { margin: 0; padding: 0; }
+.ag-sheet .co-quote-list > div { display: flex; gap: 16px; padding: 7px 0; border-bottom: 1px solid #eee5d6; }
+.ag-sheet .co-quote-list dt { width: 170px; flex-shrink: 0; color: #6b5a47; }
+.ag-sheet .co-quote-list dd { margin: 0; flex: 1; }
+.ag-sheet .co-schedule { margin: 6px 0 0; padding-left: 18px; }
+.ag-sheet .co-quote-total { font-weight: 600; }
+.ag-sheet .co-policy { margin-top: 24px; padding-top: 16px; border-top: 1px solid #d9ccb8; }
+.ag-sheet .co-policy-title { font-weight: 600; margin-bottom: 6px; }
+.ag-sheet .co-policy-body { white-space: pre-line; }
+
+.ag-foot { margin-top: 28px; padding-top: 12px; border-top: 1px solid #d9ccb8; font-size: 11.5px; color: #6b5a47; word-break: break-all; }
+
+.ag-blocked h1 { font-family: 'Playfair Display', Georgia, serif; font-size: 22px; }
+
+@media (max-width: 600px) {
+  .ag-sheet { padding: 24px 18px; }
+  .ag-sheet .co-quote-list > div { flex-direction: column; gap: 2px; }
+  .ag-sheet .co-quote-list dt { width: auto; }
+}
+
+@media print {
+  .ag-body { background: #fff; }
+  .ag-toolbar { display: none; }
+  .ag-sheet { margin: 0; padding: 0; border: 0; max-width: none; }
+  .ag-image img { max-height: 260px; }
+  @page { margin: 18mm; }
+}

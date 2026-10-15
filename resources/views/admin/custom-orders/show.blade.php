@@ -23,6 +23,9 @@
       'quote_sent'         => 'Quote sent to the customer',
       'quote_superseded'   => 'Earlier quote replaced',
       'quote_expired'      => 'Quote expired',
+      'quote_accepted'     => 'Customer accepted the agreement',
+      'quote_declined_by_customer' => 'Customer declined the quote',
+      'agreement_integrity_failed' => 'Agreement failed its integrity check',
   ];
 @endphp
 
@@ -128,6 +131,39 @@
         <div class="admin-panel-header"><div class="admin-panel-title">Version {{ $current->version }} terms</div></div>
         <div class="admin-panel-body">
           @include('admin.custom-orders._quote-terms', ['quote' => $current])
+        </div>
+      </div>
+    @endif
+
+    {{-- Agreement (Stage 6): read only --}}
+    @if($agreement)
+      <div class="admin-panel">
+        <div class="admin-panel-header">
+          <div class="admin-panel-title">Agreement {{ $agreement->agreement_number }}</div>
+          @if($hashOk)
+            <span class="co-chip co-chip--accepted">Hash verified</span>
+          @else
+            <span class="co-chip co-chip--cancelled">Hash mismatch</span>
+          @endif
+        </div>
+        <div class="admin-panel-body">
+          <dl class="co-dl">
+            <div><dt>Accepted</dt><dd>{{ $agreement->accepted_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}</dd></div>
+            <div><dt>Payment due by</dt><dd>{{ $r->payment_due_at?->timezone('Asia/Manila')->format('M d, Y h:i A') ?? '—' }}</dd></div>
+            <div><dt>Total / upfront</dt><dd>₱{{ number_format($agreement->total_amount, 2) }} / ₱{{ number_format($agreement->upfront_amount, 2) }}</dd></div>
+            <div><dt>IP address</dt><dd>{{ $agreement->ip_address }}</dd></div>
+            <div><dt>User agent</dt><dd style="overflow-wrap:anywhere;">{{ $agreement->user_agent ?: '—' }}</dd></div>
+            <div><dt>Policy version</dt><dd>{{ $agreement->policy_version }}</dd></div>
+            <div><dt>SHA-256</dt><dd style="overflow-wrap:anywhere;font-size:11.5px;">{{ $agreement->snapshot_sha256 }}</dd></div>
+          </dl>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+            @if($hashOk)
+              <a href="{{ route('admin.agreements.show', $agreement->id) }}" class="admin-btn admin-btn-outline">View agreement</a>
+              <a href="{{ route('admin.agreements.print', $agreement->id) }}" class="admin-btn admin-btn-gold" target="_blank" rel="noopener">Print view</a>
+            @else
+              <p class="co-hint">This agreement is blocked until it is investigated.</p>
+            @endif
+          </div>
         </div>
       </div>
     @endif
