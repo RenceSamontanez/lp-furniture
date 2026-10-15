@@ -36,7 +36,7 @@ class AuthController extends Controller
 
         if (empty($recaptchaToken)) {
             return back()
-                ->withInput($request->only('email', 'remember'))
+                ->withInput($request->only('email'))
                 ->withErrors(['email' => 'Security verification failed. Please refresh and try again.']);
         }
 
@@ -54,7 +54,7 @@ class AuthController extends Controller
 
             if (!($data['success'] ?? false) || ($data['score'] ?? 0) < 0.3) {
                 return back()
-                    ->withInput($request->only('email', 'remember'))
+                    ->withInput($request->only('email'))
                     ->withErrors(['email' => 'Security check failed. Please try again.']);
             }
 
@@ -75,7 +75,7 @@ class AuthController extends Controller
             $seconds = cache()->get($key . '_lockout_time', 60);
             return back()->withErrors([
                 'email' => "Too many failed login attempts for this account. Please wait {$seconds} seconds before trying again.",
-            ])->withInput($request->only('email', 'remember'));
+            ])->withInput($request->only('email'));
         }
     
         // Looked up and password-checked manually (rather than
@@ -87,7 +87,12 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if ($user && $user->role !== 'admin' && Hash::check($request->password, $user->password)) {
-            Auth::login($user, $request->boolean('remember'));
+            // No remember-me: every login (this, Google, registration)
+            // is a plain session login now, so idle logout actually
+            // means something — a persistent recaller cookie used to
+            // re-authenticate indefinitely even after the session row
+            // itself was gone, which is why customers never logged out.
+            Auth::login($user);
 
             // Clear failed attempt count on success
             cache()->forget($key);
@@ -112,12 +117,12 @@ class AuthController extends Controller
             cache()->put($key . '_lockout_time', 60, now()->addMinutes(1));
             return back()->withErrors([
                 'email' => 'Too many failed attempts for this account. Please wait 60 seconds before trying again.',
-            ])->withInput($request->only('email', 'remember'));
+            ])->withInput($request->only('email'));
         }
-    
+
         $remaining = 5 - $attempts;
         return back()
-            ->withInput($request->only('email', 'remember'))
+            ->withInput($request->only('email'))
             ->withErrors([
                 'email' => "Incorrect email or password. {$remaining} attempt(s) remaining before lockout.",
             ]);
@@ -392,7 +397,10 @@ return redirect()->route('verification.notice')
             ]);
         }
 
-        Auth::login($user, true);
+        // No remember-me — this used to hardcode true, which meant
+        // every Google sign-in got a persistent recaller cookie no
+        // matter what, independent of the session itself.
+        Auth::login($user);
 
         // One identity per browser: a customer session replaces any
         // admin session already active in this browser.

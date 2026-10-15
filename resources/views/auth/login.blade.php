@@ -82,11 +82,7 @@
         </div>
       </div>
 
-      <div class="auth-row" style="margin-top:14px;">
-        <label class="auth-remember">
-          <input type="checkbox" name="remember" value="1" {{ old('remember') ? 'checked' : '' }}/>
-          <span>Remember me</span>
-        </label>
+      <div class="auth-row" style="margin-top:14px; justify-content:flex-end;">
         <a href="{{ route('password.request') }}" class="auth-link">Forgot password?</a>
       </div>
 
