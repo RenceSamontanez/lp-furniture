@@ -53,6 +53,14 @@ class DesignRequestController extends Controller
     public function markContacted($id)
     {
         $designRequest = CustomDesignRequest::where('status', 'approved')->findOrFail($id);
+
+        // Requests sent through the new form are worked from Custom Orders,
+        // which logs calls and keeps the pipeline in step.
+        if ($designRequest->pipeline_status !== null) {
+            return redirect()->route('admin.custom-orders.show', $designRequest->id)
+                ->with('success', 'This request is handled in Custom Orders. Log the call here.');
+        }
+
         $designRequest->update(['admin_contacted_at' => now()]);
 
         Notification::create([
@@ -79,6 +87,12 @@ class DesignRequestController extends Controller
         ]);
 
         $designRequest = CustomDesignRequest::where('status', 'approved')->findOrFail($id);
+
+        if ($designRequest->pipeline_status !== null) {
+            return redirect()->route('admin.custom-orders.show', $designRequest->id)
+                ->with('success', 'This request is handled in Custom Orders. Decline it here.');
+        }
+
         $designRequest->update([
             'status'       => 'declined',
             'admin_notes'  => $request->admin_notes,

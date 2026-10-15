@@ -471,7 +471,7 @@ class CustomOrderSubmissionTest extends TestCase
 
     /* ───────────── old admin buttons still work ───────────── */
 
-    public function test_admin_mark_contacted_and_reject_still_work_on_submitted_requests(): void
+    public function test_old_admin_buttons_hand_submitted_requests_to_custom_orders(): void
     {
         $ana   = $this->customer();
         $admin = $this->makeUser('admin');
@@ -482,11 +482,15 @@ class CustomOrderSubmissionTest extends TestCase
             $this->actingAs($ana)->post(route('design.sendToTeam', $r->id), $this->payload(['suggestion_id' => $sg[0]->id]));
         }
 
-        $this->actingAs($admin, 'admin')->post(route('admin.design-requests.contacted', $request->id))->assertRedirect();
-        $this->assertNotNull($request->fresh()->admin_contacted_at);
+        // Since Stage 4 these requests are worked from Custom Orders; the
+        // old buttons redirect there instead of bypassing the pipeline.
+        $this->actingAs($admin, 'admin')->post(route('admin.design-requests.contacted', $request->id))
+            ->assertRedirect(route('admin.custom-orders.show', $request->id));
+        $this->assertNull($request->fresh()->admin_contacted_at);
 
         $this->actingAs($admin, 'admin')->post(route('admin.design-requests.reject', $second->id), ['admin_notes' => 'Not feasible'])
-            ->assertRedirect();
-        $this->assertSame('declined', $second->fresh()->status);
+            ->assertRedirect(route('admin.custom-orders.show', $second->id));
+        $this->assertSame('approved', $second->fresh()->status);
+        $this->assertSame('submitted', $second->fresh()->pipeline_status);
     }
 }

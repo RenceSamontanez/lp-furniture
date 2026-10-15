@@ -11,6 +11,13 @@
   <div class="admin-toast admin-toast-success" style="margin:0 0 20px;">{{ session('success') }}</div>
 @endif
 
+@if($designRequest->pipeline_status !== null)
+  <div class="admin-toast admin-toast-success" style="margin:0 0 20px;">
+    This request was sent through the customer form. Work it in
+    <a href="{{ route('admin.custom-orders.show', $designRequest->id) }}" style="font-weight:700;">Custom Orders</a>.
+  </div>
+@endif
+
 @php
   $selected = $designRequest->suggestions->firstWhere('is_selected', true) ?? $designRequest->suggestions->first();
 @endphp
@@ -140,7 +147,7 @@
          act without navigating back. List view keeps its own copy
          too, for fast triage across many requests without opening
          each one. --}}
-    @if($designRequest->status === 'approved')
+    @if($designRequest->status === 'approved' && $designRequest->pipeline_status === null)
       <div class="admin-panel">
         <div class="admin-panel-header"><div class="admin-panel-title">Actions</div></div>
         <div class="admin-panel-body">

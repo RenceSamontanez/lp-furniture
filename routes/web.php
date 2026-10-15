@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\ChatbotIntentController;
 use App\Http\Controllers\Admin\DesignRequestController;
+use App\Http\Controllers\Admin\CustomOrderController;
 use App\Http\Controllers\Admin\BusinessSettingController;
 
 
@@ -217,6 +218,15 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     Route::get('/orders',              [AdminController::class, 'ordersIndex'])->name('orders.index'); // List all orders
     Route::get('/orders/{id}',          [AdminController::class, 'orderShow'])->name('orders.show'); // Show a specific order
     Route::post('/orders/{id}/status',  [AdminController::class, 'orderUpdateStatus'])->name('orders.updateStatus'); // Update order status
+
+    // ────────────────
+    // Custom Orders (requests sent to the team through the customer form)
+    // ────────────────
+    Route::get('/custom-orders',                       [CustomOrderController::class, 'index'])->name('custom-orders.index');
+    Route::get('/custom-orders/{id}',                  [CustomOrderController::class, 'show'])->name('custom-orders.show')->whereNumber('id');
+    Route::post('/custom-orders/{id}/calls',           [CustomOrderController::class, 'logCall'])->name('custom-orders.calls')->whereNumber('id');
+    Route::post('/custom-orders/{id}/unreachable',     [CustomOrderController::class, 'markUnreachable'])->name('custom-orders.unreachable')->whereNumber('id');
+    Route::post('/custom-orders/{id}/decline',         [CustomOrderController::class, 'decline'])->name('custom-orders.decline')->whereNumber('id');
 
     // ────────────────
     // AI Custom Design Requests

@@ -1,0 +1,101 @@
+/* ============================================================
+   ADMIN: Custom Orders (list + detail). Builds on admin.css.
+============================================================ */
+
+/* Status chips (same shape as .admin-pill, pipeline colours) */
+.co-chip {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.co-chip--submitted            { background: #E5F0FB; color: #2E6DA4; }
+.co-chip--contacting           { background: #FEF0D8; color: #92600C; }
+.co-chip--unreachable          { background: #F3E8FB; color: #7B4FB8; }
+.co-chip--quoted,
+.co-chip--accepted,
+.co-chip--ordered              { background: #DDF5E8; color: #1B7A46; }
+.co-chip--expired,
+.co-chip--cancelled            { background: #EDE8E0; color: #6B5D52; }
+.co-chip--declined_by_admin,
+.co-chip--declined_by_customer { background: #FBE0E0; color: #C0392B; }
+
+/* Count strip */
+.co-counts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.co-count {
+  display: block;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1.5px solid #E8DFD0;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: border-color .2s;
+}
+.co-count:hover { border-color: var(--gold); }
+.co-count.active { border-color: var(--brown-deep); }
+.co-count-num { font-size: 20px; font-weight: 700; color: #2A1810; line-height: 1.2; }
+.co-count-label { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+
+/* Search */
+.co-search { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.co-search .form-input { flex: 1; min-width: 220px; padding: 10px 14px; font-size: 13px; }
+
+/* Detail layout */
+.co-detail { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: flex-start; }
+.co-dl { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 0; }
+.co-dl dt { font-size: 11px; color: var(--text-muted); margin: 0 0 3px; }
+.co-dl dd { font-size: 13px; color: #2A1810; font-weight: 500; margin: 0; overflow-wrap: anywhere; }
+.co-dl a { color: #92600C; text-decoration: none; }
+.co-dl a:hover { text-decoration: underline; }
+.co-block-label {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .4px; color: var(--text-muted); margin: 18px 0 6px;
+}
+.co-quote {
+  font-size: 13.5px; color: #2A1810; line-height: 1.6; white-space: pre-line;
+  padding: 12px 14px; background: var(--cream); border-radius: 10px;
+}
+.co-design-frame { max-width: 360px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+.co-design-frame img { width: 100%; display: block; }
+.co-noimage { font-size: 12.5px; font-weight: 600; color: #92600C; }
+
+/* Forms in the side column */
+.co-action-form { margin-bottom: 18px; }
+.co-action-title { font-size: 12.5px; font-weight: 700; color: #2A1810; margin-bottom: 8px; }
+.co-radio-row { display: flex; gap: 16px; margin-bottom: 10px; font-size: 13px; }
+.co-radio-row label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.co-radio-row input { accent-color: var(--gold); }
+.co-action-form textarea { font-size: 13px; margin-bottom: 10px; }
+.co-hint { font-size: 11.5px; color: var(--text-muted); margin: 0 0 10px; }
+.co-note-closed { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin: 0; }
+.co-error {
+  background: #FEF2F2; border: 1px solid #FCA5A5; color: #B04040;
+  border-radius: 10px; padding: 10px 14px; margin-bottom: 18px; font-size: 13px; line-height: 1.5;
+}
+.co-btn-disabled { opacity: .55; cursor: not-allowed; width: 100%; }
+
+/* Call log + timeline */
+.co-log { list-style: none; margin: 0; padding: 0; }
+.co-log li { padding: 10px 0; border-bottom: 1px solid #EFE7DA; font-size: 12.5px; color: #3D3129; }
+.co-log li:last-child { border-bottom: 0; }
+.co-log-meta { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+.co-timeline { list-style: none; margin: 0; padding: 0 0 0 16px; border-left: 2px solid #E8DFD0; }
+.co-timeline li { position: relative; padding: 0 0 16px 14px; font-size: 12.5px; color: #3D3129; }
+.co-timeline li:last-child { padding-bottom: 0; }
+.co-timeline li::before {
+  content: ""; position: absolute; left: -22px; top: 4px;
+  width: 10px; height: 10px; border-radius: 50%; background: var(--gold);
+}
+.co-timeline-when { font-size: 11.5px; color: var(--text-muted); }
+
+@media (max-width: 900px) {
+  .co-detail { grid-template-columns: 1fr; }
+  .co-dl { grid-template-columns: 1fr; }
+}

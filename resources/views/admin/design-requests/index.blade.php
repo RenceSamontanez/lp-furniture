@@ -69,8 +69,12 @@
               </td>
               <td data-label="Actions">
                 <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                  <a href="{{ route('admin.design-requests.show', $req->id) }}" class="admin-btn admin-btn-outline">View</a>
-                  @if($req->status === 'approved')
+                  @if($req->pipeline_status !== null)
+                    <a href="{{ route('admin.custom-orders.show', $req->id) }}" class="admin-btn admin-btn-gold">Open in Custom Orders</a>
+                  @else
+                    <a href="{{ route('admin.design-requests.show', $req->id) }}" class="admin-btn admin-btn-outline">View</a>
+                  @endif
+                  @if($req->status === 'approved' && $req->pipeline_status === null)
                     <form method="POST" action="{{ route('admin.design-requests.contacted', $req->id) }}">
                       @csrf
                       <button type="submit" class="admin-btn admin-btn-success">Mark Contacted</button>
