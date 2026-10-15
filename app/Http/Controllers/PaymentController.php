@@ -98,49 +98,21 @@ class PaymentController extends Controller
         $stripe = new StripeClient(config('services.stripe.secret'));
 
         try {
-            $session = $stripe->checkout->sessions->retrieve($request->session_id);
-
             // session_id comes from the URL's query string, which a
             // customer can freely edit to name a DIFFERENT Stripe
             // session — one they legitimately paid for a different
-            // (e.g. cheaper) order of their own. payment_status==='paid'
-            // on its own only proves SOME session was paid, not that
-            // THIS order was. Cross-check the order_id metadata set at
-            // session creation (stripeCreateSession()) and the charged
-            // amount against this order's own Payment row.
-            $belongsToOrder = (string) ($session->metadata->order_id ?? null) === (string) $order->id;
-            $amountMatches  = (int) $session->amount_total === (int) round((float) $order->payment->amount * 100);
+            // (e.g. cheaper) order of their own. Passing $order->id as
+            // the expected order makes confirmStripeSession() refuse
+            // that session outright instead of confirming the wrong
+            // order. The webhook below doesn't pass one, since there
+            // it's deriving the order FROM the session's own (trusted,
+            // signature-verified) metadata rather than a URL a visitor
+            // can edit.
+            $session = $stripe->checkout->sessions->retrieve($request->session_id);
 
-            if ($session->payment_status === 'paid' && $belongsToOrder && $amountMatches) {
-
-                // Same principle as stripeCreateSession() — only touch
-                // the fields this step owns. amount/payment_type/
-                // installment_* were already set correctly at checkout.
-                Payment::where('order_id', $order->id)->update([
-                    'payment_status'           => 'paid',
-                    'stripe_payment_intent_id' => $session->payment_intent,
-                    'stripe_charge_id'         => $session->payment_intent,
-                    'stripe_customer_id'       => $session->customer,
-                    'paid_at'                  => now(),
-                ]);
-
-                $order->update(['order_status' => 'confirmed']);
-
-                Notification::create([
-                    'user_id' => Auth::id(),
-                    'title'   => 'Payment Successful',
-                    'message' => "Your payment for order {$order->order_number} was successful. Your order is now confirmed!",
-                    'type'    => 'payment_confirmed',
-                    'url'     => route('orders.show', $order->id),
-                    'is_read' => false,
-                ]);
-
+            if ($this->confirmStripeSession($session, $order->id)) {
                 return redirect()->route('payment.confirmed', $order->id)
                     ->with('success', 'Payment successful! Your order is confirmed.');
-            }
-
-            if ($session->payment_status === 'paid' && (!$belongsToOrder || !$amountMatches)) {
-                \Log::warning("Stripe session {$session->id} is paid but doesn't match order {$order->id} (order_id or amount mismatch) — refusing to confirm.");
             }
 
         } catch (\Exception $e) {
@@ -149,6 +121,75 @@ class PaymentController extends Controller
 
         return redirect()->route('payment.stripe', $order->id)
             ->withErrors(['payment' => 'We could not verify your payment. Please try again or contact support.']);
+    }
+
+    /* ════════════════════════════════
+       CONFIRM A PAID STRIPE CHECKOUT SESSION
+       Shared by stripeSuccess() (the customer's browser returning from
+       Stripe) and handleWebhook() (Stripe's own server notifying us
+       directly) — both are real, independent confirmation paths for
+       the exact same event, so they go through one method rather than
+       two copies that could quietly drift apart. $expectedOrderId is
+       only ever passed by stripeSuccess(): the webhook already trusts
+       the session's own metadata (verified by Stripe's signature), so
+       it has nothing external to cross-check it against.
+    ════════════════════════════════ */
+    private function confirmStripeSession($session, ?int $expectedOrderId = null): bool
+    {
+        $metadataOrderId = $session->metadata->order_id ?? null;
+
+        if (!$metadataOrderId) {
+            return false;
+        }
+
+        if ($expectedOrderId !== null && (string) $metadataOrderId !== (string) $expectedOrderId) {
+            \Log::warning("Stripe session {$session->id} names order {$metadataOrderId} but was presented for order {$expectedOrderId} — refusing to confirm.");
+            return false;
+        }
+
+        $order = Order::with('payment')->find($metadataOrderId);
+
+        if (!$order || !$order->payment) {
+            return false;
+        }
+
+        // Idempotent: the browser return and the webhook can both
+        // arrive for the same payment — the second one is a no-op,
+        // not a second confirmation or a second notification.
+        if ($order->payment->payment_status === 'paid') {
+            return true;
+        }
+
+        $amountMatches = (int) $session->amount_total === (int) round((float) $order->payment->amount * 100);
+
+        if ($session->payment_status !== 'paid' || !$amountMatches) {
+            \Log::warning("Stripe session {$session->id} for order {$order->id}: payment_status={$session->payment_status}, amount_matches=" . ($amountMatches ? 'yes' : 'no') . ' — refusing to confirm.');
+            return false;
+        }
+
+        // Same principle as stripeCreateSession() — only touch the
+        // fields this step owns. amount/payment_type/installment_*
+        // were already set correctly at checkout.
+        Payment::where('order_id', $order->id)->update([
+            'payment_status'           => 'paid',
+            'stripe_payment_intent_id' => $session->payment_intent,
+            'stripe_charge_id'         => $session->payment_intent,
+            'stripe_customer_id'       => $session->customer,
+            'paid_at'                  => now(),
+        ]);
+
+        $order->update(['order_status' => 'confirmed']);
+
+        Notification::create([
+            'user_id' => $order->user_id,
+            'title'   => 'Payment Successful',
+            'message' => "Your payment for order {$order->order_number} was successful. Your order is now confirmed!",
+            'type'    => 'payment_confirmed',
+            'url'     => route('orders.show', $order->id),
+            'is_read' => false,
+        ]);
+
+        return true;
     }
 
     /* ════════════════════════════════
@@ -387,6 +428,17 @@ class PaymentController extends Controller
        HMAC-SHA256 + timestamp-tolerance scheme the same way the
        PayMongo webhook does it by hand) — rejects with 400 if the
        "Stripe-Signature" header is missing or doesn't match.
+
+       This is the reliable confirmation path — stripeSuccess() above
+       covers the common case (the customer's browser completes the
+       return_url redirect), but this covers the case where they close
+       the tab, their session expires, or the redirect otherwise never
+       arrives. checkout.session.async_payment_succeeded covers
+       payment methods that confirm asynchronously rather than at
+       checkout completion; both events carry the same Checkout
+       Session object in data.object, so confirmStripeSession() handles
+       them identically. Any other event type is acknowledged and
+       ignored — Stripe only needs to know we received it.
     ════════════════════════════════ */
     public function handleWebhook(Request $request)
     {
@@ -402,6 +454,10 @@ class PaymentController extends Controller
         }
 
         \Log::info('Stripe webhook received: ' . $event->type);
+
+        if (in_array($event->type, ['checkout.session.completed', 'checkout.session.async_payment_succeeded'])) {
+            $this->confirmStripeSession($event->data->object);
+        }
 
         return response()->json(['status' => 'received']);
     }

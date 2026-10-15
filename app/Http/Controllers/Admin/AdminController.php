@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Support\SafeIntendedUrl;
 use App\Models\User;
 use App\Models\UserValidation;
 use App\Models\Notification;
@@ -68,7 +69,7 @@ class AdminController extends Controller
 
             $request->session()->regenerate();
 
-            return redirect()->route('admin.dashboard')
+            return redirect(SafeIntendedUrl::resolve($request, route('admin.dashboard'), adminArea: true))
                 ->with('success', 'Welcome back, ' . Auth::guard('admin')->user()->first_name . '.');
         }
 

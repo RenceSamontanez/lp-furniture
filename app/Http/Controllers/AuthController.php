@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Support\SafeIntendedUrl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -104,7 +105,7 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
-            return redirect()->route('home')
+            return redirect(SafeIntendedUrl::resolve($request, route('home')))
                 ->with('success', 'Welcome back, ' . Auth::user()->first_name . '!');
         }
     
@@ -414,7 +415,7 @@ return redirect()->route('verification.notice')
                 ->with('success', 'Signed in with Google! Please verify your identity to place orders.');
         }
 
-        return redirect()->route('home')
+        return redirect(SafeIntendedUrl::resolve(request(), route('home')))
             ->with('success', 'Welcome back, ' . $user->first_name . '!');
     }
 
