@@ -56,6 +56,35 @@ class PhoneRequirementTest extends TestCase
         ], $overrides));
     }
 
+    public function test_form_without_address_field_keeps_stored_address(): void
+    {
+        $user = $this->makeUser();
+        $user->forceFill(['phone_number' => '09171234567', 'address' => 'Lipa City'])->save();
+
+        // what the Security tab's password form sends: no address field
+        $this->actingAs($user)->from(route('profile'))->put(route('profile.update'), [
+            'first_name'            => 'Ana',
+            'last_name'             => 'Cruz',
+            'phone_number'          => '09171234567',
+            'password'              => 'NewPassw0rd!',
+            'password_confirmation' => 'NewPassw0rd!',
+        ])->assertSessionHasNoErrors();
+
+        $this->assertSame('Lipa City', $user->fresh()->address);
+    }
+
+    public function test_form_with_address_still_updates_it(): void
+    {
+        $user = $this->makeUser();
+        $user->forceFill(['phone_number' => '09171234567', 'address' => 'Lipa City'])->save();
+
+        $this->saveProfile($user, ['address' => 'Batangas City'])->assertSessionHasNoErrors();
+        $this->assertSame('Batangas City', $user->fresh()->address);
+
+        $this->saveProfile($user, ['address' => ''])->assertSessionHasNoErrors();
+        $this->assertNull($user->fresh()->address);
+    }
+
     public function test_profile_save_normalizes_a_new_number(): void
     {
         $user = $this->makeUser();

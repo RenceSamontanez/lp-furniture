@@ -341,7 +341,11 @@ return redirect()->route('verification.notice')
         $user->phone_number = $phoneUnchanged
             ? $user->phone_number
             : PhilippineMobile::normalize($submittedPhone);
-        $user->address      = $request->address;
+        // Only forms that carry the field may change it (the Security tab
+        // form doesn't send it); an explicitly empty value still clears it.
+        if ($request->has('address')) {
+            $user->address = $request->address;
+        }
 
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
