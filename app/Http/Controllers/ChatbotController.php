@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BusinessSetting;
 use App\Models\ChatbotIntent;
 use App\Models\ChatbotLog;
 use App\Models\Product;
@@ -24,7 +25,8 @@ class ChatbotController extends Controller
             $keywords = array_map('trim', explode(',', strtolower($intent->keywords)));
             foreach ($keywords as $keyword) {
                 if ($keyword && str_contains($message, $keyword)) {
-                    $response    = $intent->response;
+                    // {{phone}} / {{email}} / {{facebook}} → Admin → Contact Settings
+                    $response    = BusinessSetting::applyPlaceholders($intent->response);
                     $suggestions = array_map('trim', explode(',', $intent->suggestions ?? ''));
                     break 2;
                 }

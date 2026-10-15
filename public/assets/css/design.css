@@ -2047,3 +2047,59 @@
     padding: 2px 9px;
   }
 }
+/* ═══ Contact strip (design request page) ═══ */
+.cd-contact-strip {
+  max-width: 680px;
+  margin: 28px auto 0;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+}
+
+.cd-contact-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-dark, #2A211B);
+  margin-bottom: 10px;
+}
+
+.cd-contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+}
+
+.cd-contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-muted, #6B5E54);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.cd-contact-link svg { color: var(--gold); flex-shrink: 0; }
+.cd-contact-link:hover { color: var(--gold); }
+
+.cd-contact-messenger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: auto;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #0866FF;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.cd-contact-messenger:hover { background: #0757D9; }
+
+@media (max-width: 560px) {
+  .cd-contact-messenger { margin-left: 0; width: 100%; justify-content: center; }
+}

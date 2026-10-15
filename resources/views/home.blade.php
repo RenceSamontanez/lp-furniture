@@ -511,7 +511,7 @@
       <div class="footer-brand">LP <span>Furniture</span></div>
       <p class="footer-desc">Handcrafted Philippine hardwood furniture, built to last. Based in San Juan, Batangas since 2020.</p>
       <div class="footer-social">
-        <a href="#" class="footer-social-icon" aria-label="Facebook">
+        <a href="{{ \App\Models\BusinessSetting::current()->facebook_url }}" class="footer-social-icon" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
         </a>
         <a href="#" class="footer-social-icon" aria-label="Instagram">

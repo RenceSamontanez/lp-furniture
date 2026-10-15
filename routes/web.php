@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\ChatbotIntentController;
 use App\Http\Controllers\Admin\DesignRequestController;
+use App\Http\Controllers\Admin\BusinessSettingController;
 
 
 
@@ -289,4 +290,8 @@ Route::get('/chatbot/{id}/edit', [ChatbotIntentController::class, 'edit'])->name
 Route::put('/chatbot/{id}', [ChatbotIntentController::class, 'update'])->name('chatbot.update');
 Route::post('/chatbot/{id}/toggle', [ChatbotIntentController::class, 'toggleActive'])->name('chatbot.toggle');
 Route::delete('/chatbot/{id}', [ChatbotIntentController::class, 'destroy'])->name('chatbot.destroy');
+
+// Contact Settings (phone / email / Facebook shown to customers)
+Route::get('/settings/contact', [BusinessSettingController::class, 'edit'])->name('settings.contact.edit');
+Route::put('/settings/contact', [BusinessSettingController::class, 'update'])->name('settings.contact.update');
 });

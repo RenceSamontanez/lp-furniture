@@ -33,6 +33,10 @@
         <label class="form-label">Response</label>
         <textarea name="response" class="form-input" rows="4" required
                   placeholder="The message the chatbot will reply with when matched">{{ old('response', $intent->response) }}</textarea>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">
+          Use <code>@{{phone}}</code>, <code>@{{email}}</code> or <code>@{{facebook}}</code> to insert the current values from
+          <a href="{{ route('admin.settings.contact.edit') }}" style="color:var(--gold);">Contact Settings</a> — don't type the number or address directly.
+        </div>
       </div>
 
       <div style="margin-bottom:16px;">
