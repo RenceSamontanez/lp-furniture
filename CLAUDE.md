@@ -74,12 +74,14 @@ Auth itself is hand-rolled in `AuthController` (no Breeze/Jetstream/Fortify) —
 
 ### Payments
 
-- **Stripe**: direct `Stripe\StripeClient` usage in `PaymentController` (Checkout Sessions) — no Laravel Cashier. Webhook events are persisted to `StripeWebhookEvent` for idempotency. Config comes from `config('services.stripe.*')` / `STRIPE_KEY`, `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`.
+- **Stripe**: direct `Stripe\StripeClient` usage in `PaymentController` (Checkout Sessions) — no Laravel Cashier. The Stripe webhook (`handleWebhook`) verifies the signature with Stripe's SDK and confirms through the same `confirmStripeSession()` the browser return uses; idempotency comes from the `payment_status === 'paid'` check there, **not** from `StripeWebhookEvent` — that model/table exists but nothing writes to it. Config comes from `config('services.stripe.*')` / `STRIPE_KEY`, `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`.
 - **GCash**: real payment gateway via PayMongo's Payment Intent API (`PaymentController::paymongoForm`/`paymongoCreateIntent`/`paymongoSuccess`/`paymongoWebhook`), test mode (`pk_test_`/`sk_test_`). Config comes from `config('services.paymongo.*')` / `PAYMONGO_PUBLIC_KEY`, `PAYMONGO_SECRET_KEY`, `PAYMONGO_WEBHOOK_SECRET`. The earlier manual receipt-upload flow (customer uploads a screenshot, admin approves/rejects) was removed — it had become unreachable dead code once every path (checkout, the order page's resume action, the payment-method switcher) routed GCash through PayMongo exclusively.
 
 ### AI custom design feature
 
 `CustomDesignController` + `CustomDesignRequest`/`AiDesignSuggestion` models. `.env.example` shows multiple possible providers wired via `config/services.php`: `GEMINI_API_KEY`, `HUGGINGFACE_API_KEY`, `DEEPAI_API_KEY`, `OPENAI_API_KEY` (the latter via `openai-php/laravel`). Check `config/services.php` and the controller to see which provider is actually active before assuming.
+
+**Planned, not built:** turning an AI design request into a phone-confirmed, recorded agreement and a custom order (quotes, agreement records, payment ledger) is planned in [`docs/custom-orders-plan.md`](docs/custom-orders-plan.md). The "Approved decisions and changes" section at the end of that file overrides the plan above it. Read it before touching design requests, orders or payments for this feature.
 
 ### Models — key relationships
 
@@ -113,17 +115,39 @@ NOT APPLICABLE:
   path — nothing writes that column anymore, so there's nothing left
   to duplicate.
 
-NOT STARTED (do these next, in order):
-- #6 Switch login lockout from IP-based to account-based
-- #7 Restrict AI Design prompts to furniture-related content only
-- #8 Add admin action audit trail (who approved/verified what)
-- #9 Per-user daily cap on AI Design generation
-- #10 Prevent duplicate order submission (double-click Place Order)
-- #11 Verify installment_schedules rows actually get created at checkout
-- #12 Shorter admin session timeout than customer sessions
-- #13 Client-side inactivity warning before session expiry
+ALSO DONE (found already built, with the commit/code that did it):
+- #6 Account-based login lockout — customer and admin login are both
+  keyed on the email being attempted, not the IP (commit `45cb925`)
+- #7 AI Design prompts restricted to furniture — `FurnitureTopic` rule on
+  the prompt in `CustomDesignController::submit`
+- #9 Per-user daily AI Design cap — `DAILY_GENERATION_LIMIT` (3, failed
+  attempts don't count) and `DAILY_ATTEMPT_LIMIT` (6) in
+  `CustomDesignController`
+- #10 Duplicate order submission — `OrderController::findRecentDuplicateOrder`
+  (same user, total and items within 10 seconds)
+- #11 Installment schedule rows — created in `placeOrder` by
+  `createInstallmentSchedule()`. Implemented, but not covered by an
+  automated test.
 
-When asked to "do the next item" or "do #5," work from this list.
+SUPERSEDED:
+- #12 Shorter admin session timeout — commit `719515b` added
+  `CheckAdminTimeout` (30 min) when customers had 120 min; commit
+  `9e98886` then set `SESSION_LIFETIME=30` too, so customer and admin
+  idle timeouts are now both 30 minutes by design.
+
+PARTIAL / NOT STARTED:
+- #8 Admin action audit trail — PARTIAL. Orders record `status_updated_by`,
+  payments `verified_by`, validations `reviewed_by`. Not recorded: who
+  marked an installment paid, who marked a design request contacted or
+  declined, who approved/rejected a review.
+- #13 Client-side inactivity warning before session expiry — NOT STARTED.
+  There is a "Please log in to continue" notice after expiry (`719515b`),
+  but no warning before it.
+- #4b still open: schedule `orders:release-abandoned` (`routes/console.php`
+  only contains the default `inspire` command).
+
+When asked to "do the next item," work from the PARTIAL / NOT STARTED list
+above.
 
 
 ## Note on frontend approach
