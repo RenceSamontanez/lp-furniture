@@ -38,8 +38,8 @@
         @foreach($items as $suggestion)
           <div class="cd-history-card">
             <div class="cd-gallery-item"
-                 onclick="openDesignModal({{ $suggestion->design_id }}, {{ $suggestion->id }}, '{{ $suggestion->image_path }}', '{{ addslashes($suggestion->request->furniture_type ?? 'Custom Furniture') }}', '{{ addslashes(Str::limit($suggestion->request->description, 150)) }}', '{{ $suggestion->request->status }}', true)">
-              <img src="{{ $suggestion->image_path }}" alt="Saved design"
+                 onclick="openDesignModal({{ $suggestion->design_id }}, {{ $suggestion->id }}, '{{ $suggestion->displayUrl() }}', '{{ addslashes($suggestion->request->furniture_type ?? 'Custom Furniture') }}', '{{ addslashes(Str::limit($suggestion->request->description, 150)) }}', '{{ $suggestion->request->status }}', true)">
+              <img src="{{ $suggestion->displayUrl() }}" alt="Saved design"
                    onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
             </div>
 
@@ -62,85 +62,104 @@
         <p>Your generated designs will appear here.</p>
       </div>
     @else
-      {{-- Every past request, not just successful ones — a log,
-           not just a gallery. Success rows are clickable (open the
-           real result); Failed/In-Progress rows are plain, non-
-           interactive divs with no onclick at all, not just a
-           disabled-looking clickable element. --}}
-      <div class="cd-history-log">
-        @foreach($items as $req)
-          @php
-            $img = $req->suggestions->firstWhere('is_selected', true) ?? $req->suggestions->first();
-            $isSuccess = $req->suggestions->count() > 0;
-            $isFailed  = !$isSuccess && $req->status === 'rejected';
-          @endphp
+      {{-- ═══════════════════════════════════
+           PLAYLIST-STYLE HISTORY — every past request, not just
+           successful ones. Brand-new "cd-plist-*" classes throughout
+           so this redesign can't bleed into the dashboard strip
+           (cd-history-grid/cd-history-thumb in design/index.blade.php)
+           or the Favorites tab above, which both keep their original
+           markup untouched.
+      ═══════════════════════════════════ --}}
+      @foreach($grouped as $label => $group)
+        <div class="cd-plist-group-header">{{ $label }}</div>
 
-          @if($isSuccess)
-            <div class="cd-history-row cd-history-row--success" role="button" tabindex="0"
-                 onclick="openDesignModal({{ $req->id }}, {{ $img->id }}, '{{ $img->image_path }}', '{{ addslashes($req->furniture_type ?? 'Custom Furniture') }}', '{{ addslashes(Str::limit($req->description, 150)) }}', '{{ $req->status }}', {{ $img->is_favorited ? 'true' : 'false' }})">
-              <div class="cd-history-row-thumb">
-                <img src="{{ $img->image_path }}" alt="{{ $req->furniture_type ?: 'Custom design' }}"
-                     onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
+        <div class="cd-plist">
+          @foreach($group as $req)
+            @php
+              $isReady = $req->hasLoadableSuggestion();
+              $img = $isReady ? ($req->loadableSuggestions()->firstWhere('is_selected', true) ?? $req->loadableSuggestions()->first()) : null;
+              $isGenerating = !$isReady && $req->status === 'pending';
+              $isFailed = !$isReady && !$isGenerating;
+              $metaParts = array_filter([$req->furniture_type, $req->preferred_material, $req->dimensions]);
+            @endphp
+
+            <div class="cd-plist-row {{ $isReady ? 'cd-plist-row--ready' : ($isGenerating ? 'cd-plist-row--generating' : 'cd-plist-row--failed') }}"
+                 @if($isReady)
+                   role="button" tabindex="0"
+                   onclick="openDesignModal({{ $req->id }}, {{ $img->id }}, '{{ $img->displayUrl() }}', '{{ addslashes($req->furniture_type ?? 'Custom Furniture') }}', '{{ addslashes(Str::limit($req->description, 150)) }}', '{{ $req->status }}', {{ $img->is_favorited ? 'true' : 'false' }})"
+                 @endif
+            >
+              @if($isReady)
+                <div class="cd-plist-thumb">
+                  <img src="{{ $img->displayUrl() }}" alt="{{ $req->furniture_type ?: 'Custom design' }}"
+                       onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
+                </div>
+              @elseif($isGenerating)
+                <div class="cd-plist-thumb cd-plist-thumb--generating">
+                  <span class="cd-plist-spinner"></span>
+                </div>
+              @else
+                <div class="cd-plist-thumb cd-plist-thumb--failed">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                </div>
+              @endif
+
+              <div class="cd-plist-body">
+                <div class="cd-plist-title">{{ Str::limit($req->description, 110) }}</div>
+
+                @if(count($metaParts) > 0)
+                  <div class="cd-plist-submeta">{{ implode(' · ', $metaParts) }}</div>
+                @endif
+
+                <div class="cd-plist-meta">
+                  <span class="cd-plist-time" title="{{ $req->created_at->format('M j, Y g:i A') }}">
+                    {{ $req->created_at->diffForHumans() }}
+                  </span>
+
+                  {{-- Reserved for a future "negotiation status" chip
+                       (Sent to team, Quote ready, etc.) — intentionally
+                       left empty for now. --}}
+                  <span class="cd-plist-negotiation"></span>
+                </div>
+
+                @if($isFailed)
+                  <div class="cd-plist-failed-reason">{{ $req->failureReasonLabel() }}</div>
+                @endif
               </div>
 
-              <div class="cd-history-row-content">
-                <div class="cd-history-row-title">{{ Str::limit($req->description, 90) }}</div>
-                <div class="cd-history-row-meta">
-                  <span class="cd-history-row-time">{{ $req->created_at->diffForHumans() }}</span>
-                  <span class="cd-history-badge cd-history-badge--success">
+              <div class="cd-plist-side">
+                @if($isReady)
+                  <span class="cd-plist-chip cd-plist-chip--ready">
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
                     Ready
                   </span>
-                </div>
-              </div>
-
-              <button type="button" class="cd-save-btn-icon js-save-heart {{ $img->is_favorited ? 'saved' : '' }}"
-                      data-suggestion-id="{{ $img->id }}" title="Save to favorites"
-                      onclick="event.stopPropagation()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="{{ $img->is_favorited ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="2">
-                  <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
-                </svg>
-              </button>
-            </div>
-
-          @elseif($isFailed)
-            <div class="cd-history-row cd-history-row--failed">
-              <div class="cd-history-row-icon cd-history-row-icon--failed">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-              </div>
-
-              <div class="cd-history-row-content">
-                <div class="cd-history-row-title">{{ Str::limit($req->description, 90) }}</div>
-                <div class="cd-history-row-meta">
-                  <span class="cd-history-row-time">{{ $req->created_at->diffForHumans() }}</span>
-                  <span class="cd-history-badge cd-history-badge--failed">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-                    Failed
-                  </span>
-                </div>
-              </div>
-            </div>
-
-          @else
-            <div class="cd-history-row cd-history-row--pending">
-              <div class="cd-history-row-icon cd-history-row-icon--pending">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
-              </div>
-
-              <div class="cd-history-row-content">
-                <div class="cd-history-row-title">{{ Str::limit($req->description, 90) }}</div>
-                <div class="cd-history-row-meta">
-                  <span class="cd-history-row-time">{{ $req->created_at->diffForHumans() }}</span>
-                  <span class="cd-history-badge cd-history-badge--pending">
+                @elseif($isGenerating)
+                  <span class="cd-plist-chip cd-plist-chip--generating">
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
                     Generating…
                   </span>
-                </div>
+                @else
+                  <span class="cd-plist-chip cd-plist-chip--failed">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                    Failed
+                  </span>
+                  <a href="{{ route('design.index', ['prompt' => $req->description]) }}"
+                     class="cd-plist-retry-btn" onclick="event.stopPropagation()">
+                    Try again
+                  </a>
+                @endif
               </div>
             </div>
-          @endif
+          @endforeach
+        </div>
+      @endforeach
 
-        @endforeach
+      <div class="cd-plist-pagination">
+        {{-- bootstrap-5 view: plain semantic .pagination/.page-item/
+             .page-link classes, styled to match below — the default
+             tailwind view would render unstyled since this storefront
+             never loads compiled Tailwind CSS. --}}
+        {{ $items->appends(['tab' => 'history'])->links('pagination::bootstrap-5') }}
       </div>
     @endif
 

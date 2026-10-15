@@ -70,7 +70,7 @@
       <div class="admin-panel-body">
         @if($selected)
           <div style="max-width:360px;border-radius:12px;overflow:hidden;border:1px solid var(--border);">
-            <img src="{{ $selected->image_path }}" alt="Generated design" style="width:100%;display:block;"
+            <img src="{{ $selected->displayUrl() }}" alt="Generated design" style="width:100%;display:block;"
                  onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
           </div>
           @if($designRequest->suggestions->count() > 1)

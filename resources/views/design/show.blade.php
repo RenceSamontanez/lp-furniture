@@ -77,7 +77,7 @@
       <h3 class="cd-failure-title">We Couldn't Generate Your Design</h3>
 
       <p class="cd-failure-reason">
-        Our AI providers were temporarily unavailable or rate-limited when processing your request.
+        {{ $designRequest->failureReasonLabel() }}.
         This is usually a short-term issue on the provider's side, not a problem with your description.
       </p>
 
@@ -129,13 +129,18 @@
       </div>
     </div>
 
-  @elseif($designRequest->suggestions->count() > 0)
+  @elseif($designRequest->hasLoadableSuggestion())
 
     {{-- ═══════════════════════════════════
          RESULTS: hero + concept gallery
+         Only ever built from LOADABLE suggestions — see PART 1 of the
+         image-reliability fix. A row whose image_path is a legacy
+         external URL (from before every provider saved locally) is
+         left out here entirely rather than shown and left to fail
+         via onerror.
     ═══════════════════════════════════ --}}
     @php
-      $suggestions = $designRequest->suggestions;
+      $suggestions = $designRequest->loadableSuggestions();
       $selected = $suggestions->firstWhere('is_selected', true) ?? $suggestions->first();
       $isFinal = in_array($designRequest->status, ['approved', 'converted_to_order']);
     @endphp
@@ -143,7 +148,7 @@
     <div class="ai-results-card">
 
       <div class="ai-preview-main">
-        <img src="{{ $selected->image_path }}" alt="Selected design" class="ai-preview-img" id="ai-preview-img"
+        <img src="{{ $selected->displayUrl() }}" alt="Selected design" class="ai-preview-img" id="ai-preview-img"
              onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
       </div>
 
@@ -153,8 +158,8 @@
         @foreach($suggestions as $suggestion)
           <div class="ai-concept-thumb {{ $suggestion->id === $selected->id ? 'selected' : '' }}"
                data-id="{{ $suggestion->id }}"
-               data-src="{{ $suggestion->image_path }}">
-            <img src="{{ $suggestion->image_path }}" alt="Concept" onclick="selectConcept(this.closest('.ai-concept-thumb'))"
+               data-src="{{ $suggestion->displayUrl() }}">
+            <img src="{{ $suggestion->displayUrl() }}" alt="Concept" onclick="selectConcept(this.closest('.ai-concept-thumb'))"
                  onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
             <button type="button" class="ai-concept-heart js-save-heart {{ $suggestion->is_favorited ? 'favorited' : '' }}"
                     data-suggestion-id="{{ $suggestion->id }}" data-state-class="favorited">
@@ -200,9 +205,58 @@
 
     </div>
 
+  @elseif(in_array($designRequest->status, ['approved', 'converted_to_order']))
+
+    {{-- ═══════════════════════════════════
+         FINALIZED, BUT THE IMAGE IS GONE — a decision was already
+         made on this design (it's approved or already an order), so
+         no regenerate/retry action makes sense here even though the
+         image itself can no longer be shown.
+    ═══════════════════════════════════ --}}
+    <div class="ai-results-card cd-failure-card">
+      <div class="cd-failure-icon">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <h3 class="cd-failure-title">Design Image No Longer Available</h3>
+      <p class="cd-failure-reason">
+        This design's reference image can no longer be displayed, but your selection is already confirmed — no action needed. Contact us if you'd like the image again.
+      </p>
+    </div>
+
   @else
-    <div class="ai-results-card" style="text-align:center;padding:40px;">
-      <p style="color:#5C4C3E;">No design concepts generated yet.</p>
+
+    {{-- ═══════════════════════════════════
+         NO LOADABLE IMAGE — either nothing ever generated, or every
+         suggestion row came from a provider URL with no durability
+         guarantee (see AiDesignSuggestion::isLoadable()). Treated as
+         Failed either way, matching the 'rejected' screen above.
+    ═══════════════════════════════════ --}}
+    <div class="ai-results-card cd-failure-card">
+      <div class="cd-failure-icon">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+
+      <h3 class="cd-failure-title">We Couldn't Generate Your Design</h3>
+
+      <p class="cd-failure-reason">{{ $designRequest->failureReasonLabel() }}.</p>
+
+      <div class="cd-failure-actions">
+        <form method="POST" action="{{ route('design.regenerate', $designRequest->id) }}" style="flex:1;">
+          @csrf
+          <button type="submit" class="ai-action-btn ai-action-secondary" style="width:100%;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+            Retry Same Prompt
+          </button>
+        </form>
+
+        <a href="{{ route('design.index') }}" class="ai-action-btn ai-action-primary" style="flex:1;text-decoration:none;">
+          Start New Prompt
+        </a>
+      </div>
     </div>
   @endif
 

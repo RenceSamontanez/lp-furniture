@@ -67,4 +67,12 @@ return [
 'gemini' => [
     'key' => env('GEMINI_API_KEY'),
 ],
+
+// Was never added here even though GenerateAiDesign::tryDeepAi()
+// reads config('services.deepai.key') and .env has had DEEPAI_API_KEY
+// set — meaning DeepAI silently never ran (always read as unconfigured)
+// regardless of the key being present.
+'deepai' => [
+    'key' => env('DEEPAI_API_KEY'),
+],
 ];

@@ -51,7 +51,7 @@
           maxlength="1000"
           placeholder="e.g. Highly detailed six-seater dining table made of solid Narra wood, modern minimalist style with rounded edges, natural finish, warm golden-brown tone..."
           oninput="updateCdPromptCount()"
-        >{{ old('prompt') }}</textarea>
+        >{{ old('prompt', $prefillPrompt) }}</textarea>
         <div class="cd-prompt-footer">
           <span class="cd-prompt-hint">Describe the furniture you want, in your own words.</span>
           <span class="cd-prompt-count" id="cd-prompt-count">0 / 1000</span>
@@ -106,8 +106,8 @@
       @if($latestImage)
         <div class="cd-hero-card">
           <div class="cd-hero-img-wrap"
-               onclick="openDesignModal({{ $latestWithImages->id }}, {{ $latestImage->id }}, '{{ $latestImage->image_path }}', '{{ addslashes($latestWithImages->furniture_type ?? 'Custom Furniture') }}', '{{ addslashes(Str::limit($latestWithImages->description, 150)) }}', '{{ $latestWithImages->status }}', {{ $latestImage->is_favorited ? 'true' : 'false' }})">
-            <img src="{{ $latestImage->image_path }}" alt="Latest design" class="cd-hero-img"
+               onclick="openDesignModal({{ $latestWithImages->id }}, {{ $latestImage->id }}, '{{ $latestImage->displayUrl() }}', '{{ addslashes($latestWithImages->furniture_type ?? 'Custom Furniture') }}', '{{ addslashes(Str::limit($latestWithImages->description, 150)) }}', '{{ $latestWithImages->status }}', {{ $latestImage->is_favorited ? 'true' : 'false' }})">
+            <img src="{{ $latestImage->displayUrl() }}" alt="Latest design" class="cd-hero-img"
                  onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
             <span class="cd-hero-label">Latest Design</span>
           </div>
@@ -134,8 +134,8 @@
           @foreach($historyThumbs as $entry)
             <div class="cd-history-card">
               <div class="cd-history-thumb"
-                   onclick="openDesignModal({{ $entry['request']->id }}, {{ $entry['image']->id }}, '{{ $entry['image']->image_path }}', '{{ addslashes($entry['request']->furniture_type ?? 'Custom Furniture') }}', '{{ addslashes(Str::limit($entry['request']->description, 150)) }}', '{{ $entry['request']->status }}', {{ $entry['image']->is_favorited ? 'true' : 'false' }})">
-                <img src="{{ $entry['image']->image_path }}" alt="Past design"
+                   onclick="openDesignModal({{ $entry['request']->id }}, {{ $entry['image']->id }}, '{{ $entry['image']->displayUrl() }}', '{{ addslashes($entry['request']->furniture_type ?? 'Custom Furniture') }}', '{{ addslashes(Str::limit($entry['request']->description, 150)) }}', '{{ $entry['request']->status }}', {{ $entry['image']->is_favorited ? 'true' : 'false' }})">
+                <img src="{{ $entry['image']->displayUrl() }}" alt="Past design"
                      onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
               </div>
 

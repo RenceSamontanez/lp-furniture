@@ -28,6 +28,19 @@ class GenerateAiDesign implements ShouldQueue
     public function handle(): void
     {
         $request = CustomDesignRequest::findOrFail($this->requestId);
+
+        // The lazy staleness check (CustomDesignController) or
+        // design:fail-stale can mark this request 'rejected' while
+        // this job is still running (it's allowed to keep running —
+        // tries/timeout handle that independently). If that happened,
+        // this job's result is stale by definition: don't flip the
+        // status back and don't create suggestions for a request the
+        // customer has already been told failed.
+        if ($request->status === 'rejected') {
+            Log::info("Request {$this->requestId} was already marked rejected before this job ran — discarding.");
+            return;
+        }
+
         $request->update(['status' => 'pending']);
 
         $prompt = $this->buildPrompt($request);
@@ -36,6 +49,16 @@ class GenerateAiDesign implements ShouldQueue
         $generated = 0;
 
         for ($i = 1; $i <= 4; $i++) {
+
+            // Re-check on every iteration, not just once at the start —
+            // this loop can easily run past the 10-minute staleness
+            // window on its own (Gemini alone throttles to one call
+            // per ~8s), so the lazy check or design:fail-stale could
+            // mark this request rejected mid-loop.
+            if ($request->fresh()->status === 'rejected') {
+                Log::info("Request {$this->requestId} was marked rejected mid-run — stopping without creating more suggestions.");
+                return;
+            }
 
             // Provider order: Gemini (primary) → Hugging Face → DeepAI → Pollinations
             $provider = 'gemini';
@@ -76,6 +99,14 @@ class GenerateAiDesign implements ShouldQueue
             }
         }
 
+        // One last check before writing the final status — the 4th
+        // variation's attempt (all 4 providers, in sequence) is the
+        // single longest stretch in this loop with no check in between.
+        if ($request->fresh()->status === 'rejected') {
+            Log::info("Request {$this->requestId} was marked rejected just as this run finished — discarding its result.");
+            return;
+        }
+
         if ($generated > 0) {
             $request->update(['status' => 'ai_generated']);
 
@@ -88,7 +119,7 @@ class GenerateAiDesign implements ShouldQueue
                 'is_read' => false,
             ]);
         } else {
-            $request->update(['status' => 'rejected']);
+            $request->update(['status' => 'rejected', 'failure_reason' => 'provider_error']);
 
             Notification::create([
                 'user_id' => $request->user_id,
@@ -156,16 +187,11 @@ class GenerateAiDesign implements ShouldQueue
                     foreach ($parts as $part) {
                         if (isset($part['inlineData']['data'])) {
                             $imageBytes = base64_decode($part['inlineData']['data']);
+                            $saved = $this->saveValidatedImage($imageBytes, 'png', 'Gemini', $variation);
 
-                            $filename = 'ai-design-' . Str::random(16) . '.png';
-                            $destination = public_path('images/ai-designs');
-
-                            if (!file_exists($destination)) {
-                                mkdir($destination, 0755, true);
+                            if ($saved) {
+                                return $saved;
                             }
-
-                            file_put_contents($destination . '/' . $filename, $imageBytes);
-                            return asset('images/ai-designs/' . $filename);
                         }
                     }
                 }
@@ -213,18 +239,15 @@ class GenerateAiDesign implements ShouldQueue
             Log::info("[Hugging Face] response variation {$variation}: status=" . $response->status());
 
             if ($response->successful() && str_starts_with($response->header('Content-Type'), 'image/')) {
-                $filename = 'ai-design-' . Str::random(16) . '.jpg';
-                $destination = public_path('images/ai-designs');
+                $saved = $this->saveValidatedImage($response->body(), 'jpg', 'Hugging Face', $variation);
 
-                if (!file_exists($destination)) {
-                    mkdir($destination, 0755, true);
+                if ($saved) {
+                    return $saved;
                 }
-
-                file_put_contents($destination . '/' . $filename, $response->body());
-                return asset('images/ai-designs/' . $filename);
+            } else {
+                Log::warning("[Hugging Face] no image returned for variation {$variation}: " . $response->body());
             }
 
-            Log::warning("[Hugging Face] no image returned for variation {$variation}: " . $response->body());
             return null;
 
         } catch (\Exception $e) {
@@ -259,8 +282,25 @@ class GenerateAiDesign implements ShouldQueue
 
             if ($response->successful()) {
                 $data = $response->json();
+
+                // output_url is DeepAI's own CDN link, not something
+                // we control the lifetime of — download it now and
+                // save the bytes ourselves rather than storing that
+                // URL directly (see PART 1 of the image-reliability fix).
                 if (!empty($data['output_url'])) {
-                    return $data['output_url'];
+                    $imageResponse = Http::timeout(30)->get($data['output_url']);
+
+                    if ($imageResponse->successful()) {
+                        $saved = $this->saveValidatedImage($imageResponse->body(), 'jpg', 'DeepAI', $variation);
+
+                        if ($saved) {
+                            return $saved;
+                        }
+                    } else {
+                        Log::warning("[DeepAI] output_url did not download for variation {$variation}: status=" . $imageResponse->status());
+                    }
+
+                    return null;
                 }
             }
 
@@ -293,7 +333,11 @@ class GenerateAiDesign implements ShouldQueue
             Log::info("[Pollinations] response variation {$variation}: status=" . $response->status());
 
             if ($response->successful()) {
-                return $imageUrl;
+                // $imageUrl is a live generation endpoint, not a stable
+                // file — regenerates (and can time out, 404, or just go
+                // away) on every single fetch. Save what we got this
+                // time rather than storing that URL for later.
+                return $this->saveValidatedImage($response->body(), 'jpg', 'Pollinations', $variation);
             }
 
         } catch (\Exception $e) {
@@ -301,6 +345,54 @@ class GenerateAiDesign implements ShouldQueue
         }
 
         return null;
+    }
+
+    /* ════════════════════════════════
+       Shared by every provider — writes the downloaded/decoded bytes
+       to public/images/ai-designs, then validates it's actually a
+       real, non-trivial image before accepting it. On any failure the
+       partial file is removed and null is returned so the caller
+       falls through to the next provider, exactly like a provider
+       that returned nothing at all.
+
+       Returns a RELATIVE path ("images/ai-designs/xyz.jpg"), never an
+       asset() URL — this job runs inside a queue worker, a console
+       context with no incoming HTTP request, so asset() here has
+       nothing to derive a host from and silently falls back to
+       APP_URL. That value only happens to be right if the customer's
+       browser is talking to the app on that exact same host, which
+       isn't guaranteed (and wasn't true in this project's own dev
+       setup). Letting AiDesignSuggestion::displayUrl() call asset()
+       at render time — inside a real request — resolves the host
+       correctly every time instead of baking in a stale one.
+    ════════════════════════════════ */
+    private function saveValidatedImage(string $bytes, string $extension, string $providerLabel, int $variation): ?string
+    {
+        // A real photo-style generation is tens of KB at minimum —
+        // this mainly catches a provider returning a tiny error/
+        // placeholder image (or near-empty body) with a 200 status.
+        if (strlen($bytes) < 5000) {
+            Log::warning("[{$providerLabel}] image for variation {$variation} is only " . strlen($bytes) . ' bytes — rejecting as invalid.');
+            return null;
+        }
+
+        $destination = public_path('images/ai-designs');
+        if (!file_exists($destination)) {
+            mkdir($destination, 0755, true);
+        }
+
+        $filename = 'ai-design-' . Str::random(16) . '.' . $extension;
+        $fullPath = $destination . '/' . $filename;
+        file_put_contents($fullPath, $bytes);
+
+        $info = @getimagesize($fullPath);
+        if ($info === false) {
+            Log::warning("[{$providerLabel}] variation {$variation}: saved file is not a decodable image — rejecting.");
+            @unlink($fullPath);
+            return null;
+        }
+
+        return 'images/ai-designs/' . $filename;
     }
 
     private function buildPrompt(CustomDesignRequest $request): string
@@ -332,8 +424,28 @@ class GenerateAiDesign implements ShouldQueue
         Log::error("GenerateAiDesign job failed for request {$this->requestId}: " . $exception->getMessage());
 
         $request = CustomDesignRequest::find($this->requestId);
-        if ($request) {
-            $request->update(['status' => 'rejected']);
+
+        // Already rejected (by the lazy check, design:fail-stale, or a
+        // previous attempt of this same job) — leave it as-is, and
+        // don't send a second failure notification for the same request.
+        if (!$request || $request->status === 'rejected') {
+            return;
         }
+
+        $reason = $exception instanceof \Illuminate\Queue\MaxAttemptsExceededException
+            || str_contains($exception->getMessage(), 'timed out')
+            ? 'timeout'
+            : 'provider_error';
+
+        $request->update(['status' => 'rejected', 'failure_reason' => $reason]);
+
+        Notification::create([
+            'user_id' => $request->user_id,
+            'title'   => 'Design Generation Failed',
+            'message' => 'We were unable to generate AI designs for your request. Please try again or contact us directly.',
+            'type'    => 'general',
+            'url'     => route('design.index'),
+            'is_read' => false,
+        ]);
     }
 }

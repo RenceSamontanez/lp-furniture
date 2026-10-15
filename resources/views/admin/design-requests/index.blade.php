@@ -32,7 +32,7 @@
               <td data-label="Design">
                 <div class="admin-product-thumb">
                   @if($selected)
-                    <img src="{{ $selected->image_path }}" alt="Selected design"
+                    <img src="{{ $selected->displayUrl() }}" alt="Selected design"
                          onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
                   @else
                     <img src="{{ asset('images/products/placeholder.jpg') }}" alt="No image"/>
