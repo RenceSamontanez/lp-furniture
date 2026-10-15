@@ -25,6 +25,9 @@ class Order extends Model
         'total_amount'      => 'decimal:2',
         'delivery_fee'      => 'decimal:2',
         'status_updated_at' => 'datetime',
+        'amount_paid'       => 'decimal:2',
+        'needs_review'      => 'boolean',
+        'reviewed_at'       => 'datetime',
     ];
 
     // Belongs to a user

@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Notification;
 use App\Models\StripeWebhookEvent;
+use App\Support\PaymentLedger;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -173,7 +174,14 @@ class PaymentController extends Controller
         // arrive for the same payment — the second one is a no-op,
         // not a second confirmation or a second notification.
         if ($order->payment->payment_status === 'paid') {
-            return self::PAID_ALREADY;
+            return $this->recordDuplicateCapture(
+                $order,
+                'stripe',
+                $session->payment_intent ?: $session->id,
+                $order->payment->stripe_payment_intent_id,
+                $session->payment_status === 'paid',
+                ((int) $session->amount_total) / 100
+            );
         }
 
         $amountMatches = (int) $session->amount_total === (int) round((float) $order->payment->amount * 100);
@@ -194,8 +202,55 @@ class PaymentController extends Controller
                 'stripe_customer_id'       => $session->customer,
             ],
             "Your payment for order {$order->order_number} was successful. Your order is now confirmed!",
-            "Stripe session {$session->id}"
+            "Stripe session {$session->id}",
+            'stripe',
+            $session->payment_intent ?: $session->id
         );
+    }
+
+    /* ════════════════════════════════
+       A verified Stripe capture arrived for an order whose payment is
+       already paid. If it is the SAME capture (same payment intent as
+       the one already recorded) it is a harmless repeat: nothing
+       happens. If it is a DIFFERENT capture, real money was taken a
+       second time: it goes into the ledger, the order is flagged for a
+       refund check and admins are told. The order status is not touched.
+    ════════════════════════════════ */
+    private function recordDuplicateCapture(Order $order, string $method, string $reference, ?string $storedReference, bool $captured, float $amount): string
+    {
+        if (!$captured || $reference === '' || $reference === $storedReference) {
+            return self::PAID_ALREADY;
+        }
+
+        DB::transaction(function () use ($order, $method, $reference, $amount) {
+            $locked = Order::lockForUpdate()->find($order->id);
+            $payment = Payment::where('order_id', $order->id)->first();
+
+            if (!$locked || !$payment) {
+                return;
+            }
+
+            $row = PaymentLedger::insert($locked, $payment, [
+                'amount'            => round($amount, 2),
+                'method'            => $method,
+                'gateway_reference' => substr($reference, 0, 191),
+                'paid_on'           => now()->toDateString(),
+                'recorded_by'       => null,
+                'note'              => 'Second capture for an order that was already paid',
+            ]);
+
+            if ($row === null) {
+                return; // this exact capture was already recorded
+            }
+
+            PaymentLedger::refreshAmountPaid($locked);
+            PaymentLedger::flagForReview(
+                $locked,
+                'duplicate payment of ₱' . number_format($amount, 2) . " ({$reference}), check for refund"
+            );
+        });
+
+        return self::PAID_ALREADY;
     }
 
     /* ════════════════════════════════
@@ -217,9 +272,18 @@ class PaymentController extends Controller
        look unpaid), but the order stays cancelled and a warning is
        logged so it can be refunded/handled by a person.
     ════════════════════════════════ */
-    private function recordPaymentArrived(int $orderId, array $gatewayFields, string $customerMessage, string $logLabel): string
+    private function recordPaymentArrived(int $orderId, array $gatewayFields, string $customerMessage, string $logLabel, string $ledgerMethod = 'stripe', ?string $gatewayReference = null): string
     {
-        return DB::transaction(function () use ($orderId, $gatewayFields, $customerMessage, $logLabel) {
+        return DB::transaction(function () use ($orderId, $gatewayFields, $customerMessage, $logLabel, $ledgerMethod, $gatewayReference) {
+            // Lock the order row first: every money write (this one, the
+            // ledger entry, amount_paid) and a concurrent admin cancel or
+            // Record Payment are serialized on it.
+            $order = Order::lockForUpdate()->find($orderId);
+
+            if (!$order) {
+                return self::PAID_ALREADY;
+            }
+
             $changed = Payment::where('order_id', $orderId)
                 ->where('payment_status', '<>', 'paid')
                 ->update($gatewayFields + [
@@ -231,15 +295,24 @@ class PaymentController extends Controller
                 return self::PAID_ALREADY;
             }
 
-            // Lock the order row so a concurrent admin cancel can't slip
-            // between this status check and the update below.
-            $order = Order::lockForUpdate()->find($orderId);
-
-            if (!$order) {
-                return self::PAID_ALREADY;
-            }
+            // The money arrived: write it to the ledger (UNIQUE method +
+            // reference makes a repeat capture a no-op) and keep
+            // orders.amount_paid equal to the ledger sum. This happens
+            // for every outcome below, including a cancelled order.
+            $payment = Payment::where('order_id', $orderId)->first();
+            PaymentLedger::insert($order, $payment, [
+                'amount'            => $payment->amount,
+                'method'            => $ledgerMethod,
+                'gateway_reference' => $gatewayReference !== null ? substr($gatewayReference, 0, 191) : null,
+                'paid_on'           => now()->toDateString(),
+                'recorded_by'       => null,
+                'note'              => null,
+            ]);
+            PaymentLedger::refreshAmountPaid($order);
 
             if ($order->order_status === 'cancelled') {
+                PaymentLedger::flagForReview($order, 'payment received for a cancelled order, check for refund');
+
                 \Log::warning("{$logLabel}: payment arrived for order {$order->id} ({$order->order_number}), which is cancelled. Payment recorded as paid; order left cancelled — needs manual refund/review.");
                 return self::PAID_ORDER_CANCELLED;
             }
@@ -482,7 +555,9 @@ class PaymentController extends Controller
             $order->id,
             ['paymongo_payment_intent_id' => $intentId],
             "Your GCash payment for order {$order->order_number} was successful. Your order is now confirmed!",
-            "PayMongo intent {$intentId}"
+            "PayMongo intent {$intentId}",
+            'gcash_paymongo',
+            $intentId
         );
     }
 
