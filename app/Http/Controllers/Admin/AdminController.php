@@ -34,11 +34,17 @@ class AdminController extends Controller
             'password' => 'required|string',
         ]);
 
-        $key = 'admin_login_' . $request->ip();
+        // Keyed on the account being attempted, not the caller's IP —
+        // same reasoning as the customer login: an IP-based key lets one
+        // shared network's failed attempts lock out everyone behind it,
+        // and does nothing to stop an account being attacked from many
+        // different IPs.
+        $key = 'admin_login_' . strtolower(trim($request->email));
 
         if (cache()->has($key . '_lockout')) {
+            $seconds = cache()->get($key . '_lockout_time', 60);
             return back()->withErrors([
-                'email' => 'Too many failed attempts. Please wait 60 seconds before trying again.',
+                'email' => "Too many failed login attempts for this account. Please wait {$seconds} seconds before trying again.",
             ])->withInput($request->only('email'));
         }
 
@@ -54,6 +60,7 @@ class AdminController extends Controller
             'role'     => 'admin',
         ])) {
             cache()->forget($key);
+            cache()->forget($key . '_lockout');
 
             // One identity per browser: an admin session replaces any
             // customer session already active in this browser.
@@ -70,12 +77,18 @@ class AdminController extends Controller
 
         if ($attempts >= 5) {
             cache()->put($key . '_lockout', true, now()->addMinutes(1));
-            return back()->withErrors(['email' => 'Too many failed attempts. Please wait 60 seconds.']);
+            cache()->put($key . '_lockout_time', 60, now()->addMinutes(1));
+            return back()->withErrors([
+                'email' => 'Too many failed attempts for this account. Please wait 60 seconds before trying again.',
+            ])->withInput($request->only('email'));
         }
 
+        $remaining = 5 - $attempts;
         return back()
             ->withInput($request->only('email'))
-            ->withErrors(['email' => 'Incorrect email or password.']);
+            ->withErrors([
+                'email' => "Incorrect email or password. {$remaining} attempt(s) remaining before lockout.",
+            ]);
     }
 
     public function logout(Request $request)

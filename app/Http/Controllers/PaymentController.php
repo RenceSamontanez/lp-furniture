@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Stripe\StripeClient;
+use Stripe\Webhook;
+use Stripe\Exception\SignatureVerificationException;
+use Stripe\Exception\UnexpectedValueException;
 
 class PaymentController extends Controller
 {
@@ -84,12 +87,31 @@ class PaymentController extends Controller
             ->where('id', $orderId)
             ->firstOrFail();
 
+        // Idempotent: a repeat visit to this URL (back button, refresh,
+        // retry) for an order already marked paid is a harmless no-op —
+        // don't re-verify with Stripe and don't send a second notification.
+        if ($order->payment->payment_status === 'paid') {
+            return redirect()->route('payment.confirmed', $order->id)
+                ->with('success', 'Payment successful! Your order is confirmed.');
+        }
+
         $stripe = new StripeClient(config('services.stripe.secret'));
 
         try {
             $session = $stripe->checkout->sessions->retrieve($request->session_id);
 
-            if ($session->payment_status === 'paid') {
+            // session_id comes from the URL's query string, which a
+            // customer can freely edit to name a DIFFERENT Stripe
+            // session — one they legitimately paid for a different
+            // (e.g. cheaper) order of their own. payment_status==='paid'
+            // on its own only proves SOME session was paid, not that
+            // THIS order was. Cross-check the order_id metadata set at
+            // session creation (stripeCreateSession()) and the charged
+            // amount against this order's own Payment row.
+            $belongsToOrder = (string) ($session->metadata->order_id ?? null) === (string) $order->id;
+            $amountMatches  = (int) $session->amount_total === (int) round((float) $order->payment->amount * 100);
+
+            if ($session->payment_status === 'paid' && $belongsToOrder && $amountMatches) {
 
                 // Same principle as stripeCreateSession() — only touch
                 // the fields this step owns. amount/payment_type/
@@ -115,6 +137,10 @@ class PaymentController extends Controller
 
                 return redirect()->route('payment.confirmed', $order->id)
                     ->with('success', 'Payment successful! Your order is confirmed.');
+            }
+
+            if ($session->payment_status === 'paid' && (!$belongsToOrder || !$amountMatches)) {
+                \Log::warning("Stripe session {$session->id} is paid but doesn't match order {$order->id} (order_id or amount mismatch) — refusing to confirm.");
             }
 
         } catch (\Exception $e) {
@@ -259,6 +285,17 @@ class PaymentController extends Controller
             ->where('id', $orderId)
             ->firstOrFail();
 
+        // Idempotent: a repeat visit (back button, refresh, retry) for
+        // an order already marked paid is a harmless no-op — don't
+        // re-verify with PayMongo and don't send a second notification.
+        // markGcashPaymentPaid() below already guards this too (shared
+        // with the webhook path), but skipping the API call entirely
+        // here avoids a pointless external request on every repeat hit.
+        if ($order->payment->payment_status === 'paid') {
+            return redirect()->route('payment.confirmed', $order->id)
+                ->with('success', 'Payment successful! Your order is confirmed.');
+        }
+
         $intentId = $order->payment->paymongo_payment_intent_id;
 
         if (!$intentId) {
@@ -271,12 +308,26 @@ class PaymentController extends Controller
                 ->get("https://api.paymongo.com/v1/payment_intents/{$intentId}");
 
             $status = $response->json('data.attributes.status');
+            $amount = $response->json('data.attributes.amount');
 
-            if ($response->successful() && $status === 'succeeded') {
+            // $intentId is already scoped to this order (set in
+            // paymongoCreateIntent(), read from this order's own
+            // Payment row above), so there's no cross-order replay here
+            // the way Stripe's URL-supplied session_id had. Still worth
+            // cross-checking the amount against this order's own
+            // Payment row for the same defense-in-depth reason as the
+            // Stripe fix — refuse to confirm if it's ever out of sync.
+            $amountMatches = (int) $amount === (int) round((float) $order->payment->amount * 100);
+
+            if ($response->successful() && $status === 'succeeded' && $amountMatches) {
                 $this->markGcashPaymentPaid($order, $intentId);
 
                 return redirect()->route('payment.confirmed', $order->id)
                     ->with('success', 'Payment successful! Your order is confirmed.');
+            }
+
+            if ($status === 'succeeded' && !$amountMatches) {
+                \Log::warning("PayMongo intent {$intentId} succeeded but amount ({$amount}) doesn't match order {$order->id}'s Payment amount — refusing to confirm.");
             }
 
         } catch (\Exception $e) {
@@ -332,10 +383,25 @@ class PaymentController extends Controller
 
     /* ════════════════════════════════
        STRIPE WEBHOOK
+       Signature verification via Stripe's own SDK helper (handles the
+       HMAC-SHA256 + timestamp-tolerance scheme the same way the
+       PayMongo webhook does it by hand) — rejects with 400 if the
+       "Stripe-Signature" header is missing or doesn't match.
     ════════════════════════════════ */
     public function handleWebhook(Request $request)
     {
-        \Log::info('Stripe webhook received: ' . $request->input('type'));
+        $payload       = $request->getContent();
+        $sigHeader     = $request->header('Stripe-Signature', '');
+        $webhookSecret = config('services.stripe.webhook');
+
+        try {
+            $event = Webhook::constructEvent($payload, $sigHeader, $webhookSecret);
+        } catch (UnexpectedValueException|SignatureVerificationException $e) {
+            \Log::warning('Stripe webhook signature verification failed: ' . $e->getMessage());
+            return response()->json(['error' => 'Invalid signature'], 400);
+        }
+
+        \Log::info('Stripe webhook received: ' . $event->type);
 
         return response()->json(['status' => 'received']);
     }
