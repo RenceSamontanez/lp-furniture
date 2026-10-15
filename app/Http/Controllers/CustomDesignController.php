@@ -6,6 +6,7 @@ use App\Jobs\GenerateAiDesign;
 use App\Models\AiDesignSuggestion;
 use App\Models\CustomDesignRequest;
 use App\Rules\FurnitureTopic;
+use App\Support\DimensionsFormatter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -78,7 +79,9 @@ class CustomDesignController extends Controller
             'prompt'             => ['required', 'string', 'min:15', 'max:1000', new FurnitureTopic()],
             'furniture_type'     => 'nullable|string|max:100',
             'preferred_material' => 'nullable|string|max:100',
-            'dimensions'         => 'nullable|string|max:200',
+            'dimensions_length'  => ['nullable', 'numeric', 'min:0', 'max:9999'],
+            'dimensions_width'   => ['nullable', 'numeric', 'min:0', 'max:9999'],
+            'dimensions_height'  => ['nullable', 'numeric', 'min:0', 'max:9999'],
             'additional_info'    => 'nullable|string|max:1000',
             'reference_image'    => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ]);
@@ -94,13 +97,24 @@ class CustomDesignController extends Controller
                 ->store('design-references/' . Auth::id(), 'public');
         }
 
+        // Same optional 3-field Width/Depth/Height (cm) pattern as the
+        // admin product form, combined via the same shared helper —
+        // unlike a product listing, a customer describing a custom
+        // piece may not know exact dimensions yet, so all three stay
+        // nullable and simply produce no `dimensions` value if unset.
+        $dimensions = DimensionsFormatter::combine(
+            $request->dimensions_length,
+            $request->dimensions_width,
+            $request->dimensions_height
+        );
+
         $designRequest = CustomDesignRequest::create([
             'user_id'            => Auth::id(),
             'title'              => ($request->furniture_type ?: 'Custom Furniture') . ' — ' . Auth::user()->first_name,
             'furniture_type'     => $request->furniture_type,
             'description'        => $description,
             'preferred_material' => $request->preferred_material,
-            'dimensions'         => $request->dimensions,
+            'dimensions'         => $dimensions,
             'reference_image'    => $refImagePath,
             'status'             => 'pending',
         ]);
@@ -177,9 +191,12 @@ class CustomDesignController extends Controller
                 ->latest('generated_at')
                 ->get();
         } else {
+            // Every past attempt, not just the ones that produced an
+            // image — this is a log of what was requested, not just
+            // a gallery of what generated. design.gallery classifies
+            // each row into success/failed/in-progress from here.
             $items = CustomDesignRequest::where('user_id', Auth::id())
                 ->with('suggestions')
-                ->whereHas('suggestions')
                 ->latest()
                 ->get();
         }

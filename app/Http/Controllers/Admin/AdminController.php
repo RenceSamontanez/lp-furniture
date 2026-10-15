@@ -208,7 +208,7 @@ class AdminController extends Controller
 
     public function orderShow($id)
     {
-        $order = Order::with('user', 'items.product', 'statusUpdatedBy')->findOrFail($id);
+        $order = Order::with('user', 'items.product', 'statusUpdatedBy', 'payment')->findOrFail($id);
         return view('admin.orders.show', compact('order'));
     }
 
@@ -280,88 +280,10 @@ class AdminController extends Controller
         return back()->with('success', 'Review rejected and removed.');
     }
 
-    /* ════════════════════════════════
-       GCASH PAYMENT VERIFICATION
-    ════════════════════════════════ */
-    public function paymentsIndex(Request $request)
-    {
-        $status = $request->get('status', 'pending');
-
-        $payments = Payment::with('order.user', 'verifier')
-            ->where('payment_method', 'gcash')
-            ->when($status !== 'all', fn($q) => $q->where('payment_status', $status))
-            ->latest()
-            ->paginate(15);
-
-        return view('admin.payments.index', compact('payments', 'status'));
-    }
-
-    public function paymentApprove($id)
-    {
-        $payment = Payment::findOrFail($id);
-        $payment->update([
-            'payment_status' => 'paid',
-            'paid_at'        => now(),
-            'verified_by'    => Auth::guard('admin')->id(),
-            'verified_at'    => now(),
-        ]);
-
-        $payment->order->update([
-            'order_status'      => 'confirmed',
-            'status_updated_by' => Auth::guard('admin')->id(),
-            'status_updated_at' => now(),
-        ]);
-
-        Notification::create([
-            'user_id' => $payment->user_id,
-            'title'   => 'Payment Verified ✓',
-            'message' => "Your GCash payment for order {$payment->order->order_number} has been verified. Your order is now confirmed!",
-            'type'    => 'payment_confirmed',
-            'url'     => route('orders.show', $payment->order_id),
-            'is_read' => false,
-        ]);
-
-        return back()->with('success', 'Payment verified and order confirmed.');
-    }
-
-    public function paymentReject(Request $request, $id)
-    {
-        $request->validate([
-            'rejection_reason' => 'required|string|max:500',
-        ]);
-
-        $payment = Payment::findOrFail($id);
-        $payment->update([
-            'payment_status' => 'failed',
-            'verified_by'    => Auth::guard('admin')->id(),
-            'verified_at'    => now(),
-        ]);
-
-        Notification::create([
-            'user_id' => $payment->user_id,
-            'title'   => 'Payment Verification Failed',
-            'message' => $request->rejection_reason,
-            'type'    => 'payment_rejected',
-            'url'     => route('orders.show', $payment->order_id),
-            'is_read' => false,
-        ]);
-
-        return back()->with('success', 'Payment rejected. Customer has been notified.');
-    }
-
-    public function showReceipt($id)
-    {
-        $payment = Payment::findOrFail($id);
-
-        if (!$payment->receipt_image_path || !Storage::disk('private')->exists($payment->receipt_image_path)) {
-            abort(404, 'Receipt not found.');
-        }
-
-        $fullPath = Storage::disk('private')->path($payment->receipt_image_path);
-        $mimeType = Storage::disk('private')->mimeType($payment->receipt_image_path);
-
-        return response()->file($fullPath, ['Content-Type' => $mimeType]);
-    }
+    // GCash manual payment verification (paymentsIndex/paymentApprove/
+    // paymentReject/showReceipt) was removed along with the manual
+    // receipt-upload flow it reviewed — PayMongo is the only GCash
+    // path now, so this queue could never have anything routed to it.
 
     /* ════════════════════════════════
        REPORTS & ANALYTICS

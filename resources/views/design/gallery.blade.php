@@ -62,24 +62,84 @@
         <p>Your generated designs will appear here.</p>
       </div>
     @else
-      <div class="cd-gallery-grid">
+      {{-- Every past request, not just successful ones — a log,
+           not just a gallery. Success rows are clickable (open the
+           real result); Failed/In-Progress rows are plain, non-
+           interactive divs with no onclick at all, not just a
+           disabled-looking clickable element. --}}
+      <div class="cd-history-log">
         @foreach($items as $req)
-          @php $img = $req->suggestions->firstWhere('is_selected', true) ?? $req->suggestions->first(); @endphp
-          <div class="cd-history-card">
-            <div class="cd-gallery-item"
+          @php
+            $img = $req->suggestions->firstWhere('is_selected', true) ?? $req->suggestions->first();
+            $isSuccess = $req->suggestions->count() > 0;
+            $isFailed  = !$isSuccess && $req->status === 'rejected';
+          @endphp
+
+          @if($isSuccess)
+            <div class="cd-history-row cd-history-row--success" role="button" tabindex="0"
                  onclick="openDesignModal({{ $req->id }}, {{ $img->id }}, '{{ $img->image_path }}', '{{ addslashes($req->furniture_type ?? 'Custom Furniture') }}', '{{ addslashes(Str::limit($req->description, 150)) }}', '{{ $req->status }}', {{ $img->is_favorited ? 'true' : 'false' }})">
-              <img src="{{ $img->image_path }}" alt="{{ $req->furniture_type }}"
-                   onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
-              <span class="cd-gallery-item-label">{{ $req->furniture_type ?: 'Custom' }}</span>
+              <div class="cd-history-row-thumb">
+                <img src="{{ $img->image_path }}" alt="{{ $req->furniture_type ?: 'Custom design' }}"
+                     onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
+              </div>
+
+              <div class="cd-history-row-content">
+                <div class="cd-history-row-title">{{ Str::limit($req->description, 90) }}</div>
+                <div class="cd-history-row-meta">
+                  <span class="cd-history-row-time">{{ $req->created_at->diffForHumans() }}</span>
+                  <span class="cd-history-badge cd-history-badge--success">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                    Ready
+                  </span>
+                </div>
+              </div>
+
+              <button type="button" class="cd-save-btn-icon js-save-heart {{ $img->is_favorited ? 'saved' : '' }}"
+                      data-suggestion-id="{{ $img->id }}" title="Save to favorites"
+                      onclick="event.stopPropagation()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="{{ $img->is_favorited ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="2">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
+                </svg>
+              </button>
             </div>
 
-            <button type="button" class="cd-save-btn-icon js-save-heart {{ $img->is_favorited ? 'saved' : '' }}"
-                    data-suggestion-id="{{ $img->id }}" title="Save to favorites">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="{{ $img->is_favorited ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="2">
-                <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
-              </svg>
-            </button>
-          </div>
+          @elseif($isFailed)
+            <div class="cd-history-row cd-history-row--failed">
+              <div class="cd-history-row-icon cd-history-row-icon--failed">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              </div>
+
+              <div class="cd-history-row-content">
+                <div class="cd-history-row-title">{{ Str::limit($req->description, 90) }}</div>
+                <div class="cd-history-row-meta">
+                  <span class="cd-history-row-time">{{ $req->created_at->diffForHumans() }}</span>
+                  <span class="cd-history-badge cd-history-badge--failed">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                    Failed
+                  </span>
+                </div>
+              </div>
+            </div>
+
+          @else
+            <div class="cd-history-row cd-history-row--pending">
+              <div class="cd-history-row-icon cd-history-row-icon--pending">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+              </div>
+
+              <div class="cd-history-row-content">
+                <div class="cd-history-row-title">{{ Str::limit($req->description, 90) }}</div>
+                <div class="cd-history-row-meta">
+                  <span class="cd-history-row-time">{{ $req->created_at->diffForHumans() }}</span>
+                  <span class="cd-history-badge cd-history-badge--pending">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+                    Generating…
+                  </span>
+                </div>
+              </div>
+            </div>
+          @endif
+
         @endforeach
       </div>
     @endif

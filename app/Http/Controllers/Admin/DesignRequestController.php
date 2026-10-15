@@ -30,6 +30,22 @@ class DesignRequestController extends Controller
     }
 
     /* ════════════════════════════════
+       SHOW — admin-facing detail view. Deliberately separate from
+       design.show (the customer page): that route sits behind the
+       'auth'+'validated' middleware for the WEB guard and filters
+       by where('user_id', Auth::id()), so an admin session (a
+       completely separate guard, per config/auth.php) hitting it
+       either gets redirected to the customer login page or 404s —
+       never actually shows the request. This is the real fix.
+    ════════════════════════════════ */
+    public function show($id)
+    {
+        $designRequest = CustomDesignRequest::with(['user', 'suggestions'])->findOrFail($id);
+
+        return view('admin.design-requests.show', compact('designRequest'));
+    }
+
+    /* ════════════════════════════════
        MARK AS CONTACTED — lightweight tracking marker, doesn't
        change status (the request stays "approved" — this just
        records that admin has followed up).
@@ -38,6 +54,14 @@ class DesignRequestController extends Controller
     {
         $designRequest = CustomDesignRequest::where('status', 'approved')->findOrFail($id);
         $designRequest->update(['admin_contacted_at' => now()]);
+
+        Notification::create([
+            'user_id' => $designRequest->user_id,
+            'title'   => 'Your Custom Design Has Been Reviewed',
+            'message' => 'Our team has reviewed your "' . ($designRequest->furniture_type ?: 'custom furniture') . '" design and will contact you shortly to discuss next steps.',
+            'type'    => 'general',
+            'url'     => route('design.show', $designRequest->id),
+        ]);
 
         return back()->with('success', 'Marked as contacted.');
     }

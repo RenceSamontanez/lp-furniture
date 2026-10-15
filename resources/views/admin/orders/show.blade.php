@@ -24,8 +24,8 @@
               <tr>
                 <td data-label="Product">{{ $item->product->product_name ?? 'N/A' }}</td>
                 <td data-label="Qty">{{ $item->quantity }}</td>
-                <td data-label="Price">₱{{ number_format($item->price, 2) }}</td>
-                <td data-label="Subtotal">₱{{ number_format($item->price * $item->quantity, 2) }}</td>
+                <td data-label="Price">₱{{ number_format($item->unit_price, 2) }}</td>
+                <td data-label="Subtotal">₱{{ number_format($item->subtotal, 2) }}</td>
               </tr>
             @endforeach
           </tbody>
@@ -98,6 +98,45 @@
         </div>
       </div>
     </div>
+
+    {{-- Payment details --}}
+    @if($order->payment)
+      <div class="admin-panel">
+        <div class="admin-panel-header"><div class="admin-panel-title">Payment</div></div>
+        <div class="admin-panel-body">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;">
+            <span style="color:var(--text-muted);">Method</span>
+            <span style="text-transform:capitalize;">{{ $order->payment->payment_method }}</span>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;">
+            <span style="color:var(--text-muted);">Type</span>
+            <span>{{ $order->payment->payment_type === 'installment' ? 'Installment' : 'Full Payment' }}</span>
+          </div>
+
+          @if($order->payment->payment_type === 'installment')
+            @php
+              $installmentMonths = $order->payment->installment_duration_months;
+              $installmentFreqLabel = $order->payment->installment_frequency_days == 15 ? '15 Days' : '1 Month';
+            @endphp
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:8px;padding:8px;background:var(--cream);border-radius:8px;">
+              <span>Plan</span>
+              <span>{{ $installmentMonths }} {{ Str::plural('Month', $installmentMonths) }} · Every {{ $installmentFreqLabel }}</span>
+            </div>
+          @endif
+
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:8px;">
+            <span style="color:var(--text-muted);">Status</span>
+            <span class="admin-pill {{ $order->payment->payment_status }}" style="font-size:10px;">{{ $order->payment->payment_status }}</span>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;font-size:13px;padding-top:10px;border-top:1px solid var(--border);">
+            <span style="color:var(--text-muted);">Paid On</span>
+            <span>{{ $order->payment->paid_at ? $order->payment->paid_at->format('M d, Y · h:i A') : '—' }}</span>
+          </div>
+        </div>
+      </div>
+    @endif
 
     {{-- Update status --}}
     <div class="admin-panel">

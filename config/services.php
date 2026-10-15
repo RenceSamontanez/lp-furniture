@@ -48,17 +48,6 @@ return [
         'webhook_secret' => env('PAYMONGO_WEBHOOK_SECRET'),
     ],
 
-    // Manual/offline flow — no GCash API integration. account_name/
-    // account_number are shown as-is on the GCash payment page, and
-    // qr_image (a filename under public/images/) is shown if present,
-    // otherwise a placeholder icon. All null until set in .env —
-    // real payment destination details, not something to fabricate.
-    'gcash' => [
-        'account_name'   => env('GCASH_ACCOUNT_NAME'),
-        'account_number' => env('GCASH_ACCOUNT_NUMBER'),
-        'qr_image'       => env('GCASH_QR_IMAGE'),
-    ],
-
     'openai' => [
         'api_key'      => env('OPENAI_API_KEY'),
         'organization' => env('OPENAI_ORGANIZATION'),

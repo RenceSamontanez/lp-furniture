@@ -62,7 +62,7 @@
               </td>
               <td data-label="Actions">
                 <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                  <a href="{{ route('design.show', $req->id) }}" target="_blank" class="admin-btn admin-btn-outline">View</a>
+                  <a href="{{ route('admin.design-requests.show', $req->id) }}" class="admin-btn admin-btn-outline">View</a>
                   @if($req->status === 'approved')
                     <form method="POST" action="{{ route('admin.design-requests.contacted', $req->id) }}">
                       @csrf

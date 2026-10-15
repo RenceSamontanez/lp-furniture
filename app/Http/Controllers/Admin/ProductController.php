@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Rules\NoInappropriateTerms;
 use App\Rules\NoLinks;
+use App\Support\DimensionsFormatter;
 use Blaspsoft\Blasp\Rules\Profanity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -82,7 +83,7 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = Product::findOrFail($id);
-        [$lengthVal, $widthVal, $heightVal] = $this->parseDimensions($product->dimensions);
+        [$lengthVal, $widthVal, $heightVal] = DimensionsFormatter::parse($product->dimensions);
 
         return view('admin.products.form', array_merge(
             compact('product', 'lengthVal', 'widthVal', 'heightVal'),
@@ -218,27 +219,6 @@ class ProductController extends Controller
     }
 
     /* ════════════════════════════════
-       DIMENSIONS PARSE / FORMAT
-       Single `dimensions` column stays a plain "L x W x H cm"
-       string — these just convert to/from the 3-field form UI.
-    ════════════════════════════════ */
-    private function parseDimensions(?string $dimensions): array
-    {
-        if ($dimensions && preg_match('/^\s*([\d.]+)\s*[x×*]\s*([\d.]+)\s*[x×*]\s*([\d.]+)\s*(?:cm)?\s*$/i', $dimensions, $m)) {
-            return [$m[1], $m[2], $m[3]];
-        }
-
-        return [null, null, null];
-    }
-
-    private function formatDimensions($length, $width, $height): string
-    {
-        $fmt = fn($n) => rtrim(rtrim(number_format((float) $n, 2, '.', ''), '0'), '.');
-
-        return "{$fmt($length)} x {$fmt($width)} x {$fmt($height)} cm";
-    }
-
-    /* ════════════════════════════════
        VALIDATION RULES
        Matches the confirmed products table schema exactly:
        no on_sale / discount_percent columns exist — those are
@@ -304,9 +284,7 @@ class ProductController extends Controller
         $height = $validated['dimensions_height'] ?? null;
         unset($validated['dimensions_length'], $validated['dimensions_width'], $validated['dimensions_height']);
 
-        $validated['dimensions'] = ($length !== null && $width !== null && $height !== null)
-            ? $this->formatDimensions($length, $width, $height)
-            : null;
+        $validated['dimensions'] = DimensionsFormatter::combine($length, $width, $height);
 
         return $validated;
     }

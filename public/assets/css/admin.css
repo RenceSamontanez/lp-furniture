@@ -424,8 +424,10 @@
   .admin-pill.approved,
   .admin-pill.confirmed,
   .admin-pill.completed,
+  .admin-pill.paid,
   .admin-pill.done             { background: #DDF5E8; color: #1B7A46; }
   .admin-pill.rejected,
+  .admin-pill.failed,
   .admin-pill.cancelled        { background: #FBE0E0; color: #C0392B; }
   .admin-pill.in_production,
   .admin-pill.on_process,

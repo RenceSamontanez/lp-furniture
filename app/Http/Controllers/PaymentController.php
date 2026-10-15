@@ -126,65 +126,12 @@ class PaymentController extends Controller
     }
 
     /* ════════════════════════════════
-       GCASH FORM
-    ════════════════════════════════ */
-    public function gcashForm($orderId)
-    {
-        $order = Order::where('user_id', Auth::id())
-            ->where('id', $orderId)
-            ->firstOrFail();
-
-        // Generate a verification hash for the QR display, tied to this order
-        $qrHash = strtoupper(substr(md5($order->order_number . $order->id), 0, 10));
-
-        return view('payment.gcash', compact('order', 'qrHash'));
-    }
-
-    /* ════════════════════════════════
-       UPLOAD GCASH RECEIPT
-    ════════════════════════════════ */
-    public function uploadReceipt(Request $request)
-    {
-        $request->validate([
-            'order_id'      => 'required|exists:orders,id',
-            'reference_no'  => 'required|string|min:8|max:100',
-            'receipt_image' => 'required|image|mimes:jpg,jpeg,png|max:5120',
-        ]);
-
-        $order = Order::where('user_id', Auth::id())
-            ->where('id', $request->order_id)
-            ->firstOrFail();
-
-        $receiptPath = $request->file('receipt_image')
-            ->store("receipts/{$order->id}", 'private');
-
-        // Same principle as the Stripe methods — the Payment row's
-        // amount/payment_type/installment_* were already set correctly
-        // by placeOrder() at checkout; this only owns the GCash-
-        // specific receipt/reference fields.
-        Payment::where('order_id', $order->id)->update([
-            'gcash_reference_number' => $request->reference_no,
-            'receipt_image_path'     => $receiptPath,
-        ]);
-
-        Notification::create([
-            'user_id' => Auth::id(),
-            'title'   => 'GCash Receipt Submitted',
-            'message' => "Your GCash payment receipt for order {$order->order_number} has been submitted for verification.",
-            'type'    => 'payment_confirmed',
-            'url'     => route('orders.show', $order->id),
-            'is_read' => false,
-        ]);
-
-        return redirect()->route('payment.confirmed', $order->id)
-            ->with('success', 'Receipt submitted! We will verify your payment within a few hours.');
-    }
-
-    /* ════════════════════════════════
-       GCASH VIA PAYMONGO — real payment gateway, the new default
-       for GCash. The manual receipt-upload flow above (gcashForm/
-       uploadReceipt) is untouched and still reachable directly —
-       kept as a fallback, not deleted.
+       GCASH VIA PAYMONGO — real payment gateway, the only GCash
+       path now. The manual receipt-upload flow (gcashForm/
+       uploadReceipt) was removed — it had become unreachable dead
+       code once checkout, the order page's resume action, and the
+       payment-method switcher all routed GCash through PayMongo
+       exclusively, with no UI path left pointing at it.
     ════════════════════════════════ */
     public function paymongoForm($orderId)
     {

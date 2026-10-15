@@ -82,7 +82,9 @@
 
         <input type="hidden" name="furniture_type" id="cd-hidden-furniture-type" value="{{ old('furniture_type') }}"/>
         <input type="hidden" name="preferred_material" id="cd-hidden-material" value="{{ old('preferred_material', 'No Preference') }}"/>
-        <input type="hidden" name="dimensions" id="cd-hidden-dimensions" value="{{ old('dimensions') }}"/>
+        <input type="hidden" name="dimensions_length" id="cd-hidden-dim-length" value="{{ old('dimensions_length') }}"/>
+        <input type="hidden" name="dimensions_width" id="cd-hidden-dim-width" value="{{ old('dimensions_width') }}"/>
+        <input type="hidden" name="dimensions_height" id="cd-hidden-dim-height" value="{{ old('dimensions_height') }}"/>
         <input type="hidden" name="additional_info" id="cd-hidden-additional" value="{{ old('additional_info') }}"/>
       </form>
     </div>
@@ -194,8 +196,21 @@
         </div>
 
         <div class="ai-field-group">
-          <label class="form-label">Dimensions <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
-          <input type="text" id="cd-modal-dimensions" class="form-input" placeholder='e.g. 180 × 80 × 75 cm'/>
+          <label class="form-label">Dimensions <span style="font-weight:400;color:var(--text-muted);">(optional — leave blank if you're not sure yet)</span></label>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+            <div>
+              <input type="number" id="cd-modal-dim-length" step="0.1" min="0" class="form-input" placeholder="Width (cm)"/>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Width (cm)</div>
+            </div>
+            <div>
+              <input type="number" id="cd-modal-dim-width" step="0.1" min="0" class="form-input" placeholder="Depth (cm)"/>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Depth (cm)</div>
+            </div>
+            <div>
+              <input type="number" id="cd-modal-dim-height" step="0.1" min="0" class="form-input" placeholder="Height (cm)"/>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Height (cm)</div>
+            </div>
+          </div>
         </div>
 
         <div class="ai-field-group">
@@ -343,12 +358,16 @@ function closeCdHowItWorksOnBackdrop(e) {
 function saveCdOptionalPanel() {
   const type = document.getElementById('cd-modal-furniture-type-select').value;
   const material = document.querySelector('input[name="cd_modal_material"]:checked')?.value || 'No Preference';
-  const dimensions = document.getElementById('cd-modal-dimensions').value;
+  const dimLength = document.getElementById('cd-modal-dim-length').value;
+  const dimWidth = document.getElementById('cd-modal-dim-width').value;
+  const dimHeight = document.getElementById('cd-modal-dim-height').value;
   const additional = document.getElementById('cd-modal-additional').value;
 
   document.getElementById('cd-hidden-furniture-type').value = type;
   document.getElementById('cd-hidden-material').value = material;
-  document.getElementById('cd-hidden-dimensions').value = dimensions;
+  document.getElementById('cd-hidden-dim-length').value = dimLength;
+  document.getElementById('cd-hidden-dim-width').value = dimWidth;
+  document.getElementById('cd-hidden-dim-height').value = dimHeight;
   document.getElementById('cd-hidden-additional').value = additional;
 
   const parts = [];

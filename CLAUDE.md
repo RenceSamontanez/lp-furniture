@@ -35,7 +35,7 @@ vendor/bin/pint
 php artisan migrate
 php artisan migrate:fresh --seed   # only DatabaseSeeder.php exists, no per-model seeders
 
-# Release abandoned/unpaid Stripe orders and restock (not currently scheduled anywhere — run manually or wire into a scheduler/cron)
+# Release abandoned/unpaid Stripe or GCash orders and restock (not currently scheduled anywhere — run manually or wire into a scheduler/cron)
 php artisan orders:release-abandoned --minutes=60
 ```
 
@@ -70,12 +70,12 @@ Auth itself is hand-rolled in `AuthController` (no Breeze/Jetstream/Fortify) —
 - Checkout supports two entry points that converge on the same logic: cart checkout and "buy now" (`CartController::orderNow` stashes a single item in session; `OrderController` has private helpers `getBuyNowItems()` / `getBuyNowItemsFromRequest()` that reshape that session data into cart-shaped data so `placeOrder()` doesn't need two code paths).
 - `OrderController::placeOrder` runs inside a DB transaction with `lockForUpdate()` on products to re-check stock, then creates `Order` + `OrderItem` + `Payment` + `Delivery` rows and a `Notification`.
 - `OrderItem` stores denormalized snapshot fields (`product_name`, `product_image`) at order time, with fallback logic if the live `Product` is later deleted/changed — this was a deliberate fix (see commit `fb7c2fd`), not an oversight; don't "simplify" it back to a pure `belongsTo(Product)` lookup.
-- `App\Console\Commands\ReleaseAbandonedOrders` (`orders:release-abandoned {--minutes=60}`) finds `pending` orders with a still-`pending` **Stripe** payment older than the cutoff, restores stock, marks the order `cancelled`/payment `failed`, and notifies the user. Cash/GCash orders are deliberately excluded since those are confirmed manually by an admin. This command is not currently registered in `routes/console.php`'s scheduler — if periodic cleanup is expected, it needs to be scheduled explicitly (or run via external cron).
+- `App\Console\Commands\ReleaseAbandonedOrders` (`orders:release-abandoned {--minutes=60}`) finds `pending` orders with a still-`pending` **Stripe or GCash** payment older than the cutoff, restores stock, marks the order `cancelled`/payment `failed`, and notifies the user. Cash orders are deliberately excluded since those are confirmed manually by an admin in person, not tied to an online payment attempt. GCash was excluded until the PayMongo migration — back when GCash meant manual receipt uploads, a slow customer/admin turnaround was legitimate; now GCash confirms instantly via PayMongo the same way Stripe does, so it's included in the same abandonment sweep. This command is not currently registered in `routes/console.php`'s scheduler — if periodic cleanup is expected, it needs to be scheduled explicitly (or run via external cron).
 
 ### Payments
 
 - **Stripe**: direct `Stripe\StripeClient` usage in `PaymentController` (Checkout Sessions) — no Laravel Cashier. Webhook events are persisted to `StripeWebhookEvent` for idempotency. Config comes from `config('services.stripe.*')` / `STRIPE_KEY`, `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`.
-- **GCash**: manual/offline flow — customer uploads a receipt (`PaymentController::uploadReceipt`), an admin approves/rejects it (`Admin\AdminController::paymentApprove`). No GCash API integration.
+- **GCash**: real payment gateway via PayMongo's Payment Intent API (`PaymentController::paymongoForm`/`paymongoCreateIntent`/`paymongoSuccess`/`paymongoWebhook`), test mode (`pk_test_`/`sk_test_`). Config comes from `config('services.paymongo.*')` / `PAYMONGO_PUBLIC_KEY`, `PAYMONGO_SECRET_KEY`, `PAYMONGO_WEBHOOK_SECRET`. The earlier manual receipt-upload flow (customer uploads a screenshot, admin approves/rejects) was removed — it had become unreachable dead code once every path (checkout, the order page's resume action, the payment-method switcher) routed GCash through PayMongo exclusively.
 
 ### AI custom design feature
 
@@ -105,8 +105,15 @@ DONE:
 - #4b Abandoned Stripe order release command — built, NOT yet
   scheduled (needs cron/Task Scheduler wiring)
 
+NOT APPLICABLE:
+- #5 Prevent duplicate GCash reference number reuse across orders —
+  superseded by the PayMongo integration. The vulnerable path
+  (`gcash_reference_number` from the manual receipt-upload flow) was
+  removed entirely as dead code once PayMongo became the only GCash
+  path — nothing writes that column anymore, so there's nothing left
+  to duplicate.
+
 NOT STARTED (do these next, in order):
-- #5 Prevent duplicate GCash reference number reuse across orders
 - #6 Switch login lockout from IP-based to account-based
 - #7 Restrict AI Design prompts to furniture-related content only
 - #8 Add admin action audit trail (who approved/verified what)

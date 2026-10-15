@@ -147,13 +147,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/payment/gcash/paymongo/{orderId}/success', [PaymentController::class, 'paymongoSuccess'])
              ->name('payment.gcash.paymongo.success');
 
-        // ── GCASH — manual receipt upload (kept as a fallback, no
-        //    longer the default entry point from checkout) ──
-        Route::get('/payment/gcash/{orderId}', [PaymentController::class, 'gcashForm'])
-             ->name('payment.gcash');
-        Route::post('/payment/gcash/upload', [PaymentController::class, 'uploadReceipt'])
-             ->name('payment.gcash.upload');
-
         // ── PAYMENT CONFIRMED ──
         Route::get('/payment/confirmed/{orderId}', [PaymentController::class, 'confirmed'])
              ->name('payment.confirmed');
@@ -225,6 +218,7 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     // AI Custom Design Requests
     // ────────────────
     Route::get('/design-requests',                  [DesignRequestController::class, 'index'])->name('design-requests.index'); // List design requests awaiting follow-up
+    Route::get('/design-requests/{id}',              [DesignRequestController::class, 'show'])->name('design-requests.show'); // Admin-facing detail view
     Route::post('/design-requests/{id}/contacted',   [DesignRequestController::class, 'markContacted'])->name('design-requests.contacted'); // Mark as contacted
     Route::post('/design-requests/{id}/reject',      [DesignRequestController::class, 'reject'])->name('design-requests.reject'); // Decline a request
 
@@ -234,14 +228,6 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     Route::get('/reviews',              [AdminController::class, 'reviewsIndex'])->name('reviews.index'); // List all reviews
     Route::post('/reviews/{id}/approve', [AdminController::class, 'reviewApprove'])->name('reviews.approve'); // Approve a review
     Route::post('/reviews/{id}/reject',  [AdminController::class, 'reviewReject'])->name('reviews.reject'); // Reject a review
-
-    // ────────────────
-    // Payments Management
-    // ────────────────
-    Route::get('/payments',                  [AdminController::class, 'paymentsIndex'])->name('payments.index'); // List all payments
-    Route::post('/payments/{id}/approve',     [AdminController::class, 'paymentApprove'])->name('payments.approve'); // Approve a payment
-    Route::post('/payments/{id}/reject',      [AdminController::class, 'paymentReject'])->name('payments.reject'); // Reject a payment
-    Route::get('/payments/{id}/receipt',      [AdminController::class, 'showReceipt'])->name('payments.receipt'); // Show a payment receipt
 
     // ────────────────
     // Product Management

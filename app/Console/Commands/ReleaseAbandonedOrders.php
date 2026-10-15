@@ -10,20 +10,23 @@ use Illuminate\Support\Facades\DB;
 
 class ReleaseAbandonedOrders extends Command
 {
-    protected $signature = 'orders:release-abandoned {--minutes=60 : How old an unpaid Stripe order must be before it is auto-cancelled}';
+    protected $signature = 'orders:release-abandoned {--minutes=60 : How old an unpaid Stripe/GCash order must be before it is auto-cancelled}';
 
-    protected $description = 'Auto-cancel Stripe orders left unpaid too long and restore their reserved stock. Cash/GCash orders are never touched by this — they legitimately take longer to confirm.';
+    protected $description = 'Auto-cancel Stripe or GCash orders left unpaid too long and restore their reserved stock. Cash orders are never touched by this — those are legitimately confirmed later by admin, in person, not tied to an online payment attempt.';
 
     public function handle()
     {
         $minutes = (int) $this->option('minutes');
         $cutoff  = now()->subMinutes($minutes);
 
-        // Only Stripe orders — cash and GCash are confirmed
-        // manually by admin and can legitimately sit pending
-        // for a long time without being "abandoned."
+        // Stripe and GCash (via PayMongo) both confirm instantly or
+        // not at all — a still-pending payment past the cutoff means
+        // the attempt was abandoned, not "still in progress." Cash
+        // is excluded: it's confirmed manually by admin in person
+        // and can legitimately sit pending for a long time without
+        // being abandoned.
         $abandoned = Order::whereHas('payment', function ($q) {
-                $q->where('payment_method', 'stripe')
+                $q->whereIn('payment_method', ['stripe', 'gcash'])
                   ->where('payment_status', 'pending');
             })
             ->where('order_status', 'pending')
@@ -32,7 +35,7 @@ class ReleaseAbandonedOrders extends Command
             ->get();
 
         if ($abandoned->isEmpty()) {
-            $this->info('No abandoned Stripe orders found.');
+            $this->info('No abandoned Stripe/GCash orders found.');
             return;
         }
 

@@ -932,55 +932,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (navReactivate) navReactivate.style.display = 'none';
   }
 
-
-/* ============================================================
-   SAVE / FAVORITE BUTTON — delegated, site-wide handler
-   Works on any element with class "js-save-heart" and a
-   data-suggestion-id attribute. This button now sits in its
-   own footer row BELOW each design image (not overlapping it),
-   so it never conflicts with the image's own click-to-preview.
-   ============================================================ */
-   document.addEventListener('click', function (e) {
-    const btn = e.target.closest('.js-save-heart');
-    if (!btn) return;
-  
-    e.stopPropagation();
-    e.preventDefault();
-  
-    const suggestionId = btn.dataset.suggestionId;
-    if (!suggestionId) {
-      console.error('Save button clicked with no data-suggestion-id set.');
-      return;
-    }
-  
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-    if (!csrfToken) {
-      console.error('CSRF meta tag missing — add <meta name="csrf-token"> to layout head.');
-      return;
-    }
-  
-    fetch(`/design/${suggestionId}/favorite`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': csrfToken,
-        'Accept': 'application/json',
-      },
-    })
-      .then(res => {
-        if (!res.ok) throw new Error('Server responded ' + res.status);
-        return res.json();
-      })
-      .then(data => {
-        // Update every button referencing this same suggestion
-        // (a thumbnail's Save button AND the modal's might both show it)
-        document.querySelectorAll(`.js-save-heart[data-suggestion-id="${suggestionId}"]`).forEach(el => {
-          el.classList.toggle('saved', data.favorited);
-          const svg = el.querySelector('svg');
-          if (svg) svg.setAttribute('fill', data.favorited ? 'currentColor' : 'none');
-          const label = el.querySelector('.cd-save-btn-text');
-          if (label) label.textContent = data.favorited ? 'Saved' : 'Save';
-        });
-      })
-      .catch(err => console.error('Save toggle failed:', err));
-  });
+// Save/favorite (.js-save-heart) click handling used to be duplicated
+// here as a second, unguarded, site-wide handler — every real click
+// fired both this one AND design/_favorite_js.blade.php's handler,
+// sending two overlapping toggle requests whose responses could
+// resolve out of order (favorited: true, then false ~1s later, with
+// zero further clicks). _favorite_js.blade.php is the single source
+// of truth now — it's included on every page that has a .js-save-heart
+// button, and has the in-flight/double-bind guards this handler lacked.
