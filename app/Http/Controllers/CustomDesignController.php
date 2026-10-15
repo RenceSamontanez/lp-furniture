@@ -5,10 +5,15 @@ namespace App\Http\Controllers;
 use App\Jobs\GenerateAiDesign;
 use App\Models\AiDesignSuggestion;
 use App\Models\CustomDesignRequest;
+use App\Models\CustomOrderEvent;
+use App\Models\Notification;
+use App\Models\User;
 use App\Rules\FurnitureTopic;
+use App\Rules\PhilippineMobile;
 use App\Support\DimensionsFormatter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CustomDesignController extends Controller
 {
@@ -176,44 +181,216 @@ class CustomDesignController extends Controller
         return view('design.show', compact('designRequest'));
     }
 
+    /* ════════════════════════════════
+       PICK A CONCEPT — no longer sends anything by itself. It only
+       checks the concept belongs to this request and opens the
+       "Send to our team" form (sendForm/sendToTeam below).
+    ════════════════════════════════ */
     public function selectDesign(Request $request, $id)
     {
         $designRequest = CustomDesignRequest::where('user_id', Auth::id())->findOrFail($id);
 
-        $request->validate(['suggestion_id' => 'required|exists:ai_design_suggestions,id']);
+        if ($designRequest->isSentToTeam()) {
+            return $this->alreadySent($designRequest);
+        }
 
-        AiDesignSuggestion::where('design_id', $id)->update(['is_selected' => false]);
-        AiDesignSuggestion::where('id', $request->suggestion_id)->where('design_id', $id)->update(['is_selected' => true]);
+        $request->validate(['suggestion_id' => 'required|integer']);
+        $suggestion = $this->sendableSuggestion($designRequest, (int) $request->suggestion_id);
+        abort_unless($suggestion, 404);
 
-        $designRequest->update(['status' => 'approved']);
-
-        return back()->with('success', 'Design selected! Our team will contact you shortly to discuss pricing and production details.');
+        return redirect()->route('design.sendForm', [$designRequest->id, 'suggestion' => $suggestion->id]);
     }
 
     /* ════════════════════════════════
        SEND TO TEAM WITHOUT AN IMAGE — PART 3 of the provider-chain
        rescue. Only available on a request generation genuinely
-       failed for (status 'rejected'); reaches the same 'approved'
-       state selectDesign() uses, so it shows up in the admin's normal
-       follow-up queue, just with no suggestion to display. Keeps the
-       prompt/furniture details exactly as submitted — nothing here
-       touches them.
+       failed for (status 'rejected'). Opens the same form as
+       selectDesign(), just with no concept attached. Keeps the
+       prompt/furniture details exactly as submitted.
     ════════════════════════════════ */
     public function sendWithoutImage($id)
     {
-        $designRequest = CustomDesignRequest::where('user_id', Auth::id())
-            ->where('status', 'rejected')
-            ->findOrFail($id);
+        $designRequest = CustomDesignRequest::where('user_id', Auth::id())->findOrFail($id);
 
-        $designRequest->update(['status' => 'approved']);
+        if ($designRequest->isSentToTeam()) {
+            return $this->alreadySent($designRequest);
+        }
+        abort_unless($designRequest->status === 'rejected', 404);
+
+        return redirect()->route('design.sendForm', $designRequest->id);
+    }
+
+    /* ════════════════════════════════
+       "SEND TO OUR TEAM" FORM — contact details, call window and
+       build mode. With ?suggestion= it sends that concept; without
+       it, it is the no-image path (failed generation only).
+    ════════════════════════════════ */
+    public function sendForm(Request $request, $id)
+    {
+        $designRequest = CustomDesignRequest::where('user_id', Auth::id())->findOrFail($id);
+
+        if ($designRequest->isSentToTeam()) {
+            return $this->alreadySent($designRequest);
+        }
+
+        $suggestion = null;
+        if ($request->filled('suggestion')) {
+            $suggestion = $this->sendableSuggestion($designRequest, (int) $request->query('suggestion'));
+            abort_unless($suggestion, 404);
+        } else {
+            abort_unless($designRequest->status === 'rejected', 404);
+        }
+
+        $user = Auth::user();
+
+        return view('design.send', [
+            'designRequest' => $designRequest,
+            'suggestion'    => $suggestion,
+            'defaultPhone'  => PhilippineMobile::normalize($user->phone_number) ?? $user->phone_number,
+            'defaultEmail'  => $user->email,
+        ]);
+    }
+
+    public function sendToTeam(Request $request, $id)
+    {
+        // Ownership first: someone else's id is a 404, whatever the payload.
+        $designRequest = CustomDesignRequest::where('user_id', Auth::id())->findOrFail($id);
+
+        if ($designRequest->isSentToTeam()) {
+            return $this->alreadySent($designRequest);
+        }
+
+        $data = $request->validate([
+            'suggestion_id'         => 'nullable|integer',
+            'contact_phone'         => ['required', 'string', 'max:20', new PhilippineMobile()],
+            'contact_email'         => 'required|email:rfc|max:150',
+            'preferred_call_window' => 'required|in:' . implode(',', array_keys(CustomDesignRequest::CALL_WINDOWS)),
+            'request_mode'          => 'required|in:' . implode(',', array_keys(CustomDesignRequest::REQUEST_MODES)),
+            'modification_notes'    => 'required_if:request_mode,modified|nullable|string|max:2000',
+        ], [
+            'contact_phone.required'         => 'Please enter a mobile number we can call.',
+            'contact_email.required'         => 'Please enter your email address.',
+            'contact_email.email'            => 'Please enter a valid email address.',
+            'modification_notes.required_if' => 'Please describe the changes you would like.',
+            'preferred_call_window.required' => 'Please choose when we should call you.',
+            'request_mode.required'          => 'Please choose how you would like it built.',
+        ]);
+
+        $user = Auth::user();
+
+        $sent = DB::transaction(function () use ($designRequest, $data, $user) {
+            // Lock the row so two submits (double click, two tabs) can't
+            // both get past the "already sent" check.
+            $locked = CustomDesignRequest::where('user_id', $user->id)
+                ->lockForUpdate()
+                ->findOrFail($designRequest->id);
+
+            if ($locked->isSentToTeam()) {
+                return false;
+            }
+
+            $suggestion = null;
+            if (!empty($data['suggestion_id'])) {
+                $suggestion = $this->sendableSuggestion($locked, (int) $data['suggestion_id']);
+                abort_unless($suggestion, 404);
+            } else {
+                abort_unless($locked->status === 'rejected', 404);
+            }
+
+            if ($suggestion) {
+                AiDesignSuggestion::where('design_id', $locked->id)->update(['is_selected' => false]);
+                AiDesignSuggestion::where('id', $suggestion->id)->where('design_id', $locked->id)->update(['is_selected' => true]);
+            }
+
+            $modified = $data['request_mode'] === 'modified';
+
+            $locked->update([
+                'status'                 => 'approved', // existing meaning: sent to team
+                'pipeline_status'        => 'submitted',
+                'contact_phone'          => PhilippineMobile::normalize($data['contact_phone']),
+                'contact_email'          => $data['contact_email'],
+                'preferred_call_window'  => $data['preferred_call_window'],
+                'request_mode'           => $data['request_mode'],
+                'modification_notes'     => $modified ? trim($data['modification_notes']) : null,
+                'selected_suggestion_id' => $suggestion?->id,
+                'submitted_at'           => now(),
+            ]);
+
+            CustomOrderEvent::create([
+                'request_id'  => $locked->id,
+                'type'        => 'submitted',
+                'actor_type'  => CustomOrderEvent::ACTOR_CUSTOMER,
+                'actor_id'    => $user->id,
+                'data'        => [
+                    'request_mode'          => $locked->request_mode,
+                    'preferred_call_window' => $locked->preferred_call_window,
+                    'selected_suggestion_id' => $locked->selected_suggestion_id,
+                ],
+                'occurred_at' => now(),
+            ]);
+
+            $design = $locked->title;
+            $window = $locked->callWindowLabel();
+
+            Notification::create([
+                'user_id' => $user->id,
+                'title'   => 'Custom Request Received',
+                'message' => "We received your request for {$design}. We'll call you at {$locked->contact_phone} during your preferred time ({$window}).",
+                'type'    => 'custom_order',
+                'url'     => route('design.show', $locked->id),
+                'is_read' => false,
+            ]);
+
+            $customerName = trim($user->first_name . ' ' . $user->last_name);
+            foreach (User::where('role', 'admin')->pluck('id') as $adminId) {
+                Notification::create([
+                    'user_id' => $adminId,
+                    'title'   => 'New Custom Order Request',
+                    'message' => "New custom order request: {$design} from {$customerName}. Preferred call: {$window}.",
+                    'type'    => 'custom_order',
+                    'url'     => route('admin.design-requests.show', $locked->id),
+                    'is_read' => false,
+                ]);
+            }
+
+            return true;
+        });
+
+        if (!$sent) {
+            return $this->alreadySent($designRequest);
+        }
 
         return redirect()->route('design.show', $designRequest->id)
-            ->with('success', "Sent to our team without an image — we'll reach out to discuss your idea directly.");
+            ->with('success', 'Your request was sent to our team.');
+    }
+
+    // A concept of THIS request that the customer can still send.
+    private function sendableSuggestion(CustomDesignRequest $designRequest, int $suggestionId): ?AiDesignSuggestion
+    {
+        if (!in_array($designRequest->status, ['ai_generated', 'under_review'], true)) {
+            return null;
+        }
+
+        $suggestion = AiDesignSuggestion::where('design_id', $designRequest->id)->find($suggestionId);
+
+        return $suggestion && $suggestion->isLoadable() ? $suggestion : null;
+    }
+
+    private function alreadySent(CustomDesignRequest $designRequest)
+    {
+        return redirect()->route('design.show', $designRequest->id)
+            ->with('info', 'This request has already been sent to our team.');
     }
 
     public function regenerate($id)
     {
         $designRequest = CustomDesignRequest::where('user_id', Auth::id())->findOrFail($id);
+
+        // Once sent, the concepts the team is reviewing must stay put.
+        if ($designRequest->isSentToTeam()) {
+            return redirect()->route('design.show', $designRequest->id)
+                ->with('info', 'This request has already been sent to our team, so its designs can no longer be regenerated. Start a new request for a different design.');
+        }
 
         AiDesignSuggestion::where('design_id', $id)->delete();
         $designRequest->update(['status' => 'pending']);

@@ -168,6 +168,8 @@ Route::middleware(['auth', 'validated'])->group(function () {
     Route::post('/design/{id}/select', [CustomDesignController::class, 'selectDesign'])->name('design.select');
     Route::post('/design/{id}/regenerate', [CustomDesignController::class, 'regenerate'])->name('design.regenerate');
     Route::post('/design/{id}/send-without-image', [CustomDesignController::class, 'sendWithoutImage'])->name('design.sendWithoutImage');
+    Route::get('/design/{id}/send',    [CustomDesignController::class, 'sendForm'])->name('design.sendForm');
+    Route::post('/design/{id}/send',   [CustomDesignController::class, 'sendToTeam'])->name('design.sendToTeam');
     Route::post('/design/{id}/favorite', [CustomDesignController::class, 'toggleFavorite'])->name('design.favorite');
 Route::get('/design-gallery', [CustomDesignController::class, 'gallery'])->name('design.gallery');
 });

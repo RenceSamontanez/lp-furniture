@@ -1,0 +1,295 @@
+/* ============================================================
+   CUSTOM ORDERS — "Send to our team" form and the request status
+   line on the design page. Uses the site tokens from style.css.
+============================================================ */
+
+.co-card {
+  max-width: 680px;
+  margin: 0 auto;
+  background: var(--warm-white);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+}
+
+.co-head {
+  margin-bottom: 20px;
+}
+
+.co-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  color: var(--brown-deep);
+  margin: 0 0 8px;
+}
+
+.co-lead {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Selected design summary */
+.co-design {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 24px;
+}
+
+.co-design-img {
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  object-fit: cover;
+  background: var(--cream);
+}
+
+.co-design-img--none {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.co-design-meta {
+  min-width: 0;
+}
+
+.co-design-name {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.co-design-desc,
+.co-design-note {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.co-design-note {
+  margin-top: 6px;
+  font-style: italic;
+}
+
+.co-errors {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  background: #FEF2F2;
+  border: 1px solid #FCA5A5;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 20px;
+  font-size: 12.5px;
+  color: var(--danger);
+}
+
+/* Form */
+.co-section {
+  border: 0;
+  margin: 0 0 22px;
+  padding: 0;
+  min-width: 0;
+}
+
+.co-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--brown-mid);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: 0;
+  margin-bottom: 12px;
+}
+
+.co-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.co-field {
+  min-width: 0;
+}
+
+.co-hint {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin: 6px 0 0;
+  text-align: left;
+}
+
+.co-options {
+  display: grid;
+  gap: 10px;
+}
+
+.co-options--2 { grid-template-columns: 1fr 1fr; }
+.co-options--3 { grid-template-columns: 1fr 1fr 1fr; }
+
+.co-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+
+.co-option:hover {
+  border-color: var(--gold-light);
+}
+
+.co-option:has(input:checked) {
+  border-color: var(--gold);
+  background: #FFFBF3;
+}
+
+.co-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.co-option-name {
+  font-weight: 600;
+}
+
+.co-option-sub {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.co-option input {
+  accent-color: var(--gold);
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.co-notes {
+  margin-top: 14px;
+}
+
+.co-notes[hidden] {
+  display: none;
+}
+
+/* Buttons: one filled primary, everything else outlined */
+.co-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.co-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 22px;
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.co-btn--primary {
+  background: var(--gold);
+  color: var(--brown-deep);
+  border: 1.5px solid var(--gold);
+}
+
+.co-btn--primary:hover {
+  background: var(--gold-light);
+  border-color: var(--gold-light);
+}
+
+.co-btn--primary:disabled {
+  opacity: .6;
+  cursor: default;
+}
+
+.co-btn--ghost {
+  background: transparent;
+  color: var(--brown-mid);
+  border: 1.5px solid var(--border);
+}
+
+.co-btn--ghost:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* Status line on the design page once a request is sent */
+.co-status {
+  max-width: 680px;
+  margin: 0 auto 20px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--success);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.co-status-icon {
+  color: var(--success);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.co-status-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.co-status-text {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.co-flash-info {
+  max-width: 680px;
+  margin: 0 auto 20px;
+  background: #F8F5EF;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  color: var(--brown-mid);
+}
+
+@media (max-width: 640px) {
+  .co-card { padding: 20px 16px; }
+  .co-grid,
+  .co-options--2,
+  .co-options--3 { grid-template-columns: 1fr; }
+  .co-actions { flex-direction: column-reverse; }
+  .co-btn { width: 100%; }
+}

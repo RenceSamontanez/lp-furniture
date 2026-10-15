@@ -28,10 +28,32 @@ class CustomDesignRequest extends Model
         'failure_reason',
         'admin_notes',
         'admin_contacted_at',
+        // custom order flow (stage 3: customer submission)
+        'pipeline_status',
+        'request_mode',
+        'modification_notes',
+        'selected_suggestion_id',
+        'contact_phone',
+        'contact_email',
+        'preferred_call_window',
+        'submitted_at',
     ];
 
     protected $casts = [
         'admin_contacted_at' => 'datetime',
+        'submitted_at'       => 'datetime',
+    ];
+
+    // Customer-facing labels; keys match the preferred_call_window ENUM.
+    public const CALL_WINDOWS = [
+        'morning_8_12'   => 'Morning, 8 AM to 12 PM',
+        'afternoon_12_5' => 'Afternoon, 12 PM to 5 PM',
+        'anytime'        => 'Anytime, 8 AM to 5 PM',
+    ];
+
+    public const REQUEST_MODES = [
+        'exact'    => 'Build exactly this design',
+        'modified' => 'Build it with some changes',
     ];
 
     public function user()
@@ -104,6 +126,21 @@ class CustomDesignRequest extends Model
     }
 
     /* ── custom order flow ── */
+
+    // Sent to the team: either through the stage 3 form (pipeline_status
+    // set) or, for older requests, the one-click flow that only set
+    // status 'approved'. Either way the design is locked: no regenerate,
+    // no second submission. A different design means a new request.
+    public function isSentToTeam(): bool
+    {
+        return $this->pipeline_status !== null
+            || in_array($this->status, ['approved', 'converted_to_order'], true);
+    }
+
+    public function callWindowLabel(): ?string
+    {
+        return self::CALL_WINDOWS[$this->preferred_call_window] ?? null;
+    }
 
     public function quotes()
     {

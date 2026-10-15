@@ -4,6 +4,7 @@
 
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/design.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/custom-orders.css') }}"/>
 @endpush
 
 @section('content')
@@ -23,6 +24,19 @@
 
   @if(session('success'))
     <div class="auth-success" style="max-width:680px;margin:0 auto 20px;">{{ session('success') }}</div>
+  @endif
+  @if(session('info'))
+    <div class="co-flash-info">{{ session('info') }}</div>
+  @endif
+
+  @if($designRequest->pipeline_status === 'submitted' && $designRequest->status === 'approved')
+    <div class="co-status">
+      <svg class="co-status-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+      <div>
+        <div class="co-status-title">Request sent, we will call you at {{ $designRequest->contact_phone }} during {{ $designRequest->callWindowLabel() }}.</div>
+        <div class="co-status-text">This is a request, not an order. No payment is due yet. We'll discuss the price and details on the call.</div>
+      </div>
+    </div>
   @endif
 
   @if($designRequest->status === 'pending')
@@ -101,7 +115,7 @@
 
       <form method="POST" action="{{ route('design.sendWithoutImage', $designRequest->id) }}" style="margin-top:10px;">
         @csrf
-        <button type="submit" class="ai-action-btn ai-action-secondary" style="width:100%;" onclick="return confirm('Send this request to our team without a design image? We\'ll reach out to discuss it directly.')">
+        <button type="submit" class="ai-action-btn ai-action-secondary" style="width:100%;">
           Send my request to the team without an image
         </button>
       </form>
@@ -153,7 +167,7 @@
     @php
       $suggestions = $designRequest->loadableSuggestions();
       $selected = $suggestions->firstWhere('is_selected', true) ?? $suggestions->first();
-      $isFinal = in_array($designRequest->status, ['approved', 'converted_to_order']);
+      $isFinal = $designRequest->isSentToTeam();
     @endphp
 
     <div class="ai-results-card">
@@ -200,7 +214,8 @@
             </button>
           </form>
         </div>
-      @else
+      @elseif($designRequest->pipeline_status === null)
+        {{-- Sent through the old one-click flow; newer requests show the status line above. --}}
         <div class="ai-final-notice">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
           Design selected! Our team will contact you shortly to discuss pricing and production.
@@ -230,10 +245,17 @@
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
       </div>
-      <h3 class="cd-failure-title">Design Image No Longer Available</h3>
-      <p class="cd-failure-reason">
-        This design's reference image can no longer be displayed, but your selection is already confirmed — no action needed. Contact us if you'd like the image again.
-      </p>
+      @if($designRequest->pipeline_status !== null && !$designRequest->selected_suggestion_id)
+        <h3 class="cd-failure-title">Sent Without an Image</h3>
+        <p class="cd-failure-reason">
+          Your description was sent to our team as written. We'll talk through the design with you on the call.
+        </p>
+      @else
+        <h3 class="cd-failure-title">Design Image No Longer Available</h3>
+        <p class="cd-failure-reason">
+          This design's reference image can no longer be displayed, but your selection is already confirmed — no action needed. Contact us if you'd like the image again.
+        </p>
+      @endif
     </div>
 
   @else

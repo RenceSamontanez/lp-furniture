@@ -87,6 +87,8 @@ Status: **Stage 0** (payment safety fixes in `PaymentController`) and **Stage 1*
 
 **Stage 2** (phone) is done: `App\Rules\PhilippineMobile` accepts `09…`/`+639…`/`639…` and `normalize()` stores `09XXXXXXXXX`. `updateProfile` only validates the phone when it is edited (legacy numbers save untouched; an account with no phone may stay empty). Registration keeps its own regex. Catalog checkout never needs a phone.
 
+**Stage 3** (customer submission) is done: `selectDesign`/`sendWithoutImage` no longer approve anything; they open the "Send to our team" form (`design.sendForm` GET / `design.sendToTeam` POST). `sendToTeam` locks the request row, saves the contact fields, sets `status=approved` + `pipeline_status=submitted`, writes a `custom_order_events` row and `custom_order` notifications for the customer and every admin, all in one transaction. `CustomDesignRequest::isSentToTeam()` (pipeline set, or legacy `approved`/`converted_to_order`) blocks a second submit and `regenerate()`. Admin pages are unchanged (Mark contacted / Reject still work). Next is Stage 4 (admin Custom Orders).
+
 ### Models — key relationships
 
 - `User` is the hub: `hasMany` CartItem, Order, Notification, Feedback, ChatbotLog, CustomDesignRequest, Payment; `hasOne` UserValidation.
