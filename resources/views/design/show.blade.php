@@ -29,6 +29,10 @@
     <div class="co-flash-info">{{ session('info') }}</div>
   @endif
 
+  @if(isset($quote) && $quote)
+    @include('design._quote-summary', ['quote' => $quote])
+  @endif
+
   @if($designRequest->pipeline_status === 'submitted' && $designRequest->status === 'approved')
     <div class="co-status">
       <svg class="co-status-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>

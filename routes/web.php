@@ -228,6 +228,16 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     Route::post('/custom-orders/{id}/unreachable',     [CustomOrderController::class, 'markUnreachable'])->name('custom-orders.unreachable')->whereNumber('id');
     Route::post('/custom-orders/{id}/decline',         [CustomOrderController::class, 'decline'])->name('custom-orders.decline')->whereNumber('id');
 
+    // Quotes (Stage 5): drafts, versions, send
+    Route::get('/custom-orders/{id}/quote-preview',              [CustomOrderController::class, 'quotePreview'])->name('custom-orders.quotes.preview')->whereNumber('id');
+    Route::get('/custom-orders/{id}/quotes/create',              [CustomOrderController::class, 'quoteForm'])->name('custom-orders.quotes.create')->whereNumber('id');
+    Route::post('/custom-orders/{id}/quotes',                    [CustomOrderController::class, 'quoteStore'])->name('custom-orders.quotes.store')->whereNumber('id');
+    Route::get('/custom-orders/{id}/quotes/{quote}/edit',        [CustomOrderController::class, 'quoteEdit'])->name('custom-orders.quotes.edit')->whereNumber(['id', 'quote']);
+    Route::post('/custom-orders/{id}/quotes/{quote}',            [CustomOrderController::class, 'quoteUpdate'])->name('custom-orders.quotes.update')->whereNumber(['id', 'quote']);
+    Route::post('/custom-orders/{id}/quotes/{quote}/delete',     [CustomOrderController::class, 'quoteDelete'])->name('custom-orders.quotes.delete')->whereNumber(['id', 'quote']);
+    Route::get('/custom-orders/{id}/quotes/{quote}/confirm',     [CustomOrderController::class, 'quoteConfirm'])->name('custom-orders.quotes.confirm')->whereNumber(['id', 'quote']);
+    Route::post('/custom-orders/{id}/quotes/{quote}/send',       [CustomOrderController::class, 'quoteSend'])->name('custom-orders.quotes.send')->whereNumber(['id', 'quote']);
+
     // ────────────────
     // AI Custom Design Requests
     // ────────────────

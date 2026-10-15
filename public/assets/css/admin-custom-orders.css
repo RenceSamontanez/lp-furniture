@@ -99,3 +99,32 @@
   .co-detail { grid-template-columns: 1fr; }
   .co-dl { grid-template-columns: 1fr; }
 }
+
+/* ── Quotes (Stage 5) ── */
+.co-quote-chip--draft      { background: #EDE8E0; color: #6B5D52; }
+.co-quote-chip--sent       { background: #DDF5E8; color: #1B7A46; }
+.co-quote-chip--superseded { background: #EDE8E0; color: #6B5D52; }
+.co-quote-chip--accepted   { background: #DDF5E8; color: #1B7A46; }
+.co-quote-chip--declined   { background: #FBE0E0; color: #C0392B; }
+.co-quote-chip--expired    { background: #FEF0D8; color: #92600C; }
+
+.co-field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 4px; }
+.co-field-grid[hidden], .co-field[hidden] { display: none; }
+.co-span-2 { grid-column: span 2; }
+.co-field .form-input { width: 100%; font-size: 13px; padding: 10px 12px; }
+.co-opt { font-weight: 400; color: var(--text-muted); }
+.co-form-actions { display: flex; justify-content: flex-end; gap: 10px; }
+.co-sticky { position: sticky; top: 16px; }
+
+.co-money { margin: 0; }
+.co-money > div { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; border-bottom: 1px solid #F1EADD; }
+.co-money > div:last-child { border-bottom: 0; }
+.co-money dt { color: var(--text-muted); }
+.co-money dd { margin: 0; font-weight: 600; color: #2A1810; }
+.co-money-total dt, .co-money-total dd { color: #2A1810; font-weight: 700; }
+.co-dl .co-span-2 { grid-column: span 2; }
+
+@media (max-width: 900px) {
+  .co-field-grid { grid-template-columns: 1fr; }
+  .co-span-2, .co-dl .co-span-2 { grid-column: auto; }
+}

@@ -6,6 +6,8 @@ use App\Jobs\GenerateAiDesign;
 use App\Models\AiDesignSuggestion;
 use App\Models\CustomDesignRequest;
 use App\Models\CustomOrderEvent;
+use App\Models\CustomQuote;
+use App\Support\CustomOrderPipeline;
 use App\Models\Notification;
 use App\Models\User;
 use App\Rules\FurnitureTopic;
@@ -57,8 +59,9 @@ class CustomDesignController extends Controller
         // Runs here (and in gallery()/show()) so stuck 'pending' rows
         // get cleaned up even with no scheduler wired up.
         CustomDesignRequest::failStale();
+        app(CustomOrderPipeline::class)->expireStaleQuotes();
 
-        $myRequests = CustomDesignRequest::where('user_id', Auth::id())
+        $myRequests =CustomDesignRequest::where('user_id', Auth::id())
             ->with('suggestions')
             ->latest()
             ->get();
@@ -173,12 +176,23 @@ class CustomDesignController extends Controller
     public function show($id)
     {
         CustomDesignRequest::failStale();
+        app(CustomOrderPipeline::class)->expireStaleQuotes();
 
         $designRequest = CustomDesignRequest::where('user_id', Auth::id())
             ->with('suggestions')
             ->findOrFail($id);
 
-        return view('design.show', compact('designRequest'));
+        // Read-only quote for the customer: the live sent quote, or the
+        // one that just expired. Drafts are never visible to them.
+        $quote = null;
+        if (in_array($designRequest->pipeline_status, ['quoted', 'expired'], true)) {
+            $quote = CustomQuote::where('request_id', $designRequest->id)
+                ->whereIn('status', ['sent', 'expired'])
+                ->orderByDesc('version')
+                ->first();
+        }
+
+        return view('design.show', compact('designRequest', 'quote'));
     }
 
     /* ════════════════════════════════

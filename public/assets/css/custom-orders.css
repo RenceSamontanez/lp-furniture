@@ -293,3 +293,33 @@
   .co-actions { flex-direction: column-reverse; }
   .co-btn { width: 100%; }
 }
+
+/* Customer quote summary (read-only until acceptance ships) */
+.co-quote-card {
+  max-width: 680px;
+  margin: 0 auto 20px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+
+.co-quote-list { margin: 12px 0; }
+
+.co-quote-list > div {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #F1EADD;
+  font-size: 13px;
+}
+
+.co-quote-list dt { color: var(--text-muted); }
+.co-quote-list dd { margin: 0; color: var(--text); overflow-wrap: anywhere; }
+.co-quote-total dt, .co-quote-total dd { font-weight: 700; color: var(--brown-deep); }
+
+@media (max-width: 640px) {
+  .co-quote-list > div { grid-template-columns: 1fr; gap: 2px; }
+}

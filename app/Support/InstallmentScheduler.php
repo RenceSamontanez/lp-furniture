@@ -64,15 +64,9 @@ final class InstallmentScheduler
         int $durationMonths,
         int $frequencyDays
     ): void {
-        $numPayments = self::paymentCount($durationMonths, $frequencyDays);
-
-        $baseAmount = floor(($remaining / $numPayments) * 100) / 100;
-        $runningTotal = 0.0;
-
-        for ($i = 1; $i <= $numPayments; $i++) {
-            $isLast = $i === $numPayments;
-            $amountDue = $isLast ? round($remaining - $runningTotal, 2) : $baseAmount;
-            $runningTotal += $amountDue;
+        foreach (self::splitAmounts($remaining, $durationMonths, $frequencyDays) as $row) {
+            $i = $row['no'];
+            $amountDue = $row['amount'];
 
             InstallmentSchedule::create([
                 'payment_id'      => $payment->id,
@@ -84,6 +78,33 @@ final class InstallmentScheduler
                 'status'          => 'pending',
             ]);
         }
+    }
+
+    /**
+     * The payment amounts and day offsets (from the upfront payment) for
+     * a remaining balance. Pure: no models, no dates. createSchedule()
+     * and every preview use this one implementation, so what an admin
+     * is shown is what gets created.
+     *
+     * @return array<int, array{no:int, amount:float, day_offset:int}>
+     */
+    public static function splitAmounts(float $remaining, int $durationMonths, int $frequencyDays): array
+    {
+        $numPayments = self::paymentCount($durationMonths, $frequencyDays);
+
+        $baseAmount = floor(($remaining / $numPayments) * 100) / 100;
+        $runningTotal = 0.0;
+        $rows = [];
+
+        for ($i = 1; $i <= $numPayments; $i++) {
+            $isLast = $i === $numPayments;
+            $amountDue = $isLast ? round($remaining - $runningTotal, 2) : $baseAmount;
+            $runningTotal += $amountDue;
+
+            $rows[] = ['no' => $i, 'amount' => $amountDue, 'day_offset' => $frequencyDays * $i];
+        }
+
+        return $rows;
     }
 
     /**

@@ -17,6 +17,12 @@
       'call_logged'        => 'Call logged',
       'marked_unreachable' => 'Marked unreachable, customer notified',
       'declined_by_admin'  => 'Declined, customer notified',
+      'quote_draft_created' => 'Quote draft created',
+      'quote_draft_updated' => 'Quote draft updated',
+      'quote_draft_deleted' => 'Quote draft deleted',
+      'quote_sent'         => 'Quote sent to the customer',
+      'quote_superseded'   => 'Earlier quote replaced',
+      'quote_expired'      => 'Quote expired',
   ];
 @endphp
 
@@ -83,6 +89,48 @@
         @endif
       </div>
     </div>
+
+    {{-- Quote versions --}}
+    @if($quotes->isNotEmpty())
+      <div class="admin-panel">
+        <div class="admin-panel-header"><div class="admin-panel-title">Quote versions</div></div>
+        <div class="admin-panel-body" style="padding:0;">
+          <table class="admin-table">
+            <thead><tr><th>Version</th><th>Status</th><th>Price</th><th>Total</th><th>Sent</th><th>Expires</th></tr></thead>
+            <tbody>
+              @foreach($quotes as $q)
+                <tr>
+                  <td data-label="Version">v{{ $q->version }}</td>
+                  <td data-label="Status"><span class="co-chip co-quote-chip--{{ $q->status }}">{{ ucfirst($q->status) }}</span></td>
+                  <td data-label="Price">
+                    ₱{{ number_format($q->price, 2) }}
+                    @if($q->previous_price !== null && (float) $q->previous_price !== (float) $q->price)
+                      <div class="co-log-meta">was ₱{{ number_format($q->previous_price, 2) }}</div>
+                    @endif
+                  </td>
+                  <td data-label="Total">₱{{ number_format($q->totalAmount(), 2) }}</td>
+                  <td data-label="Sent">
+                    @if($q->sent_at)
+                      {{ $q->sent_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}
+                      <div class="co-log-meta">by {{ $q->sender?->first_name ?? 'Admin' }}</div>
+                    @else — @endif
+                  </td>
+                  <td data-label="Expires">{{ $q->expires_at?->timezone('Asia/Manila')->format('M d, Y h:i A') ?? '—' }}</td>
+                </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      @php $current = $quotes->firstWhere('status', 'sent') ?? $quotes->first(); @endphp
+      <div class="admin-panel">
+        <div class="admin-panel-header"><div class="admin-panel-title">Version {{ $current->version }} terms</div></div>
+        <div class="admin-panel-body">
+          @include('admin.custom-orders._quote-terms', ['quote' => $current])
+        </div>
+      </div>
+    @endif
 
     {{-- Timeline --}}
     <div class="admin-panel">
@@ -160,8 +208,28 @@
           </p>
         @endif
 
+        @php $draft = $quotes->firstWhere('status', 'draft'); @endphp
         <div style="margin-top:18px;padding-top:18px;border-top:1px solid #EFE7DA;">
-          <button type="button" class="admin-btn admin-btn-outline co-btn-disabled" disabled>Create quote (next step)</button>
+          <div class="co-action-title">Quote</div>
+          @if($draft)
+            <p class="co-hint">Version {{ $draft->version }} is a draft.</p>
+            <a href="{{ route('admin.custom-orders.quotes.confirm', [$r->id, $draft->id]) }}" class="admin-btn admin-btn-gold" style="width:100%;margin-bottom:8px;">Review and send</a>
+            <a href="{{ route('admin.custom-orders.quotes.edit', [$r->id, $draft->id]) }}" class="admin-btn admin-btn-outline" style="width:100%;margin-bottom:8px;">Edit draft</a>
+            <form method="POST" action="{{ route('admin.custom-orders.quotes.delete', [$r->id, $draft->id]) }}"
+                  onsubmit="return confirm('Delete this draft?')">
+              @csrf
+              <input type="hidden" name="lock_version" value="{{ $r->lock_version }}"/>
+              <button type="submit" class="admin-btn admin-btn-danger" style="width:100%;">Delete draft</button>
+            </form>
+          @elseif($quoteBlocker)
+            <p class="co-hint">{{ $quoteBlocker }}</p>
+            <button type="button" class="admin-btn admin-btn-outline co-btn-disabled" disabled>Create quote</button>
+          @else
+            @php $hasQuotes = $quotes->isNotEmpty(); @endphp
+            <a href="{{ route('admin.custom-orders.quotes.create', $r->id) }}" class="admin-btn admin-btn-gold" style="width:100%;">
+              {{ $hasQuotes ? 'Create new version' : 'Create quote' }}
+            </a>
+          @endif
         </div>
       </div>
     </div>

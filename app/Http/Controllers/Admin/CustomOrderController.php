@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\CustomDesignRequest;
 use App\Models\CustomOrderEvent;
+use App\Models\CustomQuote;
 use App\Support\CustomOrderPipeline;
 use App\Support\PipelineException;
+use App\Support\QuoteTerms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,6 +26,8 @@ class CustomOrderController extends Controller
 
     public function index(Request $request)
     {
+        $this->pipeline->expireStaleQuotes();
+
         $status = $request->query('status');
         if (!array_key_exists((string) $status, CustomOrderPipeline::LABELS)) {
             $status = null;
@@ -72,6 +76,8 @@ class CustomOrderController extends Controller
 
     public function show($id)
     {
+        $this->pipeline->expireStaleQuotes(); // lazy expiry, like failStale()
+
         $designRequest = CustomDesignRequest::whereNotNull('pipeline_status')
             ->with(['user', 'suggestions', 'selectedSuggestion', 'callLogs.admin'])
             ->findOrFail($id);
@@ -89,6 +95,8 @@ class CustomOrderController extends Controller
             'actors'        => $actors,
             'unanswered'    => $designRequest->callLogs->where('answered', false)->count(),
             'isOpen'        => in_array($designRequest->pipeline_status, CustomOrderPipeline::OPEN, true),
+            'quotes'        => CustomQuote::where('request_id', $designRequest->id)->with(['sender', 'creator'])->orderByDesc('version')->get(),
+            'quoteBlocker'  => $this->quoteBlocker($designRequest),
         ]);
     }
 
@@ -134,6 +142,194 @@ class CustomOrderController extends Controller
 
             return 'Request declined. The customer has been notified.';
         });
+    }
+
+    /* ───────────── quotes (Stage 5) ───────────── */
+
+    private const QUOTE_FIELDS = [
+        'final_description', 'width_cm', 'depth_cm', 'height_cm', 'material', 'finish', 'modifications',
+        'price', 'delivery_option', 'delivery_fee', 'delivery_address', 'production_days',
+        'payment_terms', 'deposit_amount', 'installment_duration_months', 'installment_frequency_days',
+        'call_notes',
+    ];
+
+    /** Blank form (first quote) or a prefilled next version. */
+    public function quoteForm($id)
+    {
+        $designRequest = CustomDesignRequest::whereNotNull('pipeline_status')->with('user')->findOrFail($id);
+
+        $draft = CustomQuote::where('request_id', $designRequest->id)->where('status', 'draft')->first();
+        if ($draft) {
+            return redirect()->route('admin.custom-orders.quotes.edit', [$designRequest->id, $draft->id]);
+        }
+
+        if ($problem = $this->quoteBlocker($designRequest)) {
+            return redirect()->route('admin.custom-orders.show', $designRequest->id)->withErrors(['pipeline' => $problem]);
+        }
+
+        $latest = CustomQuote::where('request_id', $designRequest->id)->orderByDesc('version')->first();
+
+        return view('admin.custom-orders.quote-form', [
+            'hideGlobalErrorToast' => true,
+            'designRequest' => $designRequest,
+            'quote'         => null,
+            'basedOn'       => $latest,
+            'values'        => $this->formValues(old(), $latest, $designRequest),
+            'action'        => route('admin.custom-orders.quotes.store', $designRequest->id),
+        ]);
+    }
+
+    public function quoteStore(Request $request, $id)
+    {
+        $data = $request->validate(['lock_version' => 'required|integer|min:0']);
+        $terms = $request->only(self::QUOTE_FIELDS);
+
+        return $this->run($id, function () use ($id, $terms, $data) {
+            $quote = $this->pipeline->createDraft((int) $id, Auth::guard('admin')->user(), $terms, (int) $data['lock_version']);
+
+            return "Draft saved as version {$quote->version}. Review it, then send it to the customer.";
+        });
+    }
+
+    public function quoteEdit($id, $quoteId)
+    {
+        $designRequest = CustomDesignRequest::whereNotNull('pipeline_status')->with('user')->findOrFail($id);
+        $quote = CustomQuote::where('request_id', $designRequest->id)->findOrFail($quoteId);
+
+        if ($quote->status !== 'draft') {
+            return redirect()->route('admin.custom-orders.show', $designRequest->id)
+                ->withErrors(['pipeline' => 'Only a draft can be edited. Start a new version from the quote history.']);
+        }
+
+        return view('admin.custom-orders.quote-form', [
+            'hideGlobalErrorToast' => true,
+            'designRequest' => $designRequest,
+            'quote'         => $quote,
+            'basedOn'       => null,
+            'values'        => $this->formValues(old(), $quote, $designRequest),
+            'action'        => route('admin.custom-orders.quotes.update', [$designRequest->id, $quote->id]),
+        ]);
+    }
+
+    public function quoteUpdate(Request $request, $id, $quoteId)
+    {
+        $data = $request->validate(['lock_version' => 'required|integer|min:0']);
+        $terms = $request->only(self::QUOTE_FIELDS);
+
+        return $this->run($id, function () use ($id, $quoteId, $terms, $data) {
+            $this->pipeline->updateDraft((int) $id, (int) $quoteId, Auth::guard('admin')->user(), $terms, (int) $data['lock_version']);
+
+            return 'Draft updated.';
+        });
+    }
+
+    public function quoteDelete(Request $request, $id, $quoteId)
+    {
+        $data = $request->validate(['lock_version' => 'required|integer|min:0']);
+
+        return $this->run($id, function () use ($id, $quoteId, $data) {
+            $this->pipeline->deleteDraft((int) $id, (int) $quoteId, Auth::guard('admin')->user(), (int) $data['lock_version']);
+
+            return 'Draft deleted.';
+        });
+    }
+
+    /** "Send P{total} quote to {name} ({phone})?" with the full terms. */
+    public function quoteConfirm($id, $quoteId)
+    {
+        $designRequest = CustomDesignRequest::whereNotNull('pipeline_status')->with('user')->findOrFail($id);
+        $quote = CustomQuote::where('request_id', $designRequest->id)->findOrFail($quoteId);
+
+        if ($quote->status !== 'draft') {
+            return redirect()->route('admin.custom-orders.show', $designRequest->id)
+                ->withErrors(['pipeline' => 'Only a draft can be sent.']);
+        }
+
+        return view('admin.custom-orders.quote-confirm', [
+            'hideGlobalErrorToast' => true,
+            'designRequest' => $designRequest,
+            'quote'         => $quote,
+            'summary'       => QuoteTerms::summary($quote),
+            'replaces'      => CustomQuote::where('request_id', $designRequest->id)->where('status', 'sent')->first(),
+        ]);
+    }
+
+    public function quoteSend(Request $request, $id, $quoteId)
+    {
+        $data = $request->validate(['lock_version' => 'required|integer|min:0']);
+
+        return $this->run($id, function () use ($id, $quoteId, $data) {
+            $quote = $this->pipeline->sendQuote((int) $id, (int) $quoteId, Auth::guard('admin')->user(), (int) $data['lock_version']);
+
+            return 'Quote version ' . $quote->version . ' sent. The customer has been notified and has '
+                . CustomQuote::VALID_DAYS . ' days to respond.';
+        });
+    }
+
+    /** Live preview: the same arithmetic and scheduler the real quote uses. */
+    public function quotePreview(Request $request, $id)
+    {
+        CustomDesignRequest::whereNotNull('pipeline_status')->findOrFail($id);
+
+        $delivery = $request->query('delivery_option') === 'delivery';
+        $feeRaw   = $request->query('delivery_fee');
+        $deposit  = $request->query('payment_terms') === 'deposit';
+
+        $terms = [
+            'price'           => is_numeric($request->query('price')) ? (float) $request->query('price') : 0,
+            'delivery_option' => $delivery ? 'delivery' : 'pickup',
+            'delivery_fee'    => $delivery ? (is_numeric($feeRaw) ? (float) $feeRaw : CustomQuote::DEFAULT_DELIVERY_FEE) : 0,
+            'payment_terms'   => $deposit ? 'deposit' : 'full',
+            'deposit_amount'  => is_numeric($request->query('deposit_amount')) ? (float) $request->query('deposit_amount') : 0,
+            'installment_duration_months' => (int) $request->query('installment_duration_months'),
+            'installment_frequency_days'  => (int) $request->query('installment_frequency_days'),
+        ];
+
+        $summary = QuoteTerms::summary($terms);
+        $problem = $deposit
+            ? QuoteTerms::depositProblem((int) round($summary['total'] * 100), (int) round($terms['deposit_amount'] * 100))
+            : null;
+
+        return response()->json($summary + ['delivery_fee' => $terms['delivery_fee'], 'deposit_problem' => $problem]);
+    }
+
+    /** Why a new quote can't be started right now, or null. */
+    private function quoteBlocker(CustomDesignRequest $r): ?string
+    {
+        if (!in_array($r->pipeline_status, CustomOrderPipeline::QUOTE_FROM, true)) {
+            return 'A quote can only be started once the request is in contact (after an answered call).';
+        }
+        if ($r->pipeline_status === 'contacting' && !$r->callLogs()->where('answered', true)->exists()) {
+            return 'Log at least one answered call before creating a quote.';
+        }
+
+        return null;
+    }
+
+    private function formValues(array $old, ?CustomQuote $from, CustomDesignRequest $r): array
+    {
+        $base = [
+            'final_description' => $r->description,
+            'material'          => $r->preferred_material,
+            'delivery_option'   => 'pickup',
+            'delivery_fee'      => '',
+            'payment_terms'     => 'full',
+        ];
+
+        if ($from) {
+            foreach (self::QUOTE_FIELDS as $f) {
+                $base[$f] = $from->{$f};
+            }
+        }
+
+        // Plain numbers in the inputs, not "10000.00" casts with thousands separators.
+        foreach (['width_cm', 'depth_cm', 'height_cm', 'price', 'delivery_fee', 'deposit_amount'] as $f) {
+            if (isset($base[$f]) && $base[$f] !== '') {
+                $base[$f] = rtrim(rtrim(number_format((float) $base[$f], 2, '.', ''), '0'), '.');
+            }
+        }
+
+        return array_merge($base, $old);
     }
 
     /** Runs a pipeline action; a refusal becomes a flash error, never a 500. */
