@@ -110,6 +110,15 @@
             <p class="profile-panel-desc">Update your name, phone number, and delivery address.</p>
           </div>
           <div class="profile-panel-body">
+            @if(!$user->hasValidPhone())
+              <div class="profile-phone-prompt">
+                <strong>{{ $user->phone_number ? 'Please check your mobile number.' : 'Add a mobile number.' }}</strong>
+                {{ $user->phone_number
+                    ? 'The number on your account is not in a Philippine mobile format we can call.'
+                    : 'You can shop without one, but our team needs a number to call you about custom design requests.' }}
+              </div>
+            @endif
+
             <form method="POST" action="{{ route('profile.update') }}">
               @csrf
               @method('PUT')
@@ -136,11 +145,19 @@
                   <p class="profile-field-hint">Email cannot be changed here.</p>
                 </div>
                 <div class="profile-field">
-                  <label class="form-label">Phone Number</label>
+                  <label class="form-label">
+                    Phone Number
+                    @if(!$user->phone_number)
+                      <span class="profile-phone-tag profile-phone-tag--missing">Not set</span>
+                    @elseif(!$user->hasValidPhone())
+                      <span class="profile-phone-tag profile-phone-tag--invalid">Unverified</span>
+                    @endif
+                  </label>
                   <input type="tel" name="phone_number" class="form-input"
                     value="{{ old('phone_number', $user->phone_number) }}" maxlength="13"
-                    placeholder="09171234567" required
+                    placeholder="09171234567" @if($user->phone_number) required @endif
                     oninput="this.value = this.value.replace(/[^\d\+]/g, '')"/>
+                  <p class="profile-field-hint">Philippine mobile number, e.g. 09171234567 or +639171234567.</p>
                 </div>
               </div>
 

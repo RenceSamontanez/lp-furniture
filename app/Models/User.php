@@ -49,6 +49,15 @@ class User extends Authenticatable implements MustVerifyEmail
     public function payments()     { return $this->hasMany(Payment::class); }
     public function validation()   { return $this->hasOne(UserValidation::class); }
 
+    /* ── PHONE ── */
+
+    // True when phone_number is a valid PH mobile number (any accepted
+    // format). Numbers are not OTP-verified; this is a format check only.
+    public function hasValidPhone(): bool
+    {
+        return \App\Rules\PhilippineMobile::isValid($this->phone_number);
+    }
+
     /* ── SCOPES ── */
     public function scopeCustomers($query) { return $query->where('role', 'customer'); }
     public function scopeActive($query)    { return $query->where('account_status', 'active'); }

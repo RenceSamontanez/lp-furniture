@@ -85,6 +85,8 @@ Auth itself is hand-rolled in `AuthController` (no Breeze/Jetstream/Fortify) —
 
 Status: **Stage 0** (payment safety fixes in `PaymentController`) and **Stage 1** (schema + models only, no behaviour change) are done. The tables `custom_quotes`, `design_agreements`, `agreement_policies`, `custom_order_call_logs`, `custom_order_events`, `payment_records` exist with models, plus new columns on `custom_design_requests`/`orders`/`payments`; nothing in the app reads or writes them yet. `App\Support\InstallmentScheduler` now builds installment schedules (catalog = exactly 50% down; custom deposits must be >= `InstallmentScheduler::MIN_DEPOSIT_PERCENT`). `DesignAgreement` and `AgreementPolicy` are insert-only (model guards throw on update/delete; no triggers by design).
 
+**Stage 2** (phone) is done: `App\Rules\PhilippineMobile` accepts `09…`/`+639…`/`639…` and `normalize()` stores `09XXXXXXXXX`. `updateProfile` only validates the phone when it is edited (legacy numbers save untouched; an account with no phone may stay empty). Registration keeps its own regex. Catalog checkout never needs a phone.
+
 ### Models — key relationships
 
 - `User` is the hub: `hasMany` CartItem, Order, Notification, Feedback, ChatbotLog, CustomDesignRequest, Payment; `hasOne` UserValidation.

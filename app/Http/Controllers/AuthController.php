@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Rules\PhilippineMobile;
 use App\Support\SafeIntendedUrl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -314,17 +315,32 @@ return redirect()->route('verification.notice')
     {
         $user = Auth::user();
 
+        // The phone format is only checked when the number is edited, so
+        // an older account whose stored number predates the rule can still
+        // save its name/address/password untouched. An account with no
+        // phone yet (Google sign-ups) may keep it empty.
+        $submittedPhone = trim((string) $request->input('phone_number', ''));
+        $phoneUnchanged = $user->phone_number !== null && $submittedPhone === $user->phone_number;
+
+        $phoneRules = match (true) {
+            $phoneUnchanged                                        => ['required', 'string', 'max:20'],
+            $user->phone_number === null && $submittedPhone === '' => ['nullable'],
+            default                                                => ['required', 'string', 'max:20', new PhilippineMobile()],
+        };
+
         $request->validate([
             'first_name'   => 'required|string|max:100',
             'last_name'    => 'required|string|max:100',
-            'phone_number' => 'required|string|max:20',
+            'phone_number' => $phoneRules,
             'address'      => 'nullable|string|max:500',
             'password'     => 'nullable|string|min:8|confirmed',
         ]);
 
         $user->first_name   = $request->first_name;
         $user->last_name    = $request->last_name;
-        $user->phone_number = $request->phone_number;
+        $user->phone_number = $phoneUnchanged
+            ? $user->phone_number
+            : PhilippineMobile::normalize($submittedPhone);
         $user->address      = $request->address;
 
         if ($request->filled('password')) {
