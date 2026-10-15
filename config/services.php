@@ -60,19 +60,16 @@ return [
     ],
 
 
-    'huggingface' => [
-    'key' => env('HUGGINGFACE_API_KEY'),
-],
+    // Hugging Face (model permanently deprecated upstream) and DeepAI
+    // (requires a paid plan this project doesn't have) were removed
+    // from GenerateAiDesign entirely — see the provider-chain rescue.
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+    ],
 
-'gemini' => [
-    'key' => env('GEMINI_API_KEY'),
-],
-
-// Was never added here even though GenerateAiDesign::tryDeepAi()
-// reads config('services.deepai.key') and .env has had DEEPAI_API_KEY
-// set — meaning DeepAI silently never ran (always read as unconfigured)
-// regardless of the key being present.
-'deepai' => [
-    'key' => env('DEEPAI_API_KEY'),
-],
+    // Pollinations' authenticated endpoint (gen.pollinations.ai) —
+    // empty means GenerateAiDesign::tryPollinations() skips it cleanly.
+    'pollinations' => [
+        'key' => env('POLLINATIONS_API_KEY'),
+    ],
 ];

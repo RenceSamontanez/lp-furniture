@@ -21,6 +21,26 @@ class GenerateAiDesign implements ShouldQueue
     public int $tries   = 2;
     public int $timeout = 300;
 
+    // Once either flips true, that provider is skipped for every
+    // remaining variation in THIS run — set when a provider reports a
+    // structural "not available" condition (Gemini's 429/limit:0, a
+    // missing Pollinations key, or a Pollinations 429) rather than a
+    // one-off failure worth retrying on the next variation.
+    private bool $geminiUnavailable = false;
+    private bool $pollinationsUnavailable = false;
+
+    private const MAX_VARIATIONS = 4;
+    private const TIME_BUDGET_SECONDS = 180;
+
+    // A protected method rather than inlining the constant so a test
+    // can subclass this job and return a short budget, to verify the
+    // cutoff logic itself without actually waiting out the real
+    // 3-minute budget.
+    protected function timeBudgetSeconds(): int
+    {
+        return self::TIME_BUDGET_SECONDS;
+    }
+
     public function __construct(
         public readonly int $requestId
     ) {}
@@ -47,36 +67,45 @@ class GenerateAiDesign implements ShouldQueue
         $request->update(['ai_prompt' => $prompt]);
 
         $generated = 0;
+        $startedAt = microtime(true);
 
-        for ($i = 1; $i <= 4; $i++) {
+        for ($i = 1; $i <= self::MAX_VARIATIONS; $i++) {
 
             // Re-check on every iteration, not just once at the start —
-            // this loop can easily run past the 10-minute staleness
-            // window on its own (Gemini alone throttles to one call
-            // per ~8s), so the lazy check or design:fail-stale could
-            // mark this request rejected mid-loop.
+            // this loop can run long enough on its own (Gemini alone
+            // throttles to one call per ~8s) that the lazy check or
+            // design:fail-stale could mark this request rejected
+            // mid-loop.
             if ($request->fresh()->status === 'rejected') {
                 Log::info("Request {$this->requestId} was marked rejected mid-run — stopping without creating more suggestions.");
                 return;
             }
 
-            // Provider order: Gemini (primary) → Hugging Face → DeepAI → Pollinations
-            $provider = 'gemini';
-            $result = $this->tryGemini($prompt, $i);
-
-            if (!$result) {
-                $provider = 'huggingface-sd';
-                $result = $this->tryHuggingFace($prompt, $i);
+            $elapsed = microtime(true) - $startedAt;
+            $budget = $this->timeBudgetSeconds();
+            if ($elapsed >= $budget) {
+                Log::info("Request {$this->requestId}: {$budget}s time budget reached after {$generated} variation(s) — stopping with what we have rather than forcing all " . self::MAX_VARIATIONS . '.');
+                break;
             }
 
-            if (!$result) {
-                $provider = 'deepai';
-                $result = $this->tryDeepAi($prompt, $i);
+            if ($this->pollinationsUnavailable && $this->geminiUnavailable) {
+                Log::info("Request {$this->requestId}: both providers unavailable — stopping after {$generated} variation(s) instead of failing the whole request.");
+                break;
             }
 
-            if (!$result) {
+            // Provider order: Pollinations (authenticated) first, Gemini
+            // as the last option — see PART 2 of the provider-chain fix.
+            $provider = null;
+            $result = null;
+
+            if (!$this->pollinationsUnavailable) {
                 $provider = 'pollinations-ai';
                 $result = $this->tryPollinations($prompt, $i);
+            }
+
+            if (!$result && !$this->geminiUnavailable) {
+                $provider = 'gemini';
+                $result = $this->tryGemini($prompt, $i);
             }
 
             if ($result) {
@@ -91,10 +120,10 @@ class GenerateAiDesign implements ShouldQueue
                 $generated++;
                 Log::info("Variation {$i} succeeded via {$provider} for request {$this->requestId}.");
             } else {
-                Log::warning("All 4 providers failed for variation {$i}, request {$this->requestId}.");
+                Log::warning("No available provider produced an image for variation {$i}, request {$this->requestId}.");
             }
 
-            if ($i < 4) {
+            if ($i < self::MAX_VARIATIONS) {
                 sleep(1);
             }
         }
@@ -133,9 +162,62 @@ class GenerateAiDesign implements ShouldQueue
     }
 
     /* ════════════════════════════════
-       PROVIDER 1 (PRIMARY): Google Gemini
-       2.5 Flash Image ("Nano Banana")
-       Free: 500/day, no credit card.
+       PROVIDER (AUTHENTICATED): Pollinations.ai
+       Tried first — gen.pollinations.ai is the authenticated
+       endpoint (vs. the old unauthenticated image.pollinations.ai),
+       which is both more reliable and the one that actually accepts
+       POLLINATIONS_API_KEY. No key configured means no account to
+       call on behalf of, so this is skipped cleanly rather than
+       attempted and failed.
+    ════════════════════════════════ */
+    private function tryPollinations(string $prompt, int $variation): ?string
+    {
+        $apiKey = config('services.pollinations.key');
+
+        if (!$apiKey) {
+            Log::info("[Pollinations] no API key configured — skipping.");
+            $this->pollinationsUnavailable = true;
+            return null;
+        }
+
+        $seed = crc32($this->requestId . '-' . $variation . '-' . time());
+        $encodedPrompt = urlencode($prompt . ", variation {$variation}, professional product photography");
+        $imageUrl = "https://gen.pollinations.ai/prompt/{$encodedPrompt}"
+            . "?width=1024&height=1024&seed={$seed}&nologo=true";
+
+        Log::info("[Pollinations] attempt, variation {$variation}, request {$this->requestId}");
+
+        try {
+            $response = Http::timeout(20)->connectTimeout(5)->withToken($apiKey)->withoutVerifying()->get($imageUrl);
+            Log::info("[Pollinations] response variation {$variation}: status=" . $response->status());
+
+            if ($response->status() === 429) {
+                Log::info("[Pollinations] rate limited (429) — unavailable for the rest of this run.");
+                $this->pollinationsUnavailable = true;
+                return null;
+            }
+
+            if ($response->successful()) {
+                return $this->saveValidatedImage($response->body(), 'jpg', 'Pollinations', $variation);
+            }
+
+            Log::warning("[Pollinations] non-success status {$response->status()} for variation {$variation}.");
+            return null;
+
+        } catch (\Exception $e) {
+            Log::error("[Pollinations] error variation {$variation}: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /* ════════════════════════════════
+       PROVIDER (LAST OPTION): Google Gemini 2.5 Flash Image
+       Free: 500/day, no credit card — but this project's key has
+       0 free-tier allowance for this model (confirmed via a real
+       429: "...free_tier_requests, limit: 0, model:
+       gemini-2.5-flash-preview-image"), which is a structural
+       unavailability, not a transient rate limit — detected below and
+       treated as such rather than retried on later variations.
        Returns base64 image data — saved locally.
     ════════════════════════════════ */
     private function tryGemini(string $prompt, int $variation): ?string
@@ -144,12 +226,12 @@ class GenerateAiDesign implements ShouldQueue
 
         if (!$apiKey) {
             Log::info("[Gemini] no API key configured — skipping.");
+            $this->geminiUnavailable = true;
             return null;
         }
 
-        // Gemini's free tier allows only 10 requests per minute.
-        // Spacing calls out by ~8 seconds keeps us safely under
-        // that limit across 4 variations in a single job run.
+        // Free tier allows only ~10 requests/minute — space calls out
+        // so a multi-variation run doesn't trip that on its own.
         static $lastGeminiCall = null;
         if ($lastGeminiCall !== null) {
             $elapsed = microtime(true) - $lastGeminiCall;
@@ -158,193 +240,64 @@ class GenerateAiDesign implements ShouldQueue
                 sleep((int) ceil($minGap - $elapsed));
             }
         }
-
-        for ($attempt = 1; $attempt <= 1; $attempt++) {
-            $lastGeminiCall = microtime(true);
-
-            try {
-                Log::info("[Gemini] attempt {$attempt}, variation {$variation}, request {$this->requestId}");
-
-                $response = Http::timeout(45)
-                    ->withHeaders(['Content-Type' => 'application/json'])
-                    ->post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=' . $apiKey, [
-                        'contents' => [
-                            ['parts' => [
-                                ['text' => $prompt . ", variation {$variation}, professional product photography"],
-                            ]],
-                        ],
-                        'generationConfig' => [
-                            'responseModalities' => ['TEXT', 'IMAGE'],
-                        ],
-                    ]);
-
-                Log::info("[Gemini] response variation {$variation} attempt {$attempt}: status=" . $response->status());
-
-                if ($response->successful()) {
-                    $data = $response->json();
-                    $parts = $data['candidates'][0]['content']['parts'] ?? [];
-
-                    foreach ($parts as $part) {
-                        if (isset($part['inlineData']['data'])) {
-                            $imageBytes = base64_decode($part['inlineData']['data']);
-                            $saved = $this->saveValidatedImage($imageBytes, 'png', 'Gemini', $variation);
-
-                            if ($saved) {
-                                return $saved;
-                            }
-                        }
-                    }
-                }
-
-                // Rate limited — wait using Google's suggested retry delay, then try once more
-                if ($response->status() === 429) {
-                    Log::info("[Gemini] rate limited (quota likely exhausted) — moving to next provider immediately.");
-                    break;
-                }
-
-                break;
-
-            } catch (\Exception $e) {
-                Log::error("[Gemini] error variation {$variation} attempt {$attempt}: " . $e->getMessage());
-                sleep(3);
-            }
-        }
-
-        Log::warning("[Gemini] failed for variation {$variation}, request {$this->requestId}. Falling back.");
-        return null;
-    }
-
-    /* ════════════════════════════════
-       PROVIDER 2: Hugging Face Inference API
-    ════════════════════════════════ */
-    private function tryHuggingFace(string $prompt, int $variation): ?string
-    {
-        $apiKey = config('services.huggingface.key');
-
-        if (!$apiKey) {
-            Log::info("[Hugging Face] no API key configured — skipping.");
-            return null;
-        }
+        $lastGeminiCall = microtime(true);
 
         try {
-            Log::info("[Hugging Face] attempt, variation {$variation}, request {$this->requestId}");
+            Log::info("[Gemini] attempt, variation {$variation}, request {$this->requestId}");
 
-            $response = Http::timeout(60)
-                ->withToken($apiKey)
+            $response = Http::timeout(20)
                 ->withHeaders(['Content-Type' => 'application/json'])
-                ->post('https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell', [
-                    'inputs' => $prompt . ", variation {$variation}",
+                ->post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=' . $apiKey, [
+                    'contents' => [
+                        ['parts' => [
+                            ['text' => $prompt . ", variation {$variation}, professional product photography"],
+                        ]],
+                    ],
+                    'generationConfig' => [
+                        'responseModalities' => ['TEXT', 'IMAGE'],
+                    ],
                 ]);
 
-            Log::info("[Hugging Face] response variation {$variation}: status=" . $response->status());
-
-            if ($response->successful() && str_starts_with($response->header('Content-Type'), 'image/')) {
-                $saved = $this->saveValidatedImage($response->body(), 'jpg', 'Hugging Face', $variation);
-
-                if ($saved) {
-                    return $saved;
-                }
-            } else {
-                Log::warning("[Hugging Face] no image returned for variation {$variation}: " . $response->body());
-            }
-
-            return null;
-
-        } catch (\Exception $e) {
-            Log::error("[Hugging Face] error variation {$variation}: " . $e->getMessage());
-            return null;
-        }
-    }
-
-    /* ════════════════════════════════
-       PROVIDER 3: DeepAI Text2Img
-    ════════════════════════════════ */
-    private function tryDeepAi(string $prompt, int $variation): ?string
-    {
-        $apiKey = config('services.deepai.key');
-
-        if (!$apiKey) {
-            Log::info("[DeepAI] no API key configured — skipping.");
-            return null;
-        }
-
-        try {
-            Log::info("[DeepAI] attempt, variation {$variation}, request {$this->requestId}");
-
-            $response = Http::timeout(60)
-                ->withHeaders(['api-key' => $apiKey])
-                ->asForm()
-                ->post('https://api.deepai.org/api/text2img', [
-                    'text' => $prompt . ", variation {$variation}",
-                ]);
-
-            Log::info("[DeepAI] response variation {$variation}: status=" . $response->status());
+            Log::info("[Gemini] response variation {$variation}: status=" . $response->status());
 
             if ($response->successful()) {
                 $data = $response->json();
+                $parts = $data['candidates'][0]['content']['parts'] ?? [];
 
-                // output_url is DeepAI's own CDN link, not something
-                // we control the lifetime of — download it now and
-                // save the bytes ourselves rather than storing that
-                // URL directly (see PART 1 of the image-reliability fix).
-                if (!empty($data['output_url'])) {
-                    $imageResponse = Http::timeout(30)->get($data['output_url']);
-
-                    if ($imageResponse->successful()) {
-                        $saved = $this->saveValidatedImage($imageResponse->body(), 'jpg', 'DeepAI', $variation);
+                foreach ($parts as $part) {
+                    if (isset($part['inlineData']['data'])) {
+                        $imageBytes = base64_decode($part['inlineData']['data']);
+                        $saved = $this->saveValidatedImage($imageBytes, 'png', 'Gemini', $variation);
 
                         if ($saved) {
                             return $saved;
                         }
-                    } else {
-                        Log::warning("[DeepAI] output_url did not download for variation {$variation}: status=" . $imageResponse->status());
                     }
-
-                    return null;
                 }
+
+                return null;
             }
 
-            Log::warning("[DeepAI] no image returned for variation {$variation}: " . $response->body());
+            if ($response->status() === 429) {
+                $message = (string) $response->json('error.message', '');
+
+                if (str_contains($message, 'limit: 0')) {
+                    Log::info("[Gemini] 429 with limit: 0 — unavailable for the rest of this run, not a transient rate limit.");
+                    $this->geminiUnavailable = true;
+                } else {
+                    Log::info("[Gemini] rate limited (429) — skipping this variation, may retry the next one.");
+                }
+
+                return null;
+            }
+
+            Log::warning("[Gemini] non-success status {$response->status()} for variation {$variation}.");
             return null;
 
         } catch (\Exception $e) {
-            Log::error("[DeepAI] error variation {$variation}: " . $e->getMessage());
+            Log::error("[Gemini] error variation {$variation}: " . $e->getMessage());
             return null;
         }
-    }
-
-    /* ════════════════════════════════
-       PROVIDER 4 (LAST RESORT): Pollinations.ai
-       Demoted — free/no-key, but has shown
-       consistently poor reliability in testing.
-    ════════════════════════════════ */
-    private function tryPollinations(string $prompt, int $variation): ?string
-    {
-        $seed = crc32($this->requestId . '-' . $variation . '-' . time());
-        $encodedPrompt = urlencode($prompt . ", variation {$variation}, professional product photography");
-
-        $imageUrl = "https://image.pollinations.ai/prompt/{$encodedPrompt}"
-            . "?width=1024&height=1024&seed={$seed}&nologo=true";
-
-        Log::info("[Pollinations] attempt (last resort), variation {$variation}, request {$this->requestId}");
-
-        try {
-            $response = Http::timeout(30)->connectTimeout(8)->withoutVerifying()->get($imageUrl);
-            Log::info("[Pollinations] response variation {$variation}: status=" . $response->status());
-
-            if ($response->successful()) {
-                // $imageUrl is a live generation endpoint, not a stable
-                // file — regenerates (and can time out, 404, or just go
-                // away) on every single fetch. Save what we got this
-                // time rather than storing that URL for later.
-                return $this->saveValidatedImage($response->body(), 'jpg', 'Pollinations', $variation);
-            }
-
-        } catch (\Exception $e) {
-            Log::error("[Pollinations] error variation {$variation}: " . $e->getMessage());
-        }
-
-        return null;
     }
 
     /* ════════════════════════════════

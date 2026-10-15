@@ -64,8 +64,12 @@
 
     {{-- ═══════════════════════════════════
          PROFESSIONAL FAILURE SCREEN
-         No emoji. Clear explanation. Two
-         distinct recovery actions.
+         No emoji. Clear explanation. Three
+         recovery actions — the third (send without
+         an image) is PART 3 of the provider-chain
+         rescue: keeps the prompt/details exactly as
+         submitted and pushes the request straight
+         into the admin's normal follow-up queue.
     ═══════════════════════════════════ --}}
     <div class="ai-results-card cd-failure-card">
       <div class="cd-failure-icon">
@@ -94,6 +98,13 @@
           Start New Prompt
         </a>
       </div>
+
+      <form method="POST" action="{{ route('design.sendWithoutImage', $designRequest->id) }}" style="margin-top:10px;">
+        @csrf
+        <button type="submit" class="ai-action-btn ai-action-secondary" style="width:100%;" onclick="return confirm('Send this request to our team without a design image? We\'ll reach out to discuss it directly.')">
+          Send my request to the team without an image
+        </button>
+      </form>
     </div>
 
   @elseif($designRequest->status === 'declined')

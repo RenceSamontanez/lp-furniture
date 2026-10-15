@@ -79,7 +79,17 @@
             </div>
           @endif
         @else
-          <div style="font-size:13px;color:var(--text-muted);">No image was generated for this request.</div>
+          {{-- Reaching 'approved'/'declined' with zero suggestions
+               only happens one way right now: the customer used "Send
+               my request to the team without an image" after
+               generation failed (selectDesign() requires a real
+               suggestion_id, so there's no other path here) — labeled
+               explicitly so this doesn't read as a bug or a missing
+               image admin needs to go find. --}}
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#FFF3CD;border-radius:8px;font-size:13px;color:#6B4E00;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span><strong>No image generated.</strong> The customer chose to send this request to the team without picking a design image.</span>
+          </div>
         @endif
       </div>
     </div>

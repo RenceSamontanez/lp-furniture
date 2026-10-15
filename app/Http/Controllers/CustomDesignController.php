@@ -190,6 +190,27 @@ class CustomDesignController extends Controller
         return back()->with('success', 'Design selected! Our team will contact you shortly to discuss pricing and production details.');
     }
 
+    /* ════════════════════════════════
+       SEND TO TEAM WITHOUT AN IMAGE — PART 3 of the provider-chain
+       rescue. Only available on a request generation genuinely
+       failed for (status 'rejected'); reaches the same 'approved'
+       state selectDesign() uses, so it shows up in the admin's normal
+       follow-up queue, just with no suggestion to display. Keeps the
+       prompt/furniture details exactly as submitted — nothing here
+       touches them.
+    ════════════════════════════════ */
+    public function sendWithoutImage($id)
+    {
+        $designRequest = CustomDesignRequest::where('user_id', Auth::id())
+            ->where('status', 'rejected')
+            ->findOrFail($id);
+
+        $designRequest->update(['status' => 'approved']);
+
+        return redirect()->route('design.show', $designRequest->id)
+            ->with('success', "Sent to our team without an image — we'll reach out to discuss your idea directly.");
+    }
+
     public function regenerate($id)
     {
         $designRequest = CustomDesignRequest::where('user_id', Auth::id())->findOrFail($id);

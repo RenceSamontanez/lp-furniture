@@ -38,6 +38,13 @@
                     <img src="{{ asset('images/products/placeholder.jpg') }}" alt="No image"/>
                   @endif
                 </div>
+                {{-- The only way to reach 'approved'/'declined' with
+                     no suggestions is the customer's "send without an
+                     image" action after generation failed — spelled
+                     out here, not left to look like a missing image. --}}
+                @if(!$selected)
+                  <div style="font-size:10.5px;font-weight:700;color:#92600C;margin-top:4px;">No image generated</div>
+                @endif
               </td>
               <td data-label="Customer">
                 <div style="font-weight:600;color:#2A1810;">{{ $req->user->first_name }} {{ $req->user->last_name }}</div>

@@ -166,6 +166,7 @@ Route::middleware(['auth', 'validated'])->group(function () {
     Route::get('/design/{id}',         [CustomDesignController::class, 'show'])->name('design.show');
     Route::post('/design/{id}/select', [CustomDesignController::class, 'selectDesign'])->name('design.select');
     Route::post('/design/{id}/regenerate', [CustomDesignController::class, 'regenerate'])->name('design.regenerate');
+    Route::post('/design/{id}/send-without-image', [CustomDesignController::class, 'sendWithoutImage'])->name('design.sendWithoutImage');
     Route::post('/design/{id}/favorite', [CustomDesignController::class, 'toggleFavorite'])->name('design.favorite');
 Route::get('/design-gallery', [CustomDesignController::class, 'gallery'])->name('design.gallery');
 });
