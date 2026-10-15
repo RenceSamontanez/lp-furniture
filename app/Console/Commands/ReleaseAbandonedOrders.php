@@ -30,6 +30,9 @@ class ReleaseAbandonedOrders extends Command
                   ->where('payment_status', 'pending');
             })
             ->where('order_status', 'pending')
+            // Customized orders follow their agreement's payment window
+            // (custom-orders:expire) and are never auto-cancelled here.
+            ->whereNull('design_agreement_id')
             ->where('created_at', '<', $cutoff)
             ->with('items')
             ->get();

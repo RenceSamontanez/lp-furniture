@@ -249,6 +249,79 @@ class AgreementCheckout
         return [$order, true];
     }
 
+    /* ───────────── helpers for the payment handlers (Stage 9 part B) ───────────── */
+
+    /** Is this order's agreement still the request's current one, with its quote accepted? */
+    public function agreementIsCurrent(Order $order): bool
+    {
+        if ($order->design_agreement_id === null) {
+            return true;
+        }
+
+        $agreement = DesignAgreement::with('quote')->find($order->design_agreement_id);
+        if (!$agreement || !$agreement->quote || $agreement->quote->status !== 'accepted') {
+            return false;
+        }
+
+        $latest = DesignAgreement::where('request_id', $agreement->request_id)->max('id');
+
+        return (int) $latest === (int) $agreement->id;
+    }
+
+    /**
+     * Why a NEW payment attempt may not start on this order, or null.
+     * Only used when starting a payment; completing one never asks.
+     */
+    public function paymentStartProblem(Order $order): ?string
+    {
+        if ($order->design_agreement_id === null) {
+            return null;
+        }
+
+        $agreement = DesignAgreement::with(['quote', 'request'])->find($order->design_agreement_id);
+        if (!$agreement) {
+            return 'This order\'s agreement could not be found.';
+        }
+
+        if (!$this->agreementIsCurrent($order)) {
+            return 'This order\'s agreement has been replaced, so a new payment cannot be started. Please contact us.';
+        }
+
+        if (!AgreementIntegrity::check($agreement)) {
+            return 'This order\'s agreement could not be verified, so a new payment cannot be started. Our team has been alerted.';
+        }
+
+        $due = $this->dueAt($agreement, $agreement->request);
+        if ($due === null || now()->greaterThanOrEqualTo($due)) {
+            return 'The time to start payment for this order has passed. Please contact us.';
+        }
+
+        return null;
+    }
+
+    /** The payment due date for a customized order's agreement, or null. */
+    public function orderDueAt(Order $order): ?Carbon
+    {
+        if ($order->design_agreement_id === null) {
+            return null;
+        }
+
+        $agreement = DesignAgreement::with('request')->find($order->design_agreement_id);
+
+        return $agreement ? $this->dueAt($agreement, $agreement->request) : null;
+    }
+
+    /** Payment date + the agreement's production days, Monday to Saturday. Null for catalog orders. */
+    public function expectedReadyDate(Order $order, \Carbon\CarbonInterface $paidOn): ?Carbon
+    {
+        if ($order->design_agreement_id === null) {
+            return null;
+        }
+
+        $days = (int) (DesignAgreement::find($order->design_agreement_id)?->terms_snapshot['production']['days'] ?? 0);
+
+        return $days > 0 ? WorkingDays::add($paidOn->copy()->timezone(AgreementTerms::TZ), $days) : null;
+    }
     /** Same format as Order::generateOrderNumber(); $attempt skips past a collision. */
     private function orderNumber(int $attempt): string
     {

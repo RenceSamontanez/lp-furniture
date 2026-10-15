@@ -60,6 +60,7 @@ class CustomDesignController extends Controller
         // get cleaned up even with no scheduler wired up.
         CustomDesignRequest::failStale();
         app(CustomOrderPipeline::class)->expireStaleQuotes();
+        app(CustomOrderPipeline::class)->expireUnpaidAgreements();
 
         $myRequests =CustomDesignRequest::where('user_id', Auth::id())
             ->with('suggestions')
@@ -177,6 +178,7 @@ class CustomDesignController extends Controller
     {
         CustomDesignRequest::failStale();
         app(CustomOrderPipeline::class)->expireStaleQuotes();
+        app(CustomOrderPipeline::class)->expireUnpaidAgreements();
 
         $designRequest = CustomDesignRequest::where('user_id', Auth::id())
             ->with('suggestions')

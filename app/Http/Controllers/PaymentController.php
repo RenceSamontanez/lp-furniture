@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Notification;
 use App\Models\StripeWebhookEvent;
+use App\Support\AgreementCheckout;
 use App\Support\PaymentLedger;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -24,6 +25,7 @@ class PaymentController extends Controller
     private const PAID_CONFIRMED       = 'confirmed';        // this call flipped the payment to paid and confirmed the order
     private const PAID_ALREADY         = 'already_paid';     // another path got there first - nothing more to do
     private const PAID_ORDER_CANCELLED = 'order_cancelled';  // money arrived, but the order was already cancelled
+    private const PAID_AGREEMENT_OUTDATED = 'agreement_outdated'; // customized order whose agreement is no longer current: recorded, flagged, not confirmed
     private const PAID_ORDER_ADVANCED  = 'order_advanced';   // money arrived, but the order had already moved past pending
 
     /* ════════════════════════════════
@@ -55,9 +57,34 @@ class PaymentController extends Controller
         // this method only owns the Stripe-specific tracking fields.
         $chargeAmount = $order->payment->amount;
 
+        // A NEW payment attempt on a customized order needs a current
+        // agreement and an open payment window. (Completing a payment
+        // that already began never asks this: see recordPaymentArrived.)
+        if ($problem = app(AgreementCheckout::class)->paymentStartProblem($order)) {
+            return redirect()->route('orders.show', $order->id)->withErrors(['payment' => $problem]);
+        }
+
         $stripe = new StripeClient(config('services.stripe.secret'));
 
-        $session = $stripe->checkout->sessions->create([
+        // Reuse the open Checkout Session for this payment instead of
+        // creating a second payable one (two tabs, a refresh, a back
+        // button). Only reused while Stripe still says it is open and it
+        // charges exactly what this payment asks for now.
+        $existingId = $order->payment->stripe_client_secret;
+        if ($existingId && str_starts_with((string) $existingId, 'cs_')) {
+            try {
+                $open = $stripe->checkout->sessions->retrieve($existingId);
+
+                if (($open->status ?? null) === 'open' && !empty($open->url)
+                    && (int) $open->amount_total === (int) round($chargeAmount * 100)) {
+                    return redirect($open->url);
+                }
+            } catch (\Throwable $e) {
+                \Log::info("Stripe session {$existingId} could not be reused for order {$order->id}: " . $e->getMessage());
+            }
+        }
+
+        $sessionParams = [
             'payment_method_types' => ['card'],
             'line_items' => [[
                 'price_data' => [
@@ -77,7 +104,18 @@ class PaymentController extends Controller
                 'order_id' => $order->id,
                 'user_id'  => Auth::id(),
             ],
-        ]);
+        ];
+
+        // A customized order has a payment deadline: let the session lapse
+        // with it, within Stripe's limit (30 minutes to 24 hours from now).
+        // When the deadline is further away, the 24 hour maximum is used.
+        if ($dueAt = app(AgreementCheckout::class)->orderDueAt($order)) {
+            $min = now()->addMinutes(31)->timestamp;
+            $max = now()->addHours(24)->subMinute()->timestamp;
+            $sessionParams['expires_at'] = max($min, min($dueAt->timestamp, $max));
+        }
+
+        $session = $stripe->checkout->sessions->create($sessionParams);
 
         // Save the session/payment-intent reference before redirecting
         Payment::where('order_id', $order->id)->update([
@@ -125,6 +163,10 @@ class PaymentController extends Controller
 
             if ($outcome === self::PAID_ORDER_CANCELLED) {
                 return $this->cancelledOrderPaymentRedirect($order);
+            }
+
+            if ($outcome === self::PAID_AGREEMENT_OUTDATED) {
+                return $this->outdatedAgreementPaymentRedirect($order);
             }
 
             if ($outcome !== null) {
@@ -317,6 +359,19 @@ class PaymentController extends Controller
                 return self::PAID_ORDER_CANCELLED;
             }
 
+            // A customized order whose agreement is no longer the current
+            // one: the money is in the ledger, but nothing is confirmed.
+            // A person decides (needs_review + admin alert). The payment
+            // deadline is deliberately NOT checked here: a payment that
+            // began in time is honored.
+            $checkout = app(AgreementCheckout::class);
+            if (!$checkout->agreementIsCurrent($order)) {
+                PaymentLedger::flagForReview($order, 'payment arrived for an outdated agreement, review before confirming');
+                \Log::warning("{$logLabel}: payment for order {$order->id} ({$order->order_number}) arrived for an agreement that is no longer current; not confirmed, flagged for review.");
+
+                return self::PAID_AGREEMENT_OUTDATED;
+            }
+
             // A payment may only move an order pending -> confirmed. An order
             // that has already moved on (confirmed, in_production, ready,
             // out_for_delivery, completed) keeps its status and gets no
@@ -328,17 +383,32 @@ class PaymentController extends Controller
 
             $order->update(['order_status' => 'confirmed']);
 
+            // Customized orders: production time counts from the payment date.
+            $ready = $checkout->expectedReadyDate($order, now());
+            if ($ready) {
+                $order->forceFill(['expected_ready_date' => $ready->toDateString()])->save();
+                $customerMessage .= ' Expected ready date: about ' . $ready->format('M d, Y') . '.';
+            }
+
             Notification::create([
                 'user_id' => $order->user_id,
                 'title'   => 'Payment Successful',
                 'message' => $customerMessage,
-                'type'    => 'payment_confirmed',
+                'type'    => $order->design_agreement_id !== null ? 'custom_order' : 'payment_confirmed',
                 'url'     => route('orders.show', $order->id),
                 'is_read' => false,
             ]);
 
             return self::PAID_CONFIRMED;
         });
+    }
+
+    // A payment arrived for a customized order whose agreement has been
+    // replaced: not "confirmed", our team reviews it.
+    private function outdatedAgreementPaymentRedirect(Order $order)
+    {
+        return redirect()->route('orders.show', $order->id)
+            ->with('info', "We received your payment for order {$order->order_number}. Its agreement has changed, so our team will review it and contact you.");
     }
 
     // Where to send a customer whose payment went through on an order
@@ -381,6 +451,10 @@ class PaymentController extends Controller
         // full total otherwise). Charge that, don't recompute it.
         $chargeAmount = $order->payment->amount;
         $secretKey    = config('services.paymongo.secret_key');
+
+        if ($problem = app(AgreementCheckout::class)->paymentStartProblem($order)) {
+            return redirect()->route('orders.show', $order->id)->withErrors(['payment' => $problem]);
+        }
 
         // Step 1: create the Payment Intent
         $intentResponse = Http::withBasicAuth($secretKey, '')
@@ -518,8 +592,14 @@ class PaymentController extends Controller
             $amountMatches = (int) $amount === (int) round((float) $order->payment->amount * 100);
 
             if ($response->successful() && $status === 'succeeded' && $amountMatches) {
-                if ($this->markGcashPaymentPaid($order, $intentId) === self::PAID_ORDER_CANCELLED) {
+                $outcome = $this->markGcashPaymentPaid($order, $intentId);
+
+                if ($outcome === self::PAID_ORDER_CANCELLED) {
                     return $this->cancelledOrderPaymentRedirect($order);
+                }
+
+                if ($outcome === self::PAID_AGREEMENT_OUTDATED) {
+                    return $this->outdatedAgreementPaymentRedirect($order);
                 }
 
                 return redirect()->route('payment.confirmed', $order->id)

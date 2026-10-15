@@ -356,6 +356,80 @@ class CustomOrderPipeline
     }
 
     /**
+     * An accepted agreement nobody started paying for: past
+     * payment_due_at with no order, the request moves accepted ->
+     * expired (events, customer and admin notifications). An order that
+     * already exists is never touched here: an unpaid customized order
+     * past the window is only shown as "overdue, unpaid" to admins.
+     * Idempotent and safe from the command, lazy page loads and
+     * concurrent callers (re-checked under the request row lock).
+     */
+    public function expireUnpaidAgreements(): int
+    {
+        $ids = CustomDesignRequest::where('pipeline_status', 'accepted')
+            ->whereNotNull('payment_due_at')
+            ->where('payment_due_at', '<=', now())
+            ->pluck('id');
+
+        $expired = 0;
+
+        foreach ($ids as $requestId) {
+            $expired += DB::transaction(function () use ($requestId) {
+                $request = CustomDesignRequest::with('user')->lockForUpdate()->find($requestId);
+
+                if (!$request || $request->pipeline_status !== 'accepted'
+                    || $request->payment_due_at === null || $request->payment_due_at > now()) {
+                    return 0;
+                }
+
+                $agreement = DesignAgreement::where('request_id', $request->id)->orderByDesc('id')->first();
+
+                if (!$agreement || \App\Models\Order::where('design_agreement_id', $agreement->id)->exists()) {
+                    return 0;
+                }
+
+                $request->forceFill([
+                    'pipeline_status' => 'expired',
+                    'lock_version'    => (int) $request->lock_version + 1,
+                ])->save();
+
+                CustomOrderEvent::create([
+                    'request_id'  => $request->id,
+                    'type'        => 'agreement_expired',
+                    'actor_type'  => CustomOrderEvent::ACTOR_SYSTEM,
+                    'actor_id'    => null,
+                    'data'        => [
+                        'from' => 'accepted', 'to' => 'expired', 'agreement_id' => $agreement->id,
+                        'agreement_number' => $agreement->agreement_number,
+                        'payment_due_at' => $request->payment_due_at->toIso8601String(),
+                    ],
+                    'occurred_at' => now(),
+                ]);
+
+                $when = $request->payment_due_at->timezone('Asia/Manila')->format('M d, Y h:i A');
+                $this->notifyCustomer(
+                    $request,
+                    'Agreement Expired',
+                    "The time to start payment for agreement {$agreement->agreement_number} ({$request->title}) passed on {$when}, "
+                    . "so it has expired. Contact us if you'd still like to proceed.",
+                    route('design.show', $request->id)
+                );
+
+                $name = trim($request->user->first_name . ' ' . $request->user->last_name);
+                $this->notifyAdmins(
+                    $request,
+                    'Agreement Expired Unpaid',
+                    "Agreement {$agreement->agreement_number} for {$request->title} ({$name}) expired: no payment was started by {$when}."
+                );
+
+                return 1;
+            });
+        }
+
+        return $expired;
+    }
+
+    /**
      * Expire one sent quote whose request row and quote row the caller
      * already holds locked: quote -> expired, request quoted -> expired,
      * event, customer and admin notifications. Shared by the sweep and

@@ -27,6 +27,7 @@ class CustomOrderController extends Controller
     public function index(Request $request)
     {
         $this->pipeline->expireStaleQuotes();
+        $this->pipeline->expireUnpaidAgreements();
 
         $status = $request->query('status');
         if (!array_key_exists((string) $status, CustomOrderPipeline::LABELS)) {
@@ -77,6 +78,7 @@ class CustomOrderController extends Controller
     public function show($id)
     {
         $this->pipeline->expireStaleQuotes(); // lazy expiry, like failStale()
+        $this->pipeline->expireUnpaidAgreements();
 
         $designRequest = CustomDesignRequest::whereNotNull('pipeline_status')
             ->with(['user', 'suggestions', 'selectedSuggestion', 'callLogs.admin'])

@@ -148,6 +148,10 @@ class RecordPayment
                     'status_updated_at' => now(),
                 ])->save();
                 $confirmed = true;
+
+                if ($ready = app(AgreementCheckout::class)->expectedReadyDate($order, $date)) {
+                    $order->forceFill(['expected_ready_date' => $ready->toDateString()])->save();
+                }
             }
 
             $this->notifyCustomer($order, $record, $total - $paid, $confirmed);

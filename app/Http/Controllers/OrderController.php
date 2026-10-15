@@ -335,6 +335,13 @@ class OrderController extends Controller
             abort(403);
         }
 
+        // A customized order can only be paid online (stripe/gcash): a cash
+        // switch would take it out of the agreement's payment window.
+        if ($order->design_agreement_id !== null && $request->payment_method === 'onsite') {
+            return redirect()->route('orders.show', $order->id)
+                ->withErrors(['payment_method' => 'Custom orders can only be paid by card or GCash.']);
+        }
+
         // Null out every OTHER method's gateway-tracking fields.
         // This isn't just tidiness — it closes a real race: e.g. a
         // customer starts a GCash attempt, authorizes it in the
