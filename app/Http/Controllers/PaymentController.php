@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Notification;
+use App\Models\StripeWebhookEvent;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Stripe\StripeClient;
 use Stripe\Webhook;
@@ -15,6 +18,12 @@ use Stripe\Exception\UnexpectedValueException;
 
 class PaymentController extends Controller
 {
+    // Outcomes of recordPaymentArrived(), shared by the Stripe and
+    // PayMongo confirmation paths (browser return AND webhook).
+    private const PAID_CONFIRMED       = 'confirmed';        // this call flipped the payment to paid and confirmed the order
+    private const PAID_ALREADY         = 'already_paid';     // another path got there first - nothing more to do
+    private const PAID_ORDER_CANCELLED = 'order_cancelled';  // money arrived, but the order was already cancelled
+
     /* ════════════════════════════════
        SHOW STRIPE PAYMENT PAGE
     ════════════════════════════════ */
@@ -110,7 +119,13 @@ class PaymentController extends Controller
             // can edit.
             $session = $stripe->checkout->sessions->retrieve($request->session_id);
 
-            if ($this->confirmStripeSession($session, $order->id)) {
+            $outcome = $this->confirmStripeSession($session, $order->id);
+
+            if ($outcome === self::PAID_ORDER_CANCELLED) {
+                return $this->cancelledOrderPaymentRedirect($order);
+            }
+
+            if ($outcome !== null) {
                 return redirect()->route('payment.confirmed', $order->id)
                     ->with('success', 'Payment successful! Your order is confirmed.');
             }
@@ -134,62 +149,121 @@ class PaymentController extends Controller
        the session's own metadata (verified by Stripe's signature), so
        it has nothing external to cross-check it against.
     ════════════════════════════════ */
-    private function confirmStripeSession($session, ?int $expectedOrderId = null): bool
+    private function confirmStripeSession($session, ?int $expectedOrderId = null): ?string
     {
         $metadataOrderId = $session->metadata->order_id ?? null;
 
         if (!$metadataOrderId) {
-            return false;
+            return null;
         }
 
         if ($expectedOrderId !== null && (string) $metadataOrderId !== (string) $expectedOrderId) {
             \Log::warning("Stripe session {$session->id} names order {$metadataOrderId} but was presented for order {$expectedOrderId} — refusing to confirm.");
-            return false;
+            return null;
         }
 
         $order = Order::with('payment')->find($metadataOrderId);
 
         if (!$order || !$order->payment) {
-            return false;
+            return null;
         }
 
         // Idempotent: the browser return and the webhook can both
         // arrive for the same payment — the second one is a no-op,
         // not a second confirmation or a second notification.
         if ($order->payment->payment_status === 'paid') {
-            return true;
+            return self::PAID_ALREADY;
         }
 
         $amountMatches = (int) $session->amount_total === (int) round((float) $order->payment->amount * 100);
 
         if ($session->payment_status !== 'paid' || !$amountMatches) {
             \Log::warning("Stripe session {$session->id} for order {$order->id}: payment_status={$session->payment_status}, amount_matches=" . ($amountMatches ? 'yes' : 'no') . ' — refusing to confirm.');
-            return false;
+            return null;
         }
 
         // Same principle as stripeCreateSession() — only touch the
         // fields this step owns. amount/payment_type/installment_*
         // were already set correctly at checkout.
-        Payment::where('order_id', $order->id)->update([
-            'payment_status'           => 'paid',
-            'stripe_payment_intent_id' => $session->payment_intent,
-            'stripe_charge_id'         => $session->payment_intent,
-            'stripe_customer_id'       => $session->customer,
-            'paid_at'                  => now(),
-        ]);
+        return $this->recordPaymentArrived(
+            $order->id,
+            [
+                'stripe_payment_intent_id' => $session->payment_intent,
+                'stripe_charge_id'         => $session->payment_intent,
+                'stripe_customer_id'       => $session->customer,
+            ],
+            "Your payment for order {$order->order_number} was successful. Your order is now confirmed!",
+            "Stripe session {$session->id}"
+        );
+    }
 
-        $order->update(['order_status' => 'confirmed']);
+    /* ════════════════════════════════
+       RECORD THAT A VERIFIED PAYMENT ARRIVED — the single place where
+       a payment becomes 'paid' and its order becomes 'confirmed', for
+       both gateways and both confirmation paths (browser return and
+       webhook).
 
-        Notification::create([
-            'user_id' => $order->user_id,
-            'title'   => 'Payment Successful',
-            'message' => "Your payment for order {$order->order_number} was successful. Your order is now confirmed!",
-            'type'    => 'payment_confirmed',
-            'url'     => route('orders.show', $order->id),
-            'is_read' => false,
-        ]);
+       Atomic: the payment row is flipped with a conditional UPDATE
+       (WHERE payment_status <> 'paid') inside a transaction, so when a
+       redirect and a webhook arrive at the same moment exactly one of
+       them changes the row — and only that one confirms the order and
+       sends the notification. The other gets PAID_ALREADY and does
+       nothing, instead of racing past a read-then-write "already paid"
+       check and notifying twice.
 
-        return true;
+       A cancelled order is never flipped back to confirmed. The money
+       did arrive, so the payment is still recorded as paid (it must not
+       look unpaid), but the order stays cancelled and a warning is
+       logged so it can be refunded/handled by a person.
+    ════════════════════════════════ */
+    private function recordPaymentArrived(int $orderId, array $gatewayFields, string $customerMessage, string $logLabel): string
+    {
+        return DB::transaction(function () use ($orderId, $gatewayFields, $customerMessage, $logLabel) {
+            $changed = Payment::where('order_id', $orderId)
+                ->where('payment_status', '<>', 'paid')
+                ->update($gatewayFields + [
+                    'payment_status' => 'paid',
+                    'paid_at'        => now(),
+                ]);
+
+            if ($changed === 0) {
+                return self::PAID_ALREADY;
+            }
+
+            // Lock the order row so a concurrent admin cancel can't slip
+            // between this status check and the update below.
+            $order = Order::lockForUpdate()->find($orderId);
+
+            if (!$order) {
+                return self::PAID_ALREADY;
+            }
+
+            if ($order->order_status === 'cancelled') {
+                \Log::warning("{$logLabel}: payment arrived for order {$order->id} ({$order->order_number}), which is cancelled. Payment recorded as paid; order left cancelled — needs manual refund/review.");
+                return self::PAID_ORDER_CANCELLED;
+            }
+
+            $order->update(['order_status' => 'confirmed']);
+
+            Notification::create([
+                'user_id' => $order->user_id,
+                'title'   => 'Payment Successful',
+                'message' => $customerMessage,
+                'type'    => 'payment_confirmed',
+                'url'     => route('orders.show', $order->id),
+                'is_read' => false,
+            ]);
+
+            return self::PAID_CONFIRMED;
+        });
+    }
+
+    // Where to send a customer whose payment went through on an order
+    // that had already been cancelled — never the "confirmed" page.
+    private function cancelledOrderPaymentRedirect(Order $order)
+    {
+        return redirect()->route('orders.show', $order->id)
+            ->with('error', "We received your payment, but order {$order->order_number} had already been cancelled. Our team will contact you about a refund.");
     }
 
     /* ════════════════════════════════
@@ -361,7 +435,9 @@ class PaymentController extends Controller
             $amountMatches = (int) $amount === (int) round((float) $order->payment->amount * 100);
 
             if ($response->successful() && $status === 'succeeded' && $amountMatches) {
-                $this->markGcashPaymentPaid($order, $intentId);
+                if ($this->markGcashPaymentPaid($order, $intentId) === self::PAID_ORDER_CANCELLED) {
+                    return $this->cancelledOrderPaymentRedirect($order);
+                }
 
                 return redirect()->route('payment.confirmed', $order->id)
                     ->with('success', 'Payment successful! Your order is confirmed.');
@@ -386,28 +462,18 @@ class PaymentController extends Controller
        payment. Guarded so the second arrival is a harmless no-op
        rather than double-confirming or double-notifying.
     ════════════════════════════════ */
-    private function markGcashPaymentPaid(Order $order, string $intentId): void
+    private function markGcashPaymentPaid(Order $order, string $intentId): string
     {
         if ($order->payment->payment_status === 'paid') {
-            return;
+            return self::PAID_ALREADY;
         }
 
-        Payment::where('order_id', $order->id)->update([
-            'payment_status'             => 'paid',
-            'paymongo_payment_intent_id' => $intentId,
-            'paid_at'                    => now(),
-        ]);
-
-        $order->update(['order_status' => 'confirmed']);
-
-        Notification::create([
-            'user_id' => $order->user_id,
-            'title'   => 'Payment Successful',
-            'message' => "Your GCash payment for order {$order->order_number} was successful. Your order is now confirmed!",
-            'type'    => 'payment_confirmed',
-            'url'     => route('orders.show', $order->id),
-            'is_read' => false,
-        ]);
+        return $this->recordPaymentArrived(
+            $order->id,
+            ['paymongo_payment_intent_id' => $intentId],
+            "Your GCash payment for order {$order->order_number} was successful. Your order is now confirmed!",
+            "PayMongo intent {$intentId}"
+        );
     }
 
     /* ════════════════════════════════
@@ -455,11 +521,49 @@ class PaymentController extends Controller
 
         \Log::info('Stripe webhook received: ' . $event->type);
 
+        // Record every verified event id and skip ones already processed
+        // (Stripe retries, and can deliver the same event more than once).
+        // This sits AFTER signature verification, which is unchanged.
+        $record = $this->recordStripeEvent($event, $payload);
+
+        if ($record && $record->processed) {
+            \Log::info("Stripe webhook {$event->id} already processed - ignoring duplicate.");
+            return response()->json(['status' => 'duplicate']);
+        }
+
         if (in_array($event->type, ['checkout.session.completed', 'checkout.session.async_payment_succeeded'])) {
             $this->confirmStripeSession($event->data->object);
         }
 
+        // Only reached if handling didn't throw, so a failed attempt stays
+        // unprocessed and Stripe's retry gets handled again.
+        $record?->markProcessed();
+
         return response()->json(['status' => 'received']);
+    }
+
+    // Find-or-create the StripeWebhookEvent row for this event id. The
+    // stripe_event_id column is UNIQUE, so if two deliveries race to
+    // insert it the loser hits a duplicate-key error and just reads the
+    // winner's row instead.
+    private function recordStripeEvent($event, string $payload): ?StripeWebhookEvent
+    {
+        if (empty($event->id)) {
+            return null;
+        }
+
+        try {
+            return StripeWebhookEvent::firstOrCreate(
+                ['stripe_event_id' => $event->id],
+                [
+                    'event_type' => $event->type,
+                    'payload'    => json_decode($payload, true) ?? [],
+                    'processed'  => false,
+                ]
+            );
+        } catch (QueryException $e) {
+            return StripeWebhookEvent::where('stripe_event_id', $event->id)->first();
+        }
     }
 
     /* ════════════════════════════════

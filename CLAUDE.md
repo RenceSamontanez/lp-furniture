@@ -39,7 +39,7 @@ php artisan migrate:fresh --seed   # only DatabaseSeeder.php exists, no per-mode
 php artisan orders:release-abandoned --minutes=60
 ```
 
-Note: `tests/` currently only contains the default Laravel `ExampleTest.php` stubs (Unit + Feature) — there is no real test coverage of app logic yet. Tests run against an in-memory SQLite DB (see `phpunit.xml`), independent of the MySQL `furniture_db` used in `.env`.
+Note: tests run against the MySQL **scratch database `furniture_db_test`** (set in `phpunit.xml`), never `furniture_db`. `tests/TestCase.php` aborts any run whose database name doesn't end in `_test`, before anything touches the DB. Never run `migrate:fresh`/`db:wipe` against `furniture_db`. The scratch DB's structure is cloned from `furniture_db` (create it with `CREATE DATABASE furniture_db_test` and load a structure-only dump); `PaymentSafetyTest` runs inside a rolled-back transaction. The default `ExampleTest.php` stubs still exist (the Feature one fails: it needs seeded products).
 
 ## Architecture
 
@@ -74,7 +74,7 @@ Auth itself is hand-rolled in `AuthController` (no Breeze/Jetstream/Fortify) —
 
 ### Payments
 
-- **Stripe**: direct `Stripe\StripeClient` usage in `PaymentController` (Checkout Sessions) — no Laravel Cashier. The Stripe webhook (`handleWebhook`) verifies the signature with Stripe's SDK and confirms through the same `confirmStripeSession()` the browser return uses; idempotency comes from the `payment_status === 'paid'` check there, **not** from `StripeWebhookEvent` — that model/table exists but nothing writes to it. Config comes from `config('services.stripe.*')` / `STRIPE_KEY`, `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`.
+- **Stripe**: direct `Stripe\StripeClient` usage in `PaymentController` (Checkout Sessions) — no Laravel Cashier. The Stripe webhook (`handleWebhook`) verifies the signature with Stripe's SDK, records each event id in `StripeWebhookEvent` (skipping ones already `processed`), and confirms through the same `confirmStripeSession()` the browser return uses. Marking a payment paid is atomic (`recordPaymentArrived()`: conditional `UPDATE ... WHERE payment_status <> 'paid'` in a transaction, so only one of a racing redirect/webhook confirms and notifies), and a payment arriving for a **cancelled** order is recorded as paid but never flips the order to confirmed (it is logged for manual refund). Config comes from `config('services.stripe.*')` / `STRIPE_KEY`, `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`.
 - **GCash**: real payment gateway via PayMongo's Payment Intent API (`PaymentController::paymongoForm`/`paymongoCreateIntent`/`paymongoSuccess`/`paymongoWebhook`), test mode (`pk_test_`/`sk_test_`). Config comes from `config('services.paymongo.*')` / `PAYMONGO_PUBLIC_KEY`, `PAYMONGO_SECRET_KEY`, `PAYMONGO_WEBHOOK_SECRET`. The earlier manual receipt-upload flow (customer uploads a screenshot, admin approves/rejects) was removed — it had become unreachable dead code once every path (checkout, the order page's resume action, the payment-method switcher) routed GCash through PayMongo exclusively.
 
 ### AI custom design feature
