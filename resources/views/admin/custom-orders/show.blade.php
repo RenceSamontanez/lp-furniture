@@ -135,6 +135,27 @@
       </div>
     @endif
 
+    {{-- Order (Stage 9) --}}
+    @if(isset($order) && $order)
+      <div class="admin-panel">
+        <div class="admin-panel-header">
+          <div class="admin-panel-title">Order {{ $order->order_number }}</div>
+          <span style="display:flex;gap:6px;">
+            <span class="admin-pill {{ $order->order_status }}">{{ str_replace('_', ' ', $order->order_status) }}</span>
+            @if($order->order_status === 'completed')<span class="admin-pill completed">Completed</span>@endif
+            @if($order->isOverdueUnpaid())<span class="admin-pill rejected">Overdue, unpaid</span>@endif
+          </span>
+        </div>
+        <div class="admin-panel-body">
+          <dl class="co-dl">
+            <div><dt>Paid</dt><dd>₱{{ number_format($order->amount_paid, 2) }} of ₱{{ number_format($order->total_amount, 2) }}</dd></div>
+            <div><dt>Expected ready</dt><dd>{{ $order->expected_ready_date ? 'about ' . \Illuminate\Support\Carbon::parse($order->expected_ready_date)->format('M d, Y') : '—' }}</dd></div>
+          </dl>
+          <a href="{{ route('admin.orders.show', $order->id) }}" class="admin-btn admin-btn-gold" style="margin-top:12px;">Open order, ledger and status</a>
+        </div>
+      </div>
+    @endif
+
     {{-- Agreement (Stage 6): read only --}}
     @if($agreement)
       <div class="admin-panel">

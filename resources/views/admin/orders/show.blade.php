@@ -33,6 +33,45 @@
       </div>
     </div>
 
+    {{-- Customized order: agreement, custom order, deadline --}}
+    @if($order->design_agreement_id && $order->agreement)
+      <div class="admin-panel">
+        <div class="admin-panel-header">
+          <div class="admin-panel-title">Customized order</div>
+          <span style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span class="admin-pill confirmed">Customized Order</span>
+            @if($order->isOverdueUnpaid())<span class="admin-pill rejected">Overdue, unpaid</span>@endif
+            @if($order->order_status === 'completed')<span class="admin-pill completed">Completed</span>@endif
+          </span>
+        </div>
+        <div class="admin-panel-body" style="font-size:13.5px;">
+          <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;">
+            <span style="color:var(--text-muted);">Agreement</span>
+            <a href="{{ route('admin.agreements.show', $order->agreement->id) }}">{{ $order->agreement->agreement_number }}</a>
+          </div>
+          @if($order->design_request_id)
+            <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;">
+              <span style="color:var(--text-muted);">Custom order</span>
+              <a href="{{ route('admin.custom-orders.show', $order->design_request_id) }}">Open the custom order</a>
+            </div>
+          @endif
+          <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;">
+            <span style="color:var(--text-muted);">Payment due by</span>
+            <span>{{ $order->designRequest?->payment_due_at?->timezone('Asia/Manila')->format('M d, Y h:i A') ?? '—' }}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;gap:12px;">
+            <span style="color:var(--text-muted);">Expected ready date</span>
+            <span>{{ $order->expected_ready_date ? 'about ' . \Illuminate\Support\Carbon::parse($order->expected_ready_date)->format('M d, Y') : 'Set when the first payment is received' }}</span>
+          </div>
+          @if($order->isOverdueUnpaid())
+            <p style="font-size:12px;color:var(--text-muted);margin:12px 0 0;">
+              The payment window has passed and nothing has been received. The order is not cancelled automatically; cancel it below or record a payment.
+            </p>
+          @endif
+        </div>
+      </div>
+    @endif
+
     {{-- Needs review (duplicate or late payment) --}}
     @if($order->needs_review)
       <div class="admin-panel" style="border-color:#E8C27A;">
@@ -285,6 +324,41 @@
             on {{ $order->status_updated_at?->format('M d, Y · h:i A') }}
           </div>
         @endif
+        @if($order->design_agreement_id)
+          @php
+            $forward = \App\Support\CustomOrderStatus::forwardTargets($order);
+            $cancellable = \App\Support\CustomOrderStatus::canCancel($order);
+          @endphp
+          @if($errors->has('status'))
+            <div class="admin-toast admin-toast-error" style="position:static;margin-bottom:12px;">{{ $errors->first('status') }}</div>
+          @endif
+          <p style="font-size:12px;color:var(--text-muted);margin:0 0 12px;">
+            Customized orders only move forward: confirmed, in production, ready or out for delivery, completed.
+          </p>
+          @if($forward || $cancellable)
+            <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}">
+              @csrf
+              <select name="order_status" class="form-input" style="margin-bottom:12px;" id="co-status-select">
+                <option value="{{ $order->order_status }}" selected>Currently {{ str_replace('_',' ',$order->order_status) }}</option>
+                @foreach($forward as $s)
+                  <option value="{{ $s }}">{{ ucfirst(str_replace('_',' ',$s)) }}</option>
+                @endforeach
+                @if($cancellable)
+                  <option value="cancelled">Cancel this order</option>
+                @endif
+              </select>
+              @if($cancellable)
+                <textarea name="cancel_reason" rows="2" maxlength="1000" class="form-input" style="margin-bottom:12px;"
+                          placeholder="Reason for cancelling (required if money was received; refunds are handled outside the system)">{{ old('cancel_reason') }}</textarea>
+              @endif
+              <button type="submit" class="admin-btn admin-btn-gold" style="width:100%;justify-content:center;padding:11px;">
+                Update Status
+              </button>
+            </form>
+          @else
+            <p style="font-size:13px;margin:0;">This order is {{ str_replace('_',' ',$order->order_status) }}; no further changes.</p>
+          @endif
+        @else
         <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}">
           @csrf
           <select name="order_status" class="form-input" style="margin-bottom:12px;">
@@ -296,6 +370,7 @@
             Update Status
           </button>
         </form>
+        @endif
       </div>
     </div>
   </div>

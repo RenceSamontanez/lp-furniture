@@ -49,7 +49,8 @@
             Start your payment by {{ $designRequest->payment_due_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}.
           @endif
           @if($agreementOrder)
-            Order {{ $agreementOrder->order_number }} has been created.
+            Order {{ $agreementOrder->order_number }}
+            @if($agreementOrder->order_status === 'completed') is completed. @else has been created. @endif
           @endif
         </div>
         <div class="co-status-actions">

@@ -26,7 +26,12 @@
         <tbody>
           @foreach($orders as $order)
             <tr>
-              <td data-label="Order #">{{ $order->order_number }}</td>
+              <td data-label="Order #">{{ $order->order_number }}
+                @if($order->design_agreement_id)
+                  <span class="admin-pill confirmed" style="font-size:10px;margin-left:6px;">Customized</span>
+                  @if($order->isOverdueUnpaid())<span class="admin-pill rejected" style="font-size:10px;margin-left:4px;">Overdue, unpaid</span>@endif
+                @endif
+              </td>
               <td data-label="Customer">{{ $order->user->first_name }} {{ $order->user->last_name }}</td>
               <td data-label="Items">{{ $order->items->count() }} item(s)</td>
               <td data-label="Total">₱{{ number_format($order->total_amount, 2) }}</td>

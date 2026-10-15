@@ -127,4 +127,23 @@ class Order extends Model
     {
         return $this->design_agreement_id !== null;
     }
+
+    /**
+     * A customized order nobody has started paying for, past its
+     * agreement's payment window. Shown to admins; the order is never
+     * cancelled automatically.
+     */
+    public function isOverdueUnpaid(): bool
+    {
+        if ($this->design_agreement_id === null || $this->order_status !== 'pending') {
+            return false;
+        }
+
+        $due = $this->designRequest?->payment_due_at;
+
+        return $due !== null
+            && $due->isPast()
+            && ($this->payment?->payment_status ?? 'pending') === 'pending'
+            && (float) $this->amount_paid <= 0;
+    }
 }

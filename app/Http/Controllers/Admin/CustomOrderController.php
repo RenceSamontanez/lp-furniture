@@ -102,6 +102,7 @@ class CustomOrderController extends Controller
             'quotes'        => CustomQuote::where('request_id', $designRequest->id)->with(['sender', 'creator'])->orderByDesc('version')->get(),
             'quoteBlocker'  => $this->quoteBlocker($designRequest),
             'agreement'     => $agreement,
+            'order'         => $agreement ? \App\Models\Order::with('payment', 'designRequest')->where('design_agreement_id', $agreement->id)->first() : null,
             'hashOk'        => $agreement ? \App\Support\AgreementIntegrity::check($agreement) : null,
         ]);
     }

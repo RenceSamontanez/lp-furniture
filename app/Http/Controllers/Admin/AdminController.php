@@ -222,7 +222,7 @@ class AdminController extends Controller
     {
         $status = $request->get('status', 'all');
 
-        $orders = Order::with('user', 'items.product')
+        $orders = Order::with('user', 'items.product', 'designRequest', 'payment')
             ->when($status !== 'all', fn($q) => $q->where('order_status', $status))
             ->latest()
             ->paginate(15);
@@ -232,7 +232,7 @@ class AdminController extends Controller
 
     public function orderShow($id)
     {
-        $order = Order::with('user', 'items.product', 'statusUpdatedBy', 'payment', 'agreement')->findOrFail($id);
+        $order = Order::with('user', 'items.product', 'statusUpdatedBy', 'payment', 'agreement', 'designRequest')->findOrFail($id);
 
         $ledger = \App\Models\PaymentRecord::where('order_id', $order->id)
             ->with(['recorder', 'installment'])->orderBy('paid_on')->orderBy('id')->get();
@@ -246,7 +246,7 @@ class AdminController extends Controller
         session([\App\Http\Controllers\Admin\PaymentRecordController::TOKEN_SESSION_KEY => $tokens]);
 
         return view('admin.orders.show', [
-            'hideGlobalErrorToast' => true, // payment errors are shown inline in the ledger panel
+            'hideGlobalErrorToast' => true, // payment and status errors are shown inline
             'order'        => $order,
             'ledger'       => $ledger,
             'paid'         => $paid,
@@ -266,6 +266,26 @@ class AdminController extends Controller
         ]);
 
         $order = Order::findOrFail($id);
+
+        // Customized orders: forward-only map, cancel rules, ledger-aware.
+        // Catalog orders keep the free-form behaviour below, unchanged.
+        if ($order->design_agreement_id !== null) {
+            $request->validate(['cancel_reason' => 'nullable|string|max:1000']);
+
+            try {
+                app(\App\Support\CustomOrderStatus::class)->change(
+                    $order->id,
+                    Auth::guard('admin')->user(),
+                    $request->order_status,
+                    $request->input('cancel_reason')
+                );
+            } catch (\App\Support\OrderStatusException $e) {
+                return back()->withErrors(['status' => $e->getMessage()]);
+            }
+
+            return back()->with('success', 'Order status updated.');
+        }
+
         $order->update([
             'order_status'      => $request->order_status,
             'status_updated_by' => Auth::guard('admin')->id(),
