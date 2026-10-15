@@ -229,7 +229,7 @@ class OrderController extends Controller
     //    method — shared by both the normal success path and the
     //    double-submit guard, so a duplicate redirect behaves
     //    identically to a fresh order redirect. ──
-    private function redirectForOrder(Order $order)
+    public function redirectForOrder(Order $order)
     {
         $paymentMethod = $order->payment->payment_method ?? null;
 

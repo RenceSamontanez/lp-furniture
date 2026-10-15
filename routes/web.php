@@ -182,6 +182,9 @@ Route::get('/design-gallery', [CustomDesignController::class, 'gallery'])->name(
     Route::get('/design/{id}/quotes/{quote}',          [CustomAgreementController::class, 'review'])->name('design.quote.review')->whereNumber(['id', 'quote']);
     Route::post('/design/{id}/quotes/{quote}/accept',  [CustomAgreementController::class, 'accept'])->name('design.quote.accept')->whereNumber(['id', 'quote']);
     Route::post('/design/{id}/quotes/{quote}/decline', [CustomAgreementController::class, 'decline'])->name('design.quote.decline')->whereNumber(['id', 'quote']);
+    // Agreement checkout (Stage 9): the form posts only payment_method.
+    Route::get('/custom-orders/{agreement}/checkout',  [\App\Http\Controllers\CustomCheckoutController::class, 'show'])->name('custom.checkout')->whereNumber('agreement');
+    Route::post('/custom-orders/{agreement}/checkout', [\App\Http\Controllers\CustomCheckoutController::class, 'place'])->name('custom.checkout.place')->whereNumber('agreement');
     Route::get('/agreements/{agreement}',        [CustomAgreementController::class, 'show'])->name('design.agreement')->whereNumber('agreement');
     Route::get('/agreements/{agreement}/print',  [CustomAgreementController::class, 'printView'])->name('design.agreement.print')->whereNumber('agreement');
     Route::get('/agreements/{agreement}/image',  [CustomAgreementController::class, 'image'])->name('design.agreement.image')->whereNumber('agreement');

@@ -37,18 +37,27 @@
     @include('design._quote-summary', ['quote' => $quote])
   @endif
 
-  @if($designRequest->pipeline_status === 'accepted' && isset($agreement) && $agreement)
+  @if(in_array($designRequest->pipeline_status, ['accepted', 'ordered'], true) && isset($agreement) && $agreement)
+    @php $agreementOrder = $agreement->order; @endphp
     <div class="co-status">
       <svg class="co-status-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
       <div>
         <div class="co-status-title">Agreed on {{ $agreement->accepted_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}, next step is payment.</div>
         <div class="co-status-text">
-          Agreement {{ $agreement->agreement_number }}. Payment step coming soon.
-          @if($designRequest->payment_due_at)
-            Please be ready to start payment by {{ $designRequest->payment_due_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}.
+          Agreement {{ $agreement->agreement_number }}.
+          @if(!$agreementOrder && $designRequest->payment_due_at)
+            Start your payment by {{ $designRequest->payment_due_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}.
+          @endif
+          @if($agreementOrder)
+            Order {{ $agreementOrder->order_number }} has been created.
           @endif
         </div>
         <div class="co-status-actions">
+          @if($agreementOrder)
+            <a href="{{ route('orders.show', $agreementOrder->id) }}" class="ai-action-btn ai-action-primary" style="text-decoration:none;">View order</a>
+          @elseif($designRequest->pipeline_status === 'accepted')
+            <a href="{{ route('custom.checkout', $agreement->id) }}" class="ai-action-btn ai-action-primary" style="text-decoration:none;">Proceed to payment</a>
+          @endif
           <a href="{{ route('design.agreement', $agreement->id) }}" class="ai-action-btn ai-action-secondary" style="text-decoration:none;">View agreement</a>
         </div>
       </div>

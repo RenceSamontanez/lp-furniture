@@ -106,7 +106,7 @@
             <div class="order-item-row">
             <div class="order-item-img">
                 <img
-                  src="{{ $item->product->image_url ?? ($item->product_image ? asset('images/products/'.$item->product_image) : asset('images/products/placeholder.jpg')) }}"
+                  src="{{ ($order->design_agreement_id && !$item->product_id && $item->product_image) ? route('design.agreement.image', $order->design_agreement_id) : ($item->product->image_url ?? ($item->product_image ? asset('images/products/'.$item->product_image) : asset('images/products/placeholder.jpg'))) }}"
                   alt="{{ $item->product->product_name ?? $item->product_name ?? 'Product' }}"
                   onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"
                 />
@@ -120,6 +120,20 @@
           @endforeach
         </div>
       </div>
+
+      @if($order->design_agreement_id && $order->agreement)
+        <div class="order-panel">
+          <div class="order-panel-header"><div class="order-panel-title">Custom order agreement</div></div>
+          <div class="order-panel-body" style="font-size:13.5px;">
+            Agreement {{ $order->agreement->agreement_number }}, agreed on
+            {{ $order->agreement->accepted_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}.
+            <a href="{{ route('design.agreement', $order->agreement->id) }}">View agreement</a>
+            @if($order->expected_ready_date)
+              <div style="margin-top:6px;color:var(--text-muted);">Expected ready date: about {{ \Illuminate\Support\Carbon::parse($order->expected_ready_date)->format('M d, Y') }}</div>
+            @endif
+          </div>
+        </div>
+      @endif
 
       @if($order->customization_note)
         <div class="order-panel">

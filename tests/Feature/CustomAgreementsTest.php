@@ -622,7 +622,7 @@ class CustomAgreementsTest extends TestCase
             ->assertOk()
             ->assertSee('Agreed on')
             ->assertSee('next step is payment')
-            ->assertSee('Payment step coming soon')
+            ->assertSee('Proceed to payment')
             ->assertSee(route('design.agreement', $ag->id), false);
 
         // the review URL of an accepted quote goes to the agreement

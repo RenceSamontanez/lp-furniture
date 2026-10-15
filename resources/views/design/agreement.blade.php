@@ -36,9 +36,19 @@
 
     @include('agreements._terms', ['terms' => $terms, 'paymentDue' => $terms['payment_due_at'] ?? null])
 
-    <p class="co-hint">Next step: payment. Payment is coming soon; we will notify you when it is ready.</p>
+    @php $agreementOrder = $agreement->order; @endphp
+    @if($agreementOrder)
+      <p class="co-hint">An order has been created for this agreement.</p>
+    @elseif($designRequest->pipeline_status === 'accepted')
+      <p class="co-hint">Next step: payment.</p>
+    @endif
 
     <div class="co-agree-form">
+      @if($agreementOrder)
+        <a href="{{ route('orders.show', $agreementOrder->id) }}" class="ai-action-btn ai-action-primary" style="text-decoration:none;">View order</a>
+      @elseif($designRequest->pipeline_status === 'accepted')
+        <a href="{{ route('custom.checkout', $agreement->id) }}" class="ai-action-btn ai-action-primary" style="text-decoration:none;">Proceed to payment</a>
+      @endif
       <a href="{{ route('design.agreement.print', $agreement->id) }}" class="ai-action-btn ai-action-secondary" target="_blank" rel="noopener" style="text-decoration:none;">Print view</a>
     </div>
   </div>

@@ -32,7 +32,7 @@
         <div class="payment-ref-value">{{ $order->order_number }}</div>
       </div>
       <div class="payment-ref-amount">
-        <div class="payment-ref-amount-label">{{ $order->payment->payment_type === 'installment' ? 'Downpayment Due (50%)' : 'Amount Due' }}</div>
+        <div class="payment-ref-amount-label">{{ $order->payment->payment_type === 'installment' ? ($order->design_agreement_id ? 'Deposit Due' : 'Downpayment Due (50%)') : 'Amount Due' }}</div>
         <div class="payment-ref-amount-value">₱{{ number_format($order->payment->amount, 2) }}</div>
       </div>
     </div>
