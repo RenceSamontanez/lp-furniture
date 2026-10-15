@@ -230,6 +230,8 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     Route::get('/orders',              [AdminController::class, 'ordersIndex'])->name('orders.index'); // List all orders
     Route::get('/orders/{id}',          [AdminController::class, 'orderShow'])->name('orders.show'); // Show a specific order
     Route::post('/orders/{id}/status',  [AdminController::class, 'orderUpdateStatus'])->name('orders.updateStatus'); // Update order status
+    Route::post('/orders/{id}/payments', [\App\Http\Controllers\Admin\PaymentRecordController::class, 'store'])->name('orders.payments.store')->whereNumber('id'); // Record Payment (ledger)
+    Route::post('/orders/{id}/review',   [\App\Http\Controllers\Admin\PaymentRecordController::class, 'markReviewed'])->name('orders.review')->whereNumber('id'); // Clear needs_review
 
     // ────────────────
     // Custom Orders (requests sent to the team through the customer form)

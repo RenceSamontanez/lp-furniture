@@ -232,8 +232,31 @@ class AdminController extends Controller
 
     public function orderShow($id)
     {
-        $order = Order::with('user', 'items.product', 'statusUpdatedBy', 'payment')->findOrFail($id);
-        return view('admin.orders.show', compact('order'));
+        $order = Order::with('user', 'items.product', 'statusUpdatedBy', 'payment', 'agreement')->findOrFail($id);
+
+        $ledger = \App\Models\PaymentRecord::where('order_id', $order->id)
+            ->with(['recorder', 'installment'])->orderBy('paid_on')->orderBy('id')->get();
+        $paid = round((float) $ledger->sum('amount'), 2);
+        $remaining = max(0.0, round((float) $order->total_amount - $paid, 2));
+
+        // One-time token for the Record Payment form (see PaymentRecordController).
+        $token = bin2hex(random_bytes(16));
+        $tokens = array_slice((array) session(\App\Http\Controllers\Admin\PaymentRecordController::TOKEN_SESSION_KEY, []), -9);
+        $tokens[] = $token;
+        session([\App\Http\Controllers\Admin\PaymentRecordController::TOKEN_SESSION_KEY => $tokens]);
+
+        return view('admin.orders.show', [
+            'hideGlobalErrorToast' => true, // payment errors are shown inline in the ledger panel
+            'order'        => $order,
+            'ledger'       => $ledger,
+            'paid'         => $paid,
+            'remaining'    => $remaining,
+            'formToken'    => $token,
+            'unpaidRows'   => $order->installments()->where('status', '!=', 'paid')->orderBy('installment_no')->get(),
+            'reviewedBy'   => $order->reviewed_by ? \App\Models\User::find($order->reviewed_by) : null,
+            'unrecorded'   => $order->payment && $order->payment->payment_method === 'onsite' && $ledger->isEmpty(),
+            'methodLabels' => \App\Support\RecordPayment::METHOD_LABELS,
+        ]);
     }
 
     public function orderUpdateStatus(Request $request, $id)
@@ -473,20 +496,16 @@ class AdminController extends Controller
     public function installmentMarkPaid($id)
     {
         $installment = \App\Models\InstallmentSchedule::findOrFail($id);
-        $installment->update([
-            'status'  => 'paid',
-            'paid_at' => now(),
-        ]);
 
-        Notification::create([
-            'user_id' => $installment->user_id,
-            'title'   => 'Installment Payment Received',
-            'message' => "Installment #{$installment->installment_no} for order {$installment->order->order_number} has been marked as paid. Thank you!",
-            'type'    => 'payment_confirmed',
-            'url'     => route('orders.show', $installment->order_id),
-            'is_read' => false,
-        ]);
+        // Same ledger path as Record Payment: amount, method (cash by
+        // default) and the admin are recorded, and the parent payment
+        // status follows. The customer is told by that service.
+        try {
+            app(\App\Support\RecordPayment::class)->recordInstallment($installment, Auth::guard('admin')->user());
+        } catch (\App\Support\PaymentRecordException $e) {
+            return back()->withErrors(['payment' => $e->getMessage()]);
+        }
 
-        return back()->with('success', 'Installment marked as paid.');
+        return back()->with('success', 'Installment marked as paid and recorded in the ledger.');
     }
 }
