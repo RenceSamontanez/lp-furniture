@@ -106,4 +106,22 @@ class Order extends Model
     {
         return $this->order_status === 'completed';
     }
+
+    /* ── custom order flow ── */
+
+    // The agreement this order was created from (null for catalog orders).
+    public function agreement()
+    {
+        return $this->belongsTo(DesignAgreement::class, 'design_agreement_id');
+    }
+
+    public function paymentRecords()
+    {
+        return $this->hasMany(PaymentRecord::class);
+    }
+
+    public function isCustomized(): bool
+    {
+        return $this->design_agreement_id !== null;
+    }
 }

@@ -9,7 +9,7 @@ use App\Models\Delivery;
 use App\Models\CartItem;
 use App\Models\Product;
 use App\Models\Notification;
-use App\Models\InstallmentSchedule;
+use App\Support\InstallmentScheduler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -58,7 +58,7 @@ class OrderController extends Controller
             'payment_type'           => 'required|in:full,installment',
             // Duration (months) and frequency (days between payments)
             // are picked independently and combined to determine the
-            // number of installment payments — see createInstallmentSchedule().
+            // number of installment payments — see InstallmentScheduler::createSchedule().
             'installment_duration'   => 'required_if:payment_type,installment|nullable|integer|in:1,2,3',
             'installment_frequency'  => 'required_if:payment_type,installment|nullable|integer|in:15,30',
             'payment_method'         => 'required|in:stripe,gcash,onsite',
@@ -102,7 +102,7 @@ class OrderController extends Controller
                 // 50% down now, the rest split into the schedule below.
                 // Derived by subtraction (not computed independently)
                 // so downpayment + remaining always sum exactly to $total.
-                $downpayment = $isInstallment ? round($total * 0.5, 2) : $total;
+                $downpayment = $isInstallment ? InstallmentScheduler::catalogDownpayment($total) : $total;
 
                 // Re-check stock INSIDE the transaction, with a row
                 // lock, right before committing to the order. This
@@ -176,7 +176,7 @@ class OrderController extends Controller
                 ]);
 
                 if ($isInstallment) {
-                    $this->createInstallmentSchedule(
+                    InstallmentScheduler::createSchedule(
                         $payment,
                         $order,
                         $total - $downpayment,
@@ -279,43 +279,8 @@ class OrderController extends Controller
             });
     }
 
-    // ── Build the installment_schedules rows for the remaining
-    //    balance (after the 50% downpayment). Duration (months) and
-    //    frequency (days between payments) combine to determine the
-    //    number of payments — always a clean integer across the 6
-    //    allowed combinations (1/2/3 months × 15/30 days), using
-    //    30-day months, e.g. 3 months / every 15 days = 6 payments.
-    //    Amounts are split evenly with the LAST payment absorbing
-    //    any rounding remainder, so the schedule always sums to
-    //    exactly $remaining — never a phantom cent over or under. ──
-    private function createInstallmentSchedule(
-        Payment $payment,
-        Order $order,
-        float $remaining,
-        int $durationMonths,
-        int $frequencyDays
-    ): void {
-        $numPayments = (int) round(($durationMonths * 30) / $frequencyDays);
-
-        $baseAmount = floor(($remaining / $numPayments) * 100) / 100;
-        $runningTotal = 0.0;
-
-        for ($i = 1; $i <= $numPayments; $i++) {
-            $isLast = $i === $numPayments;
-            $amountDue = $isLast ? round($remaining - $runningTotal, 2) : $baseAmount;
-            $runningTotal += $amountDue;
-
-            InstallmentSchedule::create([
-                'payment_id'      => $payment->id,
-                'order_id'        => $order->id,
-                'user_id'         => $order->user_id,
-                'installment_no'  => $i,
-                'amount_due'      => $amountDue,
-                'due_date'        => $order->created_at->copy()->addDays($frequencyDays * $i),
-                'status'          => 'pending',
-            ]);
-        }
-    }
+    // The installment schedule builder moved to App\Support\InstallmentScheduler
+    // (shared with custom orders); catalog behaviour is unchanged.
 
     // ── VIEW ALL ORDERS ──
     public function index()

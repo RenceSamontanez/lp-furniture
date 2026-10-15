@@ -9,7 +9,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\StripeWebhookEvent;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -22,19 +22,18 @@ use Tests\TestCase;
  * Stage 0 payment safety: atomic paid update, cancelled orders never
  * flipped to confirmed, Stripe webhook event-id idempotency.
  *
- * Runs only on the MySQL scratch database (see tests/TestCase.php),
- * inside a transaction that is rolled back after every test, so no
- * rows are left behind. The scratch database's structure is cloned from
- * furniture_db (the live schema has columns no migration creates, so a
- * migrate:fresh database can't place an order yet — Stage 1's M0
- * migration closes that gap).
+ * Runs only on the MySQL scratch database (see tests/TestCase.php), which
+ * is rebuilt from the migrations (migrate:fresh) and wrapped in a
+ * rolled-back transaction per test, so no rows are left behind. Passing
+ * on a migrations-built database also proves the M0 reconciliation
+ * migration closed the gap between migrations and the live schema.
  * Both gateways are faked: Stripe's HTTP client is replaced with an
  * in-memory one, PayMongo goes through Http::fake(). No real request
  * to either gateway is ever made.
  */
 class PaymentSafetyTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private const STRIPE_WEBHOOK_SECRET   = 'whsec_test_fake_secret';
     private const PAYMONGO_WEBHOOK_SECRET = 'whsec_paymongo_fake_secret';

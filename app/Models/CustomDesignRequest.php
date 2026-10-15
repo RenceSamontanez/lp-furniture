@@ -102,4 +102,31 @@ class CustomDesignRequest extends Model
 
         return $stale->count();
     }
+
+    /* ── custom order flow ── */
+
+    public function quotes()
+    {
+        return $this->hasMany(CustomQuote::class, 'request_id');
+    }
+
+    public function callLogs()
+    {
+        return $this->hasMany(CustomOrderCallLog::class, 'request_id');
+    }
+
+    public function agreements()
+    {
+        return $this->hasMany(DesignAgreement::class, 'request_id');
+    }
+
+    public function events()
+    {
+        return $this->hasMany(CustomOrderEvent::class, 'request_id');
+    }
+
+    public function selectedSuggestion()
+    {
+        return $this->belongsTo(AiDesignSuggestion::class, 'selected_suggestion_id');
+    }
 }

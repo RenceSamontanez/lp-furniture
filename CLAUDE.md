@@ -39,7 +39,7 @@ php artisan migrate:fresh --seed   # only DatabaseSeeder.php exists, no per-mode
 php artisan orders:release-abandoned --minutes=60
 ```
 
-Note: tests run against the MySQL **scratch database `furniture_db_test`** (set in `phpunit.xml`), never `furniture_db`. `tests/TestCase.php` aborts any run whose database name doesn't end in `_test`, before anything touches the DB. Never run `migrate:fresh`/`db:wipe` against `furniture_db`. The scratch DB's structure is cloned from `furniture_db` (create it with `CREATE DATABASE furniture_db_test` and load a structure-only dump); `PaymentSafetyTest` runs inside a rolled-back transaction. The default `ExampleTest.php` stubs still exist (the Feature one fails: it needs seeded products).
+Note: tests run against the MySQL **scratch database `furniture_db_test`** (set in `phpunit.xml`), never `furniture_db`. `tests/TestCase.php` aborts any run whose database name doesn't end in `_test`, before anything touches the DB. Never run `migrate:fresh`/`db:wipe`/`migrate:rollback` against `furniture_db` — to run migration commands on the scratch DB use `DB_DATABASE=furniture_db_test php artisan migrate`. Create the scratch DB once with `CREATE DATABASE furniture_db_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`; the feature tests rebuild it from the migrations (`RefreshDatabase`) and roll back each test, so it needs no manual schema. The default `ExampleTest.php` stubs still exist (the Feature one fails: it needs seeded products).
 
 ## Architecture
 
@@ -81,7 +81,9 @@ Auth itself is hand-rolled in `AuthController` (no Breeze/Jetstream/Fortify) —
 
 `CustomDesignController` + `CustomDesignRequest`/`AiDesignSuggestion` models. `.env.example` shows multiple possible providers wired via `config/services.php`: `GEMINI_API_KEY`, `HUGGINGFACE_API_KEY`, `DEEPAI_API_KEY`, `OPENAI_API_KEY` (the latter via `openai-php/laravel`). Check `config/services.php` and the controller to see which provider is actually active before assuming.
 
-**Planned, not built:** turning an AI design request into a phone-confirmed, recorded agreement and a custom order (quotes, agreement records, payment ledger) is planned in [`docs/custom-orders-plan.md`](docs/custom-orders-plan.md). The "Approved decisions and changes" section at the end of that file overrides the plan above it. Read it before touching design requests, orders or payments for this feature.
+**In progress:** turning an AI design request into a phone-confirmed, recorded agreement and a custom order (quotes, agreement records, payment ledger) is planned in [`docs/custom-orders-plan.md`](docs/custom-orders-plan.md). The "Approved decisions and changes" section at the end of that file overrides the plan above it. Read it before touching design requests, orders or payments for this feature.
+
+Status: **Stage 0** (payment safety fixes in `PaymentController`) and **Stage 1** (schema + models only, no behaviour change) are done. The tables `custom_quotes`, `design_agreements`, `agreement_policies`, `custom_order_call_logs`, `custom_order_events`, `payment_records` exist with models, plus new columns on `custom_design_requests`/`orders`/`payments`; nothing in the app reads or writes them yet. `App\Support\InstallmentScheduler` now builds installment schedules (catalog = exactly 50% down; custom deposits must be >= `InstallmentScheduler::MIN_DEPOSIT_PERCENT`). `DesignAgreement` and `AgreementPolicy` are insert-only (model guards throw on update/delete; no triggers by design).
 
 ### Models — key relationships
 
