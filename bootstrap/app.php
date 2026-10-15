@@ -33,5 +33,34 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
+        // A 419 means the submitted form's CSRF token no longer
+        // matches the current session — in practice almost always
+        // because the session itself expired (idle timeout, see
+        // SESSION_LIFETIME / ADMIN_SESSION_TIMEOUT) while the page sat
+        // open. Laravel's default "Page Expired" page doesn't explain
+        // that, so render a friendlier redirect instead. This only
+        // intercepts the CSRF exception — it doesn't touch any guard,
+        // middleware, or login logic.
         //
+        // Laravel's base Handler::prepareException() converts the
+        // underlying TokenMismatchException into a plain
+        // Symfony HttpException(419, ...) BEFORE renderable callbacks
+        // are checked, so a callback type-hinted on
+        // TokenMismatchException itself would never match — this has
+        // to catch the converted HttpException and filter by status.
+        $exceptions->renderable(function (\Symfony\Component\HttpKernel\Exception\HttpException $e, \Illuminate\Http\Request $request) {
+            if ($e->getStatusCode() !== 419) {
+                return null;
+            }
+
+            $message = 'Your session expired for your security. Please log in and try again.';
+
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $message], 419);
+            }
+
+            $loginRoute = $request->is('admin/*') ? route('admin.login') : route('login');
+
+            return redirect()->guest($loginRoute)->withErrors(['email' => $message]);
+        });
     })->create();
