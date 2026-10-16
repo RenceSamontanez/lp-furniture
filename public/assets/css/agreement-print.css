@@ -87,3 +87,6 @@
 .pt-heading { font-size: 13px; margin: 14px 0 4px; }
 .pt-p, .pt-list { margin: 0 0 6px; }
 .pt-list { padding-left: 18px; }
+
+/* No scrolling when printing or saving as PDF */
+.co-policy-body { max-height: none; overflow: visible; }

@@ -101,6 +101,8 @@
           Clicking below will take you to Stripe's secure payment page. Your card details are never seen or stored by LP Furniture — everything is handled directly by Stripe.
         </div>
 
+        @include('partials.terms-reminder')
+
         <form method="POST" action="{{ route('payment.stripe.checkout', $order->id) }}">
           @csrf
           <button type="submit" class="btn-pay-stripe" id="pay-btn">

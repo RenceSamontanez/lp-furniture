@@ -156,6 +156,8 @@
         </div>
       </fieldset>
 
+      @include('partials.terms-reminder')
+
       <div class="co-actions">
         <a href="{{ route('design.show', $designRequest->id) }}" class="co-btn co-btn--ghost">Cancel</a>
         <button type="submit" class="co-btn co-btn--primary" id="co-submit">{{ $editing ? 'Save changes' : 'Send to our team' }}</button>

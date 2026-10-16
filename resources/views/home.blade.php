@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'LP Furniture — Handcrafted Wood Furniture')
+@section('hide_site_footer', '1')
 
 @section('content')
 
@@ -580,7 +581,7 @@
     <div class="footer-bottom-links">
       <a href="#">Privacy Policy</a>
       <span class="footer-dot">·</span>
-      <a href="#">Terms and Conditions</a>
+      <a href="{{ route('terms') }}">Terms and Conditions</a>
     </div>
   </div>
 </footer>

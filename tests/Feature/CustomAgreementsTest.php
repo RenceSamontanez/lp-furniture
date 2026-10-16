@@ -153,7 +153,7 @@ class CustomAgreementsTest extends TestCase
         $res->assertSee('Terms and Conditions');
         $res->assertSee('Cancellation and refunds');
         $res->assertSee('[TO CONFIRM', false);
-        $res->assertSee('I have read and agree to these terms');
+        $res->assertSee('I have read and agree to the Terms and Conditions, including the cancellation and refund policy.');
         $res->assertSee('Accept agreement');
         $res->assertDontSee('INTERNAL-ONLY-note');
         $this->assertStringContainsString('no-store', $res->headers->get('Cache-Control'));

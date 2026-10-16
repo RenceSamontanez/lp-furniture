@@ -554,3 +554,11 @@
 .pt-p { margin: 0 0 8px; font-size: 13.5px; line-height: 1.65; color: var(--text); }
 .pt-list { margin: 0 0 8px; padding-left: 20px; font-size: 13.5px; line-height: 1.65; color: var(--text); }
 .pt-list li + li { margin-top: 4px; }
+
+/* The policy in the agreement is a readable, keyboard-focusable scroll panel (Stage 17) */
+.co-policy-body { max-height: 360px; overflow-y: auto; padding-right: 8px; }
+.co-policy-body:focus-visible { outline: 3px solid var(--gold, #C9A24A); outline-offset: 3px; border-radius: 6px; }
+
+.pt-heading, .pt-p, .pt-list { text-align: left; }
+@media (max-width: 640px) { .lp-footer { padding-right: 84px; } }
+.co-policy-body, .terms-body, .pt-list li { text-align: left; }

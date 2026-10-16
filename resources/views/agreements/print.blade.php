@@ -23,7 +23,7 @@
     <table class="ag-meta">
       <tr><th>Customer</th><td>{{ \App\Support\NameFormat::proper($terms['people']['customer']['name'] ?? '') }}</td></tr>
       <tr><th>Agreed on</th><td>{{ $agreement->accepted_at->timezone('Asia/Manila')->format('M d, Y h:i A') }} (Philippine time)</td></tr>
-      <tr><th>Policy version</th><td>{{ $agreement->policy_version }}</td></tr>
+      <tr><th>Terms and Conditions</th><td>Version {{ $agreement->policy_version }}</td></tr>
       <tr><th>Prepared by</th><td>{{ \App\Support\NameFormat::proper($terms['people']['finalized_by']['name'] ?? '') }}</td></tr>
     </table>
 
@@ -31,7 +31,7 @@
       <div class="ag-image"><img src="{{ $imageUrl }}" alt="Reference design"/></div>
     @endif
 
-    @include('agreements._terms', ['terms' => $terms, 'paymentDue' => $terms['payment_due_at'] ?? null])
+    @include('agreements._terms', ['terms' => $terms, 'paymentDue' => $terms['payment_due_at'] ?? null, 'showPolicyVersion' => true])
 
     <footer class="ag-foot">
       Record integrity (SHA-256): <code>{{ $agreement->snapshot_sha256 }}</code>

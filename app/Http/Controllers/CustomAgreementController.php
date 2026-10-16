@@ -64,7 +64,7 @@ class CustomAgreementController extends Controller
 
         $request->validate(
             ['agree' => 'accepted'],
-            ['agree.accepted' => 'Tick the box to confirm you have read and agree to these terms.']
+            ['agree.accepted' => 'Tick the box to confirm you agree to the Terms and Conditions.']
         );
 
         // Copy first, outside the transaction: a DB rollback can't undo a

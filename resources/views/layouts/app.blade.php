@@ -84,6 +84,13 @@
 @yield('content')
 </main>
 
+@unless(View::hasSection('hide_site_footer'))
+<footer class="lp-footer">
+  <span>&copy; {{ date('Y') }} LP Furniture</span>
+  <a href="{{ route('terms') }}">Terms and Conditions</a>
+</footer>
+@endunless
+
 <!-- ═══ CHATBOT ═══ -->
 <div class="chatbot-fab" onclick="toggleChatbot()" id="chatbot-fab" title="Drag me anywhere">💬</div>
 {{-- Drop zone that appears while dragging the chatbot — dragging

@@ -45,7 +45,7 @@
       @csrf
       <label class="co-agree">
         <input type="checkbox" name="agree" value="1" required/>
-        <span>I have read and agree to these terms</span>
+        <span>I have read and agree to the Terms and Conditions, including the cancellation and refund policy.</span>
       </label>
       <button type="submit" class="ai-action-btn ai-action-primary">Accept agreement</button>
     </form>

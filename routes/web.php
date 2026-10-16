@@ -34,6 +34,7 @@ Route::get('/catalog', [ProductController::class, 'catalog'])->name('catalog');
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('/product/{id}/quick-view', [ProductController::class, 'quickView'])->name('product.quickview');
 Route::get('/reviews', [FeedbackController::class, 'index'])->name('feedback.index');
+Route::get('/terms', [\App\Http\Controllers\TermsController::class, 'show'])->name('terms');
 Route::post('/chatbot', [ChatbotController::class, 'respond'])->name('chatbot.respond');
 
 // ============================================================

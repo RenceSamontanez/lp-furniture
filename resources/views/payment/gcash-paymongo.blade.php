@@ -105,6 +105,8 @@
           Your GCash credentials are never seen or stored by LP Furniture — everything is handled directly by GCash and PayMongo.
         </div>
 
+        @include('partials.terms-reminder')
+
         <form method="POST" action="{{ route('payment.gcash.paymongo.checkout', $order->id) }}" id="gcash-payment-form">
           @csrf
           <button type="button" class="btn-submit-gcash" id="pay-btn">
