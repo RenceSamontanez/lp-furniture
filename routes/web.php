@@ -185,6 +185,7 @@ Route::get('/design-gallery', [CustomDesignController::class, 'gallery'])->name(
     Route::get('/services/request', [\App\Http\Controllers\ServiceInquiryController::class, 'create'])->name('services.request');
     Route::post('/services/request', [\App\Http\Controllers\ServiceInquiryController::class, 'store'])->name('services.request.submit');
     Route::get('/services/request/sent', [\App\Http\Controllers\ServiceInquiryController::class, 'sent'])->name('services.request.sent');
+    Route::get('/services/invoices/{id}', [\App\Http\Controllers\ServiceInvoiceController::class, 'show'])->name('services.invoice')->whereNumber('id');
 
     // Review and Accept, and the immutable agreement record (Stage 6).
     // There is deliberately no update or delete route for an agreement.
@@ -277,6 +278,19 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     Route::post('/service-inquiries/{id}/call-update',   [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'callUpdate'])->name('service-inquiries.call-update')->whereNumber('id');
     Route::post('/service-inquiries/{id}/notes',         [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'addNote'])->name('service-inquiries.notes')->whereNumber('id');
     Route::post('/service-inquiries/{id}/close',         [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'close'])->name('service-inquiries.close')->whereNumber('id');
+
+    // Other Services invoices (draft -> issued -> paid / void; issued ones are locked)
+    $inv = \App\Http\Controllers\Admin\ServiceInvoiceController::class;
+    Route::get('/service-inquiries/{ticketId}/invoices/create', [$inv, 'create'])->name('service-invoices.create')->whereNumber('ticketId');
+    Route::post('/service-inquiries/{ticketId}/invoices',       [$inv, 'store'])->name('service-invoices.store')->whereNumber('ticketId');
+    Route::get('/service-invoices/{id}',                        [$inv, 'show'])->name('service-invoices.show')->whereNumber('id');
+    Route::get('/service-invoices/{id}/edit',                   [$inv, 'edit'])->name('service-invoices.edit')->whereNumber('id');
+    Route::post('/service-invoices/{id}',                       [$inv, 'update'])->name('service-invoices.update')->whereNumber('id');
+    Route::post('/service-invoices/{id}/delete',                [$inv, 'destroy'])->name('service-invoices.delete')->whereNumber('id');
+    Route::post('/service-invoices/{id}/issue',                 [$inv, 'issue'])->name('service-invoices.issue')->whereNumber('id');
+    Route::post('/service-invoices/{id}/paid',                  [$inv, 'pay'])->name('service-invoices.paid')->whereNumber('id');
+    Route::post('/service-invoices/{id}/void',                  [$inv, 'void'])->name('service-invoices.void')->whereNumber('id');
+    Route::get('/service-invoices/{id}/print',                  [$inv, 'print'])->name('service-invoices.print')->whereNumber('id');
 
     // Agreement records (read only) and the admin's own notifications (Stage 6)
     Route::get('/agreements/{id}',       [AdminAgreementController::class, 'show'])->name('agreements.show')->whereNumber('id');

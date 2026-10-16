@@ -1,0 +1,67 @@
+/* ============================================================
+   SERVICE INVOICE: standalone page. Screen: a centred A4-proportioned
+   sheet. Print: A4, black on white, no chrome.
+============================================================ */
+
+* { box-sizing: border-box; }
+
+.iv-body { margin: 0; background: #f1ece3; color: #231a12; font-family: 'DM Sans', Arial, sans-serif; font-size: 13.5px; line-height: 1.55; }
+
+.iv-toolbar { max-width: 794px; margin: 16px auto 0; padding: 0 16px; display: flex; justify-content: space-between; align-items: center; }
+.iv-toolbar a { color: #5c4630; text-decoration: none; font-size: 13px; }
+.iv-toolbar a:focus-visible, .iv-toolbar button:focus-visible { outline: 2px solid #8a6a3a; outline-offset: 2px; }
+.iv-toolbar button { padding: 8px 18px; border: 1px solid #5c4630; background: #fff; color: #5c4630; border-radius: 8px; font: inherit; cursor: pointer; }
+
+.iv-sheet { position: relative; max-width: 794px; min-height: 1000px; margin: 12px auto 40px; padding: 48px 56px 40px; background: #fff; border: 1px solid #e3d9c9; display: flex; flex-direction: column; }
+
+.iv-mark { position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%) rotate(-18deg); font-size: 96px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(160, 60, 50, 0.13); pointer-events: none; }
+
+.iv-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; padding-bottom: 20px; border-bottom: 2px solid #5c4630; }
+.iv-brand { font-family: 'Playfair Display', Georgia, serif; font-size: 24px; color: #5c4630; }
+.iv-contact { margin-top: 4px; font-size: 12.5px; color: #6b5a47; }
+.iv-title { text-align: right; }
+.iv-title h1 { font-family: 'Playfair Display', Georgia, serif; font-size: 30px; font-weight: 600; margin: 0; line-height: 1.1; }
+.iv-number { margin-top: 6px; font-size: 15px; font-variant-numeric: tabular-nums; letter-spacing: 0.03em; }
+
+.iv-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: 22px 0; }
+.iv-meta h2, .iv-service h2, .iv-note h2, .iv-pay h2 { margin: 0 0 6px; font-size: 12.5px; font-weight: 600; color: #6b5a47; }
+.iv-meta p { margin: 0; }
+.iv-meta dl { margin: 0; }
+.iv-meta dl > div { display: flex; justify-content: space-between; gap: 16px; padding: 4px 0; border-bottom: 1px solid #eee5d6; }
+.iv-meta dt { color: #6b5a47; }
+.iv-meta dd { margin: 0; text-align: right; }
+
+.iv-service { padding-bottom: 14px; }
+.iv-service p { margin: 0; font-size: 15px; }
+
+.iv-lines { width: 100%; border-collapse: collapse; margin-top: 4px; }
+.iv-lines th { text-align: left; font-weight: 600; font-size: 12.5px; color: #6b5a47; padding: 8px 0; border-bottom: 1px solid #5c4630; }
+.iv-lines td { padding: 10px 0; border-bottom: 1px solid #eee5d6; vertical-align: top; }
+.iv-lines th:last-child, .iv-lines td:last-child { text-align: right; white-space: nowrap; padding-left: 20px; font-variant-numeric: tabular-nums; }
+.iv-lines tfoot td { border-bottom: 0; border-top: 2px solid #5c4630; font-size: 16px; font-weight: 700; padding-top: 12px; }
+
+.iv-delivery { margin: 10px 0 0; font-size: 12.5px; color: #6b5a47; }
+.iv-note { margin-top: 18px; }
+.iv-note p { margin: 0; }
+.iv-pre { white-space: pre-line; }
+.iv-pay { margin-top: 22px; padding: 14px 16px; background: #faf6ee; border: 1px solid #eadfcb; border-radius: 6px; }
+.iv-pay p { margin: 0 0 2px; }
+
+.iv-foot { margin-top: auto; padding-top: 28px; text-align: center; font-size: 12px; color: #6b5a47; }
+
+@media (max-width: 640px) {
+  .iv-sheet { padding: 28px 18px; min-height: 0; }
+  .iv-head { flex-direction: column; }
+  .iv-title { text-align: left; }
+  .iv-meta { grid-template-columns: 1fr; }
+  .iv-mark { font-size: 64px; }
+}
+
+@page { size: A4; margin: 15mm; }
+@media print {
+  .iv-body { background: #fff; font-size: 12pt; }
+  .iv-toolbar { display: none; }
+  .iv-sheet { margin: 0; padding: 0; border: 0; max-width: none; min-height: 255mm; }
+  .iv-pay { background: #fff; }
+  .iv-lines tr, .iv-pay, .iv-meta { break-inside: avoid; }
+}

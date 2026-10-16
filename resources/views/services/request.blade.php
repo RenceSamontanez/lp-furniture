@@ -134,6 +134,12 @@
                     <span class="si-chip si-chip--{{ $t->status }}">{{ $t->statusLabel() }}</span>
                   </div>
                   <div class="si-list-sub">{{ $t->serviceLabel() }} · {{ $t->created_at->timezone('Asia/Manila')->format('M d, Y') }}</div>
+                  @foreach($t->invoices as $inv)
+                    <a href="{{ route('services.invoice', $inv->id) }}" class="si-invoice">
+                      <span>Invoice {{ $inv->invoice_number }}</span>
+                      <span>₱{{ number_format((float) $inv->total, 2) }} · {{ $inv->status === 'paid' ? 'Paid' : 'Unpaid' }}</span>
+                    </a>
+                  @endforeach
                 </li>
               @endforeach
             </ul>

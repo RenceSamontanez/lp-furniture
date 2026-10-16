@@ -150,6 +150,16 @@ final class NotificationTemplates
             'body'  => 'Thank you for speaking with us about your service request {reference}. Our team will follow up on the next steps. {contact}',
         ],
 
+        /* ── customer: Other Services invoices ── */
+        'service_invoice_issued' => [
+            'title' => 'Your Invoice Is Ready',
+            'body'  => 'Invoice {invoice} for {service} is ready. The total is {total}. You can view and print it from your service requests page. {contact}',
+        ],
+        'service_invoice_paid' => [
+            'title' => 'Payment Recorded',
+            'body'  => 'We recorded your payment of {amount} for invoice {invoice} on {when}. Thank you. The paid invoice is available on your service requests page. {contact}',
+        ],
+
         /* ── admin ── */
         'admin_new_request' => [
             'title' => 'New Custom Order Request',
@@ -271,6 +281,7 @@ final class NotificationTemplates
             'order_number' => $has('order_number') ? (string) $d['order_number'] : 'your order',
             'agreement'    => $has('agreement') ? (string) $d['agreement'] : 'your agreement',
             'reference'    => $has('reference') ? (string) $d['reference'] : 'shown on your request',
+            'invoice'      => $has('invoice') ? (string) $d['invoice'] : 'your invoice',
             'service'      => $has('service') ? (string) $d['service'] : 'an Other Services request',
             'times'        => $has('times') ? (string) $d['times'] : 'a few times',
             'when'         => $has('when') ? (string) $d['when'] : 'the date shown on your account',

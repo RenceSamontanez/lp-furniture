@@ -49,6 +49,11 @@ class ServiceInquiry extends Model
         return $this->belongsTo(User::class, 'created_by_admin_id');
     }
 
+    public function invoices()
+    {
+        return $this->hasMany(ServiceInvoice::class, 'service_inquiry_id')->orderByDesc('id');
+    }
+
     public function serviceLabel(): string
     {
         return self::SERVICE_TYPES[$this->service_type] ?? (string) $this->service_type;

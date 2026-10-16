@@ -1,6 +1,6 @@
 # RBAC matrix (Stage 11)
 
-84 routes x 4 actors = 336 probes, 0 failures. Database: furniture_db_test
+95 routes x 4 actors = 380 probes, 0 failures. Database: furniture_db_test
 
 Expected: guest, customer and customer-credentials-on-admin-guard are redirected to /admin/login; admin gets anything except that redirect, 401, 403, 419 or 5xx. Routes with an id were sent id 999999999 only. One fresh PHP process per actor per route.
 
@@ -81,8 +81,19 @@ Expected: guest, customer and customer-credentials-on-admin-guard are redirected
 | `GET /admin/service-inquiries/999999999` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 404 ✓ |
 | `POST /admin/service-inquiries/999999999/call-update` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 →  ✓ |
 | `POST /admin/service-inquiries/999999999/close` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 →  ✓ |
+| `POST /admin/service-inquiries/999999999/invoices` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 404 ✓ |
+| `GET /admin/service-inquiries/999999999/invoices/create` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 404 ✓ |
 | `POST /admin/service-inquiries/999999999/notes` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 →  ✓ |
 | `GET /admin/service-inquiries/create` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 200 ✓ |
+| `GET /admin/service-inquiries/customer-search` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 200 ✓ |
+| `GET /admin/service-invoices/999999999` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 404 ✓ |
+| `POST /admin/service-invoices/999999999` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 404 ✓ |
+| `POST /admin/service-invoices/999999999/delete` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 404 ✓ |
+| `GET /admin/service-invoices/999999999/edit` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 404 ✓ |
+| `POST /admin/service-invoices/999999999/issue` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 404 ✓ |
+| `POST /admin/service-invoices/999999999/paid` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 404 ✓ |
+| `GET /admin/service-invoices/999999999/print` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 404 ✓ |
+| `POST /admin/service-invoices/999999999/void` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 404 ✓ |
 | `GET /admin/settings/contact` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 200 ✓ |
 | `PUT /admin/settings/contact` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 →  ✓ |
 | `GET /admin/validations` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 200 ✓ |

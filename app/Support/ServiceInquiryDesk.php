@@ -265,7 +265,7 @@ final class ServiceInquiryDesk
         return $inquiry;
     }
 
-    private function appendNote(ServiceInquiry $inquiry, User $admin, string $text): void
+    public function appendNote(ServiceInquiry $inquiry, User $admin, string $text): void
     {
         $who  = trim((string) $admin->first_name) ?: 'Admin';
         $when = Carbon::now(self::TZ)->format('M d, Y h:i A');

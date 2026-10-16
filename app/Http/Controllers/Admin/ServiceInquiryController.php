@@ -63,7 +63,7 @@ class ServiceInquiryController extends Controller
 
     public function show($id)
     {
-        $ticket = ServiceInquiry::with(['user', 'createdBy'])->findOrFail($id);
+        $ticket = ServiceInquiry::with(['user', 'createdBy', 'invoices'])->findOrFail($id);
 
         return view('admin.service-inquiries.show', [
             'hideGlobalErrorToast' => true, // errors are shown inline on this page
