@@ -1,6 +1,6 @@
 # RBAC matrix (Stage 11)
 
-75 routes x 4 actors = 300 probes, 0 failures (the one mismatch in the first full run was the checker not expecting sign-out to land on the login page; the runner now does). Database: furniture_db_test
+76 routes x 4 actors = 304 probes, 0 failures. Database: furniture_db_test
 
 Expected: guest, customer and customer-credentials-on-admin-guard are redirected to /admin/login; admin gets anything except that redirect, 401, 403, 419 or 5xx. Routes with an id were sent id 999999999 only. One fresh PHP process per actor per route.
 
@@ -18,6 +18,7 @@ Expected: guest, customer and customer-credentials-on-admin-guard are redirected
 | `GET /admin/chatbot/create` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 200 ✓ |
 | `GET /admin/custom-orders` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 200 ✓ |
 | `GET /admin/custom-orders/999999999` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 404 ✓ |
+| `POST /admin/custom-orders/999999999/call-update` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 →  ✓ |
 | `POST /admin/custom-orders/999999999/calls` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 →  ✓ |
 | `POST /admin/custom-orders/999999999/decline` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 →  ✓ |
 | `GET /admin/custom-orders/999999999/quote-preview` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 404 ✓ |
@@ -54,7 +55,7 @@ Expected: guest, customer and customer-credentials-on-admin-guard are redirected
 | `GET /admin/inventory/create` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 200 ✓ |
 | `GET /admin/login` | 200 (public page) ✓ | 200 (public page) ✓ | 200 (public page) ✓ | 302 → /admin/dashboard (public page) ✓ |
 | `POST /admin/login` | 302 →  (public page) ✓ | 302 →  (public page) ✓ | 302 →  (public page) ✓ | 302 →  (public page) ✓ |
-| `POST /admin/logout` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login (sign-out, expected) ✓ |
+| `POST /admin/logout` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ |
 | `GET /admin/notifications` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 200 ✓ |
 | `POST /admin/notifications/999999999/read` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 404 ✓ |
 | `POST /admin/notifications/read-all` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 →  ✓ |

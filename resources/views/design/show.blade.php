@@ -226,7 +226,7 @@
              onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
       </div>
 
-      <div class="ai-concepts-label">Choose Your Favorite Concept</div>
+      <div class="ai-concepts-label">{{ $isFinal ? "The design you sent to our team" : "Choose Your Favorite Concept" }}</div>
 
       <div class="ai-concepts-gallery">
         @foreach($suggestions as $suggestion)

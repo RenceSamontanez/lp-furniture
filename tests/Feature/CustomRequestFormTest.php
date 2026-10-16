@@ -305,12 +305,41 @@ class CustomRequestFormTest extends TestCase
         $this->assertNull($r->fresh()->modification_notes);
     }
 
-    public function test_guest_is_sent_to_login_for_the_edit_routes(): void
+    public static function editAccess(): array
+    {
+        $cases = [];
+        foreach (['guest' => 'login', 'customer_on_admin_guard' => 'login', 'admin_user_on_web_guard' => '404', 'other_customer' => '404'] as $who => $outcome) {
+            foreach (['edit', 'update'] as $route) {
+                $cases["$who -> $route"] = [$who, $route, $outcome];
+            }
+        }
+
+        return $cases;
+    }
+
+    /** @dataProvider editAccess */
+    public function test_edit_routes_rbac(string $who, string $route, string $outcome): void
     {
         $ana = $this->customer();
         [$r] = $this->request($ana, ['pipeline_status' => 'submitted', 'status' => 'approved']);
+        $visitor = $this->customer('Visitor');
+        $admin = $this->makeUser('admin');
 
-        $this->get(route('design.edit', $r->id))->assertRedirect(route('login'));
-        $this->post(route('design.update', $r->id), $this->payload())->assertRedirect(route('login'));
+        match ($who) {
+            'customer_on_admin_guard' => $this->actingAs($visitor, 'admin'),
+            'admin_user_on_web_guard' => $this->actingAs($admin),
+            'other_customer'          => $this->actingAs($visitor),
+            default                   => null,
+        };
+        \Illuminate\Support\Facades\Auth::shouldUse('web');
+
+        $resp = $route === 'edit'
+            ? $this->get(route('design.edit', $r->id))
+            : $this->post(route('design.update', $r->id), $this->payload(['request_mode' => 'modified', 'modification_notes' => 'hijack']));
+
+        $outcome === 'login' ? $resp->assertRedirect(route('login')) : $resp->assertNotFound();
+
+        $this->assertNull($r->fresh()->modification_notes);
+        $this->assertSame(0, CustomOrderEvent::where('type', 'request_updated')->count());
     }
 }

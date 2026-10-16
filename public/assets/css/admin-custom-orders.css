@@ -180,7 +180,7 @@
   background: #F3ECDD; color: #6B5D52; font-size: 11.5px; font-weight: 600;
 }
 
-.co-design-summary { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); gap: 18px; align-items: start; margin-bottom: 18px; }
-.co-design-frame--sm { max-width: 220px; }
+.co-design-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; align-items: start; margin-bottom: 18px; }
+.co-design-frame--sm { max-width: 260px; }
 .co-design-prompt .co-quote { margin-bottom: 12px; }
 @media (max-width: 640px) { .co-design-summary { grid-template-columns: 1fr; } .co-design-frame--sm { max-width: 100%; } }
