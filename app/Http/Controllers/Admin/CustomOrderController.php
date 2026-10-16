@@ -98,6 +98,8 @@ class CustomOrderController extends Controller
             'events'        => $events,
             'actors'        => $actors,
             'unanswered'    => $designRequest->callLogs->where('answered', false)->count(),
+            'lastCall'      => $this->lastCall($designRequest, $events),
+            'callPreview'   => \App\Support\CallUpdateMessage::previewData($designRequest),
             'isOpen'        => in_array($designRequest->pipeline_status, CustomOrderPipeline::OPEN, true),
             'quotes'        => CustomQuote::where('request_id', $designRequest->id)->with(['sender', 'creator'])->orderByDesc('version')->get(),
             'quoteBlocker'  => $this->quoteBlocker($designRequest),
@@ -122,6 +124,33 @@ class CustomOrderController extends Controller
             $this->pipeline->logCall((int) $id, Auth::guard('admin')->user(), $data['answered'] === '1', $data['note'] ?? null, (int) $data['lock_version']);
 
             return 'Call logged.';
+        });
+    }
+
+    public function callUpdate(Request $request, $id)
+    {
+        $data = $request->validate([
+            'lock_version' => 'required|integer|min:0',
+            'outcome'      => 'required|in:' . implode(',', array_keys(\App\Support\CallUpdateMessage::LABELS)),
+            'attempts'     => 'nullable|integer|min:1|max:20',
+            'note'         => 'nullable|string|max:500',
+        ], [
+            'outcome.required' => 'Choose the call outcome.',
+            'attempts.min'     => 'Call attempts must be from 1 to 20.',
+            'attempts.max'     => 'Call attempts must be from 1 to 20.',
+        ]);
+
+        return $this->run($id, function () use ($id, $data) {
+            $this->pipeline->sendCallUpdate(
+                (int) $id,
+                Auth::guard('admin')->user(),
+                $data['outcome'],
+                isset($data['attempts']) ? (int) $data['attempts'] : null,
+                $data['note'] ?? null,
+                (int) $data['lock_version']
+            );
+
+            return 'Call update sent. The customer has been notified.';
         });
     }
 
@@ -301,14 +330,40 @@ class CustomOrderController extends Controller
         return response()->json($summary + ['delivery_fee' => $terms['delivery_fee'], 'deposit_problem' => $problem]);
     }
 
+    /** The latest call update, from the new tool or an older call log row. */
+    private function lastCall(CustomDesignRequest $r, $events): ?array
+    {
+        $update = $events->where('type', 'call_update')->sortByDesc('occurred_at')->first();
+        $log = $r->callLogs->sortByDesc('attempt_no')->first();
+
+        if ($update && (!$log || $update->occurred_at >= $log->called_at)) {
+            $d = $update->data ?? [];
+
+            return [
+                'label'    => \App\Support\CallUpdateMessage::LABELS[$d['outcome'] ?? ''] ?? 'Call update',
+                'attempts' => $d['attempts'] ?? null,
+                'at'       => $update->occurred_at,
+                'count'    => $r->callLogs->count(),
+            ];
+        }
+
+        if ($log) {
+            return [
+                'label'    => $log->answered ? 'Answered' : 'No answer',
+                'attempts' => null,
+                'at'       => $log->called_at,
+                'count'    => $r->callLogs->count(),
+            ];
+        }
+
+        return null;
+    }
+
     /** Why a new quote can't be started right now, or null. */
     private function quoteBlocker(CustomDesignRequest $r): ?string
     {
         if (!in_array($r->pipeline_status, CustomOrderPipeline::QUOTE_FROM, true)) {
-            return 'A quote can only be started once the request is in contact (after an answered call).';
-        }
-        if ($r->pipeline_status === 'contacting' && !$r->callLogs()->where('answered', true)->exists()) {
-            return 'Log at least one answered call before creating a quote.';
+            return 'A quote can only be started while the request is open, or after it was declined, expired or replaced.';
         }
 
         return null;

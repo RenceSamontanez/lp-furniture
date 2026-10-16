@@ -40,7 +40,7 @@ class CustomOrderPipeline
     ];
 
     /** Pipeline statuses a quote can be drafted or sent from (Stage 5). */
-    public const QUOTE_FROM = ['contacting', 'quoted', 'expired', 'declined_by_customer'];
+    public const QUOTE_FROM = ['submitted', 'contacting', 'unreachable', 'quoted', 'expired', 'declined_by_customer'];
 
     public const LABELS = [
         'submitted'            => 'Submitted',
@@ -90,6 +90,67 @@ class CustomOrderPipeline
                 'from'       => $from,
                 'to'         => $to,
             ]);
+
+            return $log;
+        });
+    }
+
+    /**
+     * The quick call update (Stage 13): one outcome, how many attempts,
+     * an optional extra line. Writes a call log row, an event, ONE
+     * customer notification with the fixed wording, and sets the status
+     * (unreachable -> unreachable; ringing / answered -> contacting).
+     * No call has to be logged before a quote any more.
+     */
+    public function sendCallUpdate(int $requestId, User $admin, string $outcome, ?int $attempts, ?string $note, int $lockVersion): CustomOrderCallLog
+    {
+        if (!isset(CallUpdateMessage::LABELS[$outcome])) {
+            throw new PipelineException('Choose the call outcome.');
+        }
+
+        $needs = CallUpdateMessage::needsAttempts($outcome);
+        if ($needs && ($attempts === null || $attempts < 1 || $attempts > 20)) {
+            throw new PipelineException('Call attempts must be a number from 1 to 20.');
+        }
+        $attempts = $needs ? $attempts : null;
+
+        return DB::transaction(function () use ($requestId, $admin, $outcome, $attempts, $note, $lockVersion) {
+            $request = $this->lock($requestId, $lockVersion);
+            $this->requireOpen($request, 'send a call update');
+
+            $note = $note !== null && trim($note) !== '' ? trim($note) : null;
+            $from = $request->pipeline_status;
+            $to   = CallUpdateMessage::STATUS[$outcome];
+            $n    = (int) CustomOrderCallLog::where('request_id', $request->id)->max('attempt_no') + 1;
+
+            $summary = CallUpdateMessage::LABELS[$outcome]
+                . ($attempts ? ', ' . CallUpdateMessage::times($attempts) . ' called' : '');
+
+            $log = CustomOrderCallLog::create([
+                'request_id' => $request->id,
+                'admin_id'   => $admin->id,
+                'attempt_no' => $n,
+                'called_at'  => now(),
+                'answered'   => $outcome === CallUpdateMessage::ANSWERED,
+                'note'       => $summary . ($note ? '. ' . $note : ''),
+            ]);
+
+            $message = CallUpdateMessage::build($outcome, $request, $attempts ?? 1, $note);
+
+            $this->commit($request, $to, 'call_update', $admin, [
+                'outcome'  => $outcome,
+                'attempts' => $attempts,
+                'note'     => $note,
+                'from'     => $from,
+                'to'       => $to,
+                'message'  => $message,
+            ]);
+
+            $this->notifyCustomer($request, match ($outcome) {
+                CallUpdateMessage::ANSWERED => 'Update on Your Custom Request',
+                CallUpdateMessage::RINGING  => 'We Called You',
+                default                     => 'We Could Not Reach You',
+            }, $message);
 
             return $log;
         });
@@ -180,10 +241,6 @@ class CustomOrderPipeline
                 throw new PipelineException('There is already a draft quote for this request. Edit or delete it first.');
             }
 
-            if ($request->pipeline_status === 'contacting') {
-                $this->requireAnsweredCall($request);
-            }
-
             $attrs   = QuoteTerms::validate($terms);
             $latest  = CustomQuote::where('request_id', $request->id)->orderByDesc('version')->first();
             $version = ($latest?->version ?? 0) + 1;
@@ -244,10 +301,6 @@ class CustomOrderPipeline
             $request = $this->lock($requestId, $lockVersion);
             $this->requireQuotable($request);
             $quote = $this->lockDraft($request, $quoteId);
-
-            if ($request->pipeline_status === 'contacting') {
-                $this->requireAnsweredCall($request);
-            }
 
             // Re-validate what is stored: send never trusts an old save.
             try {

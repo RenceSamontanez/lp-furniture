@@ -201,52 +201,48 @@
   {{-- Side column: actions --}}
   <div>
     <div class="admin-panel">
-      <div class="admin-panel-header"><div class="admin-panel-title">Work this request</div></div>
+      <div class="admin-panel-header"><div class="admin-panel-title">This request</div></div>
       <div class="admin-panel-body">
-        @if($isOpen)
-          <form method="POST" action="{{ route('admin.custom-orders.calls', $r->id) }}" class="co-action-form">
-            @csrf
-            <input type="hidden" name="lock_version" value="{{ $r->lock_version }}"/>
-            <div class="co-action-title">Log a call</div>
-            <div class="co-radio-row">
-              <label><input type="radio" name="answered" value="1" required/> Answered</label>
-              <label><input type="radio" name="answered" value="0" required/> No answer</label>
+        <div class="co-status-row">
+          <span class="co-chip co-chip--{{ $r->pipeline_status }}">{{ $labels[$r->pipeline_status] ?? $r->pipeline_status }}</span>
+        </div>
+
+        <div class="co-lastcall">
+          <div class="co-lastcall-label">Last call update</div>
+          @if($lastCall)
+            <div class="co-lastcall-value">
+              {{ $lastCall['label'] }}@if($lastCall['attempts']), {{ \App\Support\CallUpdateMessage::times((int) $lastCall['attempts']) }} called @endif
             </div>
-            <textarea name="note" class="form-input" rows="3" maxlength="1000" placeholder="Note (optional)"></textarea>
-            <button type="submit" class="admin-btn admin-btn-gold" style="width:100%;">Save call</button>
-          </form>
+            <div class="co-log-meta">
+              {{ \Illuminate\Support\Carbon::instance($lastCall['at'])->timezone('Asia/Manila')->format('M d, Y h:i A') }}
+              · {{ $lastCall['count'] }} {{ $lastCall['count'] === 1 ? 'update' : 'updates' }} so far
+            </div>
+          @else
+            <div class="co-lastcall-value co-muted">No call update yet</div>
+          @endif
+        </div>
 
-          <form method="POST" action="{{ route('admin.custom-orders.unreachable', $r->id) }}" class="co-action-form">
-            @csrf
-            <input type="hidden" name="lock_version" value="{{ $r->lock_version }}"/>
-            <div class="co-action-title">Mark unreachable</div>
-            @if($r->pipeline_status === 'unreachable')
-              <p class="co-hint">Already unreachable. Log an answered call to resume.</p>
-            @elseif($unanswered < 1)
-              <p class="co-hint">Available after at least one unanswered call is logged.</p>
-            @else
-              <p class="co-hint">The customer is notified to check their number.</p>
-            @endif
-            <button type="submit" class="admin-btn admin-btn-outline" style="width:100%;"
-                    @disabled($r->pipeline_status === 'unreachable' || $unanswered < 1)>Mark unreachable</button>
-          </form>
+        @if($isOpen)
+          <button type="button" class="admin-btn admin-btn-gold co-wide" id="co-open-call">Send call update</button>
 
-          <form method="POST" action="{{ route('admin.custom-orders.decline', $r->id) }}" class="co-action-form"
-                onsubmit="return confirm('Decline this request? The customer will be notified and this cannot be undone.')">
-            @csrf
-            <input type="hidden" name="lock_version" value="{{ $r->lock_version }}"/>
-            <div class="co-action-title">Decline</div>
-            <textarea name="reason" class="form-input" rows="3" maxlength="1000" required
-                      placeholder="Reason (shown to the customer)">{{ old('reason') }}</textarea>
-            <button type="submit" class="admin-btn admin-btn-danger" style="width:100%;">Decline request</button>
-          </form>
+          <details class="co-more">
+            <summary>More actions</summary>
+            <form method="POST" action="{{ route('admin.custom-orders.decline', $r->id) }}" class="co-action-form"
+                  onsubmit="return confirm('Decline this request? The customer will be notified and this cannot be undone.')">
+              @csrf
+              <input type="hidden" name="lock_version" value="{{ $r->lock_version }}"/>
+              <div class="co-action-title">Decline request</div>
+              <textarea name="reason" class="form-input" rows="3" maxlength="1000" required
+                        placeholder="Reason (shown to the customer)">{{ old('reason') }}</textarea>
+              <button type="submit" class="admin-btn admin-btn-danger co-wide" data-loading="Declining...">Decline request</button>
+            </form>
+          </details>
         @else
           <p class="co-note-closed">
-            This request is {{ strtolower($labels[$r->pipeline_status] ?? $r->pipeline_status) }}; no further actions are available here.
+            This request is {{ strtolower($labels[$r->pipeline_status] ?? $r->pipeline_status) }}; call updates are closed.
             @if($r->decline_reason)<br/>Reason: {{ $r->decline_reason }}@endif
           </p>
         @endif
-
         @php $draft = $quotes->firstWhere('status', 'draft'); @endphp
         <div style="margin-top:18px;padding-top:18px;border-top:1px solid #EFE7DA;">
           <div class="co-action-title">Quote</div>
@@ -300,4 +296,81 @@
     </div>
   </div>
 </div>
+
+{{-- Send call update (Stage 13) --}}
+@if($isOpen)
+<div class="co-modal" id="co-call-modal" hidden role="dialog" aria-modal="true" aria-labelledby="co-call-title">
+  <div class="co-modal-box">
+    <div class="co-modal-head">
+      <h2 id="co-call-title">Send call update</h2>
+      <button type="button" class="co-modal-x" id="co-call-close" aria-label="Close">&times;</button>
+    </div>
+    <form method="POST" action="{{ route('admin.custom-orders.call-update', $r->id) }}" id="co-call-form">
+      @csrf
+      <input type="hidden" name="lock_version" value="{{ $r->lock_version }}"/>
+
+      <label class="co-modal-label" for="co-outcome">Outcome</label>
+      <select name="outcome" id="co-outcome" class="form-input" required>
+        <option value="unreachable">Unreachable</option>
+        <option value="ringing">Ringing but not answering</option>
+        <option value="answered">Answered</option>
+      </select>
+
+      <div id="co-attempts-wrap">
+        <label class="co-modal-label" for="co-attempts">Call attempts</label>
+        <input type="number" name="attempts" id="co-attempts" class="form-input" min="1" max="20" value="1"/>
+      </div>
+
+      <label class="co-modal-label" for="co-note">Extra note (optional, added as a separate line)</label>
+      <textarea name="note" id="co-note" class="form-input" rows="2" maxlength="500"></textarea>
+
+      <div class="co-modal-label">The customer will receive</div>
+      <div class="co-preview" id="co-preview" aria-live="polite"></div>
+
+      <div class="co-modal-actions">
+        <button type="button" class="admin-btn admin-btn-outline" id="co-call-cancel">Cancel</button>
+        <button type="submit" class="admin-btn admin-btn-gold" id="co-call-send" data-loading="Sending...">Send notification</button>
+      </div>
+    </form>
+  </div>
+</div>
+@endif
 @endsection
+
+@push('scripts')
+@if($isOpen)
+<script>
+(function () {
+  var data = @json($callPreview);
+  var modal = document.getElementById('co-call-modal');
+  var outcome = document.getElementById('co-outcome');
+  var attempts = document.getElementById('co-attempts');
+  var note = document.getElementById('co-note');
+  var wrap = document.getElementById('co-attempts-wrap');
+  var preview = document.getElementById('co-preview');
+  var opener = document.getElementById('co-open-call');
+
+  function times(n) { return n + ' ' + (n === 1 ? 'time' : 'times'); }
+  function render() {
+    var n = Math.max(1, Math.min(20, parseInt(attempts.value, 10) || 1));
+    wrap.hidden = outcome.value === 'answered';
+    var text = data.templates[outcome.value]
+      .replace('{times}', times(n)).replace('{design}', data.values.design)
+      .replace('{phone}', data.values.phone).replace('{email}', data.values.email)
+      .replace('{customer}', data.values.customer);
+    if (note.value.trim() !== '') { text += '\n' + note.value.trim(); }
+    preview.textContent = text;
+  }
+  function open() { modal.hidden = false; render(); outcome.focus(); }
+  function close() { modal.hidden = true; opener.focus(); }
+
+  opener.addEventListener('click', open);
+  document.getElementById('co-call-close').addEventListener('click', close);
+  document.getElementById('co-call-cancel').addEventListener('click', close);
+  modal.addEventListener('click', function (e) { if (e.target === modal) { close(); } });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) { close(); } });
+  [outcome, attempts, note].forEach(function (el) { el.addEventListener('input', render); el.addEventListener('change', render); });
+})();
+</script>
+@endif
+@endpush

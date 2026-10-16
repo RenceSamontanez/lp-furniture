@@ -231,22 +231,18 @@ class CustomQuotesTest extends TestCase
 
     /* ───────────── who may create a quote ───────────── */
 
-    public function test_create_is_disabled_without_an_answered_call(): void
+    public function test_create_is_available_without_any_call_logged(): void
     {
         $admin = $this->admin();
         $r = $this->contacting();
         CustomOrderCallLog::where('request_id', $r->id)->delete();
-        CustomOrderCallLog::create(['request_id' => $r->id, 'admin_id' => $admin->id, 'attempt_no' => 1, 'called_at' => now(), 'answered' => false]);
 
         $this->actingAs($admin, 'admin')->get(route('admin.custom-orders.show', $r->id))
             ->assertOk()
-            ->assertSee('Log at least one answered call before creating a quote.')
-            ->assertDontSee(route('admin.custom-orders.quotes.create', $r->id), false);
+            ->assertSee(route('admin.custom-orders.quotes.create', $r->id), false);
 
-        $this->dNew($admin, $r)->assertSessionHasErrors('pipeline');
-        $this->assertSame(0, CustomQuote::count());
-        $this->actingAs($admin, 'admin')->get(route('admin.custom-orders.quotes.create', $r->id))
-            ->assertRedirect(route('admin.custom-orders.show', $r->id));
+        $this->dNew($admin, $r)->assertSessionHasNoErrors();
+        $this->assertSame(1, CustomQuote::count());
     }
 
     public function test_create_is_enabled_with_an_answered_call(): void
@@ -271,7 +267,7 @@ class CustomQuotesTest extends TestCase
 
     public static function nonQuotableStatuses(): array
     {
-        $s = ['submitted', 'unreachable', 'accepted', 'ordered', 'declined_by_admin', 'cancelled'];
+        $s = ['accepted', 'ordered', 'declined_by_admin', 'cancelled'];
 
         return array_combine($s, array_map(fn ($x) => [$x], $s));
     }
@@ -626,16 +622,32 @@ class CustomQuotesTest extends TestCase
         $this->assertSame(1, Notification::count());
     }
 
-    public function test_send_needs_an_answered_call_even_with_a_draft(): void
+    public function test_send_does_not_need_an_answered_call(): void
     {
         $admin = $this->admin();
         $r = $this->contacting();
         $this->dNew($admin, $r);
         CustomOrderCallLog::where('request_id', $r->id)->update(['answered' => false]);
 
-        $this->dSend($admin, $r, CustomQuote::sole())->assertSessionHasErrors('pipeline');
-        $this->assertSame('draft', CustomQuote::sole()->status);
-        $this->assertSame(0, Notification::count());
+        $this->dSend($admin, $r, CustomQuote::sole())->assertSessionHasNoErrors();
+        $this->assertSame('sent', CustomQuote::sole()->status);
+        $this->assertSame('quoted', $r->fresh()->pipeline_status);
+    }
+
+    public function test_quote_can_be_created_and_sent_straight_from_submitted_and_unreachable(): void
+    {
+        $admin = $this->admin();
+
+        foreach (['submitted', 'unreachable'] as $status) {
+            $r = $this->contacting($this->customer(), ['pipeline_status' => $status]);
+            CustomOrderCallLog::where('request_id', $r->id)->delete();
+
+            $this->dNew($admin, $r)->assertSessionHasNoErrors();
+            $q = CustomQuote::where('request_id', $r->id)->sole();
+            $this->dSend($admin, $r, $q)->assertSessionHasNoErrors();
+
+            $this->assertSame('quoted', $r->fresh()->pipeline_status, "from $status");
+        }
     }
 
     public function test_incomplete_stored_draft_is_not_sent(): void
