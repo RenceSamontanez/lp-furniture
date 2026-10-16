@@ -71,6 +71,8 @@
       </div>
     @endif
 
+    @include('payment._switch')
+
     {{-- GCash card --}}
     <div class="gcash-card">
 

@@ -71,6 +71,8 @@
       </div>
     @endif
 
+    @include('payment._switch')
+
     {{-- Stripe card --}}
     <div class="stripe-card">
 

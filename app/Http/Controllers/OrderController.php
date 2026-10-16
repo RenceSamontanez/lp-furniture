@@ -341,11 +341,11 @@ class OrderController extends Controller
             abort(403);
         }
 
-        // A customized order can only be paid online (stripe/gcash): a cash
-        // switch would take it out of the agreement's payment window.
-        if ($order->design_agreement_id !== null && $request->payment_method === 'onsite') {
-            return redirect()->route('orders.show', $order->id)
-                ->withErrors(['payment_method' => 'Custom orders can only be paid by card or GCash.']);
+        // A customized order can only be paid online (stripe/gcash), and
+        // switches go through one service (lock, checks, old Stripe session
+        // expired, event). Catalog orders keep the rules below.
+        if ($order->design_agreement_id !== null) {
+            return $this->switchCustomizedOrder($request, $order);
         }
 
         // Null out every OTHER method's gateway-tracking fields.
@@ -377,6 +377,18 @@ class OrderController extends Controller
 
         return $this->redirectForOrder($order->fresh(['payment']))
             ->with('success', 'Payment method updated.');
+    }
+
+    private function switchCustomizedOrder(Request $request, Order $order)
+    {
+        try {
+            $result = app(\App\Support\PaymentMethodSwitch::class)->switch($order->id, Auth::id(), $request->payment_method);
+        } catch (\App\Support\PaymentSwitchRefused $e) {
+            return redirect()->route('orders.show', $order->id)->withErrors(['payment_method' => $e->getMessage()]);
+        }
+
+        return $this->redirectForOrder($result['order']->fresh(['payment']))
+            ->with('success', $result['changed'] ? 'Payment method updated.' : 'That is already your payment method.');
     }
 
     /* ════════════════════════════════

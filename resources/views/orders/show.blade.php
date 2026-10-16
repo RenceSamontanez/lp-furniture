@@ -29,6 +29,9 @@
     <p class="orders-subtitle">Placed on {{ $order->created_at->format('M d, Y · h:i A') }}</p>
   </div>
 
+  @if($errors->any())
+    <div class="co-error" role="alert" style="margin-bottom:20px;">@foreach($errors->all() as $error)<div>{{ $error }}</div>@endforeach</div>
+  @endif
   @if(session('success'))
     <div class="auth-success" style="margin-bottom:20px;">{{ session('success') }}</div>
   @endif
@@ -206,7 +209,7 @@
                  never programmatically becomes 'paid' through any
                  existing flow — so payment_status alone can't be
                  trusted to tell us the order is still "open". --}}
-            @if($order->order_status === 'pending' && $order->payment->payment_status !== 'paid' && !$order->design_agreement_id)
+            @if($order->order_status === 'pending' && $order->payment->payment_status !== 'paid' && (float) $order->amount_paid <= 0)
               <button type="button" class="order-change-method-toggle" style="margin-top:14px;" onclick="document.getElementById('change-method-panel').classList.toggle('open')">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
                 Change Payment Method
@@ -238,6 +241,7 @@
                     </div>
                   </label>
 
+                  @unless($order->design_agreement_id)
                   <label class="payment-method-card {{ $order->payment->payment_method === 'onsite' ? 'selected' : '' }}" data-method-card="onsite">
                     <input type="radio" name="payment_method" value="onsite" {{ $order->payment->payment_method === 'onsite' ? 'checked' : '' }}/>
                     <div class="payment-method-icon onsite">
@@ -248,6 +252,7 @@
                       <div class="payment-method-desc">Pay in cash when you receive your order.</div>
                     </div>
                   </label>
+                  @endunless
 
                   <button type="submit" class="btn btn-gold" style="width:100%;padding:11px;margin-top:4px;">
                     Confirm Switch

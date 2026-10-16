@@ -9,6 +9,7 @@ use App\Models\StripeWebhookEvent;
 use App\Support\AgreementCheckout;
 use App\Support\PaymentLedger;
 use App\Support\StripeCheckoutParams;
+use App\Support\StripeErrors;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -93,7 +94,16 @@ class PaymentController extends Controller
         }
 
         $sessionParams = StripeCheckoutParams::build($order, Auth::id());
-        $session = $stripe->checkout->sessions->create($sessionParams);
+
+        try {
+            $session = $stripe->checkout->sessions->create($sessionParams);
+        } catch (\Throwable $e) {
+            // Stripe rejected the request or could not be reached: never a 500.
+            \Log::error("Stripe Checkout Session could not be created for order {$order->id}: " . StripeErrors::describe($e));
+
+            return redirect()->route('payment.stripe', $order->id)
+                ->withErrors(['payment' => "We couldn't start the card payment. Please try again, or switch to GCash."]);
+        }
 
         // Save the session/payment-intent reference before redirecting
         Payment::where('order_id', $order->id)->update([
@@ -446,6 +456,20 @@ class PaymentController extends Controller
             return redirect()->route('orders.show', $order->id)->withErrors(['payment' => $problem]);
         }
 
+        try {
+            return $this->paymongoStart($order, $chargeAmount, $secretKey);
+        } catch (\Throwable $e) {
+            // PayMongo could not be reached or answered badly: never a 500.
+            \Log::error("PayMongo payment could not be started for order {$order->id}: " . StripeErrors::describe($e));
+
+            return redirect()->route('payment.gcash.paymongo', $order->id)
+                ->withErrors(['payment' => "We couldn't start the GCash payment. Please try again, or switch to card."]);
+        }
+    }
+
+    // The three PayMongo calls (intent, payment method, attach).
+    private function paymongoStart(Order $order, $chargeAmount, $secretKey)
+    {
         // Step 1: create the Payment Intent
         $intentResponse = Http::withBasicAuth($secretKey, '')
             ->post('https://api.paymongo.com/v1/payment_intents', [
@@ -467,7 +491,7 @@ class PaymentController extends Controller
         if (!$intentResponse->successful()) {
             \Log::error('PayMongo payment intent creation failed: ' . $intentResponse->body());
             return redirect()->route('payment.gcash.paymongo', $order->id)
-                ->withErrors(['payment' => 'We could not start your GCash payment. Please try again or contact support.']);
+                ->withErrors(['payment' => "We couldn't start the GCash payment. Please try again, or switch to card."]);
         }
 
         $intentId  = $intentResponse->json('data.id');
@@ -494,7 +518,7 @@ class PaymentController extends Controller
         if (!$methodResponse->successful()) {
             \Log::error('PayMongo payment method creation failed: ' . $methodResponse->body());
             return redirect()->route('payment.gcash.paymongo', $order->id)
-                ->withErrors(['payment' => 'We could not start your GCash payment. Please try again or contact support.']);
+                ->withErrors(['payment' => "We couldn't start the GCash payment. Please try again, or switch to card."]);
         }
 
         $methodId = $methodResponse->json('data.id');
@@ -515,7 +539,7 @@ class PaymentController extends Controller
         if (!$attachResponse->successful()) {
             \Log::error('PayMongo attach failed: ' . $attachResponse->body());
             return redirect()->route('payment.gcash.paymongo', $order->id)
-                ->withErrors(['payment' => 'We could not start your GCash payment. Please try again or contact support.']);
+                ->withErrors(['payment' => "We couldn't start the GCash payment. Please try again, or switch to card."]);
         }
 
         $redirectUrl = $attachResponse->json('data.attributes.next_action.redirect.url');
@@ -528,7 +552,7 @@ class PaymentController extends Controller
         if (!$redirectUrl) {
             \Log::error('PayMongo attach succeeded but no redirect URL was returned: ' . $attachResponse->body());
             return redirect()->route('payment.gcash.paymongo', $order->id)
-                ->withErrors(['payment' => 'We could not start your GCash payment. Please try again or contact support.']);
+                ->withErrors(['payment' => "We couldn't start the GCash payment. Please try again, or switch to card."]);
         }
 
         return redirect($redirectUrl);

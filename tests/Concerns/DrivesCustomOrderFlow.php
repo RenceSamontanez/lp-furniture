@@ -184,10 +184,30 @@ trait DrivesCustomOrderFlow
         $client = new class implements ClientInterface {
             public array $posts = [];
             public array $sessions = [];
+            public array $expired = [];
             public int $counter = 0;
+            public ?string $failCreate = null;   // 'invalid' | 'network'
 
             public function request($method, $absUrl, $headers, $params, $hasFile, $apiMode = 'v1', $maxNetworkRetries = null)
             {
+                if (strtoupper($method) === 'POST' && preg_match('#/v1/checkout/sessions/(cs_[A-Za-z0-9_]+)/expire$#', $absUrl, $m)) {
+                    if (!isset($this->sessions[$m[1]]) || $this->sessions[$m[1]]['status'] !== 'open') {
+                        return [json_encode(['error' => ['message' => 'Only open sessions can be expired.', 'type' => 'invalid_request_error']]), 400, []];
+                    }
+                    $this->sessions[$m[1]]['status'] = 'expired';
+                    $this->sessions[$m[1]]['url'] = null;
+                    $this->expired[] = $m[1];
+
+                    return [json_encode($this->sessions[$m[1]]), 200, []];
+                }
+
+                if (strtoupper($method) === 'POST' && str_ends_with($absUrl, '/v1/checkout/sessions') && $this->failCreate === 'network') {
+                    throw new \Stripe\Exception\ApiConnectionException('Could not connect to Stripe (sk_test_SECRETVALUE1234)');
+                }
+                if (strtoupper($method) === 'POST' && str_ends_with($absUrl, '/v1/checkout/sessions') && $this->failCreate === 'invalid') {
+                    return [json_encode(['error' => ['message' => 'The expires_at timestamp must be less than 24 hours from Checkout Session creation. (sk_test_SECRETVALUE1234)', 'type' => 'invalid_request_error']]), 400, []];
+                }
+
                 if (strtoupper($method) === 'POST' && str_ends_with($absUrl, '/v1/checkout/sessions')) {
                     $this->counter++;
                     $id = 'cs_e2e_' . $this->counter;
