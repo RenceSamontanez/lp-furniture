@@ -376,6 +376,7 @@
   @include('design._validation_error_modal')
 
 </div>
+@include('partials.co-loading')
 @endsection
 
 @push('scripts')

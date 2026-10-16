@@ -138,6 +138,7 @@
   </div>
 
 </div>
+@include('partials.co-loading')
 @endsection
 
 @push('scripts')

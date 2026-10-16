@@ -75,4 +75,5 @@
     });
   })();
 </script>
+@include('partials.co-loading')
 @endsection
