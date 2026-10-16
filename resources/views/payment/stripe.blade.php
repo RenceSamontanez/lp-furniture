@@ -37,7 +37,19 @@
       </div>
     </div>
 
-    @if($order->payment->payment_type === 'installment')
+    @if($order->design_agreement_id)
+      @php
+        $pct = (float) $order->total_amount > 0 ? round(((float) $order->payment->amount / (float) $order->total_amount) * 100, 1) : 100;
+        $pctLabel = rtrim(rtrim(number_format($pct, 1, '.', ''), '0'), '.');
+      @endphp
+      <div class="auth-info-box" style="margin-bottom:20px;">
+        @if($order->payment->payment_type === 'installment')
+          This order total is ₱{{ number_format($order->total_amount, 2) }}. You're paying the downpayment of ₱{{ number_format($order->payment->amount, 2) }} ({{ $pctLabel }}% of the total) now. The remaining balance follows the payment schedule in your agreement.
+        @else
+          This is your full payment of ₱{{ number_format($order->payment->amount, 2) }}.
+        @endif
+      </div>
+    @elseif($order->payment->payment_type === 'installment')
       <div class="auth-info-box" style="margin-bottom:20px;">
         This order total is ₱{{ number_format($order->total_amount, 2) }}. You're paying the 50% downpayment now — the remaining balance is split into installments you can review on your order page.
       </div>

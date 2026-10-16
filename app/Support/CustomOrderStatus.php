@@ -65,6 +65,7 @@ class CustomOrderStatus
         $reason = $reason !== null && trim($reason) !== '' ? trim($reason) : null;
 
         return DB::transaction(function () use ($orderId, $admin, $to, $reason) {
+            $completionOverride = null;
             $order = Order::lockForUpdate()->findOrFail($orderId);
 
             if ($order->design_agreement_id === null) {
@@ -97,6 +98,21 @@ class CustomOrderStatus
                     );
                 }
 
+                if ($to === 'completed') {
+                    $paidNow = round((float) PaymentRecord::where('order_id', $order->id)->sum('amount'), 2);
+                    $total = round((float) $order->total_amount, 2);
+
+                    if ($paidNow + 0.001 < $total) {
+                        if ($reason === null) {
+                            throw new OrderStatusException(
+                                'Only ₱' . number_format($paidNow, 2) . ' of ₱' . number_format($total, 2)
+                                . ' has been received. Record the balance, or enter a reason to complete this order anyway.'
+                            );
+                        }
+                        $completionOverride = $reason;
+                    }
+                }
+
                 if ($to === 'confirmed') {
                     $needed = (float) ($order->payment?->amount ?? 0);
                     $paid = round((float) PaymentRecord::where('order_id', $order->id)->sum('amount'), 2);
@@ -113,8 +129,9 @@ class CustomOrderStatus
                 'status_updated_by' => $admin->id,
                 'status_updated_at' => now(),
             ];
-            if ($to === 'cancelled' && $reason !== null) {
-                $line = '[' . now('Asia/Manila')->format('Y-m-d H:i') . ' cancelled by ' . trim($admin->first_name . ' ' . $admin->last_name) . '] ' . $reason;
+            if (($to === 'cancelled' && $reason !== null) || $completionOverride !== null) {
+                $what = $to === 'cancelled' ? 'cancelled' : 'completed with a balance outstanding';
+                $line = '[' . now('Asia/Manila')->format('Y-m-d H:i') . ' ' . $what . ' by ' . trim($admin->first_name . ' ' . $admin->last_name) . '] ' . $reason;
                 $update['notes'] = trim(($order->notes ? $order->notes . "\n" : '') . $line);
             }
             $order->forceFill($update)->save();
@@ -140,6 +157,7 @@ class CustomOrderStatus
                     'actor_id'    => $admin->id,
                     'data'        => [
                         'from' => $from, 'to' => $to, 'reason' => $reason,
+                        'completion_override_reason' => $completionOverride,
                         'pipeline_from' => $pipelineFrom, 'pipeline_to' => $request->pipeline_status,
                     ],
                     'occurred_at' => now(),

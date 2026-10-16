@@ -149,6 +149,18 @@ class RecordPayment
                 ])->save();
                 $confirmed = true;
 
+                if ($order->design_request_id) {
+                    \App\Models\CustomOrderEvent::create([
+                        'request_id'  => $order->design_request_id,
+                        'order_id'    => $order->id,
+                        'type'        => 'order_confirmed',
+                        'actor_type'  => \App\Models\CustomOrderEvent::ACTOR_ADMIN,
+                        'actor_id'    => $admin->id,
+                        'data'        => ['via' => $method, 'amount' => $amountStr],
+                        'occurred_at' => now(),
+                    ]);
+                }
+
                 if ($ready = app(AgreementCheckout::class)->expectedReadyDate($order, $date)) {
                     $order->forceFill(['expected_ready_date' => $ready->toDateString()])->save();
                 }

@@ -143,7 +143,6 @@
           <div class="admin-panel-title">Order {{ $order->order_number }}</div>
           <span style="display:flex;gap:6px;">
             <span class="admin-pill {{ $order->order_status }}">{{ str_replace('_', ' ', $order->order_status) }}</span>
-            @if($order->order_status === 'completed')<span class="admin-pill completed">Completed</span>@endif
             @if($order->isOverdueUnpaid())<span class="admin-pill rejected">Overdue, unpaid</span>@endif
           </span>
         </div>
@@ -261,6 +260,10 @@
               <input type="hidden" name="lock_version" value="{{ $r->lock_version }}"/>
               <button type="submit" class="admin-btn admin-btn-danger" style="width:100%;">Delete draft</button>
             </form>
+          @elseif(in_array($r->pipeline_status, ['accepted', 'ordered'], true))
+            <p class="co-hint">
+              {{ $r->pipeline_status === 'ordered' ? 'Quote accepted, order created.' : 'Quote accepted, waiting for the customer to pay.' }}
+            </p>
           @elseif($quoteBlocker)
             <p class="co-hint">{{ $quoteBlocker }}</p>
             <button type="button" class="admin-btn admin-btn-outline co-btn-disabled" disabled>Create quote</button>

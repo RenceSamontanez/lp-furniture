@@ -181,7 +181,17 @@
                   <strong style="font-size:13px;color:#856404;">Payment Not Completed</strong>
                 </div>
                 <p style="font-size:12.5px;color:#856404;margin-bottom:12px;line-height:1.5;">
+                  @if($order->design_agreement_id)
+                    @php $reservedUntil = $order->designRequest?->payment_due_at; @endphp
+                    Your order is saved, but payment wasn't finished.
+                    @if($reservedUntil && $reservedUntil->isFuture())
+                      Your agreement is reserved until {{ $reservedUntil->timezone('Asia/Manila')->format('M d, Y') }}. Complete payment before then to confirm your order.
+                    @else
+                      The payment window for this agreement has ended. Please contact us.
+                    @endif
+                  @else
                   Your order is saved, but payment wasn't finished. Your items are being held for a limited time — complete payment now to confirm your order.
+                  @endif
                 </p>
                 <a href="{{ route($order->payment->payment_method === 'stripe' ? 'payment.stripe' : 'payment.gcash.paymongo', $order->id) }}" class="btn btn-gold" style="display:block;text-align:center;padding:11px;">
                   Finish Payment →
@@ -196,7 +206,7 @@
                  never programmatically becomes 'paid' through any
                  existing flow — so payment_status alone can't be
                  trusted to tell us the order is still "open". --}}
-            @if($order->order_status === 'pending' && $order->payment->payment_status !== 'paid')
+            @if($order->order_status === 'pending' && $order->payment->payment_status !== 'paid' && !$order->design_agreement_id)
               <button type="button" class="order-change-method-toggle" style="margin-top:14px;" onclick="document.getElementById('change-method-panel').classList.toggle('open')">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
                 Change Payment Method

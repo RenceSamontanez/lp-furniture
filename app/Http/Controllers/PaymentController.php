@@ -383,6 +383,18 @@ class PaymentController extends Controller
 
             $order->update(['order_status' => 'confirmed']);
 
+            if ($order->design_request_id) {
+                \App\Models\CustomOrderEvent::create([
+                    'request_id'  => $order->design_request_id,
+                    'order_id'    => $order->id,
+                    'type'        => 'order_confirmed',
+                    'actor_type'  => \App\Models\CustomOrderEvent::ACTOR_SYSTEM,
+                    'actor_id'    => null,
+                    'data'        => ['via' => $ledgerMethod, 'amount' => number_format((float) $payment->amount, 2, '.', '')],
+                    'occurred_at' => now(),
+                ]);
+            }
+
             // Customized orders: production time counts from the payment date.
             $ready = $checkout->expectedReadyDate($order, now());
             if ($ready) {

@@ -55,6 +55,7 @@ class CustomOrderTimeline
                 'agreement_expired' => ['The time to start payment passed, so the agreement expired', null, 'closed'],
                 'order_placed' => ['Order ' . ($d['order_number'] ?? '') . ' was created', null, 'order'],
                 'order_status_changed' => [$this->statusTitle((string) ($d['to'] ?? '')), null, 'order'],
+                'order_confirmed' => ['Your order was confirmed', 'Your payment was received.', 'order'],
                 default => null,   // drafts, supersessions, integrity checks: not for customers
             };
 
@@ -106,6 +107,7 @@ class CustomOrderTimeline
                 'agreement_expired'    => 'Agreement ' . ($d['agreement_number'] ?? '') . ' expired: no payment started',
                 'agreement_integrity_failed' => 'Agreement ' . ($d['agreement_number'] ?? '') . ' FAILED its hash check and was blocked',
                 'order_placed'         => 'Order ' . ($d['order_number'] ?? '') . ' placed by the customer',
+                'order_confirmed'      => 'Order confirmed by payment',
                 'order_status_changed' => 'Order status: ' . str_replace('_', ' ', (string) ($d['from'] ?? '?')) . ' to ' . str_replace('_', ' ', (string) ($d['to'] ?? '?')),
                 default                => ucfirst(str_replace('_', ' ', $e->type)),
             };
@@ -124,7 +126,9 @@ class CustomOrderTimeline
                 'title'  => $title,
                 'detail' => $detail,
                 'actor'  => match ($e->actor_type) {
-                    'admin'    => $actors[$e->actor_id]->first_name ?? 'Admin',
+                    'admin'    => isset($actors[$e->actor_id])
+                        ? trim($actors[$e->actor_id]->first_name . ' ' . $actors[$e->actor_id]->last_name)
+                        : 'Admin',
                     'customer' => 'Customer',
                     default    => 'System',
                 },

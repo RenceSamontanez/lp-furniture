@@ -22,7 +22,7 @@
           <tbody>
             @foreach($order->items as $item)
               <tr>
-                <td data-label="Product">{{ $item->product->product_name ?? 'N/A' }}</td>
+                <td data-label="Product">{{ $order->design_agreement_id ? ($item->product_name ?: 'Custom order') : ($item->product->product_name ?? 'N/A') }}</td>
                 <td data-label="Qty">{{ $item->quantity }}</td>
                 <td data-label="Price">₱{{ number_format($item->unit_price, 2) }}</td>
                 <td data-label="Subtotal">₱{{ number_format($item->subtotal, 2) }}</td>
@@ -41,7 +41,7 @@
           <span style="display:flex;gap:6px;flex-wrap:wrap;">
             <span class="admin-pill confirmed">Customized Order</span>
             @if($order->isOverdueUnpaid())<span class="admin-pill rejected">Overdue, unpaid</span>@endif
-            @if($order->order_status === 'completed')<span class="admin-pill completed">Completed</span>@endif
+
           </span>
         </div>
         <div class="admin-panel-body" style="font-size:13.5px;">
@@ -265,7 +265,8 @@
 
         <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:8px;">
           <span style="color:var(--text-muted);">Production Status</span>
-          <span class="admin-pill {{ $order->production_status }}" style="font-size:10px;">{{ str_replace('_',' ',$order->production_status) }}</span>
+          @php $prodStatus = $order->design_agreement_id ? $order->order_status : $order->production_status; @endphp
+          <span class="admin-pill {{ $prodStatus }}" style="font-size:10px;">{{ str_replace('_',' ',$prodStatus) }}</span>
         </div>
 
         <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:var(--brown-deep);padding-top:10px;border-top:2px solid var(--brown-deep);margin-top:10px;">
@@ -282,7 +283,14 @@
         <div class="admin-panel-body">
           <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;">
             <span style="color:var(--text-muted);">Method</span>
-            <span style="text-transform:capitalize;">{{ $order->payment->payment_method }}</span>
+            @if($order->design_agreement_id)
+              @php
+                $usedMethods = $ledger->pluck('method')->unique()->map(fn ($m) => $methodLabels[$m] ?? $m)->values();
+              @endphp
+              <span>{{ $usedMethods->isNotEmpty() ? $usedMethods->implode(', ') : ($methodLabels[$order->payment->payment_method === 'gcash' ? 'gcash_paymongo' : $order->payment->payment_method] ?? ucfirst($order->payment->payment_method)) . ' (chosen, not paid yet)' }}</span>
+            @else
+              <span style="text-transform:capitalize;">{{ $order->payment->payment_method }}</span>
+            @endif
           </div>
 
           <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;">
@@ -303,7 +311,15 @@
 
           <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:8px;">
             <span style="color:var(--text-muted);">Status</span>
-            <span class="admin-pill {{ $order->payment->payment_status }}" style="font-size:10px;">{{ $order->payment->payment_status }}</span>
+            @if($order->design_agreement_id)
+              @php
+                $overall = $paid + 0.001 >= (float) $order->total_amount ? ['paid', 'Paid in full']
+                    : ($paid > 0 ? ['partial', 'Partially paid'] : ['pending', 'Unpaid']);
+              @endphp
+              <span class="admin-pill {{ $overall[0] }}" style="font-size:10px;">{{ $overall[1] }}</span>
+            @else
+              <span class="admin-pill {{ $order->payment->payment_status }}" style="font-size:10px;">{{ $order->payment->payment_status }}</span>
+            @endif
           </div>
 
           <div style="display:flex;justify-content:space-between;font-size:13px;padding-top:10px;border-top:1px solid var(--border);">
@@ -347,6 +363,10 @@
                   <option value="cancelled">Cancel this order</option>
                 @endif
               </select>
+              @if($paid + 0.001 < (float) $order->total_amount)
+                <textarea name="override_reason" rows="2" maxlength="1000" class="form-input" style="margin-bottom:12px;"
+                          placeholder="Only to complete with a balance outstanding: why (kept in the order note)">{{ old('override_reason') }}</textarea>
+              @endif
               @if($cancellable)
                 <textarea name="cancel_reason" rows="2" maxlength="1000" class="form-input" style="margin-bottom:12px;"
                           placeholder="Reason for cancelling (required if money was received; refunds are handled outside the system)">{{ old('cancel_reason') }}</textarea>

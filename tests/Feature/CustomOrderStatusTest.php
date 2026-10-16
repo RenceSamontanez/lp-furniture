@@ -96,6 +96,22 @@ class CustomOrderStatusTest extends TestCase
         return $order->fresh();
     }
 
+    /** Everything received: the ledger and amount_paid equal the total. */
+    private function payInFull(Order $order): Order
+    {
+        $already = (float) PaymentRecord::where('order_id', $order->id)->sum('amount');
+        if ($already < (float) $order->total_amount) {
+            PaymentRecord::create([
+                'order_id' => $order->id, 'payment_id' => $order->payment->id,
+                'amount' => number_format((float) $order->total_amount - $already, 2, '.', ''),
+                'method' => 'cash', 'paid_on' => now()->toDateString(), 'recorded_by' => User::where('role', 'admin')->value('id'),
+            ]);
+        }
+        $order->forceFill(['amount_paid' => $order->total_amount])->save();
+
+        return $order->fresh();
+    }
+
     private function catalog(string $status = 'pending'): Order
     {
         $order = $this->makeOrder($this->customer('Cat'), ['order_status' => $status]);
@@ -147,6 +163,9 @@ class CustomOrderStatusTest extends TestCase
     {
         $admin = $this->admin();
         $order = $this->customized($from, true);   // upfront in the ledger so the confirm gate is not the reason
+        if ($to === 'completed') {
+            $order = $this->payInFull($order);       // completion needs the full amount; refusal for that has its own tests
+        }
         if ($to === 'cancelled') {
             // "nothing paid" is covered by its own tests: here no reason is given, so use an unpaid order
             $order = $this->customized($from, false);
@@ -196,16 +215,16 @@ class CustomOrderStatusTest extends TestCase
     public function test_completing_keeps_the_request_ordered_and_shows_completed(): void
     {
         $admin = $this->admin();
-        $order = $this->customized('ready', true);
+        $order = $this->payInFull($this->customized('ready', true));
 
         $this->setStatus($admin, $order, 'completed')->assertSessionHasNoErrors();
 
         $this->assertSame('ordered', CustomDesignRequest::find($order->design_request_id)->pipeline_status);
 
         $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))
-            ->assertOk()->assertSee('Completed');
+            ->assertOk()->assertSee('completed');
         $this->actingAs($admin, 'admin')->get(route('admin.custom-orders.show', $order->design_request_id))
-            ->assertOk()->assertSee('Completed')->assertSee($order->order_number);
+            ->assertOk()->assertSee('completed')->assertSee($order->order_number);
     }
 
     /* ───────────── cancel rules ───────────── */

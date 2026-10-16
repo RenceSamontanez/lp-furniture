@@ -274,14 +274,19 @@ class AdminController extends Controller
         // Customized orders: forward-only map, cancel rules, ledger-aware.
         // Catalog orders keep the free-form behaviour below, unchanged.
         if ($order->design_agreement_id !== null) {
-            $request->validate(['cancel_reason' => 'nullable|string|max:1000']);
+            $request->validate([
+                'cancel_reason'   => 'nullable|string|max:1000',
+                'override_reason' => 'nullable|string|max:1000',
+            ]);
 
             try {
                 app(\App\Support\CustomOrderStatus::class)->change(
                     $order->id,
                     Auth::guard('admin')->user(),
                     $request->order_status,
-                    $request->input('cancel_reason')
+                    $request->order_status === 'completed'
+                        ? $request->input('override_reason')
+                        : $request->input('cancel_reason')
                 );
             } catch (\App\Support\OrderStatusException $e) {
                 return back()->withErrors(['status' => $e->getMessage()]);
