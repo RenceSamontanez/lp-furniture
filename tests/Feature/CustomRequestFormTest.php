@@ -256,7 +256,7 @@ class CustomRequestFormTest extends TestCase
             $this->assertSame(1, CustomOrderEvent::where('request_id', $r->id)->where('type', 'request_updated')->count());
 
             $n = Notification::where('user_id', $admin->id)->sole();
-            $this->assertStringContainsString('Ana Cruz updated their request for Dining Table - Ana', $n->message);
+            $this->assertStringContainsString('Ana Cruz updated their request for Custom Furniture — Ana', $n->message);
             $this->assertSame(route('admin.custom-orders.show', $r->id), $n->url);
         } else {
             $form->assertRedirect(route('design.show', $r->id))->assertSessionHas('info');

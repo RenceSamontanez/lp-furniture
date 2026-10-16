@@ -57,6 +57,12 @@ class CustomDesignRequest extends Model
         'modified' => 'Build it with some changes',
     ];
 
+    /** "Custom Furniture — Rence": the name shown for this custom order everywhere (the stored title is not rewritten). */
+    public function getOrderNameAttribute(): string
+    {
+        return \App\Support\CustomOrderName::for($this->user);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -200,7 +200,7 @@ class Stage12FixesTest extends TestCase
 
         // unpaid
         $page = $this->asAdmin($admin)->get(route('admin.orders.show', $order->id))->assertOk();
-        $page->assertSee('Dining Table - Ana')->assertDontSee('N/A')->assertSee('Unpaid');
+        $page->assertSee('Custom Furniture — Ana')->assertDontSee('N/A')->assertSee('Unpaid');
 
         // half paid in cash
         $this->recordCash($admin, $order->fresh(), '10250.00')->assertSessionHasNoErrors();

@@ -179,7 +179,7 @@ class CustomOrderPipeline
             $this->notifyCustomer(
                 $request,
                 'We Could Not Reach You',
-                "We tried to reach you about {$request->title} but couldn't get through. "
+                "We tried to reach you about {$request->order_name} but couldn't get through. "
                 . "Please check that {$phone} is correct, or message us at {$contact}."
             );
 
@@ -216,7 +216,7 @@ class CustomOrderPipeline
             $this->notifyCustomer(
                 $request,
                 'Custom Request Update',
-                "We're unable to take on {$request->title}. Reason: {$reason}"
+                "We're unable to take on {$request->order_name}. Reason: {$reason}"
             );
 
             return $request;
@@ -355,7 +355,7 @@ class CustomOrderPipeline
                 $this->notifyCustomer(
                     $request,
                     'Your Quote Was Updated',
-                    "Your quote for {$request->title} was updated (version {$quote->version}, ₱"
+                    "Your quote for {$request->order_name} was updated (version {$quote->version}, ₱"
                     . number_format((float) $quote->previous_price, 2) . ' → ₱' . number_format((float) $quote->price, 2)
                     . '). The previous quote can no longer be accepted.'
                 );
@@ -363,7 +363,7 @@ class CustomOrderPipeline
                 $this->notifyCustomer(
                     $request,
                     'Your Custom Quote Is Ready',
-                    "Your quote for {$request->title} is ready: ₱{$total}. Please review and accept by {$expiry}."
+                    "Your quote for {$request->order_name} is ready: ₱{$total}. Please review and accept by {$expiry}."
                 );
             }
 
@@ -463,7 +463,7 @@ class CustomOrderPipeline
                 $this->notifyCustomer(
                     $request,
                     'Agreement Expired',
-                    "The time to start payment for agreement {$agreement->agreement_number} ({$request->title}) passed on {$when}, "
+                    "The time to start payment for agreement {$agreement->agreement_number} ({$request->order_name}) passed on {$when}, "
                     . "so it has expired. Contact us if you'd still like to proceed.",
                     route('design.show', $request->id)
                 );
@@ -472,7 +472,7 @@ class CustomOrderPipeline
                 $this->notifyAdmins(
                     $request,
                     'Agreement Expired Unpaid',
-                    "Agreement {$agreement->agreement_number} for {$request->title} ({$name}) expired: no payment was started by {$when}."
+                    "Agreement {$agreement->agreement_number} for {$request->order_name} ({$name}) expired: no payment was started by {$when}."
                 );
 
                 return 1;
@@ -512,14 +512,14 @@ class CustomOrderPipeline
         $this->notifyCustomer(
             $request,
             'Your Quote Has Expired',
-            "Your quote for {$request->title} expired on {$when}. Contact us if you'd still like to proceed."
+            "Your quote for {$request->order_name} expired on {$when}. Contact us if you'd still like to proceed."
         );
 
         $name = \App\Support\NameFormat::proper(trim($request->user->first_name . ' ' . $request->user->last_name));
         $this->notifyAdmins(
             $request,
             'Quote Expired',
-            "Quote for {$request->title} ({$name}) expired without acceptance."
+            "Quote for {$request->order_name} ({$name}) expired without acceptance."
         );
     }
 
@@ -687,14 +687,14 @@ class CustomOrderPipeline
             $this->notifyCustomer(
                 $request,
                 'Agreement Accepted',
-                "You accepted agreement {$no} for {$request->title}. Agreed on {$when}. "
+                "You accepted agreement {$no} for {$request->order_name}. Agreed on {$when}. "
                 . 'Next: pay ₱' . number_format((float) $terms['money']['upfront'], 2) . " by {$dueText}.",
                 route('design.agreement', $agreement->id)
             );
             $this->notifyAdmins(
                 $request,
                 'Agreement Accepted',
-                "{$customerName} accepted agreement {$no} for {$request->title} (₱"
+                "{$customerName} accepted agreement {$no} for {$request->order_name} (₱"
                 . number_format((float) $terms['money']['total'], 2) . "). Agreed on {$when}."
             );
 
@@ -733,11 +733,11 @@ class CustomOrderPipeline
 
             $name = \App\Support\NameFormat::proper(trim($request->user->first_name . ' ' . $request->user->last_name));
 
-            $this->notifyCustomer($request, 'Quote Declined', "You declined the quote for {$request->title}.");
+            $this->notifyCustomer($request, 'Quote Declined', "You declined the quote for {$request->order_name}.");
             $this->notifyAdmins(
                 $request,
                 'Quote Declined',
-                "{$name} declined the quote for {$request->title}. Reason: " . ($reason ?? 'none given') . '.'
+                "{$name} declined the quote for {$request->order_name}. Reason: " . ($reason ?? 'none given') . '.'
             );
 
             return $request;

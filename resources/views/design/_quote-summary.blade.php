@@ -8,7 +8,7 @@
 <div class="co-quote-card">
   <div class="co-status-title">
     @if($isSent)
-      Your quote is ready (version {{ $quote->version }})
+      Your quote for {{ $quote->request->order_name }} is ready
     @else
       This quote expired on {{ $quote->expires_at->timezone('Asia/Manila')->format('M d, Y') }}
     @endif

@@ -39,13 +39,17 @@
       </dd>
     </div>
   @endif
-  <div><dt>Quote version</dt><dd>Version {{ $q['version'] }}, sent {{ $fmt($q['sent_at']) }}, valid until {{ $fmt($q['expires_at']) }}</dd></div>
+  @if($showVersions ?? false)
+    <div><dt>Quote version</dt><dd>Version {{ $q['version'] }}, sent {{ $fmt($q['sent_at']) }}, valid until {{ $fmt($q['expires_at']) }}</dd></div>
+  @else
+    <div><dt>Quote sent</dt><dd>{{ $fmt($q['sent_at']) }}, valid until {{ $fmt($q['expires_at']) }}</dd></div>
+  @endif
   @isset($paymentDue)
     <div><dt>Payment must be started by</dt><dd>{{ $fmt($paymentDue) }}</dd></div>
   @endisset
 </dl>
 
 <div class="co-policy">
-  <div class="co-policy-title">{{ $terms['policy']['title'] }} (version {{ $terms['policy']['version'] }})</div>
+  <div class="co-policy-title">{{ $terms['policy']['title'] }}@if($showVersions ?? false) (version {{ $terms['policy']['version'] }})@endif</div>
   <div class="co-policy-body">{{ $terms['policy']['text'] }}</div>
 </div>

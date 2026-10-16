@@ -199,7 +199,7 @@ class CustomCheckoutTest extends TestCase
 
         $item = $order->items()->sole();
         $this->assertNull($item->product_id);
-        $this->assertSame('Dining Table - Ana', $item->product_name);
+        $this->assertSame('Custom Furniture — Ana', $item->product_name);
         $this->assertSame(1, (int) $item->quantity);
         $this->assertSame('20000.00', (string) $item->unit_price);
         $this->assertMatchesRegularExpression('#^agreements/r\d+-q\d+-[A-Za-z0-9]{16}\.png$#', $item->product_image);

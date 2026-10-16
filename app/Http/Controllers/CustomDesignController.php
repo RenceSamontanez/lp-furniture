@@ -159,7 +159,7 @@ class CustomDesignController extends Controller
 
         $designRequest = CustomDesignRequest::create([
             'user_id'            => Auth::id(),
-            'title'              => ($request->furniture_type ?: 'Custom Furniture') . ' — ' . Auth::user()->first_name,
+            'title'              => \App\Support\CustomOrderName::for(Auth::user()),
             'furniture_type'     => $request->furniture_type,
             'description'        => $description,
             'preferred_material' => $request->preferred_material,
@@ -329,7 +329,7 @@ class CustomDesignController extends Controller
                 Notification::create([
                     'user_id' => $adminId,
                     'title'   => 'Custom Request Updated',
-                    'message' => "{$name} updated their request for {$locked->title}.",
+                    'message' => "{$name} updated their request for {$locked->order_name}.",
                     'type'    => 'custom_order',
                     'url'     => route('admin.custom-orders.show', $locked->id),
                     'is_read' => false,
@@ -517,7 +517,7 @@ class CustomDesignController extends Controller
                 'occurred_at' => now(),
             ]);
 
-            $design = $locked->title;
+            $design = $locked->order_name;
             $window = $locked->callWindowLabel();
 
             Notification::create([

@@ -207,7 +207,7 @@ class CustomAgreementsTest extends TestCase
         $this->assertSame($q->sent_at->timestamp, $a->sent_at->timestamp);
 
         $s = $a->terms_snapshot;
-        $this->assertSame('Dining Table - Ana', $s['design']['title']);
+        $this->assertSame('Custom Furniture — Ana', $s['design']['title']);
         $this->assertSame('Six-seater dining table in narra', $s['quote']['description']);
         $this->assertSame('180.00', $s['quote']['width_cm']);
         $this->assertSame('Narra', $s['quote']['material']);
@@ -450,11 +450,11 @@ class CustomAgreementsTest extends TestCase
         $this->assertSame('customer', $e->actor_type);
 
         $this->assertStringContainsString(
-            'You declined the quote for Dining Table - Ana.',
+            'You declined the quote for Custom Furniture — Ana.',
             Notification::where('user_id', $customer->id)->firstOrFail()->message
         );
         $this->assertStringContainsString(
-            'Ana Cruz declined the quote for Dining Table - Ana. Reason: Too expensive.',
+            'Ana Cruz declined the quote for Custom Furniture — Ana. Reason: Too expensive.',
             Notification::where('user_id', $admin->id)->firstOrFail()->message
         );
 

@@ -42,7 +42,7 @@
     {{-- Customer + request --}}
     <div class="admin-panel">
       <div class="admin-panel-header">
-        <div class="admin-panel-title">{{ $r->title }}</div>
+        <div class="admin-panel-title">{{ $r->order_name }}</div>
         <span class="co-chip co-chip--{{ $r->pipeline_status }}">{{ $labels[$r->pipeline_status] ?? $r->pipeline_status }}</span>
       </div>
       <div class="admin-panel-body">

@@ -55,7 +55,7 @@ final class CallUpdateMessage
 
         $text = strtr(self::TEMPLATES[$outcome], [
             '{times}'    => self::times(max(1, $attempts)),
-            '{design}'   => $request->title,
+            '{design}'   => $request->order_name,
             '{phone}'    => $business->phone,
             '{email}'    => $business->email,
             '{customer}' => $customer,
@@ -74,7 +74,7 @@ final class CallUpdateMessage
         return [
             'templates' => self::TEMPLATES,
             'values'    => [
-                'design'   => $request->title,
+                'design'   => $request->order_name,
                 'phone'    => $business->phone,
                 'email'    => $business->email,
                 'customer' => NameFormat::proper(trim($request->user->first_name . ' ' . $request->user->last_name)),

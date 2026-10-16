@@ -55,7 +55,7 @@
         <div class="co-design-img co-design-img--none">No image</div>
       @endif
       <div class="co-design-meta">
-        <div class="co-design-name">{{ $designRequest->title }}</div>
+        <div class="co-design-name">{{ $designRequest->order_name }}</div>
         <div class="co-design-desc">{{ \Illuminate\Support\Str::limit($designRequest->description, 160) }}</div>
         @unless($suggestion)
           <div class="co-design-note">Sending your description only. Our team will discuss the design with you directly.</div>

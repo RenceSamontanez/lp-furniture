@@ -180,14 +180,14 @@ class CustomOrderSubmissionTest extends TestCase
 
         $mine = Notification::where('user_id', $ana->id)->where('type', 'custom_order')->sole();
         $this->assertSame(
-            "We received your request for Dining Table — Ana. We'll call you at 09181234567 during your preferred time (Afternoon, 12 PM to 5 PM).",
+            "We received your request for Custom Furniture — Ana. We'll call you at 09181234567 during your preferred time (Afternoon, 12 PM to 5 PM).",
             $mine->message
         );
 
         foreach ([$admin1, $admin2] as $admin) {
             $n = Notification::where('user_id', $admin->id)->where('type', 'custom_order')->sole();
             $this->assertSame(
-                'New custom order request: Dining Table — Ana from Ana Cruz. Preferred call: Afternoon, 12 PM to 5 PM.',
+                'New custom order request: Custom Furniture — Ana from Ana Cruz. Preferred call: Afternoon, 12 PM to 5 PM.',
                 $n->message
             );
             $this->assertStringContainsString('/admin/design-requests/' . $request->id, $n->url);

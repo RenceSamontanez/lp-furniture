@@ -79,7 +79,7 @@ class CallUpdateTest extends TestCase
         $n = Notification::where('user_id', $r->user_id)->sole();
         $this->assertSame('custom_order', $n->type);
         $this->assertSame(
-            'We tried calling you 3 times about your custom furniture request (Dining Table - Rence), but your phone seems to be out of service or not ringing. '
+            'We tried calling you 3 times about your custom furniture request (Custom Furniture — Rence), but your phone seems to be out of service or not ringing. '
             . 'Please contact us at 0917-555-0100 or hello@lpfurniture.test. '
             . 'Tell us your account name (Rence Samontanez) and remind us which custom furniture you wanted to discuss, so we can continue the negotiation.',
             $n->message
@@ -98,7 +98,7 @@ class CallUpdateTest extends TestCase
 
         $this->assertSame('contacting', $r->fresh()->pipeline_status);
         $this->assertSame(
-            'We called you 1 time about your custom furniture request (Dining Table - Rence), but nobody answered. '
+            'We called you 1 time about your custom furniture request (Custom Furniture — Rence), but nobody answered. '
             . 'Please call us back at 0917-555-0100 or email hello@lpfurniture.test. '
             . 'Tell us your account name (Rence Samontanez) and remind us which custom furniture you wanted to discuss.',
             Notification::where('user_id', $r->user_id)->sole()->message
@@ -116,7 +116,7 @@ class CallUpdateTest extends TestCase
 
         $this->assertSame('contacting', $r->fresh()->pipeline_status);
         $this->assertSame(
-            'Thank you for speaking with us about your custom furniture request (Dining Table - Rence). '
+            'Thank you for speaking with us about your custom furniture request (Custom Furniture — Rence). '
             . 'Our team is preparing your quote and you will be notified here as soon as it is ready.',
             Notification::where('user_id', $r->user_id)->sole()->message
         );

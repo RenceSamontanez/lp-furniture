@@ -48,7 +48,7 @@ final class AgreementTerms
 
         return [
             'design' => [
-                'title'           => $request->title,
+                'title'           => \App\Support\CustomOrderName::for($request->user),
                 'request_id'      => $request->id,
                 'reference_image' => $referenceImage,
             ],

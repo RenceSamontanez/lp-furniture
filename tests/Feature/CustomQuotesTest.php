@@ -615,7 +615,7 @@ class CustomQuotesTest extends TestCase
         $n = Notification::where('user_id', $owner->id)->sole();
         $this->assertSame('custom_order', $n->type);
         $this->assertSame(
-            'Your quote for Dining Table — Ana is ready: ₱20,000.00. Please review and accept by Nov 09, 2026 10:30 AM.',
+            'Your quote for Custom Furniture — Ana is ready: ₱20,000.00. Please review and accept by Nov 09, 2026 10:30 AM.',
             $n->message
         );
         $this->assertStringContainsString('/design/' . $r->id, $n->url);
@@ -675,7 +675,7 @@ class CustomQuotesTest extends TestCase
 
         $html = $this->actingAs($owner)->get(route('design.show', $r->id))
             ->assertOk()
-            ->assertSee('Your quote is ready (version 1)')
+            ->assertSee('Your quote for Custom Furniture — Ana is ready')
             ->assertSee('₱20,500.00')
             ->assertSee('₱10,250.00')
             ->assertSee('Review and accept')
@@ -746,7 +746,7 @@ class CustomQuotesTest extends TestCase
 
         $latest = Notification::where('user_id', $owner->id)->latest('id')->first();
         $this->assertSame(
-            'Your quote for Dining Table — Ana was updated (version 2, ₱20,000.00 → ₱18,500.50). The previous quote can no longer be accepted.',
+            'Your quote for Custom Furniture — Ana was updated (version 2, ₱20,000.00 → ₱18,500.50). The previous quote can no longer be accepted.',
             $latest->message
         );
 
@@ -798,12 +798,12 @@ class CustomQuotesTest extends TestCase
         $this->assertSame('quoted', $e->data['from']);
 
         $mine = Notification::where('user_id', $owner->id)->sole();
-        $this->assertStringContainsString("Your quote for Dining Table — Ana expired on", $mine->message);
+        $this->assertStringContainsString("Your quote for Custom Furniture — Ana expired on", $mine->message);
         $this->assertStringContainsString("Contact us if you'd still like to proceed.", $mine->message);
 
         foreach ([$admin, $other] as $a) {
             $n = Notification::where('user_id', $a->id)->sole();
-            $this->assertSame('Quote for Dining Table — Ana (Ana Cruz) expired without acceptance.', $n->message);
+            $this->assertSame('Quote for Custom Furniture — Ana (Ana Cruz) expired without acceptance.', $n->message);
             $this->assertSame('custom_order', $n->type);
         }
 

@@ -33,7 +33,7 @@
       </div>
     @endif
 
-    @include('agreements._terms', ['terms' => $terms, 'paymentDue' => $terms['payment_due_at'] ?? null])
+    @include('agreements._terms', ['terms' => $terms, 'paymentDue' => $terms['payment_due_at'] ?? null, 'showVersions' => true])
   </div>
 </div>
 </div>

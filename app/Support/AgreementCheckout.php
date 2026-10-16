@@ -163,7 +163,7 @@ class AgreementCheckout
         }
 
         $delivery = ($terms['delivery']['option'] ?? 'pickup') === 'delivery';
-        $title = (string) ($terms['design']['title'] ?? $request->title);
+        $title = (string) ($terms['design']['title'] ?? $request->order_name);
 
         $order = new Order();
         $order->forceFill([

@@ -261,7 +261,7 @@ class AdminCustomOrdersTest extends TestCase
 
         $n = Notification::where('user_id', $owner->id)->sole();
         $this->assertSame('custom_order', $n->type);
-        $this->assertStringContainsString("We tried to reach you about Dining Table — Ana but couldn't get through.", $n->message);
+        $this->assertStringContainsString("We tried to reach you about Custom Furniture — Ana but couldn't get through.", $n->message);
         $this->assertStringContainsString('Please check that 09171234567 is correct', $n->message);
 
         $event = CustomOrderEvent::where('type', 'marked_unreachable')->sole();
@@ -310,7 +310,7 @@ class AdminCustomOrdersTest extends TestCase
         $this->assertSame('Outside our range', $fresh->decline_reason);
 
         $n = Notification::where('user_id', $owner->id)->sole();
-        $this->assertSame("We're unable to take on Dining Table — Ana. Reason: Outside our range", $n->message);
+        $this->assertSame("We're unable to take on Custom Furniture — Ana. Reason: Outside our range", $n->message);
         $this->assertSame('custom_order', $n->type);
 
         $event = CustomOrderEvent::where('type', 'declined_by_admin')->sole();

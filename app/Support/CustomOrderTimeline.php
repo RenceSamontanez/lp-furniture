@@ -49,7 +49,7 @@ class CustomOrderTimeline
                 'marked_unreachable' => ["We couldn't reach you by phone", 'Please check that your phone number is correct.', 'contact'],
                 'declined_by_admin' => ['Our team was unable to take on this request', $this->when($d['reason'] ?? null, 'Reason: '), 'closed'],
                 'quote_sent' => (int) ($d['version'] ?? 1) > 1
-                    ? ['Your quote was updated (version ' . (int) $d['version'] . ')', $this->quoteLine($d), 'quote']
+                    ? ['Your quote was updated', $this->quoteLine($d), 'quote']
                     : ['Your quote is ready', $this->quoteLine($d), 'quote'],
                 'quote_expired' => ['Your quote expired', null, 'closed'],
                 'quote_accepted' => [
