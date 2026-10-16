@@ -9,6 +9,9 @@
 @endphp
 <dl class="co-quote-list">
   <div><dt>Design</dt><dd>{{ $terms['design']['title'] }}</dd></div>
+  @if(!empty($terms['design']['furniture_type']))
+    <div><dt>Furniture type</dt><dd>{{ $terms['design']['furniture_type'] }}</dd></div>
+  @endif
   <div><dt>Description</dt><dd style="white-space:pre-line;">{{ $q['description'] }}</dd></div>
   <div><dt>Size</dt><dd>{{ $dim($q['width_cm']) }} x {{ $dim($q['depth_cm']) }} x {{ $dim($q['height_cm']) }} cm</dd></div>
   <div><dt>Material and finish</dt><dd>{{ $q['material'] }}@if($q['finish']), {{ $q['finish'] }}@endif</dd></div>

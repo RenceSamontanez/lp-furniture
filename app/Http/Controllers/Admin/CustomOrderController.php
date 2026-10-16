@@ -127,6 +127,36 @@ class CustomOrderController extends Controller
         });
     }
 
+    /**
+     * Requests made before the type was required have none. The team may set it
+     * when preparing a quote. A type the customer chose is never overwritten here.
+     */
+    public function setFurnitureType(Request $request, $id)
+    {
+        $data = $request->validate([
+            'furniture_type'       => ['required', 'string', \Illuminate\Validation\Rule::in(\App\Support\FurnitureTypes::LIST)],
+            'furniture_type_other' => ['nullable', 'required_if:furniture_type,' . \App\Support\FurnitureTypes::OTHER, 'string', 'max:' . \App\Support\FurnitureTypes::OTHER_MAX],
+        ], [
+            'furniture_type.required' => 'Choose the furniture type.',
+            'furniture_type.in'       => 'Choose one of the listed furniture types.',
+            'furniture_type_other.required_if' => 'Describe the furniture in a few words.',
+        ]);
+
+        $designRequest = \App\Models\CustomDesignRequest::findOrFail($id);
+
+        if (filled($designRequest->furniture_type)) {
+            return redirect()->route('admin.custom-orders.show', $designRequest->id)
+                ->withErrors(['furniture_type' => 'The customer already chose a furniture type for this request.']);
+        }
+
+        $designRequest->forceFill([
+            'furniture_type'       => $data['furniture_type'],
+            'furniture_type_other' => \App\Support\FurnitureTypes::needsText($data['furniture_type']) ? trim((string) $data['furniture_type_other']) : null,
+        ])->save();
+
+        return redirect()->route('admin.custom-orders.show', $designRequest->id)->with('success', 'Furniture type saved.');
+    }
+
     public function callUpdate(Request $request, $id)
     {
         $data = $request->validate([

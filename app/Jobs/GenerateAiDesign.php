@@ -142,7 +142,7 @@ class GenerateAiDesign implements ShouldQueue
             Notification::create([
                 'user_id' => $request->user_id,
                 'title'   => 'Your AI Design Suggestions Are Ready!',
-                'message' => "We've generated {$generated} design suggestion(s) for your {$request->furniture_type} request. Review and select your favorite!",
+                'message' => "We've generated {$generated} design suggestion(s) for your {$request->furniture_type_noun} request. Review and select your favorite!",
                 'type'    => 'design_ready',
                 'url'     => route('design.show', $request->id),
                 'is_read' => false,
@@ -350,12 +350,22 @@ class GenerateAiDesign implements ShouldQueue
 
     private function buildPrompt(CustomDesignRequest $request): string
     {
-        $parts = [
-            "Professional product photo of a custom Philippine hardwood furniture piece.",
-            $request->description,
-        ];
+        $parts = ["Professional product photo of a custom Philippine hardwood furniture piece."];
 
-        if ($request->furniture_type) {
+        // The type the customer chose comes first and is a hard instruction. It is
+        // never worked out from the description. Requests made before the type was
+        // required keep the older wording for whatever free text they stored.
+        $instruction = \App\Support\FurnitureTypes::isValid($request->furniture_type)
+            ? \App\Support\FurnitureTypes::promptInstruction($request->furniture_type, $request->furniture_type_other)
+            : null;
+
+        if ($instruction) {
+            $parts[] = $instruction;
+        }
+
+        $parts[] = $request->description;
+
+        if (!$instruction && $request->furniture_type) {
             $parts[] = "Furniture type: {$request->furniture_type}.";
         }
 

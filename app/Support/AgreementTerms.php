@@ -49,6 +49,9 @@ final class AgreementTerms
         return [
             'design' => [
                 'title'           => \App\Support\CustomOrderName::for($request->user),
+                // New agreements record the type the customer chose. Nothing is added when
+                // an older request has none, and existing snapshots are never rewritten.
+                ...(filled($request->furniture_type) ? ['furniture_type' => \App\Support\FurnitureTypes::label($request->furniture_type, $request->furniture_type_other)] : []),
                 'request_id'      => $request->id,
                 'reference_image' => $referenceImage,
             ],

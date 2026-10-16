@@ -323,6 +323,20 @@
         @endforeach
       </div>
 
+      @if(!$isFinal && filled($designRequest->furniture_type))
+        {{-- The customer confirms the type: the AI is asked for it, but it can still get it wrong. --}}
+        <div class="cd-type-check" role="group" aria-labelledby="cd-type-check-q">
+          <div class="cd-type-check-text">
+            <p class="cd-type-check-q" id="cd-type-check-q">Is this {{ \App\Support\FurnitureTypes::withArticle($designRequest->furniture_type, $designRequest->furniture_type_other) ?? 'the piece you asked for' }}?</p>
+            <p class="cd-type-check-note">We ask the AI for this type, but it can get it wrong, so please check before you continue.</p>
+          </div>
+          <form method="POST" action="{{ route('design.regenerate', $designRequest->id) }}">
+            @csrf
+            <button type="submit" class="ai-action-btn ai-action-secondary cd-type-check-btn">No, try again</button>
+          </form>
+        </div>
+      @endif
+
       @if(!$isFinal)
         <div class="ai-actions-row">
           @unless($designRequest->isLegacyUnsent())

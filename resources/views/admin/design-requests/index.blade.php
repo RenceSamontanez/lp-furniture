@@ -50,7 +50,7 @@
               <td data-label="Details" style="max-width:320px;">
                 <div style="font-size:12.5px;color:#3D3129;margin-bottom:4px;">{{ Str::limit($req->description, 120) }}</div>
                 <div style="font-size:11px;color:var(--text-muted);">
-                  @if($req->furniture_type)<span>{{ $req->furniture_type }}</span> · @endif
+                  <span>{{ $req->furniture_type_label }}</span> · 
                   @if($req->preferred_material)<span>{{ $req->preferred_material }}</span> · @endif
                   @if($req->dimensions)<span>{{ $req->dimensions }}</span>@endif
                 </div>

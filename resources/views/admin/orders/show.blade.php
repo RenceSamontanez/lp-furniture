@@ -22,7 +22,10 @@
           <tbody>
             @foreach($order->items as $item)
               <tr>
-                <td data-label="Product">{{ $order->design_agreement_id ? ($item->product_name ?: 'Custom order') : ($item->product->product_name ?? 'N/A') }}</td>
+                <td data-label="Product">{{ $order->design_agreement_id ? ($item->product_name ?: 'Custom order') : ($item->product->product_name ?? 'N/A') }}
+                  @php $itemType = $order->design_agreement_id && $order->agreement ? ($order->agreement->terms_snapshot['design']['furniture_type'] ?? null) : null; @endphp
+                  @if($itemType)<div style="font-size:11.5px;color:var(--text-muted);">Furniture type: {{ $itemType }}</div>@endif
+                </td>
                 <td data-label="Qty">{{ $item->quantity }}</td>
                 <td data-label="Price">₱{{ number_format($item->unit_price, 2) }}</td>
                 <td data-label="Subtotal">₱{{ number_format($item->subtotal, 2) }}</td>

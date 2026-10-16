@@ -48,7 +48,7 @@
               <td data-label="Design">
                 <div style="font-weight:600;color:#2A1810;">{{ $req->order_name }}</div>
                 <div style="font-size:11.5px;color:var(--text-muted);">
-                  {{ $req->request_mode === 'modified' ? 'With changes' : 'Exact design' }}
+                  {{ $req->furniture_type_label }} · {{ $req->request_mode === 'modified' ? 'With changes' : 'Exact design' }}
                   @if(!$req->selected_suggestion_id) · No image generated @endif
                 </div>
               </td>

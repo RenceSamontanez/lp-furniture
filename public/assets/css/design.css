@@ -2103,3 +2103,19 @@
 @media (max-width: 560px) {
   .cd-contact-messenger { margin-left: 0; width: 100%; justify-content: center; }
 }
+
+/* Furniture type: required, first field of the form (Stage 18) */
+.cd-type-group { margin-bottom: 16px; }
+.cd-required { font-weight: 400; font-size: 12px; color: var(--text-muted); }
+.cd-type-other { margin-top: 10px; }
+.cd-type-hint { margin: 8px 0 0; font-size: 12px; color: var(--text-muted); }
+.cd-type-error { margin: 6px 0 0; font-size: 12.5px; color: var(--danger, #B04040); min-height: 0; }
+.cd-type-error:empty { display: none; }
+
+/* "Is this a chair?" check on the generated design (Stage 18) */
+.cd-type-check { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin: 0 0 14px; padding: 12px 14px; border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 12px; background: #fff; }
+.cd-type-check-text { flex: 1 1 220px; min-width: 0; }
+.cd-type-check-q { margin: 0; font-size: 15px; font-weight: 600; color: var(--brown-deep); }
+.cd-type-check-note { margin: 3px 0 0; font-size: 12px; color: var(--text-muted); }
+.cd-type-check form { flex: 0 0 auto; }
+.cd-type-check-btn { width: auto; padding: 10px 18px; }

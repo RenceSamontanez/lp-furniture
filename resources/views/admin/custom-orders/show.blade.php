@@ -56,7 +56,24 @@
         </dl>
 
         <dl class="co-dl" style="margin-top:16px;">
-          <div><dt>Furniture type</dt><dd>{{ $r->furniture_type ?: '—' }}</dd></div>
+          <div>
+            <dt>Furniture type</dt>
+            <dd>
+              {{ $r->furniture_type_label }}
+              @if(blank($r->furniture_type))
+                <form method="POST" action="{{ route('admin.custom-orders.furniture-type', $r->id) }}" class="co-type-form">
+                  @csrf
+                  <label class="co-block-label" for="co-type-set">Set the type (older request)</label>
+                  <select name="furniture_type" id="co-type-set" class="form-input" required>
+                    <option value="">Choose</option>
+                    @foreach(\App\Support\FurnitureTypes::LIST as $t)<option value="{{ $t }}">{{ $t }}</option>@endforeach
+                  </select>
+                  <input type="text" name="furniture_type_other" class="form-input" maxlength="{{ \App\Support\FurnitureTypes::OTHER_MAX }}" placeholder="If Other, describe it"/>
+                  <button type="submit" class="admin-btn admin-btn-outline">Save type</button>
+                </form>
+              @endif
+            </dd>
+          </div>
           <div><dt>Preferred material</dt><dd>{{ $r->preferred_material ?: '—' }}</dd></div>
           <div><dt>Dimensions</dt><dd>{{ $r->dimensions ?: '—' }}</dd></div>
         </dl>

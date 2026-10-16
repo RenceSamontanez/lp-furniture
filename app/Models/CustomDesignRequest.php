@@ -15,6 +15,7 @@ class CustomDesignRequest extends Model
         'user_id',
         'title',
         'furniture_type',
+        'furniture_type_other',
         'description',
         'budget_min',
         'budget_max',
@@ -56,6 +57,18 @@ class CustomDesignRequest extends Model
         'exact'    => 'Build exactly this design',
         'modified' => 'Build it with some changes',
     ];
+
+    /** For a sentence: "chair", "pergola", or "custom furniture" when there is no type. */
+    public function getFurnitureTypeNounAttribute(): string
+    {
+        return \App\Support\FurnitureTypes::noun($this->furniture_type, $this->furniture_type_other) ?? ($this->furniture_type ?: 'custom furniture');
+    }
+
+    /** "Chair", "Other: pergola" or "Not specified" (requests made before the type was required). */
+    public function getFurnitureTypeLabelAttribute(): string
+    {
+        return \App\Support\FurnitureTypes::label($this->furniture_type, $this->furniture_type_other);
+    }
 
     /** "Custom Furniture — Rence": the name shown for this custom order everywhere (the stored title is not rewritten). */
     public function getOrderNameAttribute(): string

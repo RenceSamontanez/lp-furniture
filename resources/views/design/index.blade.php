@@ -39,6 +39,23 @@
       <form method="POST" action="{{ route('design.submit') }}" enctype="multipart/form-data" id="cd-form">
         @csrf
 
+        <div class="ai-field-group cd-type-group">
+          <label class="form-label" for="cd-furniture-type">Furniture type <span class="cd-required">(required)</span></label>
+          <select name="furniture_type" id="cd-furniture-type" class="form-input" required aria-describedby="cd-type-hint cd-type-error">
+            <option value="">Choose what you want built</option>
+            @foreach(\App\Support\FurnitureTypes::LIST as $type)
+              <option value="{{ $type }}" @selected(old('furniture_type') === $type)>{{ $type }}</option>
+            @endforeach
+          </select>
+          <div class="cd-type-other" id="cd-type-other-wrap" @if(old('furniture_type') !== \App\Support\FurnitureTypes::OTHER) hidden @endif>
+            <label class="form-label" for="cd-furniture-type-other">What kind of furniture is it?</label>
+            <input type="text" name="furniture_type_other" id="cd-furniture-type-other" class="form-input" maxlength="{{ \App\Support\FurnitureTypes::OTHER_MAX }}"
+                   value="{{ old('furniture_type_other') }}" placeholder="e.g. pergola, crib, altar" @if(old('furniture_type') === \App\Support\FurnitureTypes::OTHER) required @endif/>
+          </div>
+          <p class="cd-type-hint" id="cd-type-hint">The picture we generate will be this type of furniture. Describe the style below.</p>
+          <p class="cd-type-error" id="cd-type-error" role="alert">@error('furniture_type'){{ $message }}@enderror @error('furniture_type_other'){{ $message }}@enderror</p>
+        </div>
+
         <textarea
           name="prompt"
           id="cd-prompt-input"
@@ -77,7 +94,6 @@
           @endif
         </p>
 
-        <input type="hidden" name="furniture_type" id="cd-hidden-furniture-type" value="{{ old('furniture_type') }}"/>
         <input type="hidden" name="preferred_material" id="cd-hidden-material" value="{{ old('preferred_material', 'No Preference') }}"/>
         <input type="hidden" name="dimensions_length" id="cd-hidden-dim-length" value="{{ old('dimensions_length') }}"/>
         <input type="hidden" name="dimensions_width" id="cd-hidden-dim-width" value="{{ old('dimensions_width') }}"/>
@@ -170,16 +186,6 @@
       </div>
 
       <div class="cd-modal-body">
-        <div class="ai-field-group">
-          <label class="form-label">Furniture Type</label>
-          <select id="cd-modal-furniture-type-select" class="form-input">
-            <option value="">Select a category (optional)</option>
-            @foreach(['Dining Table','Coffee Table','Office Desk','Bed Frame','Wardrobe','TV Cabinet','Kitchen Cabinet','Bookshelf','Chair','Custom'] as $type)
-              <option value="{{ $type }}">{{ $type }}</option>
-            @endforeach
-          </select>
-        </div>
-
         <div class="ai-field-group">
           <label class="form-label">Preferred Wood Type</label>
           <div class="ai-radio-grid">
@@ -353,14 +359,12 @@ function closeCdHowItWorksOnBackdrop(e) {
 }
 
 function saveCdOptionalPanel() {
-  const type = document.getElementById('cd-modal-furniture-type-select').value;
   const material = document.querySelector('input[name="cd_modal_material"]:checked')?.value || 'No Preference';
   const dimLength = document.getElementById('cd-modal-dim-length').value;
   const dimWidth = document.getElementById('cd-modal-dim-width').value;
   const dimHeight = document.getElementById('cd-modal-dim-height').value;
   const additional = document.getElementById('cd-modal-additional').value;
 
-  document.getElementById('cd-hidden-furniture-type').value = type;
   document.getElementById('cd-hidden-material').value = material;
   document.getElementById('cd-hidden-dim-length').value = dimLength;
   document.getElementById('cd-hidden-dim-width').value = dimWidth;
@@ -368,7 +372,6 @@ function saveCdOptionalPanel() {
   document.getElementById('cd-hidden-additional').value = additional;
 
   const parts = [];
-  if (type) parts.push(type);
   if (material && material !== 'No Preference') parts.push(material);
   document.getElementById('cd-optional-summary').textContent = parts.length ? parts.join(' · ') : 'Furniture Type & Details';
 
@@ -377,6 +380,17 @@ function saveCdOptionalPanel() {
 
 document.addEventListener('DOMContentLoaded', function () {
   updateCdPromptCount();
+
+  // "Other" asks for a short description of the piece.
+  const typeSelect = document.getElementById('cd-furniture-type');
+  const otherWrap = document.getElementById('cd-type-other-wrap');
+  const otherInput = document.getElementById('cd-furniture-type-other');
+  typeSelect.addEventListener('change', function () {
+    const other = typeSelect.value === @json(\App\Support\FurnitureTypes::OTHER);
+    otherWrap.hidden = !other;
+    otherInput.required = other;
+    if (!other) { otherInput.value = ''; }
+  });
 });
 </script>
 @endpush

@@ -246,6 +246,7 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     Route::get('/custom-orders/{id}',                  [CustomOrderController::class, 'show'])->name('custom-orders.show')->whereNumber('id');
     Route::post('/custom-orders/{id}/calls',           [CustomOrderController::class, 'logCall'])->name('custom-orders.calls')->whereNumber('id');
     Route::post('/custom-orders/{id}/call-update',     [CustomOrderController::class, 'callUpdate'])->name('custom-orders.call-update')->whereNumber('id');
+    Route::post('/custom-orders/{id}/furniture-type',  [CustomOrderController::class, 'setFurnitureType'])->name('custom-orders.furniture-type')->whereNumber('id');
     Route::post('/custom-orders/{id}/unreachable',     [CustomOrderController::class, 'markUnreachable'])->name('custom-orders.unreachable')->whereNumber('id');
     Route::post('/custom-orders/{id}/decline',         [CustomOrderController::class, 'decline'])->name('custom-orders.decline')->whereNumber('id');
 

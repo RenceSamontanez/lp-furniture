@@ -126,7 +126,8 @@ class CustomDesignController extends Controller
 
         $request->validate([
             'prompt'             => ['required', 'string', 'min:15', 'max:1000', new FurnitureTopic()],
-            'furniture_type'     => 'nullable|string|max:100',
+            'furniture_type'       => ['required', 'string', \Illuminate\Validation\Rule::in(\App\Support\FurnitureTypes::LIST)],
+            'furniture_type_other' => ['nullable', 'required_if:furniture_type,' . \App\Support\FurnitureTypes::OTHER, 'string', 'max:' . \App\Support\FurnitureTypes::OTHER_MAX],
             'preferred_material' => 'nullable|string|max:100',
             'dimensions_length'  => ['nullable', 'numeric', 'min:0', 'max:9999'],
             'dimensions_width'   => ['nullable', 'numeric', 'min:0', 'max:9999'],
@@ -161,6 +162,7 @@ class CustomDesignController extends Controller
             'user_id'            => Auth::id(),
             'title'              => \App\Support\CustomOrderName::for(Auth::user()),
             'furniture_type'     => $request->furniture_type,
+            'furniture_type_other' => \App\Support\FurnitureTypes::needsText($request->furniture_type) ? trim((string) $request->furniture_type_other) : null,
             'description'        => $description,
             'preferred_material' => $request->preferred_material,
             'dimensions'         => $dimensions,

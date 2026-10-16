@@ -105,7 +105,7 @@ class CustomOrderNameTest extends TestCase
         // the review shows the name, never "Dining Table - RENCE", never a version label
         $this->flushSession();
         $review = $this->asCustomer($customer)->get(route('design.quote.review', [$r->id, $quote->id]))->assertOk();
-        $review->assertSee('Custom Furniture — Rence')->assertDontSee('Dining Table')->assertDontSee('Quote version')->assertDontSee('(version');
+        $review->assertSee('Custom Furniture — Rence')->assertDontSee('Dining Table - ')->assertDontSee('Quote version')->assertDontSee('(version');
 
         $this->asCustomer($customer)->post(route('design.quote.accept', [$r->id, $quote->id]), ['agree' => '1'])->assertRedirect();
         $agreement = $this->agreementOf($r);

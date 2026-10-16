@@ -37,7 +37,7 @@
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
           <div>
             <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px;">Furniture Type</div>
-            <div style="font-size:13px;color:#2A1810;font-weight:500;">{{ $designRequest->furniture_type ?: '—' }}</div>
+            <div style="font-size:13px;color:#2A1810;font-weight:500;">{{ $designRequest->furniture_type_label }}</div>
           </div>
           <div>
             <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px;">Preferred Material</div>

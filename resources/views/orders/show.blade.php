@@ -127,6 +127,8 @@
               </div>
               <div class="order-item-info">
                 <div class="order-item-name">{{ $item->product->product_name ?? $item->product_name ?? 'Product Unavailable' }}</div>
+                @php $itemType = $order->design_agreement_id && $order->agreement ? ($order->agreement->terms_snapshot['design']['furniture_type'] ?? null) : null; @endphp
+                @if($itemType)<div class="order-item-qty">Furniture type: {{ $itemType }}</div>@endif
                 <div class="order-item-qty">Qty: {{ $item->quantity }} × ₱{{ number_format($item->unit_price, 2) }}</div>
               </div>
               <div class="order-item-subtotal">₱{{ number_format($item->subtotal, 2) }}</div>
