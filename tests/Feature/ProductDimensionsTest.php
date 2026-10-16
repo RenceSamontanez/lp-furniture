@@ -199,12 +199,13 @@ class ProductDimensionsTest extends TestCase
 
         $text = $this->postJson(route('chatbot.respond'), ['message' => 'What is the size of the Walnut Table?'])->assertOk()->json('response');
 
-        $this->assertSame('The Walnut Table measures 180 x 90 x 75 cm (70.9 x 35.4 x 29.5 in), as length x width x height.', $text);
+        // Luma ends every answer with her closing line
+        $this->assertStringStartsWith('The Walnut Table measures 180 x 90 x 75 cm (70.9 x 35.4 x 29.5 in), as length x width x height.', $text);
         $this->assertStringNotContainsStringIgnoringCase('depth', $text);
 
         // a trained answer still wins over the size answer
         ChatbotIntent::create(['keywords' => 'walnut', 'response' => 'Ask in store.', 'suggestions' => '', 'category' => 'general', 'is_active' => true]);
-        $this->assertSame('Ask in store.', $this->postJson(route('chatbot.respond'), ['message' => 'size of the walnut table'])->json('response'));
+        $this->assertStringStartsWith('Ask in store.', $this->postJson(route('chatbot.respond'), ['message' => 'size of the walnut table'])->json('response'));
     }
 
     /* ───────────── nothing says "Depth", nothing old changes ───────────── */

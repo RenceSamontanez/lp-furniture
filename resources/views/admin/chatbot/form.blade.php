@@ -40,6 +40,15 @@
       </div>
 
       <div style="margin-bottom:16px;">
+        <label class="form-label">Tagalog Response <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+        <textarea name="answer_tl" class="form-input" rows="4"
+                  placeholder="Used when the customer writes in Tagalog. Leave empty to reply in English.">{{ old('answer_tl', $intent->answer_tl) }}</textarea>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">
+          Write it politely, with "po". Luma adds her closing line herself, so don't type one.
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
         <label class="form-label">Suggestion Chips (comma-separated) <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
         <input type="text" name="suggestions" class="form-input"
                placeholder="e.g. Browse catalog, Payment options, Track my order"

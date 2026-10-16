@@ -81,6 +81,7 @@ class ChatbotIntentController extends Controller
         return $request->validate([
             'keywords'    => 'required|string',
             'response'    => 'required|string',
+            'answer_tl'   => 'nullable|string',
             'suggestions' => 'nullable|string',
             'category'    => 'nullable|string|max:100',
         ]);

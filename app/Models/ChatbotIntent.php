@@ -8,6 +8,7 @@ class ChatbotIntent extends Model
     protected $fillable = [
         'keywords',
         'response',
+        'answer_tl',
         'suggestions',
         'category',
         'is_active',

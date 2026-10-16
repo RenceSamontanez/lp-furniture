@@ -45,6 +45,18 @@ return [
         'tl' => 'Walang anuman po! Nandito lang si Luma para tumulong.',
     ],
 
+    // Quick-reply chips in Tagalog (the chip text is sent back as the customer's next question)
+    'chips_tl' => [
+        'How to order'     => 'Paano mag-order',
+        'Custom design'    => 'Custom na disenyo',
+        'Prices'           => 'Presyo',
+        'Delivery'         => 'Delivery',
+        'Delivery info'    => 'Delivery',
+        'View all products' => 'Tingnan ang mga produkto',
+        'Payment options'  => 'Paraan ng bayad',
+        'Track my order'   => 'Saan na ang order ko',
+    ],
+
     // Values the owner has not confirmed yet. Luma never states these as fact; each answer
     // that depends on one says the shop will confirm it.
     'to_confirm' => [

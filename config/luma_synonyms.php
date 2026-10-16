@@ -95,6 +95,7 @@ return [
         'estante' => 'shelf', 'shelves' => 'shelf', 'bookcase' => 'shelf', 'bookshelf' => 'shelf', 'rack' => 'shelf',
         'bangko' => 'bench', 'benches' => 'bench',
         'dumi' => 'stool',
+        'disenyo' => 'design', 'idisenyo' => 'design', 'produkto' => 'product', 'paraan' => 'method',
         'readymade' => 'ready made', 'ready-made' => 'ready made',
         'tvstand' => 'tv stand',
     ],
