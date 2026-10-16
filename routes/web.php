@@ -37,8 +37,10 @@ Route::get('/reviews', [FeedbackController::class, 'index'])->name('feedback.ind
 Route::get('/terms', [\App\Http\Controllers\TermsController::class, 'show'])->name('terms');
 Route::get('/guide', [\App\Http\Controllers\GuideController::class, 'show'])->name('guide');
 Route::post('/chatbot', [ChatbotController::class, 'respond'])->name('chatbot.respond');
-// Labor-only requests: the form comes in the next stage; until then a plain "coming soon" page
-Route::view('/services/request', 'services.coming-soon')->name('services.request');
+// Other Services inquiry tickets (labor only with own wood, repairs, anything priced by phone)
+Route::get('/services/request', [\App\Http\Controllers\ServiceInquiryController::class, 'create'])->name('services.request');
+Route::post('/services/request', [\App\Http\Controllers\ServiceInquiryController::class, 'store'])->name('services.request.submit');
+Route::get('/services/request/sent', [\App\Http\Controllers\ServiceInquiryController::class, 'sent'])->name('services.request.sent');
 
 // ============================================================
 // GUEST ONLY ROUTES

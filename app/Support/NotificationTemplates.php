@@ -132,10 +132,32 @@ final class NotificationTemplates
             'body'  => 'Your order {order_number} was cancelled. If you have questions about this, we are happy to help. {contact}',
         ],
 
+        /* ── customer: Other Services inquiries ── */
+        'inquiry_received' => [
+            'title' => 'Service Request Received',
+            'body'  => 'We received your service request {reference}. Our team will call you at {phone} {window_phrase}on a weekday between 8:00 AM and 5:00 PM to discuss it. No payment is due at this stage. {contact}',
+        ],
+        'inquiry_call_unreachable' => [
+            'title' => 'We Could Not Reach You',
+            'body'  => 'We tried to call you {times} about your service request {reference}, but could not reach you. Please call or email us so we can continue. {contact}',
+        ],
+        'inquiry_call_ringing' => [
+            'title' => 'We Called You',
+            'body'  => 'We called you {times} about your service request {reference}, but there was no answer. Please call us back or send us an email. {contact}',
+        ],
+        'inquiry_call_answered' => [
+            'title' => 'Update on Your Service Request',
+            'body'  => 'Thank you for speaking with us about your service request {reference}. Our team will follow up on the next steps. {contact}',
+        ],
+
         /* ── admin ── */
         'admin_new_request' => [
             'title' => 'New Custom Order Request',
             'body'  => '{customer} sent a request for {order}.{window_line} Phone: {phone}.',
+        ],
+        'admin_new_inquiry' => [
+            'title' => 'New Service Request',
+            'body'  => '{customer} sent a service request ({reference}) about {service}.{window_line} Phone: {phone}.',
         ],
         'admin_request_updated' => [
             'title' => 'Custom Request Updated',
@@ -248,6 +270,8 @@ final class NotificationTemplates
             'phone'        => $has('phone') ? (string) $d['phone'] : 'the phone number you gave us',
             'order_number' => $has('order_number') ? (string) $d['order_number'] : 'your order',
             'agreement'    => $has('agreement') ? (string) $d['agreement'] : 'your agreement',
+            'reference'    => $has('reference') ? (string) $d['reference'] : 'shown on your request',
+            'service'      => $has('service') ? (string) $d['service'] : 'an Other Services request',
             'times'        => $has('times') ? (string) $d['times'] : 'a few times',
             'when'         => $has('when') ? (string) $d['when'] : 'the date shown on your account',
             'due'          => $has('due') ? (string) $d['due'] : 'the due date shown on your account',

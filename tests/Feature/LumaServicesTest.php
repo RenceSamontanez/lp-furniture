@@ -67,11 +67,14 @@ class LumaServicesTest extends TestCase
         $this->assertStringContainsString('/services/request', $reply['buttons'][0]['url']);
     }
 
-    public function test_the_request_link_opens_a_coming_soon_page(): void
+    public function test_the_request_link_opens_the_real_form_not_a_placeholder(): void
     {
         BusinessSetting::query()->first()->update(['phone' => '0917-222-3333']);
 
-        $this->get('/services/request')->assertOk()->assertSee('Coming soon')->assertSee('0917-222-3333');
+        $this->get('/services/request')->assertOk()
+            ->assertDontSee('Coming soon')
+            ->assertSee('Other services request')
+            ->assertSee('0917-222-3333');
     }
 
     public function test_the_widget_draws_a_business_card_and_clickable_buttons(): void
