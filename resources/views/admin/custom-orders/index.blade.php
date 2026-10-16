@@ -8,6 +8,7 @@
 @endpush
 
 @section('content')
+<div class="co-page">
 @php $labels = \App\Support\CustomOrderPipeline::LABELS; @endphp
 
 <div class="co-counts">
@@ -52,7 +53,7 @@
                 </div>
               </td>
               <td data-label="Customer">
-                <div style="font-weight:600;color:#2A1810;">{{ $req->user->first_name }} {{ $req->user->last_name }}</div>
+                <div style="font-weight:600;color:#2A1810;">{{ $req->user->display_name }}</div>
                 <div style="font-size:11.5px;color:var(--text-muted);">{{ $req->user->email }}</div>
               </td>
               <td data-label="Contact">
@@ -76,4 +77,5 @@
 </div>
 
 <div style="margin-top:16px;">{{ $requests->links() }}</div>
+</div>
 @endsection

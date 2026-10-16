@@ -8,6 +8,7 @@
 @endpush
 
 @section('content')
+<div class="co-page">
 @php
   $r = $designRequest;
   $v = $values;
@@ -32,9 +33,30 @@
 
     <div class="admin-panel">
       <div class="admin-panel-header">
-        <div class="admin-panel-title">Version {{ $nextVersion }} for {{ $r->user->first_name }} {{ $r->user->last_name }}</div>
+        <div class="admin-panel-title">Customized order: {{ $r->user->display_name }}</div>
+        @if($nextVersion > 1)<span class="co-version-badge">Version {{ $nextVersion }}</span>@endif
       </div>
       <div class="admin-panel-body">
+        @php $designImage = $r->previewImageUrl(); @endphp
+        <div class="co-design-summary">
+          @if($designImage)
+            <div class="co-design-frame co-design-frame--sm">
+              <img src="{{ $designImage }}" alt="The customer's selected design"
+                   onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
+            </div>
+          @else
+            <div class="co-noimage">No image generated</div>
+          @endif
+          <div class="co-design-prompt">
+            <div class="co-block-label">Customer's prompt</div>
+            <div class="co-quote">{{ $r->description }}</div>
+            @if($r->modification_notes)
+              <div class="co-block-label">Customization idea</div>
+              <div class="co-quote">{{ $r->modification_notes }}</div>
+            @endif
+          </div>
+        </div>
+
         @if($basedOn)
           <p class="co-hint">Pre-filled from version {{ $basedOn->version }}. Saving creates a new draft; the customer keeps seeing the current quote until you send it.</p>
         @endif
@@ -177,6 +199,7 @@
       </div>
     </div>
   </div>
+</div>
 </div>
 @endsection
 

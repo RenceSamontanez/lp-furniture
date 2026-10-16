@@ -468,7 +468,7 @@ class CustomOrderPipeline
                     route('design.show', $request->id)
                 );
 
-                $name = trim($request->user->first_name . ' ' . $request->user->last_name);
+                $name = \App\Support\NameFormat::proper(trim($request->user->first_name . ' ' . $request->user->last_name));
                 $this->notifyAdmins(
                     $request,
                     'Agreement Expired Unpaid',
@@ -515,7 +515,7 @@ class CustomOrderPipeline
             "Your quote for {$request->title} expired on {$when}. Contact us if you'd still like to proceed."
         );
 
-        $name = trim($request->user->first_name . ' ' . $request->user->last_name);
+        $name = \App\Support\NameFormat::proper(trim($request->user->first_name . ' ' . $request->user->last_name));
         $this->notifyAdmins(
             $request,
             'Quote Expired',
@@ -614,7 +614,7 @@ class CustomOrderPipeline
             $localS = $local->format('Y-m-d H:i:s T');
 
             $terms = AgreementTerms::fromQuote($quote, $request, $policy, $now, $referenceImage);
-            $customerName = trim($request->user->first_name . ' ' . $request->user->last_name);
+            $customerName = \App\Support\NameFormat::proper(trim($request->user->first_name . ' ' . $request->user->last_name));
 
             $agreement = null;
             for ($attempt = 0; $attempt < 5 && !$agreement; $attempt++) {
@@ -731,7 +731,7 @@ class CustomOrderPipeline
                 'quote_id' => $quote->id, 'version' => $quote->version, 'reason' => $reason,
             ], CustomOrderEvent::ACTOR_CUSTOMER);
 
-            $name = trim($request->user->first_name . ' ' . $request->user->last_name);
+            $name = \App\Support\NameFormat::proper(trim($request->user->first_name . ' ' . $request->user->last_name));
 
             $this->notifyCustomer($request, 'Quote Declined', "You declined the quote for {$request->title}.");
             $this->notifyAdmins(

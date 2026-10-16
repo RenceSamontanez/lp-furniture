@@ -136,7 +136,7 @@ class CustomOrderTimeline
                 'detail' => $detail,
                 'actor'  => match ($e->actor_type) {
                     'admin'    => isset($actors[$e->actor_id])
-                        ? trim($actors[$e->actor_id]->first_name . ' ' . $actors[$e->actor_id]->last_name)
+                        ? NameFormat::proper(trim($actors[$e->actor_id]->first_name . ' ' . $actors[$e->actor_id]->last_name))
                         : 'Admin',
                     'customer' => 'Customer',
                     default    => 'System',
@@ -154,7 +154,7 @@ class CustomOrderTimeline
                     $p->gateway_reference ? 'Ref ' . $p->gateway_reference : null,
                     $p->note ? 'Note: ' . $p->note : null,
                 ])->filter()->implode(' · '),
-                'actor'  => $p->recorder ? trim($p->recorder->first_name . ' ' . $p->recorder->last_name) : 'System',
+                'actor'  => $p->recorder ? NameFormat::proper(trim($p->recorder->first_name . ' ' . $p->recorder->last_name)) : 'System',
                 'kind'   => 'payment',
             ];
         }

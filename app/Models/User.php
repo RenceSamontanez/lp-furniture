@@ -30,6 +30,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'contact_saved_at',
     ];
 
+    // Display only; the stored name is never changed.
+    public function getDisplayNameAttribute(): string
+    {
+        return \App\Support\NameFormat::proper(trim($this->first_name . ' ' . $this->last_name));
+    }
+
     protected $hidden = [
         'password',
         'remember_token',

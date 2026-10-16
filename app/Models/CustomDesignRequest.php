@@ -158,6 +158,27 @@ class CustomDesignRequest extends Model
         return in_array($this->pipeline_status, ['submitted', 'contacting', 'unreachable'], true);
     }
 
+    // The picture to show the team: the selected concept if it can be
+    // loaded, else the customer's own reference image, else null.
+    public function previewImageUrl(): ?string
+    {
+        $selected = $this->selectedSuggestion;
+        if ($selected && $selected->isLoadable()) {
+            return $selected->displayUrl();
+        }
+
+        $chosen = $this->suggestions->firstWhere('is_selected', true);
+        if ($chosen && $chosen->isLoadable()) {
+            return $chosen->displayUrl();
+        }
+
+        if ($this->reference_image && \Illuminate\Support\Facades\Storage::disk('public')->exists($this->reference_image)) {
+            return asset('storage/' . $this->reference_image);
+        }
+
+        return null;
+    }
+
     public function callWindowLabel(): ?string
     {
         return self::CALL_WINDOWS[$this->preferred_call_window] ?? null;

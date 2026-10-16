@@ -324,7 +324,7 @@ class CustomDesignController extends Controller
                 'occurred_at' => now(),
             ]);
 
-            $name = trim($user->first_name . ' ' . $user->last_name);
+            $name = \App\Support\NameFormat::proper(trim($user->first_name . ' ' . $user->last_name));
             foreach (User::where('role', 'admin')->pluck('id') as $adminId) {
                 Notification::create([
                     'user_id' => $adminId,
@@ -509,7 +509,7 @@ class CustomDesignController extends Controller
                 'is_read' => false,
             ]);
 
-            $customerName = trim($user->first_name . ' ' . $user->last_name);
+            $customerName = \App\Support\NameFormat::proper(trim($user->first_name . ' ' . $user->last_name));
             foreach (User::where('role', 'admin')->pluck('id') as $adminId) {
                 Notification::create([
                     'user_id' => $adminId,

@@ -8,6 +8,7 @@
 @endpush
 
 @section('content')
+<div class="co-page">
 @php $r = $designRequest; @endphp
 
 <a href="{{ route('admin.custom-orders.show', $r->id) }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">← Back to request</a>
@@ -15,7 +16,7 @@
 <div class="admin-panel" style="max-width:760px;">
   <div class="admin-panel-header">
     <div class="admin-panel-title">
-      Send ₱{{ number_format($summary['total'], 2) }} quote to {{ $r->user->first_name }} {{ $r->user->last_name }} ({{ $r->contact_phone }})?
+      Send ₱{{ number_format($summary['total'], 2) }} quote to {{ $r->user->display_name }} ({{ $r->contact_phone }})?
     </div>
   </div>
   <div class="admin-panel-body">
@@ -35,5 +36,6 @@
       <button type="submit" class="admin-btn admin-btn-gold">Send quote</button>
     </form>
   </div>
+</div>
 </div>
 @endsection

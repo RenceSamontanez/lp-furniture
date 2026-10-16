@@ -400,3 +400,7 @@
 .co-check { display: flex; align-items: flex-start; gap: 10px; margin-top: 12px; font-size: 13px; color: var(--text-muted); cursor: pointer; }
 .co-check input { width: 16px; height: 16px; margin-top: 2px; }
 .co-edit-note { font-size: 12.5px; color: var(--text-muted); margin-top: 10px; }
+/* Lining numerals on every customer-facing custom order page (Stage 13) */
+.cd-wrap, .co-card, .co-title, .co-status, .co-quote-card, .co-policy {
+  font-variant-numeric: lining-nums tabular-nums;
+}

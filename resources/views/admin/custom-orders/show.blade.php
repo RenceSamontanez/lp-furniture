@@ -9,6 +9,7 @@
 @endpush
 
 @section('content')
+<div class="co-page">
 @php
   $r = $designRequest;
   $labels = \App\Support\CustomOrderPipeline::LABELS;
@@ -46,7 +47,7 @@
       </div>
       <div class="admin-panel-body">
         <dl class="co-dl">
-          <div><dt>Customer</dt><dd>{{ $r->user->first_name }} {{ $r->user->last_name }}</dd></div>
+          <div><dt>Customer</dt><dd>{{ $r->user->display_name }}</dd></div>
           <div><dt>Phone</dt><dd><a href="tel:{{ $r->contact_phone }}">{{ $r->contact_phone }}</a></dd></div>
           <div><dt>Email</dt><dd><a href="mailto:{{ $r->contact_email }}">{{ $r->contact_email }}</a></dd></div>
           <div><dt>Preferred call window</dt><dd>{{ $r->callWindowLabel() }}</dd></div>
@@ -74,14 +75,21 @@
     <div class="admin-panel">
       <div class="admin-panel-header"><div class="admin-panel-title">Selected design</div></div>
       <div class="admin-panel-body">
-        @if($selected && $selected->isLoadable())
-          <div class="co-design-frame">
-            <img src="{{ $selected->displayUrl() }}" alt="Selected design"
-                 onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
+        @php $designImage = $r->previewImageUrl(); @endphp
+        <div class="co-design-summary">
+          @if($designImage)
+            <div class="co-design-frame">
+              <img src="{{ $designImage }}" alt="Selected design"
+                   onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
+            </div>
+          @else
+            <div class="co-noimage">No image generated</div>
+          @endif
+          <div class="co-design-prompt">
+            <div class="co-block-label">Customer's prompt</div>
+            <div class="co-quote">{{ $r->description }}</div>
           </div>
-        @else
-          <div class="co-noimage">No image generated</div>
-        @endif
+        </div>
 
         @if($r->reference_image)
           <div class="co-block-label">Customer's reference image</div>
@@ -335,6 +343,7 @@
   </div>
 </div>
 @endif
+</div>
 @endsection
 
 @push('scripts')

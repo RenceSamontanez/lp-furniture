@@ -21,10 +21,10 @@
     </header>
 
     <table class="ag-meta">
-      <tr><th>Customer</th><td>{{ $terms['people']['customer']['name'] ?? '' }}</td></tr>
+      <tr><th>Customer</th><td>{{ \App\Support\NameFormat::proper($terms['people']['customer']['name'] ?? '') }}</td></tr>
       <tr><th>Agreed on</th><td>{{ $agreement->accepted_at->timezone('Asia/Manila')->format('M d, Y h:i A') }} (Philippine time)</td></tr>
       <tr><th>Policy version</th><td>{{ $agreement->policy_version }}</td></tr>
-      <tr><th>Prepared by</th><td>{{ $terms['people']['finalized_by']['name'] ?? '' }}</td></tr>
+      <tr><th>Prepared by</th><td>{{ \App\Support\NameFormat::proper($terms['people']['finalized_by']['name'] ?? '') }}</td></tr>
     </table>
 
     @if($imageUrl)
