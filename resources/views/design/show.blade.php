@@ -31,12 +31,6 @@
   <div class="co-layout {{ $showMedia ? 'co-layout--media' : '' }}">
   <div class="co-main">
 
-  @if(session('success'))
-    <div class="auth-success" style="max-width:680px;margin:0 auto 20px;">{{ session('success') }}</div>
-  @endif
-  @if(session('info'))
-    <div class="co-flash-info">{{ session('info') }}</div>
-  @endif
 
   @if($errors->has('quote'))
     <div class="co-error" role="alert">{{ $errors->first('quote') }}</div>

@@ -22,9 +22,6 @@
     <p class="orders-subtitle">View your order history and track the status of current orders.</p>
   </div>
 
-  @if(session('success'))
-    <div class="auth-success" style="margin-bottom:20px;">{{ session('success') }}</div>
-  @endif
 
   @if($orders->isEmpty())
 

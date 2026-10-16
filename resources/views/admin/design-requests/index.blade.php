@@ -11,9 +11,6 @@
   <a href="{{ route('admin.design-requests.index', ['status'=>'all']) }}" class="admin-filter-tab {{ $status==='all'?'active':'' }}">All</a>
 </div>
 
-@if(session('success'))
-  <div class="admin-toast admin-toast-success" style="margin:0 0 20px;">{{ session('success') }}</div>
-@endif
 
 <div class="admin-panel">
   <div class="admin-panel-body" style="padding:0;">

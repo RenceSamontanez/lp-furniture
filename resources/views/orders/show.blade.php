@@ -32,9 +32,6 @@
   @if($errors->any())
     <div class="co-error" role="alert" style="margin-bottom:20px;">@foreach($errors->all() as $error)<div>{{ $error }}</div>@endforeach</div>
   @endif
-  @if(session('success'))
-    <div class="auth-success" style="margin-bottom:20px;">{{ session('success') }}</div>
-  @endif
 
   {{-- Status Timeline --}}
   @php

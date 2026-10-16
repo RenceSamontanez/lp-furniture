@@ -20,7 +20,6 @@
     </a>
   </div>
 
-  @if(session('info'))<div class="co-flash-info">{{ session('info') }}</div>@endif
 
   <div class="co-layout {{ $imageUrl ? 'co-layout--media' : '' }}">
   <div class="co-main">

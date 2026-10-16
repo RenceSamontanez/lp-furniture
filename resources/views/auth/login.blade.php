@@ -33,9 +33,6 @@
 
     <div class="auth-divider"><span>or sign in with email</span></div>
 
-    @if(session('success'))
-      <div class="auth-success">{{ session('success') }}</div>
-    @endif
 
     {{-- Bounced here from a protected route (auth middleware's
          redirect()->guest() sets url.intended) — could mean the

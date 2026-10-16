@@ -31,9 +31,6 @@
       </p>
     </div>
 
-    @if(session('success'))
-      <div class="auth-success" style="margin-top:16px;">{{ session('success') }}</div>
-    @endif
 
     <div class="auth-verify-actions">
       <form method="POST" action="{{ route('verification.send') }}">

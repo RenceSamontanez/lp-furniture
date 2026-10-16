@@ -61,11 +61,8 @@
       @endif
     </div>
 
-    @if(session('success') || $errors->any())
+    @if($errors->any())
       <div class="val-alerts">
-        @if(session('success'))
-          <div class="auth-success">{{ session('success') }}</div>
-        @endif
         @if($errors->any())
           <div class="auth-errors">
             @foreach($errors->all() as $error)

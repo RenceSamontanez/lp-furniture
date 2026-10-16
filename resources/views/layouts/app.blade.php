@@ -76,24 +76,8 @@
 <!-- Dark overlay behind mobile menu -->
 <div class="nav-overlay" id="nav-overlay" onclick="toggleMobileNav()"></div>
 
-<!-- ═══ TOAST MESSAGES FROM SESSION ═══ -->
-@if(session('success'))
-<div class="toast show toast-session" id="toast-success" style="background:var(--brown-deep);">
-  ✅ {{ session('success') }}
-</div>
-@endif
-
-@if(session('error'))
-<div class="toast show toast-session" id="toast-error" style="background:var(--danger);">
-  ⚠️ {{ session('error') }}
-</div>
-@endif
-
-@if(session('warning'))
-<div class="toast show toast-session" id="toast-warning" style="background:#92400E;">
-  ⚠️ {{ session('warning') }}
-</div>
-@endif
+<!-- ═══ SESSION ALERTS (toasts) ═══ -->
+@include('partials.alerts')
 
 <!-- ═══ PAGE CONTENT ═══ -->
 <main>
@@ -151,16 +135,6 @@
 
 <script src="{{ asset('assets/main.js') }}"></script>
 @stack('scripts')
-
-<script>
-  // Auto-hide ALL session toasts after 3.5 seconds
-  document.querySelectorAll('.toast-session').forEach(function(t) {
-    setTimeout(function() {
-      t.classList.remove('show');
-      setTimeout(function() { t.remove(); }, 400);
-    }, 3500);
-  });
-</script>
 
 </body>
 </html>

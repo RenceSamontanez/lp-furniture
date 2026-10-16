@@ -87,11 +87,8 @@
         <button type="button" class="profile-mobile-tab" data-profile-tab="account">Account</button>
       </div>
 
-      @if(session('success') || $errors->any())
+      @if($errors->any())
         <div class="profile-alerts">
-          @if(session('success'))
-            <div class="auth-success">{{ session('success') }}</div>
-          @endif
           @if($errors->any())
             <div class="auth-errors">
               @foreach($errors->all() as $error)

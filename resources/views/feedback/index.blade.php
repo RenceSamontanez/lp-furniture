@@ -29,9 +29,6 @@
     </div>
   </div>
 
-  @if(session('success'))
-    <div class="auth-success" style="max-width:720px;margin:0 auto 24px;">{{ session('success') }}</div>
-  @endif
 
   @if($errors->any())
     <div class="auth-errors" style="max-width:720px;margin:0 auto 24px;">

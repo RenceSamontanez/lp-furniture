@@ -141,12 +141,7 @@
       </div>
     </div>
 
-    @if(session('success'))
-      <div class="admin-toast admin-toast-success">{{ session('success') }}</div>
-    @endif
-    @if($errors->any() && !($hideGlobalErrorToast ?? false))
-      <div class="admin-toast admin-toast-error">{{ $errors->first() }}</div>
-    @endif
+    @include('partials.alerts', ['toastValidation' => !($hideGlobalErrorToast ?? false)])
 
     <div class="admin-content">
       @yield('content')
@@ -155,6 +150,7 @@
 
 </div>
 @else
+  @include('partials.alerts')
   @yield('content')
 @endif
 

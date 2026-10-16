@@ -21,9 +21,6 @@
     </a>
   </div>
 
-  @if(session('success'))
-    <div class="auth-success" style="margin-bottom:20px;">{{ session('success') }}</div>
-  @endif
 
   <div class="cd-layout">
 

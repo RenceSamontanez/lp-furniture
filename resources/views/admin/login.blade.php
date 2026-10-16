@@ -48,9 +48,6 @@
         <p class="admin-login-sub">Enter your credentials to access the dashboard.</p>
       </div>
 
-      @if(session('success'))
-        <div class="admin-toast admin-toast-success" style="margin:0 0 16px;">{{ session('success') }}</div>
-      @endif
 
       @if($errors->any())
         <div class="admin-toast admin-toast-error" style="margin:0 0 16px;">{{ $errors->first() }}</div>

@@ -17,15 +17,6 @@
   </div>
 
   {{-- Session messages --}}
-  @if(session('success'))
-    <div class="auth-success" style="margin-bottom:20px;">{{ session('success') }}</div>
-  @endif
-
-  @if(session('error'))
-    <div class="auth-errors" style="margin-bottom:20px;">
-      <div class="auth-error-item">{{ session('error') }}</div>
-    </div>
-  @endif
 
   @if($cartItems->isEmpty())
 

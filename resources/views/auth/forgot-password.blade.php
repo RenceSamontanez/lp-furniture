@@ -21,9 +21,6 @@
       <p class="auth-sub">Enter your email address and we'll send you a secure link to reset your password.</p>
     </div>
 
-    @if(session('success'))
-      <div class="auth-success">{{ session('success') }}</div>
-    @endif
 
     @if($errors->any())
       <div class="auth-errors">

@@ -7,9 +7,6 @@
 
 <a href="{{ route('admin.design-requests.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">← Back to Design Requests</a>
 
-@if(session('success'))
-  <div class="admin-toast admin-toast-success" style="margin:0 0 20px;">{{ session('success') }}</div>
-@endif
 
 @if($designRequest->pipeline_status !== null)
   <div class="admin-toast admin-toast-success" style="margin:0 0 20px;">

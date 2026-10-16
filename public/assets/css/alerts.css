@@ -1,0 +1,77 @@
+/* Session alerts as toasts (partials/alerts.blade.php, js/alerts.js).
+   Top right on desktop, full width at the top on phones. */
+
+.lp-toasts {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 10050;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(420px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.lp-toast {
+  --lp-toast-bg: #F6F1E8;
+  --lp-toast-edge: #B9A88F;
+  --lp-toast-ink: #3D3129;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 10px 12px 14px;
+  background: var(--lp-toast-bg);
+  color: var(--lp-toast-ink);
+  border: 1px solid var(--lp-toast-edge);
+  border-left-width: 4px;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(42, 24, 16, 0.14);
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  font-size: 13.5px;
+  line-height: 1.45;
+  pointer-events: auto;
+  animation: lp-toast-in .22s ease-out;
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.lp-toast--success { --lp-toast-bg: #EAF6EE; --lp-toast-edge: #2F8F5B; --lp-toast-ink: #17412C; }
+.lp-toast--error   { --lp-toast-bg: #FDECEC; --lp-toast-edge: #C0392B; --lp-toast-ink: #7A1F16; }
+.lp-toast--warning { --lp-toast-bg: #FFF4DC; --lp-toast-edge: #D99A1E; --lp-toast-ink: #6B4700; }
+
+.lp-toast.is-leaving { opacity: 0; transform: translateY(-6px); }
+
+.lp-toast-icon { flex-shrink: 0; margin-top: 2px; }
+.lp-toast-msg { flex: 1; min-width: 0; overflow-wrap: anywhere; font-weight: 500; }
+
+.lp-toast-close {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  margin: -2px 0 0;
+  background: transparent;
+  color: inherit;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: .7;
+}
+.lp-toast-close:hover { opacity: 1; background: rgba(0, 0, 0, 0.06); }
+.lp-toast-close:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; opacity: 1; }
+
+@keyframes lp-toast-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (max-width: 640px) {
+  .lp-toasts { top: 0; right: 0; left: 0; width: 100%; padding: 10px 12px 0; gap: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-toast { animation: none; transition: none; }
+}
