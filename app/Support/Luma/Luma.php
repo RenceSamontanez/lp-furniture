@@ -38,8 +38,8 @@ final class Luma
             return self::finish(self::build($budget['text'], $more, 'budget', $lang, cards: $budget['cards'], buttons: $budget['buttons']));
         }
 
-        // "doors" on its own: show the doors
-        if ($type = ProductFinder::detectType($message)) {
+        // "doors" on its own: show the doors (a type we have nothing of is an unanswered question, so it is logged as one)
+        if (($type = ProductFinder::detectType($message)) && ProductFinder::available($type)->isNotEmpty()) {
             $reply = self::productsReply(self::build('', self::chips(['Prices', 'Custom design', 'Delivery'], $lang), 'product_type', $lang), $type, false);
 
             return self::finish($reply);
@@ -101,6 +101,7 @@ final class Luma
         return match ($def['handler'] ?? null) {
             'products' => self::productsReply($reply, ProductFinder::detectType($message), $intent->category === 'luma_ready_made'),
             'range'    => self::rangeReply($reply, ProductFinder::detectType($message)),
+            'labor'    => self::laborReply($reply),
             default    => $reply,
         };
     }
@@ -183,6 +184,16 @@ final class Luma
 
         $reply['cards']   = ProductFinder::cards($shown);
         $reply['buttons'] = [self::button('View more products', 'Tingnan ang iba pang produkto', ProductFinder::catalogUrl($type), $lang)];
+
+        return $reply;
+    }
+
+    /** Labor only: the contact card sits under the text; with no phone or email set, the text says "through our website". */
+    private static function laborReply(array $reply): array
+    {
+        if ($reply['contact'] === null) {
+            $reply['text'] = rtrim($reply['text'], ': ') . '. ' . Contact::sentence($reply['lang']);
+        }
 
         return $reply;
     }

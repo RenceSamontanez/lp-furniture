@@ -37,6 +37,8 @@ Route::get('/reviews', [FeedbackController::class, 'index'])->name('feedback.ind
 Route::get('/terms', [\App\Http\Controllers\TermsController::class, 'show'])->name('terms');
 Route::get('/guide', [\App\Http\Controllers\GuideController::class, 'show'])->name('guide');
 Route::post('/chatbot', [ChatbotController::class, 'respond'])->name('chatbot.respond');
+// Labor-only requests: the form comes in the next stage; until then a plain "coming soon" page
+Route::view('/services/request', 'services.coming-soon')->name('services.request');
 
 // ============================================================
 // GUEST ONLY ROUTES

@@ -306,6 +306,7 @@ class LumaDefaultsTest extends TestCase
     public function test_the_defaults_mention_made_to_order_where_the_owner_asked(): void
     {
         $this->artisan('chatbot:sync-defaults')->assertSuccessful();
+        \App\Models\Product::create(['product_name' => 'Panel Door', 'category' => 'Doors', 'price' => 5000, 'stock_quantity' => 1, 'product_status' => 'available']);
 
         foreach (['how long does it take', 'how does the custom design work', 'do you have ready made doors'] as $q) {
             $this->assertStringContainsStringIgnoringCase('made to order', $this->ask($q)['response'], $q);
