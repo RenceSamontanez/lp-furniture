@@ -20,6 +20,8 @@ class CustomDesignRequest extends Model
         'budget_min',
         'budget_max',
         'preferred_material',
+        'wood_special_details',
+        'wood_supply',
         'preferred_finish',
         'style_preference',
         'dimensions',
@@ -83,6 +85,22 @@ class CustomDesignRequest extends Model
         $d = $this->dimensions_cm;
 
         return $d ? \App\Support\Dimensions::triplet($d['length'], $d['width'], $d['height'], $this->dimension_unit) : null;
+    }
+
+    /** "Mahogany", or the special request in words. */
+    public function getWoodLabelAttribute(): string
+    {
+        return \App\Support\WoodChoices::label($this->preferred_material, $this->wood_special_details, $this->wood_supply);
+    }
+
+    public function getIsSpecialWoodAttribute(): bool
+    {
+        return \App\Support\WoodChoices::isSpecial($this->preferred_material);
+    }
+
+    public function getSuppliesOwnWoodAttribute(): bool
+    {
+        return $this->is_special_wood && $this->wood_supply === \App\Support\WoodChoices::SUPPLY_CUSTOMER;
     }
 
     /** For a sentence: "chair", "pergola", or "custom furniture" when there is no type. */

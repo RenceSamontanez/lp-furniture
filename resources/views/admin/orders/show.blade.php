@@ -25,6 +25,8 @@
                 <td data-label="Product">{{ $order->design_agreement_id ? ($item->product_name ?: 'Custom order') : ($item->product->product_name ?? 'N/A') }}
                   @php $itemType = $order->design_agreement_id && $order->agreement ? ($order->agreement->terms_snapshot['design']['furniture_type'] ?? null) : null; @endphp
                   @if($itemType)<div style="font-size:11.5px;color:var(--text-muted);">Furniture type: {{ $itemType }}</div>@endif
+                  @php $itemWood = $order->design_agreement_id && $order->agreement ? ($order->agreement->terms_snapshot['design']['wood'] ?? null) : null; @endphp
+                  @if($itemWood)<div style="font-size:11.5px;color:var(--text-muted);">Wood: {{ $itemWood['label'] }}@if(($itemWood['supply'] ?? null) === 'customer') <strong>(customer-supplied material)</strong>@endif</div>@endif
                   @php $itemQ = $order->design_agreement_id && $order->agreement ? ($order->agreement->terms_snapshot['quote'] ?? null) : null; @endphp
                   @if($itemQ && isset($itemQ['width_cm']))<div style="font-size:11.5px;color:var(--text-muted);">Size (length x width x height): {{ \App\Support\Dimensions::triplet($itemQ['width_cm'], $itemQ['depth_cm'], $itemQ['height_cm'], $itemQ['dimension_unit'] ?? null) }}</div>@endif
                 </td>

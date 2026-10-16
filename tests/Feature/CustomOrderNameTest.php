@@ -153,7 +153,7 @@ class CustomOrderNameTest extends TestCase
         $customer = $this->makeUserNamed('MARY JANE');
 
         $this->asCustomer($customer)->post(route('design.submit'), [
-            'furniture_type' => 'Chair', 'prompt' => 'A sturdy narra dining chair with a curved back', 'preferred_material' => 'Narra',
+            'furniture_type' => 'Chair', 'prompt' => 'A sturdy narra dining chair with a curved back', 'preferred_material' => 'Gmelina',
         ]);
 
         $r = CustomDesignRequest::where('user_id', $customer->id)->latest('id')->first();

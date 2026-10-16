@@ -369,7 +369,8 @@ class GenerateAiDesign implements ShouldQueue
             $parts[] = "Furniture type: {$request->furniture_type}.";
         }
 
-        if ($request->preferred_material) {
+        // A special request wood is the team's to settle, so it is not put into the picture prompt.
+        if ($request->preferred_material && !\App\Support\WoodChoices::isSpecial($request->preferred_material)) {
             $parts[] = "Wood: {$request->preferred_material}.";
         }
 

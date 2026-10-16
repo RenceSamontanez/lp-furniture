@@ -2140,3 +2140,12 @@
 .cd-size-error { margin: 8px 0 0; font-size: 12.5px; color: var(--danger, #B04040); }
 .cd-size-error:empty { display: none; }
 @media (max-width: 560px) { .cd-size-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .cd-size-unit { grid-column: 1 / -1; } }
+
+/* Wood choice (Stage 18) */
+.cd-wood-group { border: 0; margin: 0 0 16px; padding: 0; min-width: 0; }
+.cd-wood-group legend { padding: 0; margin-bottom: 8px; }
+.cd-wood-special { margin-top: 12px; padding: 12px 14px; border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 12px; background: #fff; }
+.cd-wood-special[hidden] { display: none; }
+.cd-wood-special .form-input { width: 100%; }
+.cd-wood-supply { display: grid; gap: 8px; margin-top: 10px; }
+.cd-wood-supply .ai-radio-chip { width: 100%; }

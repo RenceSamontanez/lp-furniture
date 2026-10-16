@@ -56,6 +56,50 @@
           <p class="cd-type-error" id="cd-type-error" role="alert">@error('furniture_type'){{ $message }}@enderror @error('furniture_type_other'){{ $message }}@enderror</p>
         </div>
 
+        <textarea
+          name="prompt"
+          id="cd-prompt-input"
+          class="cd-prompt-textarea"
+          required
+          minlength="15"
+          maxlength="1000"
+          placeholder="e.g. Highly detailed six-seater dining table made of solid Narra wood, modern minimalist style with rounded edges, natural finish, warm golden-brown tone..."
+          oninput="updateCdPromptCount()"
+        >{{ old('prompt', $prefillPrompt) }}</textarea>
+        <div class="cd-prompt-footer">
+          <span class="cd-prompt-hint">Describe the furniture you want, in your own words.</span>
+          <span class="cd-prompt-count" id="cd-prompt-count">0 / 1000</span>
+        </div>
+
+        <fieldset class="cd-wood-group">
+          <legend class="form-label">Wood <span class="cd-required">(required)</span></legend>
+          @php $woodOld = old('preferred_material'); @endphp
+          <div class="ai-radio-grid cd-wood-grid">
+            @foreach(\App\Support\WoodChoices::LIST as $wood)
+              <label class="ai-radio-chip">
+                <input type="radio" name="preferred_material" value="{{ $wood }}" required @checked($woodOld === $wood)/>
+                <span>{{ $wood }}</span>
+              </label>
+            @endforeach
+          </div>
+
+          <div class="cd-wood-special" id="cd-wood-special" @if($woodOld !== \App\Support\WoodChoices::SPECIAL) hidden @endif>
+            <label class="form-label" for="cd-wood-details">What wood do you want, and who will supply it?</label>
+            <textarea id="cd-wood-details" name="wood_special_details" class="form-input" rows="3" maxlength="{{ \App\Support\WoodChoices::DETAILS_MAX }}"
+                      placeholder="e.g. Old narra beams from our house, I will bring them to the shop">{{ old('wood_special_details') }}</textarea>
+            <div class="cd-wood-supply">
+              @foreach(\App\Support\WoodChoices::SUPPLY as $value => $text)
+                <label class="ai-radio-chip">
+                  <input type="radio" name="wood_supply" value="{{ $value }}" @checked(old('wood_supply') === $value)/>
+                  <span>{{ $text }}</span>
+                </label>
+              @endforeach
+            </div>
+            <p class="cd-type-hint">We do not give an automatic price for a special request. Our team will call you and set the price by hand.</p>
+          </div>
+          <p class="cd-type-error" id="cd-wood-error" role="alert">@error('preferred_material'){{ $message }}@enderror @error('wood_special_details'){{ $message }}@enderror @error('wood_supply'){{ $message }}@enderror</p>
+        </fieldset>
+
         <fieldset class="cd-size-group">
           <legend class="form-label">Size <span class="cd-required">(optional, leave empty if you are not sure yet)</span></legend>
           <p class="cd-size-hint" id="cd-size-hint">
@@ -82,20 +126,6 @@
           <p class="cd-size-error" id="cd-size-error" role="alert">@foreach(['dimension_length', 'dimension_width', 'dimension_height', 'dimension_unit'] as $f)@error($f){{ $message }} @enderror @endforeach</p>
         </fieldset>
 
-        <textarea
-          name="prompt"
-          id="cd-prompt-input"
-          class="cd-prompt-textarea"
-          required
-          minlength="15"
-          maxlength="1000"
-          placeholder="e.g. Highly detailed six-seater dining table made of solid Narra wood, modern minimalist style with rounded edges, natural finish, warm golden-brown tone..."
-          oninput="updateCdPromptCount()"
-        >{{ old('prompt', $prefillPrompt) }}</textarea>
-        <div class="cd-prompt-footer">
-          <span class="cd-prompt-hint">Describe the furniture you want, in your own words.</span>
-          <span class="cd-prompt-count" id="cd-prompt-count">0 / 1000</span>
-        </div>
 
         <button type="button" class="cd-optional-pill" onclick="openCdOptionalPanel()">
           <span class="cd-optional-pill-left">
@@ -120,7 +150,6 @@
           @endif
         </p>
 
-        <input type="hidden" name="preferred_material" id="cd-hidden-material" value="{{ old('preferred_material', 'No Preference') }}"/>
         <input type="hidden" name="additional_info" id="cd-hidden-additional" value="{{ old('additional_info') }}"/>
       </form>
     </div>
@@ -209,18 +238,6 @@
       </div>
 
       <div class="cd-modal-body">
-        <div class="ai-field-group">
-          <label class="form-label">Preferred Wood Type</label>
-          <div class="ai-radio-grid">
-            @foreach(['Narra','Mahogany','Acacia','Gemelina','Oak','Pine','No Preference'] as $wood)
-              <label class="ai-radio-chip">
-                <input type="radio" name="cd_modal_material" value="{{ $wood }}" {{ $wood === 'No Preference' ? 'checked' : '' }}/>
-                <span>{{ $wood }}</span>
-              </label>
-            @endforeach
-          </div>
-        </div>
-
         <div class="ai-field-group">
           <label class="form-label">Additional Information <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
           <textarea id="cd-modal-additional" class="form-input" rows="3"
@@ -364,14 +381,11 @@ function closeCdHowItWorksOnBackdrop(e) {
 }
 
 function saveCdOptionalPanel() {
-  const material = document.querySelector('input[name="cd_modal_material"]:checked')?.value || 'No Preference';
   const additional = document.getElementById('cd-modal-additional').value;
 
-  document.getElementById('cd-hidden-material').value = material;
   document.getElementById('cd-hidden-additional').value = additional;
 
   const parts = [];
-  if (material && material !== 'No Preference') parts.push(material);
   document.getElementById('cd-optional-summary').textContent = parts.length ? parts.join(' · ') : 'Furniture Type & Details';
 
   closeCdOptionalPanel();
@@ -379,6 +393,19 @@ function saveCdOptionalPanel() {
 
 document.addEventListener('DOMContentLoaded', function () {
   updateCdPromptCount();
+
+  // A special wood asks what wood and who supplies it.
+  const woodSpecial = document.getElementById('cd-wood-special');
+  const woodDetails = document.getElementById('cd-wood-details');
+  const syncWood = function () {
+    const picked = document.querySelector('input[name="preferred_material"]:checked');
+    const special = !!picked && picked.value === @json(\App\Support\WoodChoices::SPECIAL);
+    woodSpecial.hidden = !special;
+    woodDetails.required = special;
+    document.querySelectorAll('input[name="wood_supply"]').forEach(function (r) { r.required = special; });
+  };
+  document.querySelectorAll('input[name="preferred_material"]').forEach(function (r) { r.addEventListener('change', syncWood); });
+  syncWood();
 
   // "Other" asks for a short description of the piece.
   const typeSelect = document.getElementById('cd-furniture-type');

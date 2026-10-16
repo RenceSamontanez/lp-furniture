@@ -51,6 +51,8 @@ final class AgreementTerms
                 'title'           => \App\Support\CustomOrderName::for($request->user),
                 // New agreements record the type the customer chose. Nothing is added when
                 // an older request has none, and existing snapshots are never rewritten.
+                // The wood the customer chose, for new agreements. A special request records what it is and who supplies it.
+                ...(filled($request->preferred_material) ? ['wood' => ['choice' => $request->preferred_material, 'label' => \App\Support\WoodChoices::label($request->preferred_material, $request->wood_special_details, $request->wood_supply), 'supply' => $request->wood_supply]] : []),
                 ...(filled($request->furniture_type) ? ['furniture_type' => \App\Support\FurnitureTypes::label($request->furniture_type, $request->furniture_type_other)] : []),
                 'request_id'      => $request->id,
                 'reference_image' => $referenceImage,

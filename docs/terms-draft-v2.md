@@ -19,6 +19,17 @@ Each one is marked `[TO CONFIRM]` in the text below.
 9. **Defects and warranty.** We repair defects in workmanship and materials for [TO CONFIRM: warranty length, for example 6 months or 1 year] from the date of delivery or pickup.
 10. **Your data and privacy.** You may ask to see or correct your data, or ask us to delete what we are not required to keep, by contacting us below. [TO CONFIRM: retention period and the name of the person responsible for data privacy.]
 
+## Customer-supplied material (not in version 2 yet)
+
+A special wood request can mean the customer brings their own wood and pays for labor only. Version 2 is stored and cannot be edited, and it has no rules for this. Decide the points below and add them as version 3 (a new migration). Until then, the team handles these requests by hand, and the admin pages flag them as "Special wood request" and "Customer-supplied material".
+
+1. **Material quality.** We may refuse supplied wood that is not suitable. [TO CONFIRM: what makes wood unsuitable, for example moisture, rot, insects, warping, minimum thickness or quantity.]
+2. **Waste and offcuts.** Some wood is lost in cutting. [TO CONFIRM: how much extra wood must be supplied, for example a percentage, and who keeps the offcuts.]
+3. **Damage.** Wood can crack or hide defects while it is worked. [TO CONFIRM: who bears the cost if supplied wood splits or is damaged, and any limit on our liability.]
+4. **Delivery of the material.** [TO CONFIRM: who delivers the wood to the shop, by which date, and what happens if it arrives late. The ready date would count from the day the wood is received.]
+5. **No warranty on the material.** We do not give a warranty on wood the customer supplies. [TO CONFIRM: the workmanship warranty length and conditions for these orders.]
+6. **Price.** The labor-only price is set by hand on the quote. [TO CONFIRM: how it is worked out, and whether a deposit is still at least 50 percent.]
+
 ## Draft text as customers see it
 
 `{contact_phone}` and `{contact_email}` are filled in from Contact Settings.

@@ -74,7 +74,18 @@
               @endif
             </dd>
           </div>
-          <div><dt>Preferred material</dt><dd>{{ $r->preferred_material ?: '—' }}</dd></div>
+          <div class="co-span-2">
+            <dt>Wood</dt>
+            <dd>
+              {{ \App\Support\WoodChoices::isSpecial($r->preferred_material) ? 'Special request' : ($r->preferred_material ?: '—') }}
+              @if($r->is_special_wood)
+                <span class="co-flag co-flag--warn">Special wood request</span>
+                @if($r->supplies_own_wood)<span class="co-flag co-flag--warn">Customer-supplied material</span>@else<span class="co-flag">Wood supplied by the shop</span>@endif
+                <div class="co-flag-note">{{ $r->wood_special_details }}</div>
+                <div class="co-flag-note">No automatic price. Set the quote price by hand.</div>
+              @endif
+            </dd>
+          </div>
           <div><dt>Size (length x width x height)</dt><dd>{{ $r->dimensions_label ?: '—' }}</dd></div>
         </dl>
       </div>

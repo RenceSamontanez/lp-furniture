@@ -37,6 +37,15 @@
         @if($nextVersion > 1)<span class="co-version-badge">Version {{ $nextVersion }}</span>@endif
       </div>
       <div class="admin-panel-body">
+        @if($r->is_special_wood)
+          <div class="co-flag-box">
+            <span class="co-flag co-flag--warn">Special wood request</span>
+            @if($r->supplies_own_wood)<span class="co-flag co-flag--warn">Customer-supplied material</span>@endif
+            <p>{{ $r->wood_special_details }}</p>
+            <p>There is no automatic price for this wood. Set the price by hand and check the material rules in the Terms and Conditions.</p>
+          </div>
+        @endif
+
         @if($basedOn)
           <p class="co-hint">Pre-filled from version {{ $basedOn->version }}. Saving creates a new draft; the customer keeps seeing the current quote until you send it.</p>
         @endif

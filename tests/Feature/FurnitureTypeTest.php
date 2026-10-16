@@ -37,7 +37,7 @@ class FurnitureTypeTest extends TestCase
     {
         return $this->asCustomer($u)->post(route('design.submit'), array_merge([
             'prompt' => 'A sturdy narra piece with a smooth natural finish and rounded edges',
-            'furniture_type' => 'Chair',
+            'furniture_type' => 'Chair', 'preferred_material' => 'Mahogany',
         ], $over));
     }
 

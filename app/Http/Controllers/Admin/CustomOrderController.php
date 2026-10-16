@@ -403,7 +403,7 @@ class CustomOrderController extends Controller
     {
         $base = [
             'final_description' => $r->description,
-            'material'          => $r->preferred_material,
+            'material'          => \App\Support\WoodChoices::quoteMaterial($r->preferred_material, $r->wood_special_details, $r->wood_supply),
             'delivery_option'   => 'pickup',
             'delivery_fee'      => '',
             'payment_terms'     => 'full',
