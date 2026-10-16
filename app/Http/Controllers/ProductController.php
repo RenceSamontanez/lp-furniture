@@ -125,12 +125,20 @@ class ProductController extends Controller
 
         $products = $query->latest()->get();
 
+        // ?type=door (from Luma's "View more products" button): only the furniture types Luma knows
+        // are accepted, so nothing from the address bar reaches a query or the page.
+        $type = $request->query('type');
+        $type = is_string($type) && \App\Support\Luma\ProductFinder::isType($type) ? $type : null;
+        if ($type !== null) {
+            $products = $products->filter(fn ($p) => \App\Support\Luma\ProductFinder::isOfType($p, $type))->values();
+        }
+
         $categories = Product::available()
             ->select('category')
             ->distinct()
             ->pluck('category');
 
-        return view('catalog', compact('products', 'categories'));
+        return view('catalog', compact('products', 'categories', 'type'));
     }
 
     // ── PRODUCT DETAIL ──

@@ -4,6 +4,7 @@ namespace App\Support\Luma;
 
 use App\Models\ChatbotIntent;
 use App\Models\Product;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -34,7 +35,14 @@ final class Luma
         }
 
         if ($budget = self::budgetAnswer($message, $lang)) {
-            return self::finish(self::build($budget['text'], $more, 'budget', $lang, $budget['products']));
+            return self::finish(self::build($budget['text'], $more, 'budget', $lang, cards: $budget['cards'], buttons: $budget['buttons']));
+        }
+
+        // "doors" on its own: show the doors
+        if ($type = ProductFinder::detectType($message)) {
+            $reply = self::productsReply(self::build('', self::chips(['Prices', 'Custom design', 'Delivery'], $lang), 'product_type', $lang), $type, false);
+
+            return self::finish($reply);
         }
 
         return self::fallback($lang);
@@ -52,9 +60,7 @@ final class Luma
             }
         }
 
-        $reply['text'] = $text . "
-
-" . ($closing[$reply['lang']] ?? $closing['en']);
+        $reply['text'] = $text . "\n\n" . ($closing[$reply['lang']] ?? $closing['en']);
 
         return $reply;
     }
@@ -69,7 +75,7 @@ final class Luma
         return array_map(fn ($c) => config('luma.chips_tl')[$c] ?? $c, $chips);
     }
 
-    /** The answer of one trained intent, plus the buttons and contact card that go with a built-in one. */
+    /** The answer of one trained intent, plus the buttons, contact card and live products that go with a built-in one. */
     private static function fromIntent(ChatbotIntent $intent, string $message, string $lang): array
     {
         $answer = $lang === Language::TL && filled($intent->answer_tl) ? $intent->answer_tl : $intent->response;
@@ -82,19 +88,142 @@ final class Luma
         );
 
         $def = DefaultIntents::find($intent->category);
-        if ($def) {
-            $reply['buttons'] = self::buttons($def['buttons'] ?? [], $lang);
-
-            if (in_array($intent->category, DefaultIntents::CARD, true) && (Contact::phone() || Contact::email())) {
-                $reply['contact'] = Contact::card();
-            }
+        if (!$def) {
+            return $reply;
         }
+
+        $reply['buttons'] = self::buttons($def['buttons'] ?? [], $lang);
+
+        if (in_array($intent->category, DefaultIntents::CARD, true) && (Contact::phone() || Contact::email())) {
+            $reply['contact'] = Contact::card();
+        }
+
+        return match ($def['handler'] ?? null) {
+            'products' => self::productsReply($reply, ProductFinder::detectType($message), $intent->category === 'luma_ready_made'),
+            'range'    => self::rangeReply($reply, ProductFinder::detectType($message)),
+            default    => $reply,
+        };
+    }
+
+    /**
+     * Up to four product cards from the live catalog and a "View more products" button. With a furniture type
+     * the cards are that type; without one, the featured and newest products. Nothing available: say so.
+     */
+    private static function productsReply(array $reply, ?string $type, bool $madeToOrder): array
+    {
+        $lang     = $reply['lang'];
+        $tl       = $lang === Language::TL;
+        $products = ProductFinder::available($type);
+
+        if ($products->isEmpty()) {
+            return self::noProducts($reply, $type);
+        }
+
+        if ($type !== null) {
+            $label = ProductFinder::label($type, $lang);
+            $text  = $tl
+                ? "Heto po ang ilan sa aming {$label} sa Catalog. Nasa bawat card ang presyo."
+                : "Here are some of our {$label} from the Catalog. The price is on each card.";
+            if ($madeToOrder) {
+                $text .= $tl
+                    ? ' Gawa po kapag may order ang lahat: wala pong ginagawa nang maaga, kaya sisimulan ang paggawa pagka-order at kumpirmasyon ninyo.'
+                    : ' Everything is made to order: nothing is built in advance, so production starts as soon as your order is placed and confirmed.';
+            }
+            $reply['text'] = $text;
+        }
+
+        $reply['cards']   = ProductFinder::cards($products);
+        $reply['buttons'] = [self::button('View more products', 'Tingnan ang iba pang produkto', ProductFinder::catalogUrl($type), $lang)];
 
         return $reply;
     }
 
+    /** "Doors range from PHP 5,000 to PHP 18,000", with the cheapest and the most expensive as cards. */
+    private static function rangeReply(array $reply, ?string $type): array
+    {
+        $lang     = $reply['lang'];
+        $tl       = $lang === Language::TL;
+        $products = ProductFinder::available($type);
+        $range    = ProductFinder::range($products);
+
+        if (!$range) {
+            return self::noProducts($reply, $type);
+        }
+
+        $min = ProductFinder::money($range['min']);
+        $max = ProductFinder::money($range['max']);
+
+        if ($type === null) {
+            $reply['text'] = $tl
+                ? "Sa buong Catalog namin, ang presyo ay mula {$min} hanggang {$max}. Sabihin lang po ang uri ng furniture (halimbawa pinto o mesa) para sa saklaw ng presyo nito."
+                : "Across our whole Catalog, prices go from {$min} to {$max}. Tell me a furniture type (for example door or table) for that type's range.";
+        } else {
+            $label = ProductFinder::label($type, $lang);
+
+            if ($range['count'] === 1) {
+                $name  = $range['cheapest']->product_name;
+                $one   = $tl ? preg_replace('/^mga /', '', $label) : $type;
+                $reply['text'] = $tl
+                    ? "Isa lang po ang {$one} sa Catalog ngayon: {$name}, sa {$min}."
+                    : "We have just one {$one} in the Catalog right now: {$name}, at {$min}.";
+            } elseif ($range['min'] === $range['max']) {
+                $reply['text'] = $tl
+                    ? "Lahat po ng {$label} namin sa Catalog ay {$min}."
+                    : 'All our ' . $label . " in the Catalog are {$min}.";
+            } else {
+                $reply['text'] = $tl
+                    ? "Ang {$label} po ay mula {$min} hanggang {$max}."
+                    : ucfirst($label) . " range from {$min} to {$max}.";
+            }
+        }
+
+        $shown = $range['count'] === 1
+            ? collect([$range['cheapest']])
+            : collect([$range['cheapest'], $range['dearest']]);
+
+        $reply['cards']   = ProductFinder::cards($shown);
+        $reply['buttons'] = [self::button('View more products', 'Tingnan ang iba pang produkto', ProductFinder::catalogUrl($type), $lang)];
+
+        return $reply;
+    }
+
+    /** Nothing available to show: say so, point to the Customize page and give the contact details. */
+    private static function noProducts(array $reply, ?string $type): array
+    {
+        $lang = $reply['lang'];
+        $tl   = $lang === Language::TL;
+
+        if ($type !== null) {
+            $label = ProductFinder::label($type, $lang);
+            $text  = $tl
+                ? "Wala pong available na {$label} sa Catalog ngayon."
+                : "We don't have any {$label} available in the Catalog right now.";
+        } else {
+            $text = $tl ? 'Wala pong available na produkto sa Catalog ngayon.' : "We don't have any products available in the Catalog right now.";
+        }
+
+        $text .= $tl
+            ? ' Maaari po kayong magpagawa ng sarili ninyong disenyo sa Customize page, o makipag-ugnayan sa amin. '
+            : ' You can have one made for you on our Customize page, or contact us. ';
+
+        $reply['text']    = $text . Contact::sentence($lang);
+        $reply['cards']   = [];
+        $reply['buttons'] = Route::has('design.index')
+            ? [self::button('Customize a design', 'Mag-customize ng disenyo', route('design.index', [], false), $lang)]
+            : [];
+        $reply['contact'] = (Contact::phone() || Contact::email()) ? Contact::card() : null;
+
+        return $reply;
+    }
+
+    private static function button(string $en, string $tl, string $url, string $lang): array
+    {
+        return ['label' => $lang === Language::TL ? $tl : $en, 'url' => $url];
+    }
+
     /**
-     * Link buttons from [labelEn, labelTl, routeName] triples. A route that does not exist (yet) is left out.
+     * Link buttons from [labelEn, labelTl, routeName] triples. A route that does not exist (yet) is left out;
+     * "catalog" opens the full catalog.
      *
      * @return list<array{label: string, url: string}>
      */
@@ -105,7 +234,7 @@ final class Luma
             if (!Route::has($route)) {
                 continue;
             }
-            $out[] = ['label' => $lang === Language::TL ? $tl : $en, 'url' => route($route, [], false)];
+            $out[] = self::button($en, $tl, route($route, [], false), $lang);
         }
 
         return $out;
@@ -133,14 +262,14 @@ final class Luma
         return str_replace(array_keys($tokens), array_values($tokens), $text);
     }
 
-    private static function build(string $text, array $suggestions, string $detected, string $lang, array $products = []): array
+    private static function build(string $text, array $suggestions, string $detected, string $lang, array $cards = [], array $buttons = []): array
     {
         return [
             'text'        => $text,
             'suggestions' => array_values(array_filter($suggestions, fn ($s) => $s !== '')),
-            'products'    => $products,
-            'cards'       => [],
-            'buttons'     => [],
+            'products'    => [],
+            'cards'       => $cards,
+            'buttons'     => $buttons,
             'contact'     => null,
             'lang'        => $lang,
             'detected'    => $detected,
@@ -167,7 +296,12 @@ final class Luma
         return null;
     }
 
-    /** "5000", "PHP 5,000" or "5k": pieces at or under that amount. A small bare number is not a budget. */
+    /**
+     * "5000", "PHP 5,000" or "5k": pieces at or under that amount (of the furniture type, when one is named).
+     * A small bare number is not a budget.
+     *
+     * @return array{text: string, cards: list<array>, buttons: list<array>}|null
+     */
     private static function budgetAnswer(string $message, string $lang): ?array
     {
         if (!preg_match_all('/(?:(?:php|₱|pesos?)\s*)?(\d[\d,]*(?:\.\d+)?)\s*(k\b|pesos?\b|php\b|₱)?/iu', $message, $all, PREG_SET_ORDER)) {
@@ -189,16 +323,21 @@ final class Luma
             return null;
         }
 
-        $found = Product::available()->where('price', '<=', $budget)->orderBy('price', 'desc')->take((int) config('luma.max_cards', 4))->get();
+        $type  = ProductFinder::detectType($message);
+        $found = ProductFinder::available($type)
+            ->filter(fn (Product $p) => ProductFinder::price($p) <= $budget)
+            ->sortByDesc(fn (Product $p) => ProductFinder::price($p))
+            ->values();
         if ($found->isEmpty()) {
             return null;
         }
 
         return [
-            'text'     => $lang === Language::TL
-                ? 'Heto po ang ilang piraso na pasok sa budget ninyong PHP ' . number_format($budget) . ':'
-                : 'Great! Here are some pieces within your PHP ' . number_format($budget) . ' budget:',
-            'products' => $found->map(fn ($p) => ['id' => $p->id, 'product_name' => $p->product_name, 'price' => $p->price])->all(),
+            'text'    => $lang === Language::TL
+                ? 'Heto po ang ilang piraso na pasok sa budget ninyong ' . ProductFinder::money($budget) . ':'
+                : 'Great! Here are some pieces within your ' . ProductFinder::money($budget) . ' budget:',
+            'cards'   => ProductFinder::cards($found),
+            'buttons' => [self::button('View more products', 'Tingnan ang iba pang produkto', ProductFinder::catalogUrl($type, $budget), $lang)],
         ];
     }
 }

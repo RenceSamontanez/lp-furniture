@@ -24,6 +24,9 @@
     @if(request('category'))
       <input type="hidden" name="category" value="{{ request('category') }}">
     @endif
+    @if(!empty($type))
+      <input type="hidden" name="type" value="{{ $type }}">
+    @endif
     <input type="text" name="search" class="form-input" placeholder="Search furniture..." value="{{ request('search') }}" style="max-width:280px;">
     <input type="number" name="max_price" class="form-input" placeholder="Max price (₱)" value="{{ request('max_price') }}" style="max-width:180px;">
     <button type="submit" class="btn btn-outline">Filter</button>
@@ -31,6 +34,11 @@
       <a href="{{ route('catalog', request('category') ? ['category' => request('category')] : []) }}" class="link-text" style="align-self:center;">Clear</a>
     @endif
   </form>
+
+  @if(!empty($type))
+    <p style="margin-top:16px;font-size:14px;">Showing {{ config('luma.types.' . $type . '.en') }} &middot;
+      <a href="{{ route('catalog', array_filter(['category' => request('category'), 'max_price' => request('max_price')])) }}" class="link-text">Show all</a></p>
+  @endif
 
   <div class="product-grid" style="margin-top:24px;">
     @forelse($products as $product)
