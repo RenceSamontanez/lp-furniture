@@ -55,7 +55,7 @@ class Stage13FlowTest extends TestCase
         $legacyConcept->forceFill(['is_selected' => true])->save();
 
         $this->asCustomer($customer)->get(route('design.sendForm', $legacy->id))->assertOk()
-            ->assertSee('Use this as my primary phone and email for every custom order')
+            ->assertSee('Save this number and email for my next custom orders')
             ->assertSee('What would you like to change or add to this design?');
 
         // ── 2. submit it once, saving the contact for the account
@@ -74,7 +74,7 @@ class Stage13FlowTest extends TestCase
         // ── 3. a second, brand new request: the form shows the saved contact, still asks the idea and window
         [$second, $secondConcept] = $this->generatedRequest($customer);
         $this->asCustomer($customer)->get(route('design.sendForm', [$second->id, 'suggestion' => $secondConcept->id]))->assertOk()
-            ->assertSee("We'll call", false)->assertSee('09171234567')->assertSee('rence@example.com')
+            ->assertSee('Use a different number or email for this request')->assertSee('09171234567')->assertSee('rence@example.com')
             ->assertSee('When should we call?')->assertSee('What would you like to change or add to this design?');
         $this->submitRequest($customer, $second, $secondConcept, [
             'contact_phone' => '09171234567', 'contact_email' => 'rence@example.com', 'preferred_call_window' => 'morning_8_12',

@@ -485,3 +485,64 @@
 /* Buttons beside the status text stay button-sized instead of stretching */
 .co-status-actions .ai-action-btn,
 .co-quote-card .co-status-actions .ai-action-btn { flex: 0 0 auto; width: auto; padding: 12px 22px; }
+
+/* ============================================================
+   TOGGLE SWITCH (Stage 16): <input type="checkbox" role="switch">
+============================================================ */
+.lp-switch {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 44px;
+  padding: 10px 0;
+  cursor: pointer;
+  font-size: 13.5px;
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+}
+.lp-switch-input {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 44px;
+  height: 26px;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.lp-switch-track {
+  position: relative;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  background: #CFC4B3;
+  transition: background .18s ease;
+}
+.lp-switch-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(42, 24, 16, .3);
+  transition: transform .18s ease;
+}
+.lp-switch-input:checked + .lp-switch-track { background: var(--success, #4A7C59); }
+.lp-switch-input:checked + .lp-switch-track .lp-switch-thumb { transform: translateX(18px); }
+.lp-switch-input:focus-visible + .lp-switch-track { outline: 3px solid var(--gold, #C9A24A); outline-offset: 2px; }
+.lp-switch-input:disabled + .lp-switch-track { opacity: .5; }
+.lp-switch-text { display: flex; flex-direction: column; gap: 2px; padding-top: 3px; min-width: 0; }
+.lp-switch-label { font-weight: 500; color: var(--brown-deep, #2A1810); }
+.lp-switch-hint { font-size: 12px; color: var(--text-muted); }
+@media (prefers-reduced-motion: reduce) {
+  .lp-switch-track, .lp-switch-thumb { transition: none; }
+}
+
+/* Saved contact shown read-only until "different" is switched on */
+.form-input.is-locked { background: #F4EFE6; color: var(--text-muted); cursor: default; border-color: var(--border); }
+.co-hint--lead { margin: 0 0 12px; }
+.co-section .lp-switch { margin-top: 6px; }

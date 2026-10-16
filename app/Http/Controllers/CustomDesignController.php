@@ -359,6 +359,8 @@ class CustomDesignController extends Controller
             'request_mode'          => 'required|in:' . implode(',', array_keys(CustomDesignRequest::REQUEST_MODES)),
             'modification_notes'    => 'required_if:request_mode,modified|nullable|string|max:2000',
             'save_contact'          => 'nullable|boolean',
+            'use_different'         => 'nullable|boolean',
+            'update_saved'          => 'nullable|boolean',
         ];
     }
 
@@ -382,9 +384,25 @@ class CustomDesignController extends Controller
     }
 
     // Convenience copy only: every request keeps the contact it was sent with.
+    //
+    // The contact that was submitted is always validated and used for the
+    // request. The users columns are written only when saving was asked for,
+    // and the toggle state alone is not enough:
+    //  - no saved contact yet: "save_contact" saves it;
+    //  - a saved contact exists: it is replaced only when "use_different" AND
+    //    "update_saved" are both on and the submitted contact really differs.
     private function rememberContact(User $user, Request $request, CustomDesignRequest $designRequest): void
     {
-        if (!$request->boolean('save_contact')) {
+        $hadSaved = filled($user->saved_contact_phone) && filled($user->saved_contact_email);
+
+        if ($hadSaved) {
+            $differs = $designRequest->contact_phone !== $user->saved_contact_phone
+                || strcasecmp((string) $designRequest->contact_email, (string) $user->saved_contact_email) !== 0;
+
+            if (!($request->boolean('use_different') && $request->boolean('update_saved') && $differs)) {
+                return;
+            }
+        } elseif (!$request->boolean('save_contact')) {
             return;
         }
 
@@ -421,6 +439,8 @@ class CustomDesignController extends Controller
             'suggestion'    => $suggestion,
             'editing'       => $editing,
             'hasSaved'      => $hasSaved,
+            'savedPhone'    => $savedPhone,
+            'savedEmail'    => $savedEmail,
             'defaultPhone'  => $phone,
             'defaultEmail'  => $email,
             'values'        => $editing ? [

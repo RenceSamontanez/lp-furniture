@@ -154,8 +154,8 @@ class CustomRequestFormTest extends TestCase
         $this->actingAs($ana)->get(route('design.sendForm', [$r->id, 'suggestion' => $s->id]))->assertOk()
             ->assertSee('name="contact_phone"', false)
             ->assertSee('name="contact_email"', false)
-            ->assertSee('Use this as my primary phone and email for every custom order')
-            ->assertDontSee("We'll call", false);
+            ->assertSee('Save this number and email for my next custom orders')
+            ->assertDontSee('Use a different number or email for this request');
     }
 
     public function test_checkbox_saves_the_contact_and_the_next_form_shows_a_summary(): void
@@ -175,10 +175,10 @@ class CustomRequestFormTest extends TestCase
 
         [$r2, $s2] = $this->request($ana);
         $page = $this->actingAs($ana)->get(route('design.sendForm', [$r2->id, 'suggestion' => $s2->id]))->assertOk();
-        $page->assertSee("We'll call", false)->assertSee('09181112222')->assertSee('saved@example.com')->assertSee('Change');
+        $page->assertSee('Use a different number or email for this request')->assertSee('09181112222')->assertSee('saved@example.com');
         // the idea and the call window are still asked every time
         $page->assertSee('What would you like to change or add to this design?')->assertSee('When should we call?');
-        $this->assertMatchesRegularExpression('/id="co-save-contact"\s+hidden/', $page->getContent(), 'the checkbox stays hidden behind Change');
+        $this->assertMatchesRegularExpression('/id="co-update-saved"\s+hidden/', $page->getContent(), 'the update toggle stays hidden until a different contact is chosen');
     }
 
     public function test_saved_contact_does_not_skip_validation_or_the_call_window(): void

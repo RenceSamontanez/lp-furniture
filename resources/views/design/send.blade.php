@@ -15,7 +15,16 @@
   $mode = old('request_mode', $values['request_mode'] ?? 'exact');
   $window = old('preferred_call_window', $values['preferred_call_window'] ?? null);
   $notesValue = old('modification_notes', $values['modification_notes'] ?? '');
-  $showSavedSummary = $hasSaved && !$editing && !$errors->hasAny(['contact_phone', 'contact_email']);
+  $savedPhone = $savedPhone ?? null;
+  $savedEmail = $savedEmail ?? null;
+  $submitted = session()->hasOldInput();
+  // Another number or email is being used (or was just submitted and needs fixing): fields open.
+  $useDifferent = $hasSaved && (
+      $submitted ? (bool) old('use_different') || $errors->hasAny(['contact_phone', 'contact_email'])
+                 : ($editing && ($defaultPhone !== $savedPhone || strcasecmp((string) $defaultEmail, (string) $savedEmail) !== 0))
+  );
+  $lockContact = $hasSaved && !$useDifferent;
+  $saveByDefault = $submitted ? (bool) old('save_contact') : true;
 @endphp
 <div class="cd-wrap">
 
@@ -70,29 +79,46 @@
 
       <fieldset class="co-section">
         <legend class="co-section-title">How can we reach you?</legend>
-        @if($showSavedSummary)
-          <div class="co-saved" id="co-saved">
-            <span>We'll call <strong>{{ $defaultPhone }}</strong>, email <strong>{{ $defaultEmail }}</strong>.</span>
-            <a href="#" id="co-change-contact" class="co-link">Change</a>
-          </div>
+
+        @if($hasSaved)
+          {{-- Saved contact: shown filled in and read-only until the customer asks to use another. --}}
+          <p class="co-hint co-hint--lead" id="co-saved-hint" @if($useDifferent) hidden @endif>We'll use your saved contact for this request.</p>
         @endif
-        <div class="co-grid" id="co-contact-fields" @if($showSavedSummary) hidden @endif>
+
+        <div class="co-grid" id="co-contact-fields">
           <div class="co-field">
             <label class="form-label" for="contact_phone">Mobile number</label>
-            <input type="tel" id="contact_phone" name="contact_phone" class="form-input" required maxlength="16"
-                   value="{{ old('contact_phone', $defaultPhone) }}" placeholder="09171234567"/>
-            <p class="co-hint">Philippine mobile number. This doesn't change your profile.</p>
+            <input type="tel" id="contact_phone" name="contact_phone" class="form-input {{ $lockContact ? 'is-locked' : '' }}" required maxlength="16"
+                   value="{{ old('contact_phone', $defaultPhone) }}" placeholder="09171234567"
+                   data-saved="{{ $savedPhone }}" @readonly($lockContact)/>
+            <p class="co-hint">Philippine mobile number, for example 09171234567.</p>
           </div>
           <div class="co-field">
             <label class="form-label" for="contact_email">Email</label>
-            <input type="email" id="contact_email" name="contact_email" class="form-input" required maxlength="150"
-                   value="{{ old('contact_email', $defaultEmail) }}"/>
+            <input type="email" id="contact_email" name="contact_email" class="form-input {{ $lockContact ? 'is-locked' : '' }}" required maxlength="150"
+                   value="{{ old('contact_email', $defaultEmail) }}"
+                   data-saved="{{ $savedEmail }}" @readonly($lockContact)/>
           </div>
         </div>
-        <label class="co-check" id="co-save-contact" @if($showSavedSummary) hidden @endif>
-          <input type="checkbox" name="save_contact" value="1" @checked(old('save_contact'))/>
-          <span>Use this as my primary phone and email for every custom order</span>
-        </label>
+
+        @if($hasSaved)
+          @include('partials.switch', [
+            'id' => 'use_different', 'name' => 'use_different', 'checked' => $useDifferent,
+            'label' => 'Use a different number or email for this request',
+          ])
+          <div id="co-update-saved" @if(!$useDifferent) hidden @endif>
+            @include('partials.switch', [
+              'id' => 'update_saved', 'name' => 'update_saved', 'checked' => (bool) old('update_saved'),
+              'label' => 'Also update my saved contact',
+              'hint' => 'Your next custom orders will use the new number and email.',
+            ])
+          </div>
+        @else
+          @include('partials.switch', [
+            'id' => 'save_contact', 'name' => 'save_contact', 'checked' => $saveByDefault,
+            'label' => 'Save this number and email for my next custom orders',
+          ])
+        @endif
       </fieldset>
 
       <fieldset class="co-section">
@@ -152,14 +178,26 @@
   const checked = document.querySelector('input[name="request_mode"]:checked');
   textarea.required = !!checked && checked.value === 'modified';
 
-  const change = document.getElementById('co-change-contact');
-  if (change) {
-    change.addEventListener('click', function (e) {
-      e.preventDefault();
-      document.getElementById('co-saved').hidden = true;
-      document.getElementById('co-contact-fields').hidden = false;
-      document.getElementById('co-save-contact').hidden = false;
-    });
+  // Saved contact: the fields stay read-only until "different" is switched on.
+  const different = document.getElementById('use_different');
+  if (different) {
+    const phone = document.getElementById('contact_phone');
+    const email = document.getElementById('contact_email');
+    const update = document.getElementById('update_saved');
+    const updateRow = document.getElementById('co-update-saved');
+    const apply = function () {
+      const on = different.checked;
+      [phone, email].forEach(function (input) {
+        input.readOnly = !on;
+        input.classList.toggle('is-locked', !on);
+        if (!on) { input.value = input.getAttribute('data-saved') || ''; }
+      });
+      updateRow.hidden = !on;
+      const hint = document.getElementById("co-saved-hint");
+      if (hint) { hint.hidden = on; }
+      if (!on) { update.checked = false; }
+    };
+    different.addEventListener('change', apply);
   }
 
   // One click only; the server also refuses a second submission.
