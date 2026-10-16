@@ -374,7 +374,7 @@ class GenerateAiDesign implements ShouldQueue
         }
 
         if ($request->dimensions) {
-            $parts[] = "Approximate dimensions: {$request->dimensions}.";
+            $parts[] = "Approximate size (length x width x height): {$request->dimensions}.";
         }
 
         $parts[] = "Clean white background, studio lighting, high quality, realistic wood texture, Filipino craftsmanship style.";

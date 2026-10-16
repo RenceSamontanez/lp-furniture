@@ -59,6 +59,9 @@ final class AgreementTerms
                 'id'            => $quote->id,
                 'version'       => (int) $quote->version,
                 'description'   => $quote->final_description,
+                // Reading of the three numbers: Length, Width, Height (the older key names are kept).
+                // New agreements also record the unit the customer typed them in.
+                ...(filled($request->dimension_unit) ? ['dimension_unit' => $request->dimension_unit] : []),
                 'width_cm'      => $dim($quote->width_cm),
                 'depth_cm'      => $dim($quote->depth_cm),
                 'height_cm'     => $dim($quote->height_cm),

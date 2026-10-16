@@ -52,7 +52,7 @@
                 <div style="font-size:11px;color:var(--text-muted);">
                   <span>{{ $req->furniture_type_label }}</span> · 
                   @if($req->preferred_material)<span>{{ $req->preferred_material }}</span> · @endif
-                  @if($req->dimensions)<span>{{ $req->dimensions }}</span>@endif
+                  @if($req->dimensions_label)<span>{{ $req->dimensions_label }}</span>@endif
                 </div>
                 @if($req->admin_contacted_at)
                   <div style="font-size:11px;color:var(--success);margin-top:4px;">✓ Contacted {{ $req->admin_contacted_at->diffForHumans() }}</div>

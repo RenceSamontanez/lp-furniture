@@ -47,12 +47,16 @@
             <textarea id="final_description" name="final_description" class="form-input" rows="4" maxlength="3000" required>{{ $v['final_description'] ?? '' }}</textarea>
           </div>
 
+          <p class="co-hint co-span-2" style="margin:0;">
+            Length is the longest side across, Width is the shorter side across, Height is floor to top.
+            @if($r->dimensions_label)The customer wrote: {{ $r->dimensions_label }}.@endif
+          </p>
           <div class="co-field">
-            <label class="form-label" for="width_cm">Width (cm)</label>
+            <label class="form-label" for="width_cm">Length (cm)</label>
             <input type="number" step="0.01" min="0.1" max="9999" id="width_cm" name="width_cm" class="form-input" value="{{ $v['width_cm'] ?? '' }}" required/>
           </div>
           <div class="co-field">
-            <label class="form-label" for="depth_cm">Depth (cm)</label>
+            <label class="form-label" for="depth_cm">Width (cm)</label>
             <input type="number" step="0.01" min="0.1" max="9999" id="depth_cm" name="depth_cm" class="form-input" value="{{ $v['depth_cm'] ?? '' }}" required/>
           </div>
           <div class="co-field">

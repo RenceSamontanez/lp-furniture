@@ -1,7 +1,7 @@
 {{-- Read-only terms of one quote. Admin-only: includes internal call notes. --}}
 @php $summary = \App\Support\QuoteTerms::summary($quote); @endphp
 <dl class="co-dl">
-  <div><dt>Size (W x D x H)</dt><dd>{{ rtrim(rtrim(number_format($quote->width_cm, 2, '.', ''), '0'), '.') }} x {{ rtrim(rtrim(number_format($quote->depth_cm, 2, '.', ''), '0'), '.') }} x {{ rtrim(rtrim(number_format($quote->height_cm, 2, '.', ''), '0'), '.') }} cm</dd></div>
+  <div><dt>Size (length x width x height)</dt><dd>{{ \App\Support\Dimensions::triplet($quote->width_cm, $quote->depth_cm, $quote->height_cm, $quote->request->dimension_unit ?? null) }}</dd></div>
   <div><dt>Material / finish</dt><dd>{{ $quote->material }}@if($quote->finish) / {{ $quote->finish }}@endif</dd></div>
   <div><dt>Production</dt><dd>{{ $quote->production_days }} working days</dd></div>
   <div><dt>Delivery</dt><dd>{{ $quote->delivery_option === 'delivery' ? 'Delivery' : 'Pickup' }}</dd></div>

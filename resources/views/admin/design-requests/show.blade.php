@@ -45,7 +45,7 @@
           </div>
           <div>
             <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px;">Dimensions</div>
-            <div style="font-size:13px;color:#2A1810;font-weight:500;">{{ $designRequest->dimensions ?: '—' }}</div>
+            <div style="font-size:13px;color:#2A1810;font-weight:500;">{{ $designRequest->dimensions_label ?: '—' }}</div>
           </div>
         </div>
       </div>

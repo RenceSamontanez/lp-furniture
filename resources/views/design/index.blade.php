@@ -56,6 +56,32 @@
           <p class="cd-type-error" id="cd-type-error" role="alert">@error('furniture_type'){{ $message }}@enderror @error('furniture_type_other'){{ $message }}@enderror</p>
         </div>
 
+        <fieldset class="cd-size-group">
+          <legend class="form-label">Size <span class="cd-required">(optional, leave empty if you are not sure yet)</span></legend>
+          <p class="cd-size-hint" id="cd-size-hint">
+            <strong>Length</strong> is the longest side across. <strong>Width</strong> is the shorter side across. <strong>Height</strong> is from the floor to the top.
+          </p>
+          <div class="cd-size-grid">
+            @foreach(['length' => 'Length', 'width' => 'Width', 'height' => 'Height'] as $key => $label)
+              <div class="cd-size-field">
+                <label for="cd-dim-{{ $key }}">{{ $label }}</label>
+                <input type="text" inputmode="decimal" autocomplete="off" id="cd-dim-{{ $key }}" name="dimension_{{ $key }}"
+                       class="form-input @error('dimension_' . $key) is-invalid @enderror" value="{{ old('dimension_' . $key) }}"
+                       placeholder="{{ ['length' => '120', 'width' => '60', 'height' => '75'][$key] }}" aria-describedby="cd-size-hint cd-size-error"/>
+              </div>
+            @endforeach
+            <div class="cd-size-field cd-size-unit">
+              <label for="cd-dim-unit">Unit</label>
+              <select id="cd-dim-unit" name="dimension_unit" class="form-input">
+                @foreach(\App\Support\Dimensions::UNITS as $unit => $unitLabel)
+                  <option value="{{ $unit }}" @selected(old('dimension_unit', 'cm') === $unit)>{{ $unitLabel }}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <p class="cd-size-error" id="cd-size-error" role="alert">@foreach(['dimension_length', 'dimension_width', 'dimension_height', 'dimension_unit'] as $f)@error($f){{ $message }} @enderror @endforeach</p>
+        </fieldset>
+
         <textarea
           name="prompt"
           id="cd-prompt-input"
@@ -95,9 +121,6 @@
         </p>
 
         <input type="hidden" name="preferred_material" id="cd-hidden-material" value="{{ old('preferred_material', 'No Preference') }}"/>
-        <input type="hidden" name="dimensions_length" id="cd-hidden-dim-length" value="{{ old('dimensions_length') }}"/>
-        <input type="hidden" name="dimensions_width" id="cd-hidden-dim-width" value="{{ old('dimensions_width') }}"/>
-        <input type="hidden" name="dimensions_height" id="cd-hidden-dim-height" value="{{ old('dimensions_height') }}"/>
         <input type="hidden" name="additional_info" id="cd-hidden-additional" value="{{ old('additional_info') }}"/>
       </form>
     </div>
@@ -195,24 +218,6 @@
                 <span>{{ $wood }}</span>
               </label>
             @endforeach
-          </div>
-        </div>
-
-        <div class="ai-field-group">
-          <label class="form-label">Dimensions <span style="font-weight:400;color:var(--text-muted);">(optional — leave blank if you're not sure yet)</span></label>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
-            <div>
-              <input type="number" id="cd-modal-dim-length" step="0.1" min="0" class="form-input" placeholder="Width (cm)"/>
-              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Width (cm)</div>
-            </div>
-            <div>
-              <input type="number" id="cd-modal-dim-width" step="0.1" min="0" class="form-input" placeholder="Depth (cm)"/>
-              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Depth (cm)</div>
-            </div>
-            <div>
-              <input type="number" id="cd-modal-dim-height" step="0.1" min="0" class="form-input" placeholder="Height (cm)"/>
-              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Height (cm)</div>
-            </div>
           </div>
         </div>
 
@@ -360,15 +365,9 @@ function closeCdHowItWorksOnBackdrop(e) {
 
 function saveCdOptionalPanel() {
   const material = document.querySelector('input[name="cd_modal_material"]:checked')?.value || 'No Preference';
-  const dimLength = document.getElementById('cd-modal-dim-length').value;
-  const dimWidth = document.getElementById('cd-modal-dim-width').value;
-  const dimHeight = document.getElementById('cd-modal-dim-height').value;
   const additional = document.getElementById('cd-modal-additional').value;
 
   document.getElementById('cd-hidden-material').value = material;
-  document.getElementById('cd-hidden-dim-length').value = dimLength;
-  document.getElementById('cd-hidden-dim-width').value = dimWidth;
-  document.getElementById('cd-hidden-dim-height').value = dimHeight;
   document.getElementById('cd-hidden-additional').value = additional;
 
   const parts = [];

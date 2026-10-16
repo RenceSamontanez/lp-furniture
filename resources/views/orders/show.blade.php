@@ -129,6 +129,8 @@
                 <div class="order-item-name">{{ $item->product->product_name ?? $item->product_name ?? 'Product Unavailable' }}</div>
                 @php $itemType = $order->design_agreement_id && $order->agreement ? ($order->agreement->terms_snapshot['design']['furniture_type'] ?? null) : null; @endphp
                 @if($itemType)<div class="order-item-qty">Furniture type: {{ $itemType }}</div>@endif
+                @php $itemQ = $order->design_agreement_id && $order->agreement ? ($order->agreement->terms_snapshot['quote'] ?? null) : null; @endphp
+                @if($itemQ && isset($itemQ['width_cm']))<div class="order-item-qty">Size (length x width x height): {{ \App\Support\Dimensions::triplet($itemQ['width_cm'], $itemQ['depth_cm'], $itemQ['height_cm'], $itemQ['dimension_unit'] ?? null) }}</div>@endif
                 <div class="order-item-qty">Qty: {{ $item->quantity }} × ₱{{ number_format($item->unit_price, 2) }}</div>
               </div>
               <div class="order-item-subtotal">₱{{ number_format($item->subtotal, 2) }}</div>

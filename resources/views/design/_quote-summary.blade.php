@@ -17,7 +17,7 @@
   <dl class="co-quote-list">
     <div><dt>Furniture type</dt><dd>{{ $quote->request->furniture_type_label }}</dd></div>
     <div><dt>Description</dt><dd style="white-space:pre-line;">{{ $quote->final_description }}</dd></div>
-    <div><dt>Size</dt><dd>{{ $dim($quote->width_cm) }} x {{ $dim($quote->depth_cm) }} x {{ $dim($quote->height_cm) }} cm</dd></div>
+    <div><dt>Size (length x width x height)</dt><dd>{{ \App\Support\Dimensions::triplet($quote->width_cm, $quote->depth_cm, $quote->height_cm, $quote->request->dimension_unit) }}</dd></div>
     <div><dt>Material</dt><dd>{{ $quote->material }}@if($quote->finish), {{ $quote->finish }}@endif</dd></div>
     @if($quote->modifications)<div><dt>Modifications</dt><dd style="white-space:pre-line;">{{ $quote->modifications }}</dd></div>@endif
     <div><dt>Production time</dt><dd>{{ $quote->production_days }} working days</dd></div>

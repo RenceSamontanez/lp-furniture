@@ -13,7 +13,7 @@
     <div><dt>Furniture type</dt><dd>{{ $terms['design']['furniture_type'] }}</dd></div>
   @endif
   <div><dt>Description</dt><dd style="white-space:pre-line;">{{ $q['description'] }}</dd></div>
-  <div><dt>Size</dt><dd>{{ $dim($q['width_cm']) }} x {{ $dim($q['depth_cm']) }} x {{ $dim($q['height_cm']) }} cm</dd></div>
+  <div><dt>Size (length x width x height)</dt><dd>{{ \App\Support\Dimensions::triplet($q['width_cm'], $q['depth_cm'], $q['height_cm'], $q['dimension_unit'] ?? null) }}</dd></div>
   <div><dt>Material and finish</dt><dd>{{ $q['material'] }}@if($q['finish']), {{ $q['finish'] }}@endif</dd></div>
   @if($q['modifications'])
     <div><dt>Modifications</dt><dd style="white-space:pre-line;">{{ $q['modifications'] }}</dd></div>

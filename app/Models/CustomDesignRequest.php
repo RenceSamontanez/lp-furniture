@@ -23,6 +23,10 @@ class CustomDesignRequest extends Model
         'preferred_finish',
         'style_preference',
         'dimensions',
+        'dim_length_cm',
+        'dim_width_cm',
+        'dim_height_cm',
+        'dimension_unit',
         'reference_image',
         'ai_prompt',
         'status',
@@ -57,6 +61,29 @@ class CustomDesignRequest extends Model
         'exact'    => 'Build exactly this design',
         'modified' => 'Build it with some changes',
     ];
+
+    /**
+     * Length x Width x Height in cm: the new columns, or the old "Width x Depth x Height" text
+     * read as Length x Width x Height. Null when the customer gave no size.
+     *
+     * @return array{length: float, width: float, height: float}|null
+     */
+    public function getDimensionsCmAttribute(): ?array
+    {
+        if ($this->dim_length_cm !== null && $this->dim_width_cm !== null && $this->dim_height_cm !== null) {
+            return ['length' => (float) $this->dim_length_cm, 'width' => (float) $this->dim_width_cm, 'height' => (float) $this->dim_height_cm];
+        }
+
+        return \App\Support\Dimensions::legacy($this->dimensions);
+    }
+
+    /** "47.2 x 23.6 x 29.5 in (120 x 60 x 75 cm)", or null when there is no size. */
+    public function getDimensionsLabelAttribute(): ?string
+    {
+        $d = $this->dimensions_cm;
+
+        return $d ? \App\Support\Dimensions::triplet($d['length'], $d['width'], $d['height'], $this->dimension_unit) : null;
+    }
 
     /** For a sentence: "chair", "pergola", or "custom furniture" when there is no type. */
     public function getFurnitureTypeNounAttribute(): string

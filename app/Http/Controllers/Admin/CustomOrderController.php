@@ -409,6 +409,14 @@ class CustomOrderController extends Controller
             'payment_terms'     => 'full',
         ];
 
+        // The customer's size (Length x Width x Height) is the starting point. A quote stores the
+        // same three numbers in the older columns: Length in width_cm, Width in depth_cm.
+        if ($d = $r->dimensions_cm) {
+            $base['width_cm']  = $d['length'];
+            $base['depth_cm']  = $d['width'];
+            $base['height_cm'] = $d['height'];
+        }
+
         if ($from) {
             foreach (self::QUOTE_FIELDS as $f) {
                 $base[$f] = $from->{$f};

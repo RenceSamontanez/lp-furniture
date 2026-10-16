@@ -75,7 +75,7 @@
             </dd>
           </div>
           <div><dt>Preferred material</dt><dd>{{ $r->preferred_material ?: '—' }}</dd></div>
-          <div><dt>Dimensions</dt><dd>{{ $r->dimensions ?: '—' }}</dd></div>
+          <div><dt>Size (length x width x height)</dt><dd>{{ $r->dimensions_label ?: '—' }}</dd></div>
         </dl>
       </div>
     </div>

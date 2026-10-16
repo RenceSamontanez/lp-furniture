@@ -129,12 +129,22 @@ class CustomDesignController extends Controller
             'furniture_type'       => ['required', 'string', \Illuminate\Validation\Rule::in(\App\Support\FurnitureTypes::LIST)],
             'furniture_type_other' => ['nullable', 'required_if:furniture_type,' . \App\Support\FurnitureTypes::OTHER, 'string', 'max:' . \App\Support\FurnitureTypes::OTHER_MAX],
             'preferred_material' => 'nullable|string|max:100',
-            'dimensions_length'  => ['nullable', 'numeric', 'min:0', 'max:9999'],
-            'dimensions_width'   => ['nullable', 'numeric', 'min:0', 'max:9999'],
-            'dimensions_height'  => ['nullable', 'numeric', 'min:0', 'max:9999'],
+            'dimension_length'   => ['nullable'],
+            'dimension_width'    => ['nullable'],
+            'dimension_height'   => ['nullable'],
+            'dimension_unit'     => ['nullable', 'string', 'max:4'],
             'additional_info'    => 'nullable|string|max:1000',
             'reference_image'    => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ]);
+
+        // Optional Length x Width x Height. Converted to centimetres here, never trusted from the page.
+        $size = \App\Support\Dimensions::fromInput(
+            $request->input('dimension_length'), $request->input('dimension_width'),
+            $request->input('dimension_height'), $request->input('dimension_unit')
+        );
+        if ($size['errors'] !== []) {
+            throw \Illuminate\Validation\ValidationException::withMessages($size['errors']);
+        }
 
         $description = trim($request->prompt);
         if ($request->filled('additional_info')) {
@@ -152,11 +162,10 @@ class CustomDesignController extends Controller
         // unlike a product listing, a customer describing a custom
         // piece may not know exact dimensions yet, so all three stay
         // nullable and simply produce no `dimensions` value if unset.
-        $dimensions = DimensionsFormatter::combine(
-            $request->dimensions_length,
-            $request->dimensions_width,
-            $request->dimensions_height
-        );
+        // The old text column keeps "L x W x H cm" so older screens and the AI prompt read it as before.
+        $dimensions = $size['values']
+            ? DimensionsFormatter::combine($size['values']['length_cm'], $size['values']['width_cm'], $size['values']['height_cm'])
+            : null;
 
         $designRequest = CustomDesignRequest::create([
             'user_id'            => Auth::id(),
@@ -166,6 +175,10 @@ class CustomDesignController extends Controller
             'description'        => $description,
             'preferred_material' => $request->preferred_material,
             'dimensions'         => $dimensions,
+            'dim_length_cm'      => $size['values']['length_cm'] ?? null,
+            'dim_width_cm'       => $size['values']['width_cm'] ?? null,
+            'dim_height_cm'      => $size['values']['height_cm'] ?? null,
+            'dimension_unit'     => $size['values']['unit'] ?? null,
             'reference_image'    => $refImagePath,
             'status'             => 'pending',
         ]);
