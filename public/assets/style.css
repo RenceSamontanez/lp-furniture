@@ -3094,3 +3094,17 @@ nav .nav-btn:active {
 @media (max-width: 640px) { .lp-footer { padding-right: 84px; } }
 
 .lp-footer-links { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+
+/* Luma: product cards, link buttons and the contact card inside the chat (full redesign comes later) */
+.chat-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+.chat-card { display: block; border: 1px solid var(--border); border-radius: 10px; background: #fff; overflow: hidden; text-decoration: none; color: inherit; }
+.chat-card:hover { border-color: var(--gold); }
+.chat-card img { width: 100%; height: 80px; object-fit: cover; display: block; background: var(--cream); }
+.chat-card-name { font-size: 11.5px; font-weight: 500; color: var(--brown-deep); padding: 6px 8px 0; }
+.chat-card-price { font-size: 12px; color: var(--brown-mid); padding: 2px 8px 8px; }
+.chat-buttons { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 0 36px; }
+.chat-link-btn { font-size: 12px; padding: 7px 14px; border-radius: 20px; background: var(--brown-deep); color: #fff; text-decoration: none; }
+.chat-link-btn:hover { background: var(--gold); color: var(--brown-deep); }
+.chat-contact { margin: 6px 0 0 36px; border: 1px solid var(--border); border-radius: 10px; background: #fff; padding: 10px 14px; font-size: 12.5px; line-height: 1.7; }
+.chat-contact-name { font-weight: 600; color: var(--brown-deep); }
+.chat-contact a { color: var(--brown-mid); }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ChatbotIntent;
+use App\Models\ChatbotLog;
 use Illuminate\Http\Request;
 
 class ChatbotIntentController extends Controller
@@ -17,7 +18,16 @@ class ChatbotIntentController extends Controller
             ->orderBy('category')
             ->paginate(15);
 
-        return view('admin.chatbot.index', compact('intents', 'search'));
+        // Questions Luma could not answer (newest first, repeats counted) so the admin can train her
+        $unanswered = ChatbotLog::query()
+            ->where('intent_detected', 'unmatched')
+            ->selectRaw('LOWER(message) as question, COUNT(*) as times, MAX(created_at) as last_asked')
+            ->groupBy('question')
+            ->orderByDesc('last_asked')
+            ->limit(15)
+            ->get();
+
+        return view('admin.chatbot.index', compact('intents', 'search', 'unanswered'));
     }
 
     public function create()

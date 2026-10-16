@@ -44,15 +44,12 @@ class ChatbotIntent extends Model
         return $query->where('is_active', true);
     }
 
-    // Check if message matches this intent
+    // Check if message matches this intent (whole words, synonyms and typos handled by Luma's matcher)
     public function matches(string $message): bool
     {
-        $message = strtolower($message);
-        foreach ($this->keywords_array as $keyword) {
-            if (str_contains($message, strtolower($keyword))) {
-                return true;
-            }
-        }
-        return false;
+        return \App\Support\Luma\IntentMatcher::score(
+            \App\Support\Luma\Text::words($message),
+            (string) $this->keywords
+        )['score'] >= (float) config('luma.min_score', 2.0);
     }
 }

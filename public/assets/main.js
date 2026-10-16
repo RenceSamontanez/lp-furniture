@@ -54,31 +54,82 @@ function openChatbot() {
 /* Send the initial greeting when chatbot first opens */
 function initChat() {
   addBotMessage(
-    "Hi! 👋 I'm LP Furniture's assistant. Tell me your budget and what furniture you're looking for!",
-    ['Browse chairs', 'Browse tables', 'Delivery info', 'Payment options']
+    "Hi, I'm Luma, LP Furniture Shop's AI Assistant. Ask me about our furniture, prices, custom designs, delivery or your order. Kumusta po! Pwede rin po kayong magtanong sa Tagalog.",
+    ['How to order', 'Custom design', 'Prices', 'Delivery']
   );
 }
 
-/* Add a message bubble from the bot side */
-function addBotMessage(msg, suggestions, products) {
-  const body = document.getElementById('chat-body');
+/* Escape text before it goes into HTML. Nothing from the server or the user is trusted as HTML. */
+function chatEsc(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
 
-  // Create the chat bubble
+/* Only same-site paths and http(s) links are clickable */
+function chatSafeUrl(url) {
+  url = String(url || '');
+  if (url.charAt(0) === '/' && url.charAt(1) !== '/') return url;
+  return /^https?:\/\//i.test(url) ? url : '#';
+}
+
+/* Add a message bubble from the bot side.
+   extra = { cards: [{name, price_label, old_price_label, image, url}], buttons: [{label, url}], contact: {phone, email} } */
+function addBotMessage(msg, suggestions, products, extra) {
+  const body = document.getElementById('chat-body');
+  extra = extra || {};
+
+  // Create the chat bubble (the text is escaped; only line breaks become <br>)
   const el = document.createElement('div');
   el.className = 'chat-msg bot';
   el.innerHTML = `
     <div class="chat-avatar">🪑</div>
-    <div class="chat-bubble">${msg.replace(/\n/g, '<br/>')}</div>
+    <div class="chat-bubble">${chatEsc(msg).replace(/\n/g, '<br/>')}</div>
   `;
   body.appendChild(el);
 
-  // If the bot returned product cards, display them in a grid
+  // Product cards from the live catalog
+  if (extra.cards && extra.cards.length) {
+    const cardsEl = document.createElement('div');
+    cardsEl.style.width = '100%';
+    cardsEl.innerHTML = '<div class="chat-cards">' + extra.cards.map(c => `
+      <a class="chat-card" href="${chatEsc(chatSafeUrl(c.url))}">
+        ${c.image ? `<img src="${chatEsc(chatSafeUrl(c.image))}" alt="${chatEsc(c.name)}" loading="lazy">` : ''}
+        <div class="chat-card-name">${chatEsc(c.name)}</div>
+        <div class="chat-card-price">${chatEsc(c.price_label)}${c.old_price_label ? ` <s>${chatEsc(c.old_price_label)}</s>` : ''}</div>
+      </a>`).join('') + '</div>';
+    body.appendChild(cardsEl);
+  }
+
+  // The shop's contact details, business-card style
+  if (extra.contact && (extra.contact.phone || extra.contact.email)) {
+    const c = extra.contact;
+    const cardEl = document.createElement('div');
+    cardEl.style.width = '100%';
+    cardEl.innerHTML = `<div class="chat-contact">
+      <div class="chat-contact-name">LP Furniture Shop</div>
+      ${c.phone ? `<div>📞 <a href="tel:${chatEsc(String(c.phone).replace(/[^\d+]/g, ''))}">${chatEsc(c.phone)}</a></div>` : ''}
+      ${c.email ? `<div>✉️ <a href="mailto:${chatEsc(c.email)}">${chatEsc(c.email)}</a></div>` : ''}
+    </div>`;
+    body.appendChild(cardEl);
+  }
+
+  // Link buttons ("View more products", "Send a request", ...)
+  if (extra.buttons && extra.buttons.length) {
+    const btnEl = document.createElement('div');
+    btnEl.className = 'chat-buttons';
+    btnEl.innerHTML = extra.buttons.map(b =>
+      `<a class="chat-link-btn" href="${chatEsc(chatSafeUrl(b.url))}">${chatEsc(b.label)}</a>`).join('');
+    body.appendChild(btnEl);
+  }
+
+  // Older replies: a plain list of products
   if (products && products.length) {
     const prodEl = document.createElement('div');
     prodEl.style.width = '100%';
     const cards = products.map(p => `
-      <div class="chat-product-card" onclick="window.location='/product/${p.id}'">
-        <div class="chat-product-name">${p.product_name}</div>
+      <div class="chat-product-card" onclick="window.location='/product/${encodeURIComponent(p.id)}'">
+        <div class="chat-product-name">${chatEsc(p.product_name)}</div>
         <div class="chat-product-price">₱${Number(p.price).toLocaleString()}</div>
       </div>
     `).join('');
@@ -98,7 +149,7 @@ function addUserMessage(msg) {
   const body = document.getElementById('chat-body');
   const el = document.createElement('div');
   el.className = 'chat-msg user';
-  el.innerHTML = `<div class="chat-bubble">${msg}</div>`;
+  el.innerHTML = `<div class="chat-bubble">${chatEsc(msg)}</div>`;
   body.appendChild(el);
   body.scrollTop = body.scrollHeight;
 }
@@ -107,7 +158,7 @@ function addUserMessage(msg) {
 function setSuggestions(list) {
   const el = document.getElementById('chat-suggestions');
   el.innerHTML = list
-    .map(s => `<div class="chat-sugg" onclick="handleSugg('${s.replace(/'/g, "\\'")}')">${s}</div>`)
+    .map(s => `<div class="chat-sugg" data-sugg="${chatEsc(s)}" onclick="handleSugg(this.dataset.sugg)">${chatEsc(s)}</div>`)
     .join('');
 }
 
@@ -183,7 +234,7 @@ async function sendChat() {
       body: JSON.stringify({ message: msg }),
     });
     const data = await res.json();
-    addBotMessage(data.response, data.suggestions, data.products);
+    addBotMessage(data.response, data.suggestions, data.products, data);
   } catch (e) {
     addBotMessage("Sorry, I'm having trouble right now. Please try again!", []);
   }

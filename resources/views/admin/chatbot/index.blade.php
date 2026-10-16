@@ -18,6 +18,20 @@
 </div>
 
 
+@if(isset($unanswered) && $unanswered->isNotEmpty())
+<div class="admin-panel" style="margin-bottom:16px;">
+  <div class="admin-panel-header"><div class="admin-panel-title">Questions Luma could not answer</div></div>
+  <div class="admin-panel-body">
+    <p style="font-size:12px;color:var(--text-muted);margin:0 0 10px;">Add an intent with these words as keywords to teach her.</p>
+    <ul style="margin:0;padding-left:18px;font-size:13px;color:#3D3129;line-height:1.7;">
+      @foreach($unanswered as $row)
+        <li>{{ $row->question }} @if($row->times > 1)<span style="color:var(--text-muted);">(asked {{ $row->times }} times)</span>@endif</li>
+      @endforeach
+    </ul>
+  </div>
+</div>
+@endif
+
 <div class="admin-panel">
   <div class="admin-panel-body" style="padding:0;">
     @if($intents->isEmpty())

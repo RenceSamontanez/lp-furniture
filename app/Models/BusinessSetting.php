@@ -16,7 +16,7 @@ class BusinessSetting extends Model
     public const CACHE_KEY = 'business_settings.current';
 
     // Values used if the row is somehow missing, so pages never break
-    private const DEFAULTS = [
+    public const DEFAULTS = [
         'phone'        => '0917-000-0000',
         'email'        => 'contact@example.com',
         'facebook_url' => 'https://facebook.com/your-page',
