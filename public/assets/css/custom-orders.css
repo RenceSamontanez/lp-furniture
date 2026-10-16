@@ -390,3 +390,13 @@
 .co-tl-title { font-weight: 500; }
 .co-tl-detail { font-size: 12.5px; color: #6B5D52; margin-top: 2px; overflow-wrap: anywhere; }
 .co-tl-when { font-size: 11.5px; color: #8A7B6D; margin-top: 2px; }
+/* Saved contact summary and checkbox (Stage 13) */
+.co-saved {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 12px 14px; background: #fff; border: 1px solid var(--border); border-radius: 12px;
+  font-size: 13.5px; color: var(--text);
+}
+.co-link { color: var(--gold-dark, #8a6a1e); font-size: 13px; text-decoration: underline; }
+.co-check { display: flex; align-items: flex-start; gap: 10px; margin-top: 12px; font-size: 13px; color: var(--text-muted); cursor: pointer; }
+.co-check input { width: 16px; height: 16px; margin-top: 2px; }
+.co-edit-note { font-size: 12.5px; color: var(--text-muted); margin-top: 10px; }

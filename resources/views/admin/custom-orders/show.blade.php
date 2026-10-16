@@ -54,8 +54,8 @@
           <div><dt>Submitted</dt><dd>{{ $r->submitted_at?->format('M d, Y h:i A') }}</dd></div>
         </dl>
 
-        @if($r->request_mode === 'modified')
-          <div class="co-block-label">Changes the customer wants</div>
+        @if($r->modification_notes)
+          <div class="co-block-label">Customer's customization idea</div>
           <div class="co-quote">{{ $r->modification_notes }}</div>
         @endif
 

@@ -263,18 +263,172 @@ class CustomDesignController extends Controller
         if ($request->filled('suggestion')) {
             $suggestion = $this->sendableSuggestion($designRequest, (int) $request->query('suggestion'));
             abort_unless($suggestion, 404);
+        } elseif ($designRequest->isLegacyUnsent()) {
+            // old one-click request: use the concept it already had selected, if any
+            $suggestion = $this->legacySuggestion($designRequest);
         } else {
             abort_unless($designRequest->status === 'rejected', 404);
         }
 
+        return view('design.send', $this->formData($designRequest, $suggestion, false));
+    }
+
+    // The same form, prefilled, while no quote has been sent yet.
+    public function editForm($id)
+    {
+        $designRequest = CustomDesignRequest::where('user_id', Auth::id())->with('selectedSuggestion')->findOrFail($id);
+
+        if (!$designRequest->isEditableByCustomer()) {
+            return redirect()->route('design.show', $designRequest->id)
+                ->with('info', 'This request can no longer be edited because a quote has been sent. Please contact us for changes.');
+        }
+
+        return view('design.send', $this->formData($designRequest, $designRequest->selectedSuggestion, true));
+    }
+
+    public function updateRequest(Request $request, $id)
+    {
+        $designRequest = CustomDesignRequest::where('user_id', Auth::id())->findOrFail($id);
+
+        $data = $request->validate($this->contactRules(), $this->contactMessages());
         $user = Auth::user();
 
-        return view('design.send', [
+        $result = DB::transaction(function () use ($designRequest, $data, $user, $request) {
+            $locked = CustomDesignRequest::where('user_id', $user->id)->lockForUpdate()->findOrFail($designRequest->id);
+
+            if (!$locked->isEditableByCustomer()) {
+                return false;
+            }
+
+            $locked->forceFill([
+                'contact_phone'         => PhilippineMobile::normalize($data['contact_phone']),
+                'contact_email'         => $data['contact_email'],
+                'preferred_call_window' => $data['preferred_call_window'],
+                'request_mode'          => $data['request_mode'],
+                'modification_notes'    => $this->cleanNotes($data),
+                'lock_version'          => (int) $locked->lock_version + 1,
+            ])->save();
+
+            $this->rememberContact($user, $request, $locked);
+
+            CustomOrderEvent::create([
+                'request_id'  => $locked->id,
+                'type'        => 'request_updated',
+                'actor_type'  => CustomOrderEvent::ACTOR_CUSTOMER,
+                'actor_id'    => $user->id,
+                'data'        => [
+                    'request_mode' => $locked->request_mode,
+                    'preferred_call_window' => $locked->preferred_call_window,
+                    'status' => $locked->pipeline_status,
+                ],
+                'occurred_at' => now(),
+            ]);
+
+            $name = trim($user->first_name . ' ' . $user->last_name);
+            foreach (User::where('role', 'admin')->pluck('id') as $adminId) {
+                Notification::create([
+                    'user_id' => $adminId,
+                    'title'   => 'Custom Request Updated',
+                    'message' => "{$name} updated their request for {$locked->title}.",
+                    'type'    => 'custom_order',
+                    'url'     => route('admin.custom-orders.show', $locked->id),
+                    'is_read' => false,
+                ]);
+            }
+
+            return true;
+        });
+
+        if (!$result) {
+            return redirect()->route('design.show', $designRequest->id)
+                ->with('info', 'This request can no longer be edited because a quote has been sent.');
+        }
+
+        return redirect()->route('design.show', $designRequest->id)->with('success', 'Your request was updated.');
+    }
+
+    /* ── shared by the send and edit forms ── */
+
+    private function contactRules(): array
+    {
+        return [
+            'suggestion_id'         => 'nullable|integer',
+            'contact_phone'         => ['required', 'string', 'max:20', new PhilippineMobile()],
+            'contact_email'         => 'required|email:rfc|max:150',
+            'preferred_call_window' => 'required|in:' . implode(',', array_keys(CustomDesignRequest::CALL_WINDOWS)),
+            'request_mode'          => 'required|in:' . implode(',', array_keys(CustomDesignRequest::REQUEST_MODES)),
+            'modification_notes'    => 'required_if:request_mode,modified|nullable|string|max:2000',
+            'save_contact'          => 'nullable|boolean',
+        ];
+    }
+
+    private function contactMessages(): array
+    {
+        return [
+            'contact_phone.required'         => 'Please enter a mobile number we can call.',
+            'contact_email.required'         => 'Please enter your email address.',
+            'contact_email.email'            => 'Please enter a valid email address.',
+            'modification_notes.required_if' => 'Please describe the changes you would like.',
+            'preferred_call_window.required' => 'Please choose when we should call you.',
+            'request_mode.required'          => 'Please choose how you would like it built.',
+        ];
+    }
+
+    private function cleanNotes(array $data): ?string
+    {
+        $notes = isset($data['modification_notes']) ? trim((string) $data['modification_notes']) : '';
+
+        return $notes !== '' ? $notes : null;
+    }
+
+    // Convenience copy only: every request keeps the contact it was sent with.
+    private function rememberContact(User $user, Request $request, CustomDesignRequest $designRequest): void
+    {
+        if (!$request->boolean('save_contact')) {
+            return;
+        }
+
+        $user->forceFill([
+            'saved_contact_phone' => $designRequest->contact_phone,
+            'saved_contact_email' => $designRequest->contact_email,
+            'contact_saved_at'    => now(),
+        ])->save();
+    }
+
+    private function legacySuggestion(CustomDesignRequest $designRequest): ?AiDesignSuggestion
+    {
+        $all = AiDesignSuggestion::where('design_id', $designRequest->id)->get()->filter(fn ($s) => $s->isLoadable());
+
+        return $all->firstWhere('is_selected', true) ?? $all->first();
+    }
+
+    private function formData(CustomDesignRequest $designRequest, ?AiDesignSuggestion $suggestion, bool $editing): array
+    {
+        $user = Auth::user();
+        $savedPhone = $user->saved_contact_phone;
+        $savedEmail = $user->saved_contact_email;
+        $hasSaved = $savedPhone && $savedEmail;
+
+        $phone = $editing
+            ? ($designRequest->contact_phone ?: ($savedPhone ?: PhilippineMobile::normalize($user->phone_number)))
+            : ($hasSaved ? $savedPhone : (PhilippineMobile::normalize($user->phone_number) ?? $user->phone_number));
+        $email = $editing
+            ? ($designRequest->contact_email ?: ($savedEmail ?: $user->email))
+            : ($hasSaved ? $savedEmail : $user->email);
+
+        return [
             'designRequest' => $designRequest,
             'suggestion'    => $suggestion,
-            'defaultPhone'  => PhilippineMobile::normalize($user->phone_number) ?? $user->phone_number,
-            'defaultEmail'  => $user->email,
-        ]);
+            'editing'       => $editing,
+            'hasSaved'      => $hasSaved,
+            'defaultPhone'  => $phone,
+            'defaultEmail'  => $email,
+            'values'        => $editing ? [
+                'preferred_call_window' => $designRequest->preferred_call_window,
+                'request_mode'          => $designRequest->request_mode,
+                'modification_notes'    => $designRequest->modification_notes,
+            ] : [],
+        ];
     }
 
     public function sendToTeam(Request $request, $id)
@@ -286,25 +440,11 @@ class CustomDesignController extends Controller
             return $this->alreadySent($designRequest);
         }
 
-        $data = $request->validate([
-            'suggestion_id'         => 'nullable|integer',
-            'contact_phone'         => ['required', 'string', 'max:20', new PhilippineMobile()],
-            'contact_email'         => 'required|email:rfc|max:150',
-            'preferred_call_window' => 'required|in:' . implode(',', array_keys(CustomDesignRequest::CALL_WINDOWS)),
-            'request_mode'          => 'required|in:' . implode(',', array_keys(CustomDesignRequest::REQUEST_MODES)),
-            'modification_notes'    => 'required_if:request_mode,modified|nullable|string|max:2000',
-        ], [
-            'contact_phone.required'         => 'Please enter a mobile number we can call.',
-            'contact_email.required'         => 'Please enter your email address.',
-            'contact_email.email'            => 'Please enter a valid email address.',
-            'modification_notes.required_if' => 'Please describe the changes you would like.',
-            'preferred_call_window.required' => 'Please choose when we should call you.',
-            'request_mode.required'          => 'Please choose how you would like it built.',
-        ]);
+        $data = $request->validate($this->contactRules(), $this->contactMessages());
 
         $user = Auth::user();
 
-        $sent = DB::transaction(function () use ($designRequest, $data, $user) {
+        $sent = DB::transaction(function () use ($designRequest, $data, $user, $request) {
             // Lock the row so two submits (double click, two tabs) can't
             // both get past the "already sent" check.
             $locked = CustomDesignRequest::where('user_id', $user->id)
@@ -319,6 +459,8 @@ class CustomDesignController extends Controller
             if (!empty($data['suggestion_id'])) {
                 $suggestion = $this->sendableSuggestion($locked, (int) $data['suggestion_id']);
                 abort_unless($suggestion, 404);
+            } elseif ($locked->isLegacyUnsent()) {
+                $suggestion = $this->legacySuggestion($locked);
             } else {
                 abort_unless($locked->status === 'rejected', 404);
             }
@@ -328,8 +470,6 @@ class CustomDesignController extends Controller
                 AiDesignSuggestion::where('id', $suggestion->id)->where('design_id', $locked->id)->update(['is_selected' => true]);
             }
 
-            $modified = $data['request_mode'] === 'modified';
-
             $locked->update([
                 'status'                 => 'approved', // existing meaning: sent to team
                 'pipeline_status'        => 'submitted',
@@ -337,10 +477,12 @@ class CustomDesignController extends Controller
                 'contact_email'          => $data['contact_email'],
                 'preferred_call_window'  => $data['preferred_call_window'],
                 'request_mode'           => $data['request_mode'],
-                'modification_notes'     => $modified ? trim($data['modification_notes']) : null,
+                'modification_notes'     => $this->cleanNotes($data),
                 'selected_suggestion_id' => $suggestion?->id,
                 'submitted_at'           => now(),
             ]);
+
+            $this->rememberContact($user, $request, $locked);
 
             CustomOrderEvent::create([
                 'request_id'  => $locked->id,
@@ -393,7 +535,7 @@ class CustomDesignController extends Controller
     // A concept of THIS request that the customer can still send.
     private function sendableSuggestion(CustomDesignRequest $designRequest, int $suggestionId): ?AiDesignSuggestion
     {
-        if (!in_array($designRequest->status, ['ai_generated', 'under_review'], true)) {
+        if (!in_array($designRequest->status, ['ai_generated', 'under_review'], true) && !$designRequest->isLegacyUnsent()) {
             return null;
         }
 
@@ -413,7 +555,7 @@ class CustomDesignController extends Controller
         $designRequest = CustomDesignRequest::where('user_id', Auth::id())->findOrFail($id);
 
         // Once sent, the concepts the team is reviewing must stay put.
-        if ($designRequest->isSentToTeam()) {
+        if ($designRequest->isSentToTeam() || $designRequest->isLegacyUnsent()) {
             return redirect()->route('design.show', $designRequest->id)
                 ->with('info', 'This request has already been sent to our team, so its designs can no longer be regenerated. Start a new request for a different design.');
         }

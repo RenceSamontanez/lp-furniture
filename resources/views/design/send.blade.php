@@ -9,8 +9,13 @@
 
 @section('content')
 @php
-  $mode = old('request_mode', 'exact');
-  $window = old('preferred_call_window');
+  $editing = $editing ?? false;
+  $hasSaved = $hasSaved ?? false;
+  $values = $values ?? [];
+  $mode = old('request_mode', $values['request_mode'] ?? 'exact');
+  $window = old('preferred_call_window', $values['preferred_call_window'] ?? null);
+  $notesValue = old('modification_notes', $values['modification_notes'] ?? '');
+  $showSavedSummary = $hasSaved && !$editing && !$errors->hasAny(['contact_phone', 'contact_email']);
 @endphp
 <div class="cd-wrap">
 
@@ -23,9 +28,13 @@
 
   <div class="co-card">
     <div class="co-head">
-      <h1 class="co-title">Send to our team</h1>
+      <h1 class="co-title">{{ $editing ? 'Edit your request' : 'Send to our team' }}</h1>
       <p class="co-lead">
-        This is a request, not an order. No payment is due yet. Our team will call you to discuss the price and details.
+        @if($editing)
+          You can change your request until we send you a quote. Our team is told when you save.
+        @else
+          This is a request, not an order. No payment is due yet. Our team will call you to discuss the price and details.
+        @endif
       </p>
     </div>
 
@@ -53,15 +62,21 @@
       </div>
     @endif
 
-    <form method="POST" action="{{ route('design.sendToTeam', $designRequest->id) }}" class="co-form" id="co-send-form">
+    <form method="POST" action="{{ $editing ? route('design.update', $designRequest->id) : route('design.sendToTeam', $designRequest->id) }}" class="co-form" id="co-send-form">
       @csrf
-      @if($suggestion)
+      @if($suggestion && !$editing)
         <input type="hidden" name="suggestion_id" value="{{ $suggestion->id }}"/>
       @endif
 
       <fieldset class="co-section">
         <legend class="co-section-title">How can we reach you?</legend>
-        <div class="co-grid">
+        @if($showSavedSummary)
+          <div class="co-saved" id="co-saved">
+            <span>We'll call <strong>{{ $defaultPhone }}</strong>, email <strong>{{ $defaultEmail }}</strong>.</span>
+            <a href="#" id="co-change-contact" class="co-link">Change</a>
+          </div>
+        @endif
+        <div class="co-grid" id="co-contact-fields" @if($showSavedSummary) hidden @endif>
           <div class="co-field">
             <label class="form-label" for="contact_phone">Mobile number</label>
             <input type="tel" id="contact_phone" name="contact_phone" class="form-input" required maxlength="16"
@@ -74,6 +89,10 @@
                    value="{{ old('contact_email', $defaultEmail) }}"/>
           </div>
         </div>
+        <label class="co-check" id="co-save-contact" @if($showSavedSummary) hidden @endif>
+          <input type="checkbox" name="save_contact" value="1" @checked(old('save_contact'))/>
+          <span>Use this as my primary phone and email for every custom order</span>
+        </label>
       </fieldset>
 
       <fieldset class="co-section">
@@ -103,16 +122,17 @@
           @endforeach
         </div>
 
-        <div class="co-field co-notes" id="co-notes" @if($mode !== 'modified') hidden @endif>
-          <label class="form-label" for="modification_notes">What would you like changed?</label>
+        <div class="co-field co-notes" id="co-notes">
+          <label class="form-label" for="modification_notes">What would you like to change or add to this design?</label>
           <textarea id="modification_notes" name="modification_notes" class="form-textarea" rows="4" maxlength="2000"
-                    placeholder="e.g. Make it 20 cm longer, use a darker stain, add a drawer">{{ old('modification_notes') }}</textarea>
+                    placeholder="e.g. Make it 20 cm longer, use a darker stain, add a drawer">{{ $notesValue }}</textarea>
+          <p class="co-hint" id="co-notes-hint">Required if you want changes. Optional if you want it built exactly as shown.</p>
         </div>
       </fieldset>
 
       <div class="co-actions">
         <a href="{{ route('design.show', $designRequest->id) }}" class="co-btn co-btn--ghost">Cancel</a>
-        <button type="submit" class="co-btn co-btn--primary" id="co-submit">Send to our team</button>
+        <button type="submit" class="co-btn co-btn--primary" id="co-submit">{{ $editing ? 'Save changes' : 'Send to our team' }}</button>
       </div>
     </form>
   </div>
@@ -123,16 +143,24 @@
 @push('scripts')
 <script>
 (function () {
-  const notes = document.getElementById('co-notes');
   const textarea = document.getElementById('modification_notes');
   document.querySelectorAll('input[name="request_mode"]').forEach(function (radio) {
     radio.addEventListener('change', function () {
-      const modified = this.value === 'modified' && this.checked;
-      notes.hidden = !modified;
-      textarea.required = modified;
+      textarea.required = this.value === 'modified' && this.checked;
     });
   });
-  textarea.required = !notes.hidden;
+  const checked = document.querySelector('input[name="request_mode"]:checked');
+  textarea.required = !!checked && checked.value === 'modified';
+
+  const change = document.getElementById('co-change-contact');
+  if (change) {
+    change.addEventListener('click', function (e) {
+      e.preventDefault();
+      document.getElementById('co-saved').hidden = true;
+      document.getElementById('co-contact-fields').hidden = false;
+      document.getElementById('co-save-contact').hidden = false;
+    });
+  }
 
   // One click only; the server also refuses a second submission.
   document.getElementById('co-send-form').addEventListener('submit', function () {

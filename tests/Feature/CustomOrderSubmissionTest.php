@@ -228,7 +228,7 @@ class CustomOrderSubmissionTest extends TestCase
         $this->assertSame('Make it 20 cm longer', $fresh->modification_notes);
     }
 
-    public function test_exact_mode_drops_stray_notes(): void
+    public function test_exact_mode_keeps_optional_notes(): void
     {
         $ana = $this->customer();
         [$request, $s] = $this->generatedRequest($ana);
@@ -237,7 +237,7 @@ class CustomOrderSubmissionTest extends TestCase
             'suggestion_id' => $s[0]->id, 'modification_notes' => 'left over text',
         ]));
 
-        $this->assertNull($request->fresh()->modification_notes);
+        $this->assertSame('left over text', $request->fresh()->modification_notes);
     }
 
     /* ───────────── validation ───────────── */
@@ -321,11 +321,11 @@ class CustomOrderSubmissionTest extends TestCase
         $this->assertSame($s[0]->id, $request->fresh()->selected_suggestion_id);
     }
 
-    public function test_legacy_one_click_request_cannot_be_resubmitted(): void
+    public function test_legacy_one_click_request_already_handled_stays_blocked(): void
     {
         $ana = $this->customer();
         [$request, $s] = $this->generatedRequest($ana);
-        $request->update(['status' => 'approved']); // sent under the old flow, no pipeline_status
+        $request->update(['status' => 'approved', 'admin_contacted_at' => now()]); // sent under the old flow and already handled in the old admin list
 
         $this->actingAs($ana)->post(route('design.sendToTeam', $request->id), $this->payload(['suggestion_id' => $s[0]->id]))
             ->assertRedirect(route('design.show', $request->id));

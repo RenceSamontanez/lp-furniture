@@ -134,8 +134,28 @@ class CustomDesignRequest extends Model
     // no second submission. A different design means a new request.
     public function isSentToTeam(): bool
     {
+        if ($this->isLegacyUnsent()) {
+            return false;
+        }
+
         return $this->pipeline_status !== null
             || in_array($this->status, ['approved', 'converted_to_order'], true);
+    }
+
+    // A request sent the old one-click way (status approved, no pipeline)
+    // that no admin has touched yet: it never got contact details, so it
+    // may open the "Send to our team" form once.
+    public function isLegacyUnsent(): bool
+    {
+        return $this->pipeline_status === null
+            && $this->status === 'approved'
+            && $this->admin_contacted_at === null;
+    }
+
+    // Before a quote is sent the customer may still change their request.
+    public function isEditableByCustomer(): bool
+    {
+        return in_array($this->pipeline_status, ['submitted', 'contacting', 'unreachable'], true);
     }
 
     public function callWindowLabel(): ?string

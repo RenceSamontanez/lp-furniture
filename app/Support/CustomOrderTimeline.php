@@ -37,6 +37,7 @@ class CustomOrderTimeline
 
             $entry = match ($e->type) {
                 'submitted' => ['You sent your request to our team', null, 'request'],
+                'request_updated' => ['You updated your request', null, 'request'],
                 'call_logged' => !empty($d['answered'])
                     ? ['Our team called you', null, 'contact']
                     : ["We tried to call you but couldn't get through", null, 'contact'],
@@ -93,6 +94,7 @@ class CustomOrderTimeline
 
             $title = match ($e->type) {
                 'submitted'            => 'Customer sent the request to the team',
+                'request_updated'      => 'Customer updated the request',
                 'call_logged'          => 'Call logged (attempt ' . ($d['attempt_no'] ?? '?') . ', ' . (!empty($d['answered']) ? 'answered' : 'no answer') . ')',
                 'marked_unreachable'   => 'Marked unreachable, customer notified',
                 'declined_by_admin'    => 'Declined by our team, customer notified',

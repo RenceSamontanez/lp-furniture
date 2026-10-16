@@ -25,6 +25,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'google_token',
         'is_validated',
         'email_verified_at',
+        'saved_contact_phone',
+        'saved_contact_email',
+        'contact_saved_at',
     ];
 
     protected $hidden = [
@@ -36,6 +39,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'is_validated'      => 'boolean',
+        'contact_saved_at'  => 'datetime',
         'password'          => 'hashed',
     ];
 

@@ -79,6 +79,11 @@
       <div>
         <div class="co-status-title">Request sent, we will call you at {{ $designRequest->contact_phone }} during {{ $designRequest->callWindowLabel() }}.</div>
         <div class="co-status-text">This is a request, not an order. No payment is due yet. We'll discuss the price and details on the call.</div>
+        @if($designRequest->isEditableByCustomer())
+          <div class="co-status-actions">
+            <a href="{{ route('design.edit', $designRequest->id) }}" class="ai-action-btn ai-action-secondary" style="text-decoration:none;">Edit my request</a>
+          </div>
+        @endif
       </div>
     </div>
   @endif
@@ -242,6 +247,7 @@
 
       @if(!$isFinal)
         <div class="ai-actions-row">
+          @unless($designRequest->isLegacyUnsent())
           <form method="POST" action="{{ route('design.regenerate', $designRequest->id) }}">
             @csrf
             <button type="submit" class="ai-action-btn ai-action-secondary" onclick="return confirm('Generate a new set of concepts? This replaces the current ones.')">
@@ -249,6 +255,7 @@
               Regenerate
             </button>
           </form>
+          @endunless
 
           <form method="POST" action="{{ route('design.select', $designRequest->id) }}" id="continue-form">
             @csrf
