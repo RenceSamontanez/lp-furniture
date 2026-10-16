@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Notification;
 use App\Models\StripeWebhookEvent;
+use App\Models\User;
 use App\Support\AgreementCheckout;
 use App\Support\PaymentLedger;
 use App\Support\StripeCheckoutParams;
@@ -711,7 +712,26 @@ class PaymentController extends Controller
         }
 
         if (in_array($event->type, ['checkout.session.completed', 'checkout.session.async_payment_succeeded'])) {
-            $this->confirmStripeSession($event->data->object);
+            $session = $event->data->object;
+
+            // A paid session that no longer belongs to an order's current
+            // Stripe payment (unknown order, or the customer has since
+            // switched to another method) is never confirmed or ledgered
+            // here: admins are told to refund or match it by hand.
+            $why = $this->stripeSessionMismatch($session);
+
+            if ($why !== null) {
+                if (($session->payment_status ?? null) === 'paid') {
+                    $this->alertUnmatchedPayment(
+                        'Stripe',
+                        ((int) ($session->amount_total ?? 0)) / 100,
+                        (string) ($session->payment_intent ?: $session->id),
+                        $why
+                    );
+                }
+            } else {
+                $this->confirmStripeSession($session);
+            }
         }
 
         // Only reached if handling didn't throw, so a failed attempt stays
@@ -719,6 +739,56 @@ class PaymentController extends Controller
         $record?->markProcessed();
 
         return response()->json(['status' => 'received']);
+    }
+
+    // Why a verified Stripe session cannot be matched to an order's current
+    // Stripe payment, or null when it can.
+    private function stripeSessionMismatch($session): ?string
+    {
+        $orderId = $session->metadata->order_id ?? null;
+        $order   = $orderId ? Order::with('payment')->find($orderId) : null;
+
+        if (!$order || !$order->payment) {
+            return 'no order matches this payment';
+        }
+
+        // An already-paid order keeps the existing duplicate-capture path
+        // (ledgered and flagged for refund review).
+        if ($order->payment->payment_method !== 'stripe' && $order->payment->payment_status !== 'paid') {
+            return "order {$order->order_number} now uses {$order->payment->payment_method}";
+        }
+
+        return null;
+    }
+
+    // A verified gateway payment that matches no current order payment. Logged
+    // and sent to every admin once per reference; nothing else is touched
+    // (no order status change, no ledger row). Only the last 8 characters of
+    // the gateway reference are ever written.
+    private function alertUnmatchedPayment(string $gateway, float $amount, string $reference, string $why): void
+    {
+        $tail    = substr($reference, -8);
+        $amount  = number_format($amount, 2);
+        $message = "{$gateway} payment of ₱{$amount} (reference …{$tail}) was not applied: {$why}. "
+            . 'Check the gateway dashboard and refund or match this payment.';
+
+        \Log::warning("Unmatched {$gateway} payment of ₱{$amount} (reference …{$tail}): {$why}.");
+
+        // The gateway may deliver the same event repeatedly.
+        if (Notification::where('title', 'Unmatched Payment')->where('message', $message)->exists()) {
+            return;
+        }
+
+        foreach (User::where('role', 'admin')->pluck('id') as $adminId) {
+            Notification::create([
+                'user_id' => $adminId,
+                'title'   => 'Unmatched Payment',
+                'message' => $message,
+                'type'    => 'general',
+                'url'     => route('admin.orders.index'),
+                'is_read' => false,
+            ]);
+        }
     }
 
     // Find-or-create the StripeWebhookEvent row for this event id. The
@@ -780,10 +850,16 @@ class PaymentController extends Controller
             if ($intentId) {
                 $payment = Payment::where('paymongo_payment_intent_id', $intentId)->first();
 
-                if ($payment && $payment->order) {
+                $amount = ((int) ($resource['attributes']['amount'] ?? 0)) / 100;
+
+                if ($payment && $payment->order
+                    && ($payment->payment_method === 'gcash' || $payment->payment_status === 'paid')) {
                     $this->markGcashPaymentPaid($payment->order, $intentId);
+                } elseif ($payment && $payment->order) {
+                    $this->alertUnmatchedPayment('GCash (PayMongo)', $amount, $intentId,
+                        "order {$payment->order->order_number} now uses {$payment->payment_method}");
                 } else {
-                    \Log::warning("PayMongo webhook: no matching payment found for intent {$intentId}.");
+                    $this->alertUnmatchedPayment('GCash (PayMongo)', $amount, $intentId, 'no order matches this payment');
                 }
             }
         }
