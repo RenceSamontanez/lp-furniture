@@ -74,7 +74,8 @@ class CustomOrderSchemaTest extends TestCase
 
         $this->assertNotNull($policy);
         $this->assertStringContainsString('text to be supplied', $policy->body);
-        $this->assertSame(1, AgreementPolicy::current()->version);
+        // version 2 (Terms and Conditions) is added by its own migration; version 1 stays as it was
+        $this->assertSame(2, AgreementPolicy::current()->version);
     }
 
     public function test_agreement_foreign_keys_are_restrict(): void
@@ -346,10 +347,10 @@ class CustomOrderSchemaTest extends TestCase
         } catch (ImmutableRecordException) {
         }
 
-        $v2 = AgreementPolicy::create(['version' => 2, 'title' => 'Refund policy', 'body' => 'new wording']);
-        $this->assertSame(2, AgreementPolicy::current()->version);
+        $v3 = AgreementPolicy::create(['version' => 3, 'title' => 'Refund policy', 'body' => 'new wording']);
+        $this->assertSame(3, AgreementPolicy::current()->version);
         $this->assertStringContainsString('text to be supplied', $v1->fresh()->body);
-        $this->assertNotNull($v2->created_at);
+        $this->assertNotNull($v3->created_at);
     }
 
     /* ───────────── snapshot hash ───────────── */

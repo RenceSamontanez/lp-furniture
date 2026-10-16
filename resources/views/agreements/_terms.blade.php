@@ -51,5 +51,5 @@
 
 <div class="co-policy">
   <div class="co-policy-title">{{ $terms['policy']['title'] }}@if($showVersions ?? false) (version {{ $terms['policy']['version'] }})@endif</div>
-  <div class="co-policy-body">{{ $terms['policy']['text'] }}</div>
+  <div class="co-policy-body">@include('agreements._policy', ['text' => $terms['policy']['text']])</div>
 </div>

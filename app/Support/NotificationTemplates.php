@@ -181,6 +181,18 @@ final class NotificationTemplates
         return self::render($key, $data, $business)['message'];
     }
 
+    /** The configured business phone, or '' when it is empty or the built-in placeholder. */
+    public static function phone(?BusinessSetting $business = null): string
+    {
+        return self::real(($business ?? BusinessSetting::current())->phone, self::PLACEHOLDER_PHONE);
+    }
+
+    /** The configured business email, or '' when it is empty or the built-in placeholder. */
+    public static function email(?BusinessSetting $business = null): string
+    {
+        return self::real(($business ?? BusinessSetting::current())->email, self::PLACEHOLDER_EMAIL);
+    }
+
     /** "You can reach us at 0917 or hello@x.com." or the website fallback. */
     public static function contact(?BusinessSetting $business = null): string
     {

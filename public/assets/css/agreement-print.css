@@ -82,3 +82,8 @@
   .ag-image img { max-height: 260px; }
   @page { margin: 18mm; }
 }
+
+/* Policy sections */
+.pt-heading { font-size: 13px; margin: 14px 0 4px; }
+.pt-p, .pt-list { margin: 0 0 6px; }
+.pt-list { padding-left: 18px; }

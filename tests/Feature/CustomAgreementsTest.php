@@ -150,8 +150,9 @@ class CustomAgreementsTest extends TestCase
         $res->assertSee('20 working days');
         $res->assertSee('ready about');
         $res->assertSee('Payment 1: ₱5,125.00', false);
-        $res->assertSee('Refund and Cancellation Policy');
-        $res->assertSee('[Refund and cancellation policy', false);
+        $res->assertSee('Terms and Conditions');
+        $res->assertSee('Cancellation and refunds');
+        $res->assertSee('[TO CONFIRM', false);
         $res->assertSee('I have read and agree to these terms');
         $res->assertSee('Accept agreement');
         $res->assertDontSee('INTERNAL-ONLY-note');
@@ -201,7 +202,7 @@ class CustomAgreementsTest extends TestCase
         $this->assertMatchesRegularExpression('/^2026-10-16 14:05:09 [A-Z0-9+-]+$/', $a->accepted_at_local);
         $this->assertSame(self::IP, $a->ip_address);
         $this->assertSame(self::UA, $a->user_agent);
-        $this->assertSame(1, (int) $a->policy_version);
+        $this->assertSame(2, (int) $a->policy_version);
         $this->assertSame('20500.00', (string) $a->total_amount);
         $this->assertSame('10250.00', (string) $a->upfront_amount);
         $this->assertSame($q->sent_at->timestamp, $a->sent_at->timestamp);
@@ -217,8 +218,9 @@ class CustomAgreementsTest extends TestCase
         $this->assertSame('10250.00', $s['money']['balance']);
         $this->assertCount(2, $s['schedule']);
         $this->assertSame(20, $s['production']['days']);
-        $this->assertSame(1, $s['policy']['version']);
-        $this->assertStringContainsString('Refund and cancellation policy', $s['policy']['text']);
+        $this->assertSame(2, $s['policy']['version']);
+        $this->assertSame('Terms and Conditions', $s['policy']['title']);
+        $this->assertStringContainsString('## Cancellation and refunds', $s['policy']['text']);
         $this->assertSame('Ana Cruz', $s['people']['customer']['name']);
         $this->assertSame('Rhea Santos', $s['people']['finalized_by']['name']);
         $this->assertSame($s['payment_due_at'], $q->expires_at->timezone('Asia/Manila')->format('Y-m-d H:i:s'));
@@ -483,7 +485,7 @@ class CustomAgreementsTest extends TestCase
         [$c, , , , $a] = $this->accepted();
 
         $page = $this->actingAs($c)->get(route('design.agreement', $a->id));
-        $page->assertOk()->assertSee($a->agreement_number)->assertSee('Agreed on')->assertSee('Refund and Cancellation Policy');
+        $page->assertOk()->assertSee($a->agreement_number)->assertSee('Agreed on')->assertSee('Terms and Conditions');
         $this->assertStringContainsString('no-store', $page->headers->get('Cache-Control'));
 
         $print = $this->actingAs($c)->get(route('design.agreement.print', $a->id));
