@@ -29,6 +29,17 @@
     <form method="POST" action="{{ route('admin.service-inquiries.store') }}">
       @csrf
 
+      <div class="co-field si-link" id="si-link">
+        <label class="co-block-label" for="si-search" style="margin-top:0;">Link an existing customer account (optional)</label>
+        <input type="search" id="si-search" class="form-input" placeholder="Search by name, phone or email" autocomplete="off" aria-controls="si-results"/>
+        <ul class="si-results" id="si-results" role="listbox" hidden></ul>
+        <input type="hidden" name="customer_id" id="si-customer-id" value="{{ old('customer_id') }}"/>
+        <div class="si-linked" id="si-linked" hidden>
+          <span>Linked to <strong id="si-linked-name"></strong></span>
+          <button type="button" class="admin-btn admin-btn-outline" id="si-unlink">Unlink</button>
+        </div>
+      </div>
+
       <div class="co-block-label" style="margin-top:0;">Service</div>
       <div class="si-radio-list">
         @foreach(\App\Models\ServiceInquiry::SERVICE_TYPES as $value => $label)
@@ -85,7 +96,7 @@
         </div>
       </div>
 
-      <p class="si-hint">A ticket entered here has no customer account, so the customer is not notified in the app.</p>
+      <p class="si-hint" id="si-hint">With no account linked, the customer is not notified in the app.</p>
 
       <div class="co-modal-actions">
         <a href="{{ route('admin.service-inquiries.index') }}" class="admin-btn admin-btn-outline">Cancel</a>
@@ -96,3 +107,69 @@
 </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+(function () {
+  var url = @json(route('admin.service-inquiries.customer-search'));
+  var search = document.getElementById('si-search');
+  var list = document.getElementById('si-results');
+  var idField = document.getElementById('si-customer-id');
+  var linked = document.getElementById('si-linked');
+  var linkedName = document.getElementById('si-linked-name');
+  var hint = document.getElementById('si-hint');
+  var timer = null;
+
+  function setLinked(c) {
+    idField.value = c ? c.id : '';
+    linked.hidden = !c;
+    search.hidden = !!c;
+    list.hidden = true;
+    if (c) {
+      linkedName.textContent = c.name + (c.email ? ' (' + c.email + ')' : '');
+      [['name', c.name], ['phone', c.phone], ['email', c.email]].forEach(function (p) {
+        var el = document.getElementById(p[0]);
+        if (el && p[1]) { el.value = p[1]; }
+      });
+    }
+    hint.textContent = c
+      ? 'This ticket belongs to the linked account, so the customer is notified in the app. You can still edit the contact details above.'
+      : 'With no account linked, the customer is not notified in the app.';
+  }
+
+  function show(results) {
+    list.innerHTML = '';
+    if (!results.length) {
+      var none = document.createElement('li');
+      none.className = 'si-results-none';
+      none.textContent = 'No customer found';
+      list.appendChild(none);
+    }
+    results.forEach(function (c) {
+      var li = document.createElement('li');
+      li.setAttribute('role', 'option');
+      li.tabIndex = 0;
+      li.textContent = c.name + ' · ' + (c.phone || 'no phone') + ' · ' + (c.email || 'no email');
+      li.addEventListener('click', function () { setLinked(c); });
+      li.addEventListener('keydown', function (e) { if (e.key === 'Enter') { setLinked(c); } });
+      list.appendChild(li);
+    });
+    list.hidden = false;
+  }
+
+  search.addEventListener('input', function () {
+    clearTimeout(timer);
+    var q = search.value.trim();
+    if (q.length < 2) { list.hidden = true; return; }
+    timer = setTimeout(function () {
+      fetch(url + '?q=' + encodeURIComponent(q), { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(function (d) { show(d.results || []); })
+        .catch(function () { list.hidden = true; });
+    }, 250);
+  });
+  search.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); } });
+  document.getElementById('si-unlink').addEventListener('click', function () { setLinked(null); search.value = ''; search.focus(); });
+})();
+</script>
+@endpush

@@ -213,7 +213,10 @@ try {
     \Log::warning('Email verification send failed for ' . $user->email . ': ' . $e->getMessage());
 }
 
-return redirect()->route('verification.notice')
+// A guest who was sent here from a protected page (for example /services/request) goes back to it.
+$intended = SafeIntendedUrl::resolve($request, route('verification.notice'));
+
+return redirect($intended)
     ->with('success', 'Account created! Please check your email to verify your account.');
     }
     /* ════════════════════════════════════════

@@ -5,6 +5,7 @@ namespace App\Support\Luma;
 use App\Models\ChatbotIntent;
 use App\Models\Product;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -191,8 +192,15 @@ final class Luma
     /** Labor only: the contact card sits under the text; with no phone or email set, the text says "through our website". */
     private static function laborReply(array $reply): array
     {
+        $tl      = $reply['lang'] === Language::TL;
+        $account = $tl
+            ? 'Kailangan po ng account para makapagpadala ng request, para makontak namin kayo.'
+            : 'You need an account to send a request, so that we can contact you.';
+
+        $reply['text'] = rtrim($reply['text'], ': ') . '. ' . $account;
+
         if ($reply['contact'] === null) {
-            $reply['text'] = rtrim($reply['text'], ': ') . '. ' . Contact::sentence($reply['lang']);
+            $reply['text'] .= ' ' . Contact::sentence($reply['lang']);
         }
 
         return $reply;
@@ -244,6 +252,10 @@ final class Luma
         foreach ($defs as [$en, $tl, $route]) {
             if (!Route::has($route)) {
                 continue;
+            }
+            // The request form needs an account: a guest is sent to log in first and comes back to it.
+            if ($route === 'services.request' && !Auth::check()) {
+                [$en, $tl] = ['Log in to send a request', 'Mag-log in para magpadala ng request'];
             }
             $out[] = self::button($en, $tl, route($route, [], false), $lang);
         }

@@ -24,3 +24,12 @@
 .si-hint { font-size: 11.5px; color: var(--text-muted); margin: 4px 0 0; }
 
 @media (max-width: 640px) { .si-form-grid { grid-template-columns: 1fr; } }
+
+.si-link { position: relative; }
+.si-results { list-style: none; margin: 4px 0 0; padding: 4px; border: 1px solid #E4D9C8; border-radius: 8px; background: #fff; max-height: 240px; overflow-y: auto; }
+.si-results li { padding: 9px 10px; font-size: 12.5px; border-radius: 6px; cursor: pointer; overflow-wrap: anywhere; }
+.si-results li:hover, .si-results li:focus { background: #F6EFE3; outline: none; }
+.si-results .si-results-none { color: var(--text-muted); cursor: default; }
+.si-results .si-results-none:hover { background: transparent; }
+.si-linked { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 1px solid #CFE6D8; background: #EEF8F2; border-radius: 8px; font-size: 13px; }
+.si-linked[hidden], .si-results[hidden] { display: none; }

@@ -37,11 +37,6 @@ Route::get('/reviews', [FeedbackController::class, 'index'])->name('feedback.ind
 Route::get('/terms', [\App\Http\Controllers\TermsController::class, 'show'])->name('terms');
 Route::get('/guide', [\App\Http\Controllers\GuideController::class, 'show'])->name('guide');
 Route::post('/chatbot', [ChatbotController::class, 'respond'])->name('chatbot.respond');
-// Other Services inquiry tickets (labor only with own wood, repairs, anything priced by phone)
-Route::get('/services/request', [\App\Http\Controllers\ServiceInquiryController::class, 'create'])->name('services.request');
-Route::post('/services/request', [\App\Http\Controllers\ServiceInquiryController::class, 'store'])->name('services.request.submit');
-Route::get('/services/request/sent', [\App\Http\Controllers\ServiceInquiryController::class, 'sent'])->name('services.request.sent');
-
 // ============================================================
 // GUEST ONLY ROUTES
 // ============================================================
@@ -185,6 +180,12 @@ Route::middleware(['auth', 'validated'])->group(function () {
     Route::post('/design/{id}/favorite', [CustomDesignController::class, 'toggleFavorite'])->name('design.favorite');
 Route::get('/design-gallery', [CustomDesignController::class, 'gallery'])->name('design.gallery');
 
+    // Other Services inquiry tickets (labor only with own wood, repairs, anything priced by phone).
+    // An account is required, same group as the Customize page, so we can always reach the customer.
+    Route::get('/services/request', [\App\Http\Controllers\ServiceInquiryController::class, 'create'])->name('services.request');
+    Route::post('/services/request', [\App\Http\Controllers\ServiceInquiryController::class, 'store'])->name('services.request.submit');
+    Route::get('/services/request/sent', [\App\Http\Controllers\ServiceInquiryController::class, 'sent'])->name('services.request.sent');
+
     // Review and Accept, and the immutable agreement record (Stage 6).
     // There is deliberately no update or delete route for an agreement.
     Route::get('/design/{id}/quotes/{quote}',          [CustomAgreementController::class, 'review'])->name('design.quote.review')->whereNumber(['id', 'quote']);
@@ -271,6 +272,7 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     Route::get('/service-inquiries',                     [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'index'])->name('service-inquiries.index');
     Route::get('/service-inquiries/create',              [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'create'])->name('service-inquiries.create');
     Route::post('/service-inquiries',                    [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'store'])->name('service-inquiries.store');
+    Route::get('/service-inquiries/customer-search',     [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'customerSearch'])->name('service-inquiries.customer-search');
     Route::get('/service-inquiries/{id}',                [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'show'])->name('service-inquiries.show')->whereNumber('id');
     Route::post('/service-inquiries/{id}/call-update',   [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'callUpdate'])->name('service-inquiries.call-update')->whereNumber('id');
     Route::post('/service-inquiries/{id}/notes',         [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'addNote'])->name('service-inquiries.notes')->whereNumber('id');

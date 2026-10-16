@@ -271,6 +271,65 @@ class ServiceInquiryAdminTest extends TestCase
         $this->assertSame(0, ServiceInquiry::count());
     }
 
+    /* ───────────── link an existing customer ───────────── */
+
+    public function test_the_customer_search_finds_customers_by_name_phone_and_email_only(): void
+    {
+        $admin = $this->admin();
+        $maria = $this->makeUser();
+        $maria->forceFill(['first_name' => 'Maria', 'last_name' => 'Clara', 'email' => 'maria@example.test', 'phone_number' => '09171112222'])->save();
+        $this->makeUser('admin')->forceFill(['first_name' => 'Maria', 'last_name' => 'Admin'])->save();
+
+        $this->actingAs($admin, 'admin');
+        foreach (['Maria Cla', '0917111', 'maria@example'] as $q) {
+            $res = $this->getJson(route('admin.service-inquiries.customer-search', ['q' => $q]))->assertOk();
+            $this->assertSame([$maria->id], array_column($res->json('results'), 'id'), $q);
+        }
+        $this->assertSame([], $this->getJson(route('admin.service-inquiries.customer-search', ['q' => 'M']))->json('results'));
+        $this->assertSame([], $this->getJson(route('admin.service-inquiries.customer-search', ['q' => 'nobody-here']))->json('results'));
+    }
+
+    public function test_a_ticket_can_be_linked_to_a_customer_who_is_then_notified_of_calls(): void
+    {
+        $admin    = $this->admin();
+        $customer = $this->makeUser();
+        $this->actingAs($admin, 'admin');
+
+        $this->get(route('admin.service-inquiries.create'))->assertOk()->assertSee('Link an existing customer account');
+
+        $this->post(route('admin.service-inquiries.store'), [
+            'service_type' => 'repair', 'concern' => 'Wobbly chair leg, walk-in customer.',
+            'name' => 'Maria Clara', 'phone' => '09177654321', 'customer_id' => $customer->id,
+        ]);
+
+        $t = ServiceInquiry::sole();
+        $this->assertSame($customer->id, $t->user_id);
+        $this->assertSame(0, Notification::where('user_id', $customer->id)->count(), 'the customer is not told about a ticket an admin typed in');
+
+        $this->post(route('admin.service-inquiries.call-update', $t->id), ['outcome' => 'answered'])->assertSessionHas('success');
+        $this->assertSame(1, Notification::where('user_id', $customer->id)->count());
+    }
+
+    public function test_only_a_customer_account_can_be_linked(): void
+    {
+        $this->actingAs($this->admin(), 'admin');
+        $payload = ['service_type' => 'repair', 'concern' => 'Wobbly chair leg, walk-in customer.', 'name' => 'Maria Clara', 'phone' => '09177654321'];
+
+        $this->post(route('admin.service-inquiries.store'), $payload + ['customer_id' => $this->makeUser('admin')->id])->assertSessionHasErrors('customer_id');
+        $this->post(route('admin.service-inquiries.store'), $payload + ['customer_id' => 999999])->assertSessionHasErrors('customer_id');
+        $this->assertSame(0, ServiceInquiry::count());
+    }
+
+    public function test_without_a_linked_account_the_detail_and_call_modal_say_no_notification_is_sent(): void
+    {
+        $this->actingAs($this->admin(), 'admin');
+        $t = $this->ticket(['user_id' => null]);
+
+        $this->get(route('admin.service-inquiries.show', $t->id))->assertOk()
+            ->assertSee('No account (walk-in or an older ticket)')
+            ->assertSee('no in-app notification is sent');
+    }
+
     /* ───────────── RBAC: every route x every actor ───────────── */
 
     public function test_every_service_inquiry_route_is_admin_only(): void
@@ -282,7 +341,7 @@ class ServiceInquiryAdminTest extends TestCase
         $routes = collect(Route::getRoutes()->getRoutes())
             ->filter(fn ($r) => str_starts_with($r->getName() ?? '', 'admin.service-inquiries.'))
             ->values();
-        $this->assertCount(7, $routes);
+        $this->assertCount(8, $routes);
 
         foreach ($routes as $route) {
             $method = $route->methods()[0];

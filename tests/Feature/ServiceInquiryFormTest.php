@@ -21,10 +21,24 @@ class ServiceInquiryFormTest extends TestCase
     use RefreshDatabase;
     use BuildsCustomOrderFixtures;
 
+    private User $customer;
+
     protected function setUp(): void
     {
         parent::setUp();
         RateLimiter::clear('service-inquiry:127.0.0.1');
+
+        // Stage 21 follow-up: the form needs an account, so every test is a logged-in customer unless it calls guest().
+        $this->customer = $this->makeUser();
+        $this->actingAs($this->customer);
+    }
+
+    private function guest(): static
+    {
+        $this->app['auth']->forgetGuards();
+        $this->flushSession();
+
+        return $this;
     }
 
     private function payload(array $over = []): array
@@ -141,27 +155,68 @@ class ServiceInquiryFormTest extends TestCase
 
     /* ───────────── submit ───────────── */
 
-    public function test_a_guest_can_submit_and_sees_the_reference_and_no_my_requests_list(): void
-    {
-        $admin = $this->makeUser('admin');
+    /* ───────────── account required ───────────── */
 
+    public function test_a_guest_is_sent_to_login_and_nothing_is_saved(): void
+    {
+        $this->makeUser('admin');
+        $this->guest();
+
+        $this->get('/services/request')->assertRedirect(route('login'));
+        $this->post('/services/request', $this->payload())->assertRedirect(route('login'));
+        $this->get(route('services.request.sent'))->assertRedirect(route('login'));
+
+        $this->assertSame(0, ServiceInquiry::count());
+        $this->assertSame(0, Notification::count());
+    }
+
+    public function test_the_login_page_explains_why_after_the_redirect(): void
+    {
+        $this->guest()->get('/services/request');
+
+        $this->get(route('login'))->assertOk()
+            ->assertSee('Please log in or create an account to send a service request so we can contact you')
+            ->assertDontSee('Please log in to continue.');
+    }
+
+    public function test_after_login_the_customer_returns_to_the_request_form(): void
+    {
+        \Illuminate\Support\Facades\Http::fake(['*' => \Illuminate\Support\Facades\Http::response(['success' => true, 'score' => 0.9])]);
+        $u = $this->makeUser();
+        $u->forceFill(['email' => 'return@example.com', 'password' => \Illuminate\Support\Facades\Hash::make('Passw0rd!x')])->save();
+        $this->guest()->get('/services/request')->assertRedirect(route('login'));
+
+        $this->post(route('login.post'), [
+            'email' => 'return@example.com', 'password' => 'Passw0rd!x', 'g-recaptcha-response' => 'token',
+        ])->assertRedirect(url('/services/request'));
+
+        $this->get('/services/request')->assertOk()->assertSee('Other services request');
+    }
+
+    public function test_after_registration_the_customer_returns_to_the_request_form(): void
+    {
+        $this->guest()->get('/services/request')->assertRedirect(route('login'));
+
+        $this->post(route('register.post'), [
+            'first_name' => 'New', 'last_name' => 'Customer', 'email' => 'newbie@gmail.com', 'phone_number' => '09171234567',
+            'password' => 'Passw0rd!x', 'password_confirmation' => 'Passw0rd!x',
+        ])->assertRedirect(url('/services/request'));
+
+        $this->assertAuthenticated();
+    }
+
+    public function test_a_logged_in_customer_can_submit_and_sees_the_reference(): void
+    {
         $this->post('/services/request', $this->payload())->assertRedirect(route('services.request.sent'));
 
         $t = ServiceInquiry::sole();
-        $this->assertNull($t->user_id);
+        $this->assertSame($this->customer->id, $t->user_id);
         $this->assertSame('new', $t->status);
         $this->assertSame('Rence Samontanez', $t->name);
-        $this->assertSame('labor_only_own_wood', $t->service_type);
         $this->assertMatchesRegularExpression('/^SI-\d{4}-0001$/', $t->reference_number);
 
         $this->get(route('services.request.sent'))->assertOk()
             ->assertSee($t->reference_number)->assertSee('We will call you');
-
-        // guests get no notification, admins do
-        $this->assertSame(0, Notification::where('message', 'like', '%your service request%')->count());
-        $this->assertSame(1, Notification::where('user_id', $admin->id)->count());
-
-        $this->get('/services/request')->assertDontSee('My requests');
     }
 
     public function test_the_success_page_without_a_submission_goes_back_to_the_form(): void

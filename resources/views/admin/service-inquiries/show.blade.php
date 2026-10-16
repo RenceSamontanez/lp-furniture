@@ -33,7 +33,7 @@
           <div><dt>Name</dt><dd>{{ $t->name }}</dd></div>
           <div><dt>Phone</dt><dd><a href="tel:{{ $t->phone }}">{{ $t->phone }}</a></dd></div>
           <div><dt>Email</dt><dd>@if($t->email)<a href="mailto:{{ $t->email }}">{{ $t->email }}</a>@else — @endif</dd></div>
-          <div><dt>Account</dt><dd>{{ $t->user ? $t->user->display_name . ' (' . $t->user->email . ')' : 'No account (guest or walk-in)' }}</dd></div>
+          <div><dt>Account</dt><dd>{{ $t->user ? $t->user->display_name . ' (' . $t->user->email . ')' : 'No account (walk-in or an older ticket)' }}</dd></div>
           <div><dt>Service</dt><dd>{{ $t->serviceLabel() }}</dd></div>
           <div><dt>Furniture type</dt><dd>{{ $t->furniture_type ?: '—' }}</dd></div>
           <div><dt>Preferred call time</dt><dd>{{ $t->callTimeSummary() ?? 'Any time, Monday to Friday, 8 AM to 5 PM' }}</dd></div>

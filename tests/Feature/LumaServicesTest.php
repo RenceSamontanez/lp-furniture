@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\BusinessSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\BuildsCustomOrderFixtures;
 use Tests\TestCase;
 
 /**
@@ -12,6 +13,7 @@ use Tests\TestCase;
 class LumaServicesTest extends TestCase
 {
     use RefreshDatabase;
+    use BuildsCustomOrderFixtures;
 
     protected function setUp(): void
     {
@@ -40,14 +42,35 @@ class LumaServicesTest extends TestCase
             $this->assertStringContainsString('Labor-only prices vary by furniture type', $reply['response'], $question);
             $this->assertStringContainsString('by phone', $reply['response'], $question);
             $this->assertSame(['phone' => '0917-222-3333', 'email' => 'owner@lp.test'], $reply['contact'], $question);
-            $this->assertSame([['label' => 'Send a request', 'url' => '/services/request']], $reply['buttons'], $question);
+            $this->assertSame([['label' => 'Log in to send a request', 'url' => '/services/request']], $reply['buttons'], $question);
+            $this->assertStringContainsString('You need an account to send a request', $reply['response'], $question);
             $this->assertDoesNotMatchRegularExpression('/(PHP|₱)\s?\d/', $reply['response'], $question);
         }
     }
 
-    /** Stage 21 part C: the button Luma shows leads to the real ticket form, English and Tagalog. */
+    public function test_the_button_label_depends_on_whether_the_visitor_is_logged_in(): void
+    {
+        $en = 'labor only';
+        $tl = 'pwede po ba labor lang, ako na sa kahoy';
+
+        // guest: log in first; the link still goes to /services/request, which redirects to login
+        $this->assertSame(['label' => 'Log in to send a request', 'url' => '/services/request'], $this->ask($en)['buttons'][0]);
+        $this->assertSame(['label' => 'Mag-log in para magpadala ng request', 'url' => '/services/request'], $this->ask($tl)['buttons'][0]);
+        $this->assertStringContainsString('Kailangan po ng account', $this->ask($tl)['response']);
+        $this->get('/services/request')->assertRedirect(route('login'));
+
+        // customer: the plain label
+        $this->actingAs($this->makeUser());
+        $this->assertSame(['label' => 'Send a request', 'url' => '/services/request'], $this->ask($en)['buttons'][0]);
+        $this->assertSame(['label' => 'Magpadala ng request', 'url' => '/services/request'], $this->ask($tl)['buttons'][0]);
+        $this->assertStringContainsString('You need an account to send a request', $this->ask($en)['response']);
+    }
+
+    /** Stage 21 part C (logged in): the button Luma shows leads to the real ticket form, English and Tagalog. */
     public function test_the_send_a_request_button_resolves_to_the_real_form_and_it_works(): void
     {
+        $this->actingAs($this->makeUser());
+
         foreach (['labor only' => 'Send a request', 'pwede po ba labor lang, ako na sa kahoy' => 'Magpadala ng request'] as $question => $label) {
             $button = $this->ask($question)['buttons'][0];
 
@@ -78,7 +101,7 @@ class LumaServicesTest extends TestCase
 
         $this->assertSame('tl', $reply['lang']);
         $this->assertStringContainsString('Magkakaiba po ang presyo ng labor', $reply['response']);
-        $this->assertSame('Magpadala ng request', $reply['buttons'][0]['label']);
+        $this->assertSame('Mag-log in para magpadala ng request', $reply['buttons'][0]['label']);
         $this->assertSame('/services/request', $reply['buttons'][0]['url']);
         $this->assertSame('0917-222-3333', $reply['contact']['phone']);
     }
@@ -96,6 +119,7 @@ class LumaServicesTest extends TestCase
     {
         BusinessSetting::query()->first()->update(['phone' => '0917-222-3333']);
 
+        $this->actingAs($this->makeUser());
         $this->get('/services/request')->assertOk()
             ->assertDontSee('Coming soon')
             ->assertSee('Other services request')

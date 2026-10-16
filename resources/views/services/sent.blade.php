@@ -21,16 +21,12 @@
         We will call you on a weekday between 8:00 AM and 5:00 PM. No payment is due at this stage.
         Please keep your phone nearby and have the reference number ready.
       </p>
-      @auth
-        <p class="co-lead">You can follow the status of your request on the request page.</p>
-      @endauth
+      <p class="co-lead">You can follow the status of your request on the request page.</p>
 
       @include('services._contact-card')
 
       <div class="co-actions si-sent-actions">
-        @auth
-          <a href="{{ route('services.request') }}" class="co-btn co-btn--ghost">View my requests</a>
-        @endauth
+        <a href="{{ route('services.request') }}" class="co-btn co-btn--ghost">View my requests</a>
         <a href="{{ route('home') }}" class="co-btn co-btn--primary">Back to the shop</a>
       </div>
     </div>

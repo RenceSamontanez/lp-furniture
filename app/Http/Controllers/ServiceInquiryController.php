@@ -9,8 +9,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 
 /**
- * Public "Other Services" request form (labor only with the customer's own wood, repairs,
+ * "Other Services" request form (labor only with the customer's own wood, repairs,
  * anything priced by phone). It only collects the concern and contact details: no order.
+ * Needs a logged-in customer (same route group as the Customize page), so the team can
+ * always reach them and the customer can follow the ticket and its invoices.
  */
 class ServiceInquiryController extends Controller
 {
@@ -24,15 +26,13 @@ class ServiceInquiryController extends Controller
     {
         $user = Auth::user();
 
-        $mine = $user
-            ? ServiceInquiry::where('user_id', $user->id)->orderByDesc('id')->limit(10)->get()
-            : collect();
+        $mine = ServiceInquiry::where('user_id', $user->id)->orderByDesc('id')->limit(10)->get();
 
         return view('services.request', [
             'defaults' => [
-                'name'  => $user?->display_name,
-                'phone' => $user ? ($user->saved_contact_phone ?: $user->phone_number) : null,
-                'email' => $user ? ($user->saved_contact_email ?: $user->email) : null,
+                'name'  => $user->display_name,
+                'phone' => $user->saved_contact_phone ?: $user->phone_number,
+                'email' => $user->saved_contact_email ?: $user->email,
             ],
             'mine'        => $mine,
             'serviceType' => $request->query('type'),

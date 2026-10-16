@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ServiceInquiry;
+use App\Models\User;
 use App\Support\CallUpdateMessage;
 use App\Support\PipelineException;
 use App\Support\ServiceInquiryDesk;
@@ -79,12 +80,51 @@ class ServiceInquiryController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate(ServiceInquiryDesk::rules(false), ServiceInquiryDesk::messages());
+        $data = $request->validate(
+            ServiceInquiryDesk::rules(false) + ['customer_id' => ['nullable', 'integer']],
+            ServiceInquiryDesk::messages()
+        );
 
-        $ticket = $this->desk->create($data, null, Auth::guard('admin')->user());
+        // Optionally link an existing customer account (found with the search box); only customers can be linked.
+        $customer = null;
+        if (!empty($data['customer_id'])) {
+            $customer = User::where('role', 'customer')->find($data['customer_id']);
+            if (!$customer) {
+                return back()->withInput()->withErrors(['customer_id' => 'That customer account was not found. Search again or unlink it.']);
+            }
+        }
+
+        $ticket = $this->desk->create($data, $customer, Auth::guard('admin')->user());
 
         return redirect()->route('admin.service-inquiries.show', $ticket->id)
             ->with('success', "Ticket {$ticket->reference_number} created.");
+    }
+
+    /** Search box on the create form: customers by name, phone or email (JSON, at most 8). */
+    public function customerSearch(Request $request)
+    {
+        $term = trim((string) $request->query('q', ''));
+        if (mb_strlen($term) < 2) {
+            return response()->json(['results' => []]);
+        }
+
+        $like  = '%' . addcslashes($term, '\\%_') . '%';
+        $users = User::where('role', 'customer')
+            ->where(function ($q) use ($like) {
+                $q->whereRaw("CONCAT(first_name, ' ', last_name) like ?", [$like])
+                  ->orWhere('email', 'like', $like)
+                  ->orWhere('phone_number', 'like', $like)
+                  ->orWhere('saved_contact_phone', 'like', $like)
+                  ->orWhere('saved_contact_email', 'like', $like);
+            })
+            ->orderBy('first_name')->limit(8)->get();
+
+        return response()->json(['results' => $users->map(fn (User $u) => [
+            'id'    => $u->id,
+            'name'  => $u->display_name,
+            'phone' => $u->saved_contact_phone ?: $u->phone_number,
+            'email' => $u->saved_contact_email ?: $u->email,
+        ])->values()]);
     }
 
     public function callUpdate(Request $request, $id)

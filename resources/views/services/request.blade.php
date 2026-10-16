@@ -123,8 +123,7 @@
     <div class="si-side">
       @include('services._contact-card')
 
-      @auth
-        @if($mine->isNotEmpty())
+      @if($mine->isNotEmpty())
           <section class="si-card" aria-label="My requests">
             <h2 class="si-card-title">My requests</h2>
             <ul class="si-list">
@@ -139,8 +138,7 @@
               @endforeach
             </ul>
           </section>
-        @endif
-      @endauth
+      @endif
     </div>
 
   </div>

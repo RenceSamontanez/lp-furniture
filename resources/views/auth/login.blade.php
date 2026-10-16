@@ -40,7 +40,11 @@
          without ever logging in. Can't tell which, so the
          message stays neutral and honest either way. --}}
     @if(session()->has('url.intended') && !$errors->any())
-      <div class="auth-notice">Please log in to continue.</div>
+      @if(parse_url((string) session('url.intended'), PHP_URL_PATH) === '/services/request')
+        <div class="auth-notice">Please log in or create an account to send a service request so we can contact you.</div>
+      @else
+        <div class="auth-notice">Please log in to continue.</div>
+      @endif
     @endif
 
     @if($errors->any())
