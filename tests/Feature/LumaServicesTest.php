@@ -45,6 +45,31 @@ class LumaServicesTest extends TestCase
         }
     }
 
+    /** Stage 21 part C: the button Luma shows leads to the real ticket form, English and Tagalog. */
+    public function test_the_send_a_request_button_resolves_to_the_real_form_and_it_works(): void
+    {
+        foreach (['labor only' => 'Send a request', 'pwede po ba labor lang, ako na sa kahoy' => 'Magpadala ng request'] as $question => $label) {
+            $button = $this->ask($question)['buttons'][0];
+
+            $this->assertSame($label, $button['label']);
+            $this->assertSame(route('services.request', [], false), $button['url']);
+
+            $this->get($button['url'])->assertOk()
+                ->assertSee('Other services request')
+                ->assertSee('name="service_type"', false)
+                ->assertSee('value="labor_only_own_wood"', false)
+                ->assertSee(route('services.request.submit'), false)
+                ->assertDontSee('Coming soon');
+        }
+
+        // and a request made through that form is recorded
+        $this->post(route('services.request.submit'), [
+            'service_type' => 'labor_only_own_wood', 'concern' => 'Door from my own narra wood.',
+            'name' => 'Juan Dela Cruz', 'phone' => '09171234567', 'email' => 'juan@example.com',
+        ])->assertRedirect(route('services.request.sent'));
+        $this->assertSame(1, \App\Models\ServiceInquiry::count());
+    }
+
     public function test_the_tagalog_answer_has_the_same_card_and_button(): void
     {
         BusinessSetting::query()->first()->update(['phone' => '0917-222-3333', 'email' => 'owner@lp.test']);
