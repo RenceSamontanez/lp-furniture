@@ -270,6 +270,8 @@ final class ServiceInquiryDesk
         $who  = trim((string) $admin->first_name) ?: 'Admin';
         $when = Carbon::now(self::TZ)->format('M d, Y h:i A');
 
+        $text = trim((string) preg_replace('/\s+/u', ' ', $text)); // one line per entry, so the log stays readable
+
         $inquiry->admin_notes = ($inquiry->admin_notes ? $inquiry->admin_notes . "\n" : '') . "{$when} · {$who} · {$text}";
     }
 }

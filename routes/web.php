@@ -265,6 +265,17 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     Route::get('/custom-orders/{id}/quotes/{quote}/confirm',     [CustomOrderController::class, 'quoteConfirm'])->name('custom-orders.quotes.confirm')->whereNumber(['id', 'quote']);
     Route::post('/custom-orders/{id}/quotes/{quote}/send',       [CustomOrderController::class, 'quoteSend'])->name('custom-orders.quotes.send')->whereNumber(['id', 'quote']);
 
+    // ────────────────
+    // Other Services (inquiry tickets; they never become orders)
+    // ────────────────
+    Route::get('/service-inquiries',                     [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'index'])->name('service-inquiries.index');
+    Route::get('/service-inquiries/create',              [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'create'])->name('service-inquiries.create');
+    Route::post('/service-inquiries',                    [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'store'])->name('service-inquiries.store');
+    Route::get('/service-inquiries/{id}',                [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'show'])->name('service-inquiries.show')->whereNumber('id');
+    Route::post('/service-inquiries/{id}/call-update',   [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'callUpdate'])->name('service-inquiries.call-update')->whereNumber('id');
+    Route::post('/service-inquiries/{id}/notes',         [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'addNote'])->name('service-inquiries.notes')->whereNumber('id');
+    Route::post('/service-inquiries/{id}/close',         [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'close'])->name('service-inquiries.close')->whereNumber('id');
+
     // Agreement records (read only) and the admin's own notifications (Stage 6)
     Route::get('/agreements/{id}',       [AdminAgreementController::class, 'show'])->name('agreements.show')->whereNumber('id');
     Route::get('/agreements/{id}/print', [AdminAgreementController::class, 'printView'])->name('agreements.print')->whereNumber('id');

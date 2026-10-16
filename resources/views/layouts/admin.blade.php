@@ -84,6 +84,12 @@
         @php $customSubmittedCount = \App\Models\CustomDesignRequest::where('pipeline_status','submitted')->count(); @endphp
         @if($customSubmittedCount > 0)<span class="admin-nav-badge">{{ $customSubmittedCount }}</span>@endif
       </a>
+      <a href="{{ route('admin.service-inquiries.index') }}" class="admin-nav-link {{ request()->routeIs('admin.service-inquiries.*') ? 'active' : '' }}">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+        Other Services
+        @php $serviceNewCount = \App\Models\ServiceInquiry::where('status','new')->count(); @endphp
+        @if($serviceNewCount > 0)<span class="admin-nav-badge">{{ $serviceNewCount }}</span>@endif
+      </a>
       <a href="{{ route('admin.design-requests.index') }}" class="admin-nav-link {{ request()->routeIs('admin.design-requests.*') ? 'active' : '' }}">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>
         AI Design Requests
