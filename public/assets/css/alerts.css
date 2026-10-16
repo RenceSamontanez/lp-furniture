@@ -3,7 +3,7 @@
 
 .lp-toasts {
   position: fixed;
-  top: 16px;
+  top: 76px;                      /* just below the 64px navigation bar */
   right: 16px;
   z-index: 10050;
   display: flex;

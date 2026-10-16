@@ -128,7 +128,7 @@ class AlertToastTest extends TestCase
 
         $css = file_get_contents(public_path('assets/css/alerts.css'));
         $this->assertStringContainsString('@media (max-width: 640px)', $css);
-        $this->assertStringContainsString('top: 16px;', $css);
+        $this->assertStringContainsString('top: 76px;', $css);
         $this->assertStringContainsString('right: 16px;', $css);
         $this->assertStringContainsString('prefers-reduced-motion', $css);
     }

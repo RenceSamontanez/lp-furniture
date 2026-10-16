@@ -213,7 +213,7 @@
                   Your order is saved, but payment wasn't finished. Your items are being held for a limited time — complete payment now to confirm your order.
                   @endif
                 </p>
-                <a href="{{ route($order->payment->payment_method === 'stripe' ? 'payment.stripe' : 'payment.gcash.paymongo', $order->id) }}" class="btn btn-gold" style="display:block;text-align:center;padding:11px;">
+                <a href="{{ route($order->payment->payment_method === 'stripe' ? 'payment.stripe' : 'payment.gcash.paymongo', $order->id) }}" class="btn btn-gold" style="display:block;text-align:center;padding:11px;" data-loading="Opening payment..." data-loading-overlay="payment">
                   Finish Payment →
                 </a>
               </div>
@@ -339,5 +339,4 @@
   </div>
 
 </div>
-@include('partials.co-loading')
 @endsection

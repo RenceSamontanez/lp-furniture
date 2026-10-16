@@ -41,7 +41,7 @@
       @if($agreementOrder)
         <a href="{{ route('orders.show', $agreementOrder->id) }}" class="ai-action-btn ai-action-primary" style="text-decoration:none;">View order</a>
       @elseif($designRequest->pipeline_status === 'accepted')
-        <a href="{{ route('custom.checkout', $agreement->id) }}" class="ai-action-btn ai-action-primary" style="text-decoration:none;">Proceed to payment</a>
+        <a href="{{ route('custom.checkout', $agreement->id) }}" class="ai-action-btn ai-action-primary" style="text-decoration:none;" data-loading="Opening payment..." data-loading-overlay="payment">Proceed to payment</a>
       @endif
       <a href="{{ route('design.agreement.print', $agreement->id) }}" class="ai-action-btn ai-action-secondary" target="_blank" rel="noopener" style="text-decoration:none;">Print view</a>
     </div>
@@ -57,5 +57,4 @@
   @endif
   </div>
 </div>
-@include('partials.co-loading')
 @endsection

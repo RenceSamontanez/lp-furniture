@@ -156,5 +156,6 @@
 
 <script src="{{ asset('assets/js/admin.js') }}"></script>
 @stack('scripts')
+@include('partials.co-loading')
 </body>
 </html>

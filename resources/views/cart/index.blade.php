@@ -183,7 +183,7 @@
 
           {{-- Checkout button --}}
           @if(Auth::user()->is_validated)
-            <a href="{{ route('checkout') }}" class="btn-checkout">
+            <a href="{{ route('checkout') }}" class="btn-checkout" data-loading="Opening checkout...">
               Proceed to Checkout →
             </a>
           @else

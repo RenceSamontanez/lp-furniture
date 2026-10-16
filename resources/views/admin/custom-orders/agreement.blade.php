@@ -37,5 +37,4 @@
   </div>
 </div>
 </div>
-@include('partials.co-loading')
 @endsection

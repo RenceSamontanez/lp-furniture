@@ -78,5 +78,4 @@
 
 <div style="margin-top:16px;">{{ $requests->links() }}</div>
 </div>
-@include('partials.co-loading')
 @endsection

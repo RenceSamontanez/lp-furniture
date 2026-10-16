@@ -51,5 +51,4 @@
 </div>
 
 <div style="margin-top:16px;">{{ $notifications->links() }}</div>
-@include('partials.co-loading')
 @endsection

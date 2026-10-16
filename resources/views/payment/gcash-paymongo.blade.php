@@ -166,7 +166,7 @@
       <div class="gcash-redirect-spinner"></div>
       <h2 class="gcash-redirect-title">Redirecting you to GCash…</h2>
       <p class="gcash-redirect-text">
-        Hang tight — opening GCash's secure payment page now.
+        Processing your payment. Please don't close or refresh this page.
       </p>
     </div>
 
@@ -187,6 +187,7 @@
     this.disabled = true;
     gcashConfirmPanel.style.display = 'none';
     gcashProcessingPanel.style.display = 'flex';
+    if (window.LPLoading) { window.LPLoading.progress(true); }
     gcashForm.submit();
   });
 </script>
