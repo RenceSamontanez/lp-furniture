@@ -615,7 +615,7 @@ class CustomQuotesTest extends TestCase
         $n = Notification::where('user_id', $owner->id)->sole();
         $this->assertSame('custom_order', $n->type);
         $this->assertSame(
-            'Your quote for Custom Furniture — Ana is ready: ₱20,000.00. Please review and accept by Nov 09, 2026 10:30 AM.',
+            'Your quote for Custom Furniture — Ana is ready. The total is ₱20,000.00. Please review and accept it by Nov 09, 2026 10:30 AM. You can reach our team through our website.',
             $n->message
         );
         $this->assertStringContainsString('/design/' . $r->id, $n->url);
@@ -745,8 +745,8 @@ class CustomQuotesTest extends TestCase
         $this->assertSame(1, CustomOrderEvent::where('type', 'quote_superseded')->count());
 
         $latest = Notification::where('user_id', $owner->id)->latest('id')->first();
-        $this->assertSame(
-            'Your quote for Custom Furniture — Ana was updated (version 2, ₱20,000.00 → ₱18,500.50). The previous quote can no longer be accepted.',
+        $this->assertMatchesRegularExpression(
+            '/^We updated your quote for Custom Furniture — Ana\. The new total is ₱18,500\.50\. The earlier quote can no longer be accepted\. Please review and accept it by [A-Z][a-z]{2} \d{2}, \d{4} \d{2}:\d{2} [AP]M\. You can reach our team through our website\.$/u',
             $latest->message
         );
 
@@ -799,11 +799,11 @@ class CustomQuotesTest extends TestCase
 
         $mine = Notification::where('user_id', $owner->id)->sole();
         $this->assertStringContainsString("Your quote for Custom Furniture — Ana expired on", $mine->message);
-        $this->assertStringContainsString("Contact us if you'd still like to proceed.", $mine->message);
+        $this->assertStringContainsString('If you would still like to go ahead, we can prepare a new quote.', $mine->message);
 
         foreach ([$admin, $other] as $a) {
             $n = Notification::where('user_id', $a->id)->sole();
-            $this->assertSame('Quote for Custom Furniture — Ana (Ana Cruz) expired without acceptance.', $n->message);
+            $this->assertSame('The quote for Custom Furniture — Ana (Ana Cruz) expired without a reply.', $n->message);
             $this->assertSame('custom_order', $n->type);
         }
 

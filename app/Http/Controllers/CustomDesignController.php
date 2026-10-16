@@ -326,10 +326,13 @@ class CustomDesignController extends Controller
 
             $name = \App\Support\NameFormat::proper(trim($user->first_name . ' ' . $user->last_name));
             foreach (User::where('role', 'admin')->pluck('id') as $adminId) {
+                $updated = \App\Support\NotificationTemplates::render('admin_request_updated', [
+                    'order' => $locked->order_name, 'customer' => $name,
+                ]);
                 Notification::create([
                     'user_id' => $adminId,
-                    'title'   => 'Custom Request Updated',
-                    'message' => "{$name} updated their request for {$locked->order_name}.",
+                    'title'   => $updated['title'],
+                    'message' => $updated['message'],
                     'type'    => 'custom_order',
                     'url'     => route('admin.custom-orders.show', $locked->id),
                     'is_read' => false,
@@ -520,10 +523,13 @@ class CustomDesignController extends Controller
             $design = $locked->order_name;
             $window = $locked->callWindowLabel();
 
+            $received = \App\Support\NotificationTemplates::render('request_received', [
+                'order' => $design, 'phone' => $locked->contact_phone, 'window' => $window,
+            ]);
             Notification::create([
                 'user_id' => $user->id,
-                'title'   => 'Custom Request Received',
-                'message' => "We received your request for {$design}. We'll call you at {$locked->contact_phone} during your preferred time ({$window}).",
+                'title'   => $received['title'],
+                'message' => $received['message'],
                 'type'    => 'custom_order',
                 'url'     => route('design.show', $locked->id),
                 'is_read' => false,
@@ -531,10 +537,13 @@ class CustomDesignController extends Controller
 
             $customerName = \App\Support\NameFormat::proper(trim($user->first_name . ' ' . $user->last_name));
             foreach (User::where('role', 'admin')->pluck('id') as $adminId) {
+                $adminMsg = \App\Support\NotificationTemplates::render('admin_new_request', [
+                    'order' => $design, 'customer' => $customerName, 'window' => $window, 'phone' => $locked->contact_phone,
+                ]);
                 Notification::create([
                     'user_id' => $adminId,
-                    'title'   => 'New Custom Order Request',
-                    'message' => "New custom order request: {$design} from {$customerName}. Preferred call: {$window}.",
+                    'title'   => $adminMsg['title'],
+                    'message' => $adminMsg['message'],
                     'type'    => 'custom_order',
                     'url'     => route('admin.design-requests.show', $locked->id),
                     'is_read' => false,

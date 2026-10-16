@@ -202,3 +202,6 @@
   .co-design-frame--side img { max-height: 240px; }
 }
 .co-design-summary--stack { display: block; margin-bottom: 0; }
+
+.co-preview-title { font-weight: 600; margin-bottom: 6px; color: #2A1810; }
+.co-preview { white-space: normal; }

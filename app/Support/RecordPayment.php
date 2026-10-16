@@ -268,28 +268,18 @@ class RecordPayment
         $amount = number_format((float) $record->amount, 2);
         $custom = $order->design_agreement_id !== null;
 
-        $message = "Payment of ₱{$amount} received for order {$order->order_number}";
-        if ($custom && $order->agreement) {
-            $message .= " (agreement {$order->agreement->agreement_number})";
-        }
-        $message .= '.';
-
-        if ($balanceLeft > 0.004) {
-            $message .= ' Remaining balance: ₱' . number_format($balanceLeft, 2) . '.';
-        } else {
-            $message .= ' Your order is paid in full.';
-        }
-        if ($confirmed) {
-            $message .= ' Your order is now confirmed.';
-        }
-        if ($custom && $order->expected_ready_date) {
-            $message .= ' Expected ready date: about ' . Carbon::parse($order->expected_ready_date)->format('M d, Y') . '.';
-        }
+        $t = NotificationTemplates::render('payment_received', [
+            'amount'       => (float) $record->amount,
+            'order_number' => $order->order_number,
+            'balance'      => $balanceLeft,
+            'confirmed'    => $confirmed,
+            'ready_date'   => $custom && $order->expected_ready_date ? Carbon::parse($order->expected_ready_date)->format('M d, Y') : null,
+        ]);
 
         Notification::create([
             'user_id' => $order->user_id,
-            'title'   => 'Payment Received',
-            'message' => $message,
+            'title'   => $t['title'],
+            'message' => $t['message'],
             'type'    => $custom ? 'custom_order' : 'payment_confirmed',
             'url'     => route('orders.show', $order->id),
             'is_read' => false,

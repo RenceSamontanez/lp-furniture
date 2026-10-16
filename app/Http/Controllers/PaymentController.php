@@ -232,7 +232,7 @@ class PaymentController extends Controller
                 'stripe_charge_id'         => $session->payment_intent,
                 'stripe_customer_id'       => $session->customer,
             ],
-            "Your payment for order {$order->order_number} was successful. Your order is now confirmed!",
+            \App\Support\NotificationTemplates::message('payment_confirmed', ['order_number' => $order->order_number]),
             "Stripe session {$session->id}",
             'stripe',
             $session->payment_intent ?: $session->id
@@ -393,7 +393,7 @@ class PaymentController extends Controller
 
             Notification::create([
                 'user_id' => $order->user_id,
-                'title'   => 'Payment Successful',
+                'title'   => \App\Support\NotificationTemplates::TEMPLATES['payment_confirmed']['title'],
                 'message' => $customerMessage,
                 'type'    => $order->design_agreement_id !== null ? 'custom_order' : 'payment_confirmed',
                 'url'     => route('orders.show', $order->id),
@@ -649,7 +649,7 @@ class PaymentController extends Controller
         return $this->recordPaymentArrived(
             $order->id,
             ['paymongo_payment_intent_id' => $intentId],
-            "Your GCash payment for order {$order->order_number} was successful. Your order is now confirmed!",
+            \App\Support\NotificationTemplates::message('payment_confirmed', ['order_number' => $order->order_number]),
             "PayMongo intent {$intentId}",
             'gcash_paymongo',
             $intentId

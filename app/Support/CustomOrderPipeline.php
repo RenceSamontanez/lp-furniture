@@ -135,7 +135,8 @@ class CustomOrderPipeline
                 'note'       => $summary . ($note ? '. ' . $note : ''),
             ]);
 
-            $message = CallUpdateMessage::build($outcome, $request, $attempts ?? 1, $note);
+            $rendered = CallUpdateMessage::render($outcome, $request, $attempts ?? 1, $note);
+            $message  = $rendered['message'];
 
             $this->commit($request, $to, 'call_update', $admin, [
                 'outcome'  => $outcome,
@@ -146,11 +147,7 @@ class CustomOrderPipeline
                 'message'  => $message,
             ]);
 
-            $this->notifyCustomer($request, match ($outcome) {
-                CallUpdateMessage::ANSWERED => 'Update on Your Custom Request',
-                CallUpdateMessage::RINGING  => 'We Called You',
-                default                     => 'We Could Not Reach You',
-            }, $message);
+            $this->notifyCustomer($request, $rendered);
 
             return $log;
         });
@@ -173,15 +170,10 @@ class CustomOrderPipeline
                 'from' => $from, 'to' => 'unreachable', 'unanswered_calls' => $unanswered,
             ]);
 
-            $phone   = $request->contact_phone ?: $request->user?->phone_number;
-            $contact = BusinessSetting::current()->phone;
-
-            $this->notifyCustomer(
-                $request,
-                'We Could Not Reach You',
-                "We tried to reach you about {$request->order_name} but couldn't get through. "
-                . "Please check that {$phone} is correct, or message us at {$contact}."
-            );
+            $this->notifyCustomer($request, NotificationTemplates::render('marked_unreachable', [
+                'order' => $request->order_name,
+                'phone' => $request->contact_phone ?: $request->user?->phone_number,
+            ]));
 
             return $request;
         });
@@ -213,11 +205,10 @@ class CustomOrderPipeline
                 'from' => $from, 'to' => 'declined_by_admin', 'reason' => $reason,
             ]);
 
-            $this->notifyCustomer(
-                $request,
-                'Custom Request Update',
-                "We're unable to take on {$request->order_name}. Reason: {$reason}"
-            );
+            $this->notifyCustomer($request, NotificationTemplates::render('request_declined', [
+                'order'  => $request->order_name,
+                'reason' => $reason,
+            ]));
 
             return $request;
         });
@@ -351,21 +342,15 @@ class CustomOrderPipeline
             $total  = number_format($quote->totalAmount(), 2);
             $expiry = $quote->expires_at->timezone('Asia/Manila')->format('M d, Y h:i A');
 
-            if ($quote->version > 1 && $quote->previous_price !== null) {
-                $this->notifyCustomer(
-                    $request,
-                    'Your Quote Was Updated',
-                    "Your quote for {$request->order_name} was updated (version {$quote->version}, ₱"
-                    . number_format((float) $quote->previous_price, 2) . ' → ₱' . number_format((float) $quote->price, 2)
-                    . '). The previous quote can no longer be accepted.'
-                );
-            } else {
-                $this->notifyCustomer(
-                    $request,
-                    'Your Custom Quote Is Ready',
-                    "Your quote for {$request->order_name} is ready: ₱{$total}. Please review and accept by {$expiry}."
-                );
-            }
+            $this->notifyCustomer($request, NotificationTemplates::render(
+                $quote->version > 1 && $quote->previous_price !== null ? 'quote_updated' : 'quote_sent',
+                [
+                    'order'          => $request->order_name,
+                    'total'          => $quote->totalAmount(),
+                    'expiry'         => $expiry,
+                    'previous_total' => $quote->version > 1 ? $quote->previous_price : null,
+                ]
+            ));
 
             return $quote;
         });
@@ -460,20 +445,14 @@ class CustomOrderPipeline
                 ]);
 
                 $when = $request->payment_due_at->timezone('Asia/Manila')->format('M d, Y h:i A');
-                $this->notifyCustomer(
-                    $request,
-                    'Agreement Expired',
-                    "The time to start payment for agreement {$agreement->agreement_number} ({$request->order_name}) passed on {$when}, "
-                    . "so it has expired. Contact us if you'd still like to proceed.",
-                    route('design.show', $request->id)
-                );
+                $this->notifyCustomer($request, NotificationTemplates::render('agreement_expired', [
+                    'order' => $request->order_name, 'agreement' => $agreement->agreement_number, 'when' => $when,
+                ]), route('design.show', $request->id));
 
-                $name = \App\Support\NameFormat::proper(trim($request->user->first_name . ' ' . $request->user->last_name));
-                $this->notifyAdmins(
-                    $request,
-                    'Agreement Expired Unpaid',
-                    "Agreement {$agreement->agreement_number} for {$request->order_name} ({$name}) expired: no payment was started by {$when}."
-                );
+                $this->notifyAdmins($request, NotificationTemplates::render('admin_agreement_expired', [
+                    'order' => $request->order_name, 'agreement' => $agreement->agreement_number, 'when' => $when,
+                    'customer' => \App\Support\NameFormat::proper(trim($request->user->first_name . ' ' . $request->user->last_name)),
+                ]));
 
                 return 1;
             });
@@ -509,18 +488,14 @@ class CustomOrderPipeline
         ]);
 
         $when = $quote->expires_at->timezone('Asia/Manila')->format('M d, Y');
-        $this->notifyCustomer(
-            $request,
-            'Your Quote Has Expired',
-            "Your quote for {$request->order_name} expired on {$when}. Contact us if you'd still like to proceed."
-        );
+        $this->notifyCustomer($request, NotificationTemplates::render('quote_expired', [
+            'order' => $request->order_name, 'when' => $when,
+        ]));
 
-        $name = \App\Support\NameFormat::proper(trim($request->user->first_name . ' ' . $request->user->last_name));
-        $this->notifyAdmins(
-            $request,
-            'Quote Expired',
-            "Quote for {$request->order_name} ({$name}) expired without acceptance."
-        );
+        $this->notifyAdmins($request, NotificationTemplates::render('admin_quote_expired', [
+            'order'    => $request->order_name,
+            'customer' => \App\Support\NameFormat::proper(trim($request->user->first_name . ' ' . $request->user->last_name)),
+        ]));
     }
 
     /* ───────────── customer review: accept / decline (Stage 6) ───────────── */
@@ -684,19 +659,14 @@ class CustomOrderPipeline
             $dueText = $dueAt->copy()->timezone(AgreementTerms::TZ)->format('M d, Y h:i A');
             $no      = $agreement->agreement_number;
 
-            $this->notifyCustomer(
-                $request,
-                'Agreement Accepted',
-                "You accepted agreement {$no} for {$request->order_name}. Agreed on {$when}. "
-                . 'Next: pay ₱' . number_format((float) $terms['money']['upfront'], 2) . " by {$dueText}.",
-                route('design.agreement', $agreement->id)
-            );
-            $this->notifyAdmins(
-                $request,
-                'Agreement Accepted',
-                "{$customerName} accepted agreement {$no} for {$request->order_name} (₱"
-                . number_format((float) $terms['money']['total'], 2) . "). Agreed on {$when}."
-            );
+            $this->notifyCustomer($request, NotificationTemplates::render('agreement_accepted', [
+                'order' => $request->order_name, 'agreement' => $no, 'when' => $when,
+                'upfront' => $terms['money']['upfront'], 'due' => $dueText,
+            ]), route('design.agreement', $agreement->id));
+            $this->notifyAdmins($request, NotificationTemplates::render('admin_agreement_accepted', [
+                'order' => $request->order_name, 'agreement' => $no, 'when' => $when,
+                'total' => $terms['money']['total'], 'customer' => $customerName,
+            ]));
 
             return ['outcome' => self::ACCEPTED, 'agreement' => $agreement];
         });
@@ -733,12 +703,10 @@ class CustomOrderPipeline
 
             $name = \App\Support\NameFormat::proper(trim($request->user->first_name . ' ' . $request->user->last_name));
 
-            $this->notifyCustomer($request, 'Quote Declined', "You declined the quote for {$request->order_name}.");
-            $this->notifyAdmins(
-                $request,
-                'Quote Declined',
-                "{$name} declined the quote for {$request->order_name}. Reason: " . ($reason ?? 'none given') . '.'
-            );
+            $this->notifyCustomer($request, NotificationTemplates::render('quote_declined', ['order' => $request->order_name]));
+            $this->notifyAdmins($request, NotificationTemplates::render('admin_quote_declined', [
+                'order' => $request->order_name, 'customer' => $name, 'reason' => $reason ?? 'none given',
+            ]));
 
             return $request;
         });
@@ -758,13 +726,14 @@ class CustomOrderPipeline
         return $prefix . str_pad((string) ($seq + 1 + $attempt), 4, '0', STR_PAD_LEFT);
     }
 
-    private function notifyAdmins(CustomDesignRequest $request, string $title, string $message): void
+    /** @param array{title: string, message: string} $t from NotificationTemplates::render() */
+    private function notifyAdmins(CustomDesignRequest $request, array $t): void
     {
         foreach (User::where('role', 'admin')->pluck('id') as $adminId) {
             Notification::create([
                 'user_id' => $adminId,
-                'title'   => $title,
-                'message' => $message,
+                'title'   => $t['title'],
+                'message' => $t['message'],
                 'type'    => 'custom_order',
                 'url'     => route('admin.custom-orders.show', $request->id),
                 'is_read' => false,
@@ -854,12 +823,13 @@ class CustomOrderPipeline
         ]);
     }
 
-    private function notifyCustomer(CustomDesignRequest $request, string $title, string $message, ?string $url = null): void
+    /** @param array{title: string, message: string} $t from NotificationTemplates::render() */
+    private function notifyCustomer(CustomDesignRequest $request, array $t, ?string $url = null): void
     {
         Notification::create([
             'user_id' => $request->user_id,
-            'title'   => $title,
-            'message' => $message,
+            'title'   => $t['title'],
+            'message' => $t['message'],
             'type'    => 'custom_order',
             'url'     => $url ?? route('design.show', $request->id),
             'is_read' => false,

@@ -45,7 +45,7 @@ final class AgreementIntegrity
             Notification::create([
                 'user_id' => $adminId,
                 'title'   => $title,
-                'message' => "Agreement {$agreement->agreement_number} no longer matches its recorded SHA-256 and was blocked from display. Do not rely on it until it is investigated.",
+                'message' => NotificationTemplates::message('admin_integrity_failed', ['agreement' => $agreement->agreement_number]),
                 'type'    => 'custom_order',
                 'url'     => $url,
                 'is_read' => false,

@@ -40,15 +40,6 @@ class CustomOrderStatus
         'cancelled'        => [],
     ];
 
-    private const MESSAGES = [
-        'confirmed'        => 'Your order has been confirmed and will begin production soon.',
-        'in_production'    => 'Your order is now in production.',
-        'ready'            => 'Your order is ready for pickup!',
-        'out_for_delivery' => 'Your order is out for delivery!',
-        'completed'        => 'Your order has been completed. Thank you for choosing LP Furniture!',
-        'cancelled'        => 'Your order has been cancelled.',
-    ];
-
     /** Forward targets the admin may pick right now (cancel is separate). */
     public static function forwardTargets(Order $order): array
     {
@@ -164,10 +155,11 @@ class CustomOrderStatus
                 ]);
             }
 
+            $update = NotificationTemplates::render('order_' . $to, ['order_number' => $order->order_number]);
             Notification::create([
                 'user_id' => $order->user_id,
-                'title'   => 'Order Update — ' . $order->order_number,
-                'message' => self::MESSAGES[$to] ?? 'Your order was updated.',
+                'title'   => $update['title'],
+                'message' => $update['message'],
                 'type'    => 'order_update',
                 'url'     => route('orders.show', $order->id),
                 'is_read' => false,

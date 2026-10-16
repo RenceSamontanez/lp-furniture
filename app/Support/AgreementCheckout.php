@@ -236,11 +236,14 @@ class AgreementCheckout
         ]);
 
         $due = $this->dueAt($agreement, $request)->copy()->timezone(AgreementTerms::TZ)->format('M d, Y h:i A');
+        $created = NotificationTemplates::render('order_created', [
+            'order_number' => $order->order_number, 'order' => $title, 'agreement' => $agreement->agreement_number,
+            'upfront' => $upfront, 'due' => $due,
+        ]);
         Notification::create([
             'user_id' => $customer->id,
-            'title'   => 'Order Created',
-            'message' => "Order {$order->order_number} was created for {$title} (agreement {$agreement->agreement_number}). "
-                . 'Pay ₱' . number_format($upfront, 2) . " by {$due} to start production.",
+            'title'   => $created['title'],
+            'message' => $created['message'],
             'type'    => 'custom_order',
             'url'     => route('orders.show', $order->id),
             'is_read' => false,

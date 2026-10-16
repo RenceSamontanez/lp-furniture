@@ -329,7 +329,10 @@
       <textarea name="note" id="co-note" class="form-input" rows="2" maxlength="500"></textarea>
 
       <div class="co-modal-label">The customer will receive</div>
-      <div class="co-preview" id="co-preview" aria-live="polite"></div>
+      <div class="co-preview" aria-live="polite">
+        <div class="co-preview-title" id="co-preview-title"></div>
+        <div id="co-preview" style="white-space:pre-line;"></div>
+      </div>
 
       <div class="co-modal-actions">
         <button type="button" class="admin-btn admin-btn-outline" id="co-call-cancel">Cancel</button>
@@ -353,17 +356,19 @@
   var note = document.getElementById('co-note');
   var wrap = document.getElementById('co-attempts-wrap');
   var preview = document.getElementById('co-preview');
+  var previewTitle = document.getElementById('co-preview-title');
   var opener = document.getElementById('co-open-call');
 
   function times(n) { return n + ' ' + (n === 1 ? 'time' : 'times'); }
   function render() {
     var n = Math.max(1, Math.min(20, parseInt(attempts.value, 10) || 1));
     wrap.hidden = outcome.value === 'answered';
-    var text = data.templates[outcome.value]
-      .replace('{times}', times(n)).replace('{design}', data.values.design)
-      .replace('{phone}', data.values.phone).replace('{email}', data.values.email)
-      .replace('{customer}', data.values.customer);
+    var values = Object.assign({ times: times(n) }, data.values);
+    var text = data.templates[outcome.value].replace(/\{([a-z_]+)\}/g, function (m, key) {
+      return Object.prototype.hasOwnProperty.call(values, key) ? values[key] : '';
+    });
     if (note.value.trim() !== '') { text += '\n' + note.value.trim(); }
+    previewTitle.textContent = data.titles[outcome.value];
     preview.textContent = text;
   }
   function open() { modal.hidden = false; render(); outcome.focus(); }

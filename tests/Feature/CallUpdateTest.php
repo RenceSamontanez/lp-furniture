@@ -79,9 +79,10 @@ class CallUpdateTest extends TestCase
         $n = Notification::where('user_id', $r->user_id)->sole();
         $this->assertSame('custom_order', $n->type);
         $this->assertSame(
-            'We tried calling you 3 times about your custom furniture request (Custom Furniture — Rence), but your phone seems to be out of service or not ringing. '
-            . 'Please contact us at 0917-555-0100 or hello@lpfurniture.test. '
-            . 'Tell us your account name (Rence Samontanez) and remind us which custom furniture you wanted to discuss, so we can continue the negotiation.',
+            'We tried to call you 3 times about your request for Custom Furniture — Rence, but could not reach you. '
+            . 'Please call or email us so we can continue. '
+            . 'Mention your account name (Rence Samontanez) so we can find your request. '
+            . 'You can reach us at 0917-555-0100 or hello@lpfurniture.test.',
             $n->message
         );
         $this->assertSame(0, Notification::where('user_id', $admin->id)->count());
@@ -98,9 +99,10 @@ class CallUpdateTest extends TestCase
 
         $this->assertSame('contacting', $r->fresh()->pipeline_status);
         $this->assertSame(
-            'We called you 1 time about your custom furniture request (Custom Furniture — Rence), but nobody answered. '
-            . 'Please call us back at 0917-555-0100 or email hello@lpfurniture.test. '
-            . 'Tell us your account name (Rence Samontanez) and remind us which custom furniture you wanted to discuss.',
+            'We called you 1 time about your request for Custom Furniture — Rence, but there was no answer. '
+            . 'Please call us back or send us an email. '
+            . 'Mention your account name (Rence Samontanez) so we can find your request. '
+            . 'You can reach us at 0917-555-0100 or hello@lpfurniture.test.',
             Notification::where('user_id', $r->user_id)->sole()->message
         );
     }
@@ -116,8 +118,9 @@ class CallUpdateTest extends TestCase
 
         $this->assertSame('contacting', $r->fresh()->pipeline_status);
         $this->assertSame(
-            'Thank you for speaking with us about your custom furniture request (Custom Furniture — Rence). '
-            . 'Our team is preparing your quote and you will be notified here as soon as it is ready.',
+            'Thank you for speaking with us about your request for Custom Furniture — Rence. '
+            . 'We are preparing your quote and will notify you here as soon as it is ready. '
+            . 'You can reach us at 0917-555-0100 or hello@lpfurniture.test.',
             Notification::where('user_id', $r->user_id)->sole()->message
         );
         $this->assertTrue((bool) CustomOrderCallLog::where('request_id', $r->id)->sole()->answered);

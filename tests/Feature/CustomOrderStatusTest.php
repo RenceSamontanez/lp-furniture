@@ -205,7 +205,7 @@ class CustomOrderStatusTest extends TestCase
 
         $n = Notification::where('user_id', $order->user_id)->sole();
         $this->assertSame('order_update', $n->type);
-        $this->assertSame('Your order is now in production.', $n->message);
+        $this->assertSame("Your order {$order->order_number} is now in production. We will notify you when it is ready. You can reach our team through our website.", $n->message);
 
         $e = CustomOrderEvent::where('type', 'order_status_changed')->sole();
         $this->assertSame($order->id, (int) $e->order_id);
@@ -238,7 +238,7 @@ class CustomOrderStatusTest extends TestCase
 
         $this->assertSame('cancelled', $order->fresh()->order_status);
         $this->assertSame('cancelled', CustomDesignRequest::find($order->design_request_id)->pipeline_status);
-        $this->assertSame('Your order has been cancelled.', Notification::where('user_id', $order->user_id)->sole()->message);
+        $this->assertSame("Your order {$order->order_number} was cancelled. If you have questions about this, we are happy to help. You can reach our team through our website.", Notification::where('user_id', $order->user_id)->sole()->message);
     }
 
     public function test_cancel_after_payment_needs_a_reason_which_is_kept(): void

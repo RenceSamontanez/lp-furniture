@@ -2,15 +2,14 @@
 
 namespace App\Support;
 
-use App\Models\BusinessSetting;
 use App\Models\CustomDesignRequest;
 
 /**
  * The fixed customer messages for the admin's "Send call update" tool.
  * The admin picks an outcome and a number of attempts; the wording is
- * not editable (only an optional extra line is appended). The same
- * templates are given to the page for the live preview, so the preview
- * is the message that is sent.
+ * not editable (only an optional extra line is appended). The wording lives
+ * in NotificationTemplates; the page's live preview is given the same
+ * templates and values, so the preview is the message that is sent.
  */
 final class CallUpdateMessage
 {
@@ -31,12 +30,6 @@ final class CallUpdateMessage
         self::ANSWERED    => 'contacting',
     ];
 
-    public const TEMPLATES = [
-        self::UNREACHABLE => 'We tried calling you {times} about your custom furniture request ({design}), but your phone seems to be out of service or not ringing. Please contact us at {phone} or {email}. Tell us your account name ({customer}) and remind us which custom furniture you wanted to discuss, so we can continue the negotiation.',
-        self::RINGING     => 'We called you {times} about your custom furniture request ({design}), but nobody answered. Please call us back at {phone} or email {email}. Tell us your account name ({customer}) and remind us which custom furniture you wanted to discuss.',
-        self::ANSWERED    => 'Thank you for speaking with us about your custom furniture request ({design}). Our team is preparing your quote and you will be notified here as soon as it is ready.',
-    ];
-
     public static function needsAttempts(string $outcome): bool
     {
         return $outcome !== self::ANSWERED;
@@ -48,36 +41,43 @@ final class CallUpdateMessage
         return $n . ' ' . ($n === 1 ? 'time' : 'times');
     }
 
-    public static function build(string $outcome, CustomDesignRequest $request, int $attempts, ?string $note = null): string
+    public static function templateKey(string $outcome): string
     {
-        $business = BusinessSetting::current();
-        $customer = NameFormat::proper(trim($request->user->first_name . ' ' . $request->user->last_name));
+        return 'call_' . $outcome;
+    }
 
-        $text = strtr(self::TEMPLATES[$outcome], [
-            '{times}'    => self::times(max(1, $attempts)),
-            '{design}'   => $request->order_name,
-            '{phone}'    => $business->phone,
-            '{email}'    => $business->email,
-            '{customer}' => $customer,
+    /** Title and message for the customer's notification. */
+    public static function render(string $outcome, CustomDesignRequest $request, int $attempts, ?string $note = null): array
+    {
+        $t = NotificationTemplates::render(self::templateKey($outcome), [
+            'order'    => $request->order_name,
+            'times'    => self::times(max(1, $attempts)),
+            'customer' => NameFormat::proper(trim($request->user->first_name . ' ' . $request->user->last_name)),
         ]);
 
         $note = $note !== null ? trim($note) : '';
+        if ($note !== '') {
+            $t['message'] .= "\n" . $note;
+        }
 
-        return $note !== '' ? $text . "\n" . $note : $text;
+        return $t;
+    }
+
+    public static function build(string $outcome, CustomDesignRequest $request, int $attempts, ?string $note = null): string
+    {
+        return self::render($outcome, $request, $attempts, $note)['message'];
     }
 
     /** What the page's live preview needs: the templates and the filled-in values. */
     public static function previewData(CustomDesignRequest $request): array
     {
-        $business = BusinessSetting::current();
-
         return [
-            'templates' => self::TEMPLATES,
+            'templates' => NotificationTemplates::callTemplates(),
+            'titles'    => NotificationTemplates::callTitles(),
             'values'    => [
-                'design'   => $request->order_name,
-                'phone'    => $business->phone,
-                'email'    => $business->email,
+                'order'    => $request->order_name,
                 'customer' => NameFormat::proper(trim($request->user->first_name . ' ' . $request->user->last_name)),
+                'contact'  => NotificationTemplates::contact(),
             ],
         ];
     }

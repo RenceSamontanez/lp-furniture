@@ -250,8 +250,8 @@ class RecordPaymentTest extends TestCase
 
         $n = Notification::where('user_id', $customer->id)->latest('id')->first();
         $this->assertSame('custom_order', $n->type);
-        $this->assertStringContainsString('Payment of ₱9,999.99 received for order', $n->message);
-        $this->assertStringContainsString('agreement LP-A-2026-0042', $n->message);
+        $this->assertStringContainsString('We received your payment of ₱9,999.99 for order', $n->message);
+        $this->assertStringContainsString('The remaining balance is', $n->message);
 
         $this->pay($admin, $order, ['amount' => '0.01'])->assertSessionHasNoErrors();
         $this->assertSame('confirmed', $order->fresh()->order_status);
@@ -266,7 +266,7 @@ class RecordPaymentTest extends TestCase
 
         $n = Notification::where('user_id', $order->user_id)->sole();
         $this->assertSame('payment_confirmed', $n->type);
-        $this->assertStringContainsString("Payment of ₱1,000.00 received for order {$order->order_number}", $n->message);
+        $this->assertStringContainsString("We received your payment of ₱1,000.00 for order {$order->order_number}", $n->message);
         $this->assertSame(route('orders.show', $order->id), $n->url);
     }
 

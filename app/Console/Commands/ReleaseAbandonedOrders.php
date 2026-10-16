@@ -54,10 +54,11 @@ class ReleaseAbandonedOrders extends Command
                 $order->update(['order_status' => 'cancelled']);
                 $order->payment()->update(['payment_status' => 'failed']);
 
+                $expired = \App\Support\NotificationTemplates::render('payment_expired', ['order_number' => $order->order_number]);
                 Notification::create([
                     'user_id' => $order->user_id,
-                    'title'   => 'Order Cancelled — Payment Not Completed',
-                    'message' => "Your order {$order->order_number} was cancelled because payment was not completed in time. You're welcome to place a new order anytime.",
+                    'title'   => $expired['title'],
+                    'message' => $expired['message'],
                     'type'    => 'order_update',
                     'url'     => route('orders.show', $order->id),
                 ]);
