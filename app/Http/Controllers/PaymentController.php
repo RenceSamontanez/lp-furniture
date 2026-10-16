@@ -8,6 +8,7 @@ use App\Models\Notification;
 use App\Models\StripeWebhookEvent;
 use App\Support\AgreementCheckout;
 use App\Support\PaymentLedger;
+use App\Support\StripeCheckoutParams;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -84,37 +85,14 @@ class PaymentController extends Controller
             }
         }
 
-        $sessionParams = [
-            'payment_method_types' => ['card'],
-            'line_items' => [[
-                'price_data' => [
-                    'currency' => 'php',
-                    'product_data' => [
-                        'name' => 'LP Furniture Order ' . $order->order_number
-                            . ($order->payment->payment_type === 'installment' ? ' (Downpayment)' : ''),
-                    ],
-                    'unit_amount' => (int) round($chargeAmount * 100), // centavos
-                ],
-                'quantity' => 1,
-            ]],
-            'mode' => 'payment',
-            'success_url' => route('payment.stripe.success', $order->id) . '?session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url'  => route('payment.stripe', $order->id),
-            'metadata' => [
-                'order_id' => $order->id,
-                'user_id'  => Auth::id(),
-            ],
-        ];
-
-        // A customized order has a payment deadline: let the session lapse
-        // with it, within Stripe's limit (30 minutes to 24 hours from now).
-        // When the deadline is further away, the 24 hour maximum is used.
-        if ($dueAt = app(AgreementCheckout::class)->orderDueAt($order)) {
-            $min = now()->addMinutes(31)->timestamp;
-            $max = now()->addHours(24)->subMinute()->timestamp;
-            $sessionParams['expires_at'] = max($min, min($dueAt->timestamp, $max));
+        // Everything we send is shaped by one class that knows Stripe's
+        // limits (expires_at window, amount range, name length, metadata
+        // sizes, absolute URLs).
+        if ($problem = StripeCheckoutParams::amountProblem(StripeCheckoutParams::amountCentavos($order))) {
+            return redirect()->route('payment.stripe', $order->id)->withErrors(['payment' => $problem]);
         }
 
+        $sessionParams = StripeCheckoutParams::build($order, Auth::id());
         $session = $stripe->checkout->sessions->create($sessionParams);
 
         // Save the session/payment-intent reference before redirecting

@@ -340,22 +340,19 @@ class CustomPaymentGuardsTest extends TestCase
     {
         Carbon::setTestNow(Carbon::parse('2026-10-16 10:00:00', 'Asia/Manila'));
 
-        // due date days away: the 24 hour maximum applies
+        // due date days away: the 23 hour cap applies (Stripe's limit is 24, with room for clock skew)
         [$c, , , $order] = $this->order();
         $this->actingAs($c)->post(route('payment.stripe.checkout', $order->id));
         $exp = (int) $this->stripe->posts[0]['expires_at'];
-        $this->assertLessThanOrEqual(now()->addHours(24)->timestamp, $exp);
-        $this->assertGreaterThanOrEqual(now()->addMinutes(30)->timestamp, $exp);
-        $this->assertGreaterThan(now()->addHours(23)->timestamp, $exp);
+        $this->assertSame(now()->addHours(23)->timestamp, $exp);
+        $this->assertLessThan(now()->addHours(24)->timestamp, $exp);
 
-        // due date inside the hour: never below Stripe's 30 minute minimum
+        // due date inside 31 minutes: no expires_at is sent at all (see StripeParamsTest for the exact bounds)
         $c2 = $this->customer('Soon');
         [, $r2, , $order2] = $this->order('stripe', ['expires_at' => now()->addMinutes(40)], $c2);
-        $r2->forceFill(['payment_due_at' => now()->addMinutes(35)])->save();
+        $r2->forceFill(['payment_due_at' => now()->addMinutes(20)])->save();
         $this->actingAs($c2)->post(route('payment.stripe.checkout', $order2->id));
-        $exp2 = (int) $this->stripe->posts[1]['expires_at'];
-        $this->assertGreaterThanOrEqual(now()->addMinutes(30)->timestamp, $exp2);
-        $this->assertLessThanOrEqual(now()->addHours(24)->timestamp, $exp2);
+        $this->assertArrayNotHasKey('expires_at', $this->stripe->posts[1]);
     }
 
     public function test_catalog_session_has_no_expiry_parameter(): void
