@@ -5,6 +5,11 @@
 @section('title', ($product->exists ? 'Edit' : 'Add') . ' Product — Admin')
 @section('page-title', ($product->exists ? 'Edit' : 'Add') . ' Product')
 
+@push('styles')
+  <link rel="stylesheet" href="{{ asset('assets/css/guide.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/design.css') }}"/>
+@endpush
+
 @section('content')
 
 <a href="{{ route('admin.products.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">
@@ -96,33 +101,43 @@
             </div>
           </div>
 
-          {{-- DIMENSIONS: split into Width / Depth / Height —
-               positional (1st/2nd/3rd value), matching how
-               parseDimensions()/formatDimensions() read the
-               combined string; only the labels changed here. --}}
-          <div>
-            <label class="form-label">Dimensions</label>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
-              <div>
-                <input type="number" name="dimensions_length" step="0.1" min="0" class="form-input"
-                       placeholder="Width (cm)"
-                       value="{{ old('dimensions_length', $lengthVal) }}"/>
-                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Width (cm)</div>
-              </div>
-              <div>
-                <input type="number" name="dimensions_width" step="0.1" min="0" class="form-input"
-                       placeholder="Depth (cm)"
-                       value="{{ old('dimensions_width', $widthVal) }}"/>
-                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Depth (cm)</div>
-              </div>
-              <div>
-                <input type="number" name="dimensions_height" step="0.1" min="0" class="form-input"
-                       placeholder="Height (cm)"
-                       value="{{ old('dimensions_height', $heightVal) }}"/>
-                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Height (cm)</div>
+          {{-- SIZE: Length x Width x Height in the unit chosen here. The server converts to cm and
+               stores "L x W x H cm" in the one `dimensions` column, as it always has. --}}
+          @php($dimVals = $product->dimension_form_values)
+          <fieldset class="cd-size-group pf-size">
+            <legend class="form-label">Size, length x width x height <span style="font-weight:400;color:var(--text-muted);">(optional)</span></legend>
+            <p class="cd-size-hint" id="pf-size-hint">
+              <strong>Length</strong> is the longest side across. <strong>Width</strong> is the shorter side across. <strong>Height</strong> is from the floor to the top.
+              Choose the unit first: it is stored in centimetres. Allowed: {{ \App\Support\Dimensions::number(\App\Support\Dimensions::MIN_CM) }} to {{ \App\Support\Dimensions::number(\App\Support\Dimensions::MAX_CM) }} cm for each side.
+            </p>
+            <div class="cd-size-grid">
+              @foreach(['length' => 'Length', 'width' => 'Width', 'height' => 'Height'] as $key => $label)
+                <div class="cd-size-field">
+                  <label for="pf-dim-{{ $key }}">{{ $label }}</label>
+                  <input type="text" inputmode="decimal" autocomplete="off" id="pf-dim-{{ $key }}" name="dimension_{{ $key }}"
+                         class="form-input @error('dimension_' . $key) is-invalid @enderror"
+                         value="{{ old('dimension_' . $key, $dimVals[$key]) }}" aria-describedby="pf-size-hint pf-size-error"/>
+                </div>
+              @endforeach
+              <div class="cd-size-field cd-size-unit">
+                <label for="pf-dim-unit">Unit</label>
+                <select id="pf-dim-unit" name="dimension_unit" class="form-input" data-prev="{{ old('dimension_unit', 'cm') }}">
+                  @foreach(\App\Support\Dimensions::UNITS as $unit => $unitLabel)
+                    <option value="{{ $unit }}" @selected(old('dimension_unit', 'cm') === $unit)>{{ $unitLabel }}</option>
+                  @endforeach
+                </select>
               </div>
             </div>
-          </div>
+            <p class="cd-size-error" id="pf-size-error" role="alert">@foreach(['dimension_length', 'dimension_width', 'dimension_height', 'dimension_unit'] as $f)@error($f){{ $message }} @enderror @endforeach</p>
+
+            <details class="cd-measure" id="pf-measure">
+              <summary>Need help measuring?</summary>
+              <div class="cd-measure-body">
+                <p class="cd-measure-links"><a href="{{ route('guide') }}" target="_blank" rel="noopener" data-no-loading>Read the full guide</a></p>
+                @include('guide._measure')
+              </div>
+            </details>
+          </fieldset>
 
         </div>
       </div>
@@ -326,5 +341,29 @@ function stripPriceCommasOnSubmit(form) {
     input.value = input.value.replace(/,/g, '');
   });
 }
+</script>
+@endpush
+
+@push('scripts')
+<script>
+// Switching the unit converts the numbers already typed, so they keep meaning the same size.
+// The server converts again from what is posted; this is only a convenience.
+(function () {
+  var factors = @json(\App\Support\Dimensions::FACTORS);
+  var unit = document.getElementById('pf-dim-unit');
+  if (!unit) { return; }
+  var inputs = ['length', 'width', 'height'].map(function (k) { return document.getElementById('pf-dim-' + k); });
+  unit.addEventListener('change', function () {
+    var from = unit.getAttribute('data-prev') || 'cm';
+    var to = unit.value;
+    inputs.forEach(function (input) {
+      var raw = input.value.trim().replace(',', '.');
+      if (raw === '' || isNaN(Number(raw))) { return; }
+      var converted = Number(raw) * factors[from] / factors[to];
+      input.value = String(Math.round(converted * 100) / 100);
+    });
+    unit.setAttribute('data-prev', to);
+  });
+})();
 </script>
 @endpush

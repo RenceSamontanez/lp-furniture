@@ -121,8 +121,8 @@
           @endif
           @if($product->dimensions)
             <div class="detail-spec-row">
-              <span class="detail-spec-label">Dimensions</span>
-              <span class="detail-spec-value">{{ $product->dimensions }}</span>
+              <span class="detail-spec-label">Size (L x W x H)</span>
+              <span class="detail-spec-value">{{ $product->dimensions_label }}</span>
             </div>
           @endif
           <div class="detail-spec-row">

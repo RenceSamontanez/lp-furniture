@@ -83,10 +83,8 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = Product::findOrFail($id);
-        [$lengthVal, $widthVal, $heightVal] = DimensionsFormatter::parse($product->dimensions);
-
         return view('admin.products.form', array_merge(
-            compact('product', 'lengthVal', 'widthVal', 'heightVal'),
+            compact('product'),
             $this->dropdownOptions()
         ));
     }
@@ -252,9 +250,10 @@ class ProductController extends Controller
             'sale_price'     => ['nullable', 'numeric', 'min:0', 'max:999999', 'lt:price'],
             'stock_quantity' => ['required', 'integer', 'min:0'],
 
-            'dimensions_length' => ['nullable', 'numeric', 'min:0', 'max:9999'],
-            'dimensions_width'  => ['nullable', 'numeric', 'min:0', 'max:9999'],
-            'dimensions_height' => ['nullable', 'numeric', 'min:0', 'max:9999'],
+            'dimension_length' => ['nullable'],
+            'dimension_width'  => ['nullable'],
+            'dimension_height' => ['nullable'],
+            'dimension_unit'   => ['nullable', 'string', 'max:4'],
 
             'product_status' => ['required', 'in:available,unavailable'],
             'product_image'  => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120'],
@@ -278,13 +277,20 @@ class ProductController extends Controller
         $validated['finish']   = $validated['finish'] === '__new__' ? $validated['new_finish'] : $validated['finish'];
         unset($validated['new_category'], $validated['new_material'], $validated['new_finish']);
 
-        // Combine the 3 split fields back into the single stored column
-        $length = $validated['dimensions_length'] ?? null;
-        $width  = $validated['dimensions_width'] ?? null;
-        $height = $validated['dimensions_height'] ?? null;
-        unset($validated['dimensions_length'], $validated['dimensions_width'], $validated['dimensions_height']);
+        // Length x Width x Height in the chosen unit, converted to cm here and stored in the
+        // single column as "L x W x H cm", the same form as before. All three or none.
+        $size = \App\Support\Dimensions::fromInput(
+            $request->input('dimension_length'), $request->input('dimension_width'),
+            $request->input('dimension_height'), $request->input('dimension_unit')
+        );
+        if ($size['errors'] !== []) {
+            throw \Illuminate\Validation\ValidationException::withMessages($size['errors']);
+        }
+        unset($validated['dimension_length'], $validated['dimension_width'], $validated['dimension_height'], $validated['dimension_unit']);
 
-        $validated['dimensions'] = DimensionsFormatter::combine($length, $width, $height);
+        $validated['dimensions'] = $size['values']
+            ? DimensionsFormatter::combine($size['values']['length_cm'], $size['values']['width_cm'], $size['values']['height_cm'])
+            : null;
 
         return $validated;
     }

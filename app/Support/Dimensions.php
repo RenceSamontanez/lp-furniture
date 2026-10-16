@@ -123,6 +123,20 @@ final class Dimensions
     }
 
     /**
+     * For shop pages: centimetres first, inches in brackets.
+     * "120 x 60 x 75 cm (47.2 x 23.6 x 29.5 in)"
+     */
+    public static function cmWithInches(float|int|string|null $length, float|int|string|null $width, float|int|string|null $height): string
+    {
+        if ($length === null || $width === null || $height === null || $length === '' || $width === '' || $height === '') {
+            return '—';
+        }
+
+        return self::number($length) . ' x ' . self::number($width) . ' x ' . self::number($height) . ' cm ('
+            . self::number(self::fromCm($length, 'in')) . ' x ' . self::number(self::fromCm($width, 'in')) . ' x ' . self::number(self::fromCm($height, 'in')) . ' in)';
+    }
+
+    /**
      * Old rows. "Width x Depth x Height cm" text, read as Length x Width x Height.
      * Returns null when there is nothing usable.
      *

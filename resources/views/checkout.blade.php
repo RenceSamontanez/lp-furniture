@@ -144,7 +144,7 @@
                           <span>{{ $item->product->finish }} Finish</span>
                         @endif
                         @if($item->product->dimensions)
-                          <span>{{ $item->product->dimensions }}</span>
+                          <span>{{ $item->product->dimensions_label }}</span>
                         @endif
                       </div>
 

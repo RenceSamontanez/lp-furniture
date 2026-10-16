@@ -296,11 +296,11 @@ async function openQuickView(productId) {
           <!-- Short description ending in ... -->
           <p class="qv-desc">${shortDesc}</p>
 
-          <!-- Specs as pill-style rows (Material, Finish, Dimensions) -->
+          <!-- Specs as pill-style rows (Material, Finish, Size) -->
           <div class="qv-specs">
             ${p.material   ? `<div class="qv-spec"><span class="qv-spec-label">Material</span><span class="qv-spec-val">${p.material}</span></div>` : ''}
             ${p.finish     ? `<div class="qv-spec"><span class="qv-spec-label">Finish</span><span class="qv-spec-val">${p.finish}</span></div>` : ''}
-            ${p.dimensions ? `<div class="qv-spec"><span class="qv-spec-label">Dimensions</span><span class="qv-spec-val">${p.dimensions}</span></div>` : ''}
+            ${p.dimensions ? `<div class="qv-spec"><span class="qv-spec-label">Size (L x W x H)</span><span class="qv-spec-val">${p.dimensions}</span></div>` : ''}
           </div>
 
           <!-- Footer: Go Back closes modal, View Full Details goes to product page -->

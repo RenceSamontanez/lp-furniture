@@ -4,7 +4,7 @@ namespace App\Support;
 
 // Shared by Admin\ProductController and CustomDesignController — both
 // split a single "L x W x H cm" text column into three numeric form
-// fields (Width/Depth/Height) and recombine them on save. Originally
+// fields (Length/Width/Height) and recombine them on save. Originally
 // lived only on Admin\ProductController; extracted here once the AI
 // Design form needed the exact same pattern, so the parse/format rules
 // can't drift between the two forms.

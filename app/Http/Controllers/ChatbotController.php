@@ -33,6 +33,18 @@ class ChatbotController extends Controller
             }
         }
 
+        // A question about the size of one of our products, answered from its stored size,
+        // always in the shop's order: length x width x height, in cm with inches in brackets.
+        if (!$response && preg_match('/\b(sizes?|dimensions?|measurements?|how (big|large|long|tall|wide))\b/i', $message)) {
+            $named = Product::available()->whereNotNull('dimensions')->get()
+                ->first(fn ($p) => $p->product_name && str_contains($message, strtolower($p->product_name)));
+
+            if ($named && $named->dimensions_label) {
+                $response    = "The {$named->product_name} measures {$named->dimensions_label}, as length x width x height.";
+                $suggestions = ['View all products', 'Custom design', 'Delivery info'];
+            }
+        }
+
         // Budget detection
         if (!$response && preg_match('/(\d[\d,]*)\s*(pesos?|php|₱)?/i', $message, $matches)) {
             $budget = (int) str_replace(',', '', $matches[1]);

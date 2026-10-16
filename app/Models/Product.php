@@ -28,6 +28,42 @@ class Product extends Model
         'is_customizable' => 'boolean',
     ];
 
+    /**
+     * Length x Width x Height in cm. The stored text has always been "A x B x C cm"; A was
+     * labelled Width and B Depth, so it is read as Length and Width with the numbers unchanged.
+     * Null when there is no size or the text is not in that form.
+     *
+     * @return array{length: float, width: float, height: float}|null
+     */
+    public function getDimensionsCmAttribute(): ?array
+    {
+        return \App\Support\Dimensions::legacy($this->dimensions);
+    }
+
+    /** The three numbers for the admin form, in cm and without trailing zeros ('' when there is no size). */
+    public function getDimensionFormValuesAttribute(): array
+    {
+        $d = $this->dimensions_cm;
+        $out = [];
+        foreach (['length', 'width', 'height'] as $k) {
+            $out[$k] = $d ? \App\Support\Dimensions::number($d[$k]) : '';
+        }
+
+        return $out;
+    }
+
+    /** "120 x 60 x 75 cm (47.2 x 23.6 x 29.5 in)", or whatever text was stored if it is not in that form, or null. */
+    public function getDimensionsLabelAttribute(): ?string
+    {
+        if (blank($this->dimensions)) {
+            return null;
+        }
+
+        $d = $this->dimensions_cm;
+
+        return $d ? \App\Support\Dimensions::cmWithInches($d['length'], $d['width'], $d['height']) : (string) $this->dimensions;
+    }
+
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);

@@ -177,7 +177,7 @@ class ProductController extends Controller
             'discount_percent' => $product->discount_percent,
             'material'         => $product->material,
             'finish'           => $product->finish,
-            'dimensions'       => $product->dimensions,
+            'dimensions'       => $product->dimensions_label,
             'image_url'        => $product->image_url,
             'images'           => $images,
             'detail_url'       => route('product.show', $product->id),
