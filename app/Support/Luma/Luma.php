@@ -4,6 +4,7 @@ namespace App\Support\Luma;
 
 use App\Models\ChatbotIntent;
 use App\Models\Product;
+use Illuminate\Support\Facades\Route;
 
 /**
  * Luma, LP Furniture Shop's AI Assistant: turns one customer message into a structured reply.
@@ -23,15 +24,7 @@ final class Luma
         $hit     = IntentMatcher::best($message, $intents);
 
         if ($hit) {
-            $intent = $hit['intent'];
-            $answer = $lang === Language::TL && filled($intent->answer_tl) ? $intent->answer_tl : $intent->response;
-
-            return self::finish(self::build(
-                text: self::fill((string) $answer, $lang),
-                suggestions: self::chips($intent->suggestions_array, $lang),
-                detected: 'intent:' . $intent->id,
-                lang: $lang,
-            ));
+            return self::finish(self::fromIntent($hit['intent'], $message, $lang));
         }
 
         $more = self::chips(['View all products', 'Custom design', 'Delivery info'], $lang);
@@ -76,6 +69,48 @@ final class Luma
         return array_map(fn ($c) => config('luma.chips_tl')[$c] ?? $c, $chips);
     }
 
+    /** The answer of one trained intent, plus the buttons and contact card that go with a built-in one. */
+    private static function fromIntent(ChatbotIntent $intent, string $message, string $lang): array
+    {
+        $answer = $lang === Language::TL && filled($intent->answer_tl) ? $intent->answer_tl : $intent->response;
+
+        $reply = self::build(
+            text: self::fill((string) $answer, $lang),
+            suggestions: self::chips($intent->suggestions_array, $lang),
+            detected: 'intent:' . $intent->id,
+            lang: $lang,
+        );
+
+        $def = DefaultIntents::find($intent->category);
+        if ($def) {
+            $reply['buttons'] = self::buttons($def['buttons'] ?? [], $lang);
+
+            if (in_array($intent->category, DefaultIntents::CARD, true) && (Contact::phone() || Contact::email())) {
+                $reply['contact'] = Contact::card();
+            }
+        }
+
+        return $reply;
+    }
+
+    /**
+     * Link buttons from [labelEn, labelTl, routeName] triples. A route that does not exist (yet) is left out.
+     *
+     * @return list<array{label: string, url: string}>
+     */
+    private static function buttons(array $defs, string $lang): array
+    {
+        $out = [];
+        foreach ($defs as [$en, $tl, $route]) {
+            if (!Route::has($route)) {
+                continue;
+            }
+            $out[] = ['label' => $lang === Language::TL ? $tl : $en, 'url' => route($route, [], false)];
+        }
+
+        return $out;
+    }
+
     /** The friendly dead-end answer: four topics to pick and how to reach the shop. */
     public static function fallback(string $lang): array
     {
@@ -86,16 +121,16 @@ final class Luma
         return self::finish(self::build($text, self::chips(['How to order', 'Custom design', 'Prices', 'Delivery'], $lang), 'unmatched', $lang));
     }
 
-    /** {{phone}} / {{email}} / {{facebook}} / {{contact}} from Contact Settings, written as plain text. */
+    /** Fills the {{tokens}} (contact details, hours, estimates...) as plain text. See Facts. */
     public static function fill(string $text, string $lang): string
     {
-        $site = $lang === 'tl' ? 'aming website' : 'our website';
+        if (!str_contains($text, '{{')) {
+            return $text;
+        }
 
-        return str_replace(
-            ['{{phone}}', '{{email}}', '{{facebook}}', '{{contact}}'],
-            [Contact::phone() ?? $site, Contact::email() ?? $site, Contact::facebook() ?? $site, Contact::sentence($lang)],
-            $text
-        );
+        $tokens = Facts::tokens($lang);
+
+        return str_replace(array_keys($tokens), array_values($tokens), $text);
     }
 
     private static function build(string $text, array $suggestions, string $detected, string $lang, array $products = []): array

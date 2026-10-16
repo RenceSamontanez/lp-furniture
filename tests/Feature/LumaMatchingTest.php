@@ -143,6 +143,17 @@ class LumaMatchingTest extends TestCase
         $this->assertNotSame($one->id, $best['intent']->id);
     }
 
+    public function test_a_keyword_inside_a_longer_matched_keyword_is_not_counted_twice(): void
+    {
+        $words = Text::words('what payment methods do you accept');
+
+        $both   = IntentMatcher::score($words, 'payment, payment method');
+        $longer = IntentMatcher::score($words, 'payment method');
+
+        $this->assertSame($longer['score'], $both['score']);
+        $this->assertSame(['payment method'], $both['matched']);
+    }
+
     public function test_ties_go_to_the_most_recently_edited_then_the_newest(): void
     {
         $old = $this->intent('delivery', 'Old answer.');

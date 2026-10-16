@@ -45,6 +45,24 @@ return [
         'tl' => 'Walang anuman po! Nandito lang si Luma para tumulong.',
     ],
 
+    // The furniture types Luma recognises in a question. The key is the one word or phrase she
+    // rewrites every spelling to (see luma_synonyms.php) and looks for in a product's category and name.
+    // Labels are used in sentences: "Doors range from ...".
+    'types' => [
+        'door'     => ['en' => 'doors',     'tl' => 'mga pinto'],
+        'table'    => ['en' => 'tables',    'tl' => 'mga mesa'],
+        'chair'    => ['en' => 'chairs',    'tl' => 'mga upuan'],
+        'desk'     => ['en' => 'desks',     'tl' => 'mga desk'],
+        'bed'      => ['en' => 'beds',      'tl' => 'mga kama'],
+        'sofa'     => ['en' => 'sofas',     'tl' => 'mga sopa'],
+        'cabinet'  => ['en' => 'cabinets',  'tl' => 'mga kabinet'],
+        'shelf'    => ['en' => 'shelves',   'tl' => 'mga estante'],
+        'wardrobe' => ['en' => 'wardrobes', 'tl' => 'mga aparador'],
+        'tv stand' => ['en' => 'TV stands', 'tl' => 'mga TV stand'],
+        'bench'    => ['en' => 'benches',   'tl' => 'mga bangko'],
+        'stool'    => ['en' => 'stools',    'tl' => 'mga dumi'],
+    ],
+
     // Quick-reply chips in Tagalog (the chip text is sent back as the customer's next question)
     'chips_tl' => [
         'How to order'     => 'Paano mag-order',
@@ -55,6 +73,16 @@ return [
         'View all products' => 'Tingnan ang mga produkto',
         'Payment options'  => 'Paraan ng bayad',
         'Track my order'   => 'Saan na ang order ko',
+        'Wood choices'     => 'Anong kahoy',
+        'Contact us'       => 'Makausap ang shop',
+        'How long does it take' => 'Gaano katagal',
+        'Price range'      => 'Saklaw ng presyo',
+        'Labor only'       => 'Labor lang',
+        'Shop hours'       => 'Oras ng shop',
+        'Measuring guide'  => 'Paano sukatin',
+        'Free delivery'    => 'Libre ba ang delivery',
+        'Cancel an order'  => 'Cancel ng order',
+        'Deposit and installment' => 'Hulugan',
     ],
 
     // Values the owner has not confirmed yet. Luma never states these as fact; each answer

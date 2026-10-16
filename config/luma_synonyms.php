@@ -96,6 +96,7 @@ return [
         'bangko' => 'bench', 'benches' => 'bench',
         'dumi' => 'stool',
         'disenyo' => 'design', 'idisenyo' => 'design', 'produkto' => 'product', 'paraan' => 'method',
+        'labour' => 'labor', 'trabaho' => 'labor',
         'readymade' => 'ready made', 'ready-made' => 'ready made',
         'tvstand' => 'tv stand',
     ],

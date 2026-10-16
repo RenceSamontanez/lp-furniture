@@ -51,8 +51,7 @@ final class IntentMatcher
      */
     public static function score(array $messageWords, string $keywordList): array
     {
-        $score   = 0.0;
-        $matched = [];
+        $found = [];
 
         foreach (explode(',', $keywordList) as $keyword) {
             $kw = Text::words($keyword);
@@ -61,15 +60,29 @@ final class IntentMatcher
             }
 
             $key = implode(' ', $kw);
-            if (isset($matched[$key]) || !Text::containsSequence($messageWords, $kw)) {
-                continue;
+            if (!isset($found[$key]) && Text::containsSequence($messageWords, $kw)) {
+                $found[$key] = $kw;
+            }
+        }
+
+        // A keyword that sits inside a longer matched keyword of the same intent adds nothing:
+        // "payment" and "payment method" are the same hit, counted once, as the longer phrase.
+        $kept = array_filter($found, function (array $kw, string $key) use ($found) {
+            foreach ($found as $otherKey => $other) {
+                if ($otherKey !== $key && count($other) > count($kw) && Text::containsSequence($other, $kw)) {
+                    return false;
+                }
             }
 
-            $matched[$key] = true;
+            return true;
+        }, ARRAY_FILTER_USE_BOTH);
+
+        $score = 0.0;
+        foreach ($kept as $kw) {
             $score += self::keywordScore($kw);
         }
 
-        return ['score' => $score, 'matched' => array_keys($matched)];
+        return ['score' => $score, 'matched' => array_keys($kept)];
     }
 
     /** 2 points per word and up to 1.4 for length: "hi" 2.2, "price" 2.5, "price list" 5.0. */
