@@ -55,50 +55,11 @@
           <div><dt>Submitted</dt><dd>{{ $r->submitted_at?->format('M d, Y h:i A') }}</dd></div>
         </dl>
 
-        @if($r->modification_notes)
-          <div class="co-block-label">Customer's customization idea</div>
-          <div class="co-quote">{{ $r->modification_notes }}</div>
-        @endif
-
-        <div class="co-block-label">Customer's original prompt</div>
-        <div class="co-quote">{{ $r->description }}</div>
-
         <dl class="co-dl" style="margin-top:16px;">
           <div><dt>Furniture type</dt><dd>{{ $r->furniture_type ?: '—' }}</dd></div>
           <div><dt>Preferred material</dt><dd>{{ $r->preferred_material ?: '—' }}</dd></div>
           <div><dt>Dimensions</dt><dd>{{ $r->dimensions ?: '—' }}</dd></div>
         </dl>
-      </div>
-    </div>
-
-    {{-- Design image --}}
-    <div class="admin-panel">
-      <div class="admin-panel-header"><div class="admin-panel-title">Selected design</div></div>
-      <div class="admin-panel-body">
-        @php $designImage = $r->previewImageUrl(); @endphp
-        <div class="co-design-summary">
-          @if($designImage)
-            <div class="co-design-frame">
-              <img src="{{ $designImage }}" alt="Selected design"
-                   onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
-            </div>
-          @else
-            <div class="co-noimage">No image generated</div>
-          @endif
-          <div class="co-design-prompt">
-            <div class="co-block-label">Customer's prompt</div>
-            <div class="co-quote">{{ $r->description }}</div>
-          </div>
-        </div>
-
-        @if($r->reference_image)
-          <div class="co-block-label">Customer's reference image</div>
-          <div class="co-design-frame">
-            <a href="{{ asset('storage/' . $r->reference_image) }}" target="_blank" rel="noopener">
-              <img src="{{ asset('storage/' . $r->reference_image) }}" alt="Customer-uploaded reference"/>
-            </a>
-          </div>
-        @endif
       </div>
     </div>
 
@@ -208,6 +169,41 @@
 
   {{-- Side column: actions --}}
   <div>
+    {{-- Design image and the customer's words, beside the actions --}}
+    <div class="admin-panel">
+      <div class="admin-panel-header"><div class="admin-panel-title">Selected design</div></div>
+      <div class="admin-panel-body">
+        @php $designImage = $r->previewImageUrl(); @endphp
+        <div class="co-design-summary co-design-summary--stack">
+        @if($designImage)
+          <div class="co-design-frame co-design-frame--side">
+            <img src="{{ $designImage }}" alt="Selected design"
+                 onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
+          </div>
+        @else
+          <div class="co-noimage">No image generated</div>
+        @endif
+
+        <div class="co-block-label">Customer's prompt</div>
+        <div class="co-quote">{{ $r->description }}</div>
+
+        @if($r->modification_notes)
+          <div class="co-block-label">Customer's customization idea</div>
+          <div class="co-quote">{{ $r->modification_notes }}</div>
+        @endif
+        </div>
+
+        @if($r->reference_image)
+          <div class="co-block-label">Customer's reference image</div>
+          <div class="co-design-frame co-design-frame--side">
+            <a href="{{ asset('storage/' . $r->reference_image) }}" target="_blank" rel="noopener">
+              <img src="{{ asset('storage/' . $r->reference_image) }}" alt="Customer-uploaded reference"/>
+            </a>
+          </div>
+        @endif
+      </div>
+    </div>
+
     <div class="admin-panel">
       <div class="admin-panel-header"><div class="admin-panel-title">This request</div></div>
       <div class="admin-panel-body">

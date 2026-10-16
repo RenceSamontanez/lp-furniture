@@ -37,26 +37,6 @@
         @if($nextVersion > 1)<span class="co-version-badge">Version {{ $nextVersion }}</span>@endif
       </div>
       <div class="admin-panel-body">
-        @php $designImage = $r->previewImageUrl(); @endphp
-        <div class="co-design-summary">
-          @if($designImage)
-            <div class="co-design-frame co-design-frame--sm">
-              <img src="{{ $designImage }}" alt="The customer's selected design"
-                   onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
-            </div>
-          @else
-            <div class="co-noimage">No image generated</div>
-          @endif
-          <div class="co-design-prompt">
-            <div class="co-block-label">Customer's prompt</div>
-            <div class="co-quote">{{ $r->description }}</div>
-            @if($r->modification_notes)
-              <div class="co-block-label">Customization idea</div>
-              <div class="co-quote">{{ $r->modification_notes }}</div>
-            @endif
-          </div>
-        </div>
-
         @if($basedOn)
           <p class="co-hint">Pre-filled from version {{ $basedOn->version }}. Saving creates a new draft; the customer keeps seeing the current quote until you send it.</p>
         @endif
@@ -180,8 +160,31 @@
   </form>
 
   {{-- Live preview (server-computed through the same scheduler as the real order) --}}
-  <div>
-    <div class="admin-panel co-sticky">
+  <div class="co-side-sticky">
+    <div class="admin-panel">
+      <div class="admin-panel-header"><div class="admin-panel-title">Selected design</div></div>
+      <div class="admin-panel-body">
+        @php $designImage = $r->previewImageUrl(); @endphp
+        <div class="co-design-summary co-design-summary--stack">
+        @if($designImage)
+          <div class="co-design-frame co-design-frame--side">
+            <img src="{{ $designImage }}" alt="The customer's selected design"
+                 onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
+          </div>
+        @else
+          <div class="co-noimage">No image generated</div>
+        @endif
+        <div class="co-block-label">Customer's prompt</div>
+        <div class="co-quote">{{ $r->description }}</div>
+        @if($r->modification_notes)
+          <div class="co-block-label">Customization idea</div>
+          <div class="co-quote">{{ $r->modification_notes }}</div>
+        @endif
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-panel">
       <div class="admin-panel-header"><div class="admin-panel-title">Preview</div></div>
       <div class="admin-panel-body" id="quote-preview">
         <dl class="co-money">

@@ -8,7 +8,7 @@
 @endpush
 
 @section('content')
-<div class="orders-wrap">
+<div class="orders-wrap orders-wrap--wide">
 
 <div style="display:flex;gap:16px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
     <a href="{{ route('home') }}" class="orders-back-link">
@@ -94,10 +94,23 @@
     </div>
   @endif
 
+  @php
+    $designCopy = $order->design_agreement_id && $order->agreement
+        ? $order->items->first(fn ($i) => !$i->product_id && $i->product_image)
+        : null;
+  @endphp
   <div class="order-detail-layout">
 
     {{-- LEFT: Items + Notes --}}
     <div>
+      @if($designCopy)
+        {{-- Phones: the agreed design first, short. Wide screens show it in the right column. --}}
+        <figure class="co-media-card co-media-card--order co-media-card--phone">
+          <img src="{{ route('design.agreement.image', $order->design_agreement_id) }}" alt="Your agreed design"
+               onerror="this.closest('.co-media-card').style.display='none';"/>
+          <figcaption>Your agreed design</figcaption>
+        </figure>
+      @endif
       <div class="order-panel">
         <div class="order-panel-header">
           <div class="order-panel-title">Order Items</div>
@@ -158,6 +171,13 @@
 
     {{-- RIGHT: Summary --}}
     <div>
+      @if($designCopy)
+        <figure class="co-media-card co-media-card--order co-media-card--wide">
+          <img src="{{ route('design.agreement.image', $order->design_agreement_id) }}" alt="Your agreed design"
+               onerror="this.closest('.co-media-card').style.display='none';"/>
+          <figcaption>Your agreed design</figcaption>
+        </figure>
+      @endif
     @if($order->payment)
         <div class="order-panel">
           <div class="order-panel-header"><div class="order-panel-title">Payment</div></div>

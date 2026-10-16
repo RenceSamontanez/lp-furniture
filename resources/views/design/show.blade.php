@@ -8,7 +8,7 @@
 @endpush
 
 @section('content')
-<div class="cd-wrap">
+<div class="cd-wrap cd-wrap--wide">
 
   <div class="cd-top-bar">
     <a href="{{ route('design.index') }}" class="cd-back-btn">
@@ -22,6 +22,15 @@
     </a>
   </div>
 
+  @php
+    // The design image sits beside the details on wide screens (and on top
+    // on phones) once there is a loadable design to show.
+    $showMedia = !in_array($designRequest->status, ['pending', 'rejected', 'declined'], true)
+        && $designRequest->hasLoadableSuggestion();
+  @endphp
+  <div class="co-layout {{ $showMedia ? 'co-layout--media' : '' }}">
+  <div class="co-main">
+
   @if(session('success'))
     <div class="auth-success" style="max-width:680px;margin:0 auto 20px;">{{ session('success') }}</div>
   @endif
@@ -30,7 +39,7 @@
   @endif
 
   @if($errors->has('quote'))
-    <div class="co-error" role="alert" style="max-width:680px;margin:0 auto 20px;">{{ $errors->first('quote') }}</div>
+    <div class="co-error" role="alert">{{ $errors->first('quote') }}</div>
   @endif
 
   @if(isset($quote) && $quote)
@@ -203,7 +212,82 @@
       </div>
     </div>
 
-  @elseif($designRequest->hasLoadableSuggestion())
+  @elseif($showMedia)
+    {{-- The design and its concepts are shown beside these details (see the media column below). --}}
+
+  @elseif(in_array($designRequest->status, ['approved', 'converted_to_order']))
+
+    {{-- ═══════════════════════════════════
+         FINALIZED, BUT THE IMAGE IS GONE — a decision was already
+         made on this design (it's approved or already an order), so
+         no regenerate/retry action makes sense here even though the
+         image itself can no longer be shown.
+    ═══════════════════════════════════ --}}
+    <div class="ai-results-card cd-failure-card">
+      <div class="cd-failure-icon">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      @if($designRequest->pipeline_status !== null && !$designRequest->selected_suggestion_id)
+        <h3 class="cd-failure-title">Sent Without an Image</h3>
+        <p class="cd-failure-reason">
+          Your description was sent to our team as written. We'll talk through the design with you on the call.
+        </p>
+      @else
+        <h3 class="cd-failure-title">Design Image No Longer Available</h3>
+        <p class="cd-failure-reason">
+          This design's reference image can no longer be displayed, but your selection is already confirmed — no action needed. Contact us if you'd like the image again.
+        </p>
+      @endif
+    </div>
+
+  @else
+
+    {{-- ═══════════════════════════════════
+         NO LOADABLE IMAGE — either nothing ever generated, or every
+         suggestion row came from a provider URL with no durability
+         guarantee (see AiDesignSuggestion::isLoadable()). Treated as
+         Failed either way, matching the 'rejected' screen above.
+    ═══════════════════════════════════ --}}
+    <div class="ai-results-card cd-failure-card">
+      <div class="cd-failure-icon">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+
+      <h3 class="cd-failure-title">We Couldn't Generate Your Design</h3>
+
+      <p class="cd-failure-reason">{{ $designRequest->failureReasonLabel() }}.</p>
+
+      <div class="cd-failure-actions">
+        <form method="POST" action="{{ route('design.regenerate', $designRequest->id) }}" style="flex:1;">
+          @csrf
+          <button type="submit" class="ai-action-btn ai-action-secondary" style="width:100%;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+            Retry Same Prompt
+          </button>
+        </form>
+
+        <a href="{{ route('design.index') }}" class="ai-action-btn ai-action-primary" style="flex:1;text-decoration:none;">
+          Start New Prompt
+        </a>
+      </div>
+    </div>
+  @endif
+
+  @if(!empty($timeline))
+    <div class="co-card" style="margin-top:20px;">
+      <div class="co-action-title" style="margin-bottom:14px;">What has happened so far</div>
+      @include('agreements._timeline', ['entries' => $timeline])
+    </div>
+  @endif
+
+  </div>{{-- /.co-main --}}
+
+  @if($showMedia)
+  <aside class="co-media">
 
     {{-- ═══════════════════════════════════
          RESULTS: hero + concept gallery
@@ -282,74 +366,9 @@
 
     </div>
 
-  @elseif(in_array($designRequest->status, ['approved', 'converted_to_order']))
-
-    {{-- ═══════════════════════════════════
-         FINALIZED, BUT THE IMAGE IS GONE — a decision was already
-         made on this design (it's approved or already an order), so
-         no regenerate/retry action makes sense here even though the
-         image itself can no longer be shown.
-    ═══════════════════════════════════ --}}
-    <div class="ai-results-card cd-failure-card">
-      <div class="cd-failure-icon">
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
-      </div>
-      @if($designRequest->pipeline_status !== null && !$designRequest->selected_suggestion_id)
-        <h3 class="cd-failure-title">Sent Without an Image</h3>
-        <p class="cd-failure-reason">
-          Your description was sent to our team as written. We'll talk through the design with you on the call.
-        </p>
-      @else
-        <h3 class="cd-failure-title">Design Image No Longer Available</h3>
-        <p class="cd-failure-reason">
-          This design's reference image can no longer be displayed, but your selection is already confirmed — no action needed. Contact us if you'd like the image again.
-        </p>
-      @endif
-    </div>
-
-  @else
-
-    {{-- ═══════════════════════════════════
-         NO LOADABLE IMAGE — either nothing ever generated, or every
-         suggestion row came from a provider URL with no durability
-         guarantee (see AiDesignSuggestion::isLoadable()). Treated as
-         Failed either way, matching the 'rejected' screen above.
-    ═══════════════════════════════════ --}}
-    <div class="ai-results-card cd-failure-card">
-      <div class="cd-failure-icon">
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
-      </div>
-
-      <h3 class="cd-failure-title">We Couldn't Generate Your Design</h3>
-
-      <p class="cd-failure-reason">{{ $designRequest->failureReasonLabel() }}.</p>
-
-      <div class="cd-failure-actions">
-        <form method="POST" action="{{ route('design.regenerate', $designRequest->id) }}" style="flex:1;">
-          @csrf
-          <button type="submit" class="ai-action-btn ai-action-secondary" style="width:100%;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
-            Retry Same Prompt
-          </button>
-        </form>
-
-        <a href="{{ route('design.index') }}" class="ai-action-btn ai-action-primary" style="flex:1;text-decoration:none;">
-          Start New Prompt
-        </a>
-      </div>
-    </div>
+  </aside>
   @endif
-
-  @if(!empty($timeline))
-    <div class="co-card" style="margin-top:20px;">
-      <div class="co-action-title" style="margin-bottom:14px;">What has happened so far</div>
-      @include('agreements._timeline', ['entries' => $timeline])
-    </div>
-  @endif
+  </div>{{-- /.co-layout --}}
 
   {{-- Contact fallback — shown in every state so the customer can always
        reach the team about this request. Values come from Admin → Contact Settings. --}}

@@ -184,3 +184,21 @@
 .co-design-frame--sm { max-width: 260px; }
 .co-design-prompt .co-quote { margin-bottom: 12px; }
 @media (max-width: 640px) { .co-design-summary { grid-template-columns: 1fr; } .co-design-frame--sm { max-width: 100%; } }
+/* ── Desktop layout (Stage 15): the design and the customer's words sit
+   beside the form, not above it ── */
+.co-detail { grid-template-columns: minmax(0, 1fr) 400px; }
+.co-detail > * { min-width: 0; }
+.co-design-frame--side { max-width: 320px; }
+.co-design-frame--side img { max-height: 320px; object-fit: cover; }
+.co-quote { max-height: 220px; overflow-y: auto; }
+
+/* Quote form: the form on the left, design + live preview on the right */
+.co-side-sticky { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow-y: auto; }
+.co-side-sticky > .admin-panel:last-child { margin-bottom: 0; }
+
+@media (max-width: 900px) {
+  .co-detail { grid-template-columns: 1fr; }
+  .co-side-sticky { position: static; max-height: none; overflow: visible; }
+  .co-design-frame--side img { max-height: 240px; }
+}
+.co-design-summary--stack { display: block; margin-bottom: 0; }

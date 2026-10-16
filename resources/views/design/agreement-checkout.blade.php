@@ -12,7 +12,7 @@
   $m = $terms['money'];
   $peso = fn ($n) => '₱' . number_format((float) $n, 2);
 @endphp
-<div class="cd-wrap">
+<div class="cd-wrap cd-wrap--wide">
   <div class="cd-top-bar">
     <a href="{{ route('design.show', $designRequest->id) }}" class="cd-back-btn">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -22,6 +22,8 @@
 
   @if(session('info'))<div class="co-flash-info">{{ session('info') }}</div>@endif
 
+  <div class="co-layout {{ $imageUrl ? 'co-layout--media' : '' }}">
+  <div class="co-main">
   <div class="co-card co-review">
     <div class="co-head">
       <h1 class="co-title">Pay for your custom order</h1>
@@ -34,12 +36,6 @@
 
     @if($errors->any())
       <div class="co-error" role="alert">{{ $errors->first() }}</div>
-    @endif
-
-    @if($imageUrl)
-      <div class="co-design-frame" style="margin-bottom:20px;">
-        <img src="{{ $imageUrl }}" alt="Reference design for this agreement"/>
-      </div>
     @endif
 
     @include('agreements._terms', ['terms' => $terms, 'paymentDue' => $terms['payment_due_at'] ?? null])
@@ -63,6 +59,16 @@
       <label class="co-agree"><input type="radio" name="payment_method" value="gcash" required {{ old('payment_method') === 'gcash' ? 'checked' : '' }}/> <span>GCash</span></label>
       <button type="submit" class="ai-action-btn ai-action-primary" id="co-pay-btn">Continue to payment</button>
     </form>
+  </div>
+  </div>
+  @if($imageUrl)
+    <aside class="co-media">
+      <figure class="co-media-card">
+        <img src="{{ $imageUrl }}" alt="Reference design for this agreement" onerror="this.closest('.co-media').style.display='none';"/>
+        <figcaption>Reference design</figcaption>
+      </figure>
+    </aside>
+  @endif
   </div>
 </div>
 <script>

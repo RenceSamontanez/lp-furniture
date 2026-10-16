@@ -8,7 +8,7 @@
 @endpush
 
 @section('content')
-<div class="cd-wrap">
+<div class="cd-wrap cd-wrap--wide">
   <div class="cd-top-bar">
     <a href="{{ route('design.show', $designRequest->id) }}" class="cd-back-btn">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -16,6 +16,9 @@
     </a>
   </div>
 
+  @php $media = $designRequest->previewImageUrl(); @endphp
+  <div class="co-layout {{ $media ? 'co-layout--media' : '' }}">
+  <div class="co-main">
   <div class="co-card co-review">
     <div class="co-head">
       <h1 class="co-title">Review and accept your agreement</h1>
@@ -54,6 +57,16 @@
       <textarea name="reason" class="form-input" rows="2" maxlength="1000" placeholder="Reason (optional)"></textarea>
       <button type="submit" class="ai-action-btn ai-action-secondary">Decline this quote</button>
     </form>
+  </div>
+  </div>
+  @if($media)
+    <aside class="co-media">
+      <figure class="co-media-card">
+        <img src="{{ $media }}" alt="The design you are reviewing" onerror="this.closest('.co-media').style.display='none';"/>
+        <figcaption>Your selected design</figcaption>
+      </figure>
+    </aside>
+  @endif
   </div>
 </div>
 @include('partials.co-loading')

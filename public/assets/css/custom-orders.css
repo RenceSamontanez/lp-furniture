@@ -404,3 +404,84 @@
 .cd-wrap, .co-card, .co-title, .co-status, .co-quote-card, .co-policy {
   font-variant-numeric: lining-nums tabular-nums;
 }
+/* ============================================================
+   DESKTOP LAYOUT (Stage 15)
+   Details on the left, the design image on the right in a sticky
+   card from 900px; one column below that, with the image on top
+   at a modest height. Applies to the design page, quote summary,
+   review, agreement, checkout and the order page.
+============================================================ */
+.cd-wrap--wide { max-width: 1260px; } /* 1180px of content plus the 40px side padding */
+
+.co-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.co-layout > * { min-width: 0; }
+
+.co-main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.co-main > * { margin: 0; max-width: none; }
+.co-main > .ai-results-card,
+.co-main .co-card,
+.co-main .co-review { max-width: none; }
+
+.co-media { order: -1; }
+.co-media .ai-results-card { max-width: none; margin: 0; }
+
+.co-media-card {
+  margin: 0;
+  background: var(--warm-white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 12px;
+}
+.co-media-card img {
+  display: block;
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 10px;
+  background: var(--cream);
+}
+.co-media-card figcaption {
+  margin-top: 10px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+/* Phone: the image card on the design page stays short */
+.co-layout .ai-preview-main { aspect-ratio: auto; height: min(62vw, 260px); }
+
+@media (min-width: 900px) {
+  .co-layout--media { grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 28px; }
+  .co-layout--media > .co-media { order: 0; position: sticky; top: 88px; align-self: start; }
+  .co-layout .ai-preview-main { aspect-ratio: 1; height: auto; }
+  .co-media-card img { height: auto; aspect-ratio: 1; }
+}
+
+/* Order page: wider content area, image card above the payment panel */
+.orders-wrap--wide {
+  padding-inline: max(20px, calc((100% - 1180px) / 2));
+}
+.orders-wrap--wide .order-detail-layout { grid-template-columns: minmax(0, 1fr) 380px; }
+.co-media-card--order { margin-bottom: 18px; }
+.co-media-card--order img { height: auto; aspect-ratio: 4 / 3; }
+@media (max-width: 860px) {
+  .orders-wrap--wide .order-detail-layout { grid-template-columns: 1fr; }
+  .co-media-card--order img { aspect-ratio: auto; height: 220px; }
+}
+.co-media-card--phone { display: none; }
+@media (max-width: 860px) {
+  .co-media-card--phone { display: block; }
+  .co-media-card--wide { display: none; }
+}
+
+/* Buttons beside the status text stay button-sized instead of stretching */
+.co-status-actions .ai-action-btn,
+.co-quote-card .co-status-actions .ai-action-btn { flex: 0 0 auto; width: auto; padding: 12px 22px; }
