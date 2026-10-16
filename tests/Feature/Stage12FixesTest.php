@@ -171,14 +171,15 @@ class Stage12FixesTest extends TestCase
 
     /* ═════════ 3. customer order page ═════════ */
 
-    public function test_customized_order_page_wording_and_no_change_method(): void
+    public function test_customized_order_page_wording_and_switch_without_cash(): void
     {
         [$c, , $r, , $order] = $this->flowOrder();
         $due = $r->payment_due_at->timezone('Asia/Manila')->format('M d, Y');
 
         $this->asCustomer($c)->get(route('orders.show', $order->id))->assertOk()
             ->assertDontSee('Your items are being held')
-            ->assertDontSee('Change Payment Method')
+            ->assertSee('Change Payment Method')     // Stage 14: switching Stripe/GCash is back for customized orders
+            ->assertDontSee('Cash on Pickup')
             ->assertSee('Your agreement is reserved until ' . $due);
     }
 
