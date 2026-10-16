@@ -137,7 +137,9 @@ class LumaDefaultsTest extends TestCase
         $free = $this->ask('which locations get free delivery?')['response'];
         $this->assertStringContainsString('roughly 5 to 15 km away or about a 10 to 30 minute drive', $free);
         $this->assertStringContainsString('San Juan, Batangas', $free);
-        $this->assertStringContainsString('shop sets the delivery fee and confirms it', $free);
+        $this->assertStringContainsString('Beyond that area, the shop sets the delivery fee and confirms it', $free);
+        $this->assertSame(1, substr_count($free, 'San Juan, Batangas'));
+        $this->assertStringContainsString('20 hanggang 40 araw', $this->ask('gaano katagal po')['response']);
         $this->assertDoesNotMatchRegularExpression('/(PHP|₱)\s?\d/', $free);
     }
 

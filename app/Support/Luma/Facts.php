@@ -25,17 +25,17 @@ final class Facts
             '{{email}}'       => Contact::email() ?? $site,
             '{{facebook}}'    => Contact::facebook() ?? $site,
             '{{contact}}'     => Contact::sentence($lang),
-            '{{days}}'        => "{$days['min']} to {$days['max']}",
+            '{{days}}'        => $tl ? "{$days['min']} hanggang {$days['max']}" : "{$days['min']} to {$days['max']}",
             '{{hours}}'       => Hours::text($lang),
             '{{open_status}}' => Hours::status($lang),
             '{{free_area}}'   => $tl
-                ? "humigit-kumulang {$area['min_km']} hanggang {$area['max_km']} km ang layo o mga {$area['min_minutes']} hanggang {$area['max_minutes']} minutong biyahe mula sa San Juan, Batangas"
-                : "roughly {$area['min_km']} to {$area['max_km']} km away or about a {$area['min_minutes']} to {$area['max_minutes']} minute drive from San Juan, Batangas",
+                ? "humigit-kumulang {$area['min_km']} hanggang {$area['max_km']} km ang layo o mga {$area['min_minutes']} hanggang {$area['max_minutes']} minutong biyahe"
+                : "roughly {$area['min_km']} to {$area['max_km']} km away or about a {$area['min_minutes']} to {$area['max_minutes']} minute drive",
             '{{fee_note}}'    => self::feeNote($tl),
             '{{catalog_down}}' => (string) InstallmentScheduler::CATALOG_DOWNPAYMENT_PERCENT,
             '{{deposit_min}}' => (string) InstallmentScheduler::MIN_DEPOSIT_PERCENT,
-            '{{months}}'      => min(InstallmentScheduler::ALLOWED_DURATION_MONTHS) . ' to ' . max(InstallmentScheduler::ALLOWED_DURATION_MONTHS),
-            '{{frequency}}'   => implode(' or ', InstallmentScheduler::ALLOWED_FREQUENCY_DAYS),
+            '{{months}}'      => min(InstallmentScheduler::ALLOWED_DURATION_MONTHS) . ($tl ? ' hanggang ' : ' to ') . max(InstallmentScheduler::ALLOWED_DURATION_MONTHS),
+            '{{frequency}}'   => implode($tl ? ' o ' : ' or ', InstallmentScheduler::ALLOWED_FREQUENCY_DAYS),
         ];
     }
 
@@ -48,12 +48,12 @@ final class Facts
             $amount = 'PHP ' . number_format((float) $fee, 2);
 
             return $tl
-                ? "Ang karaniwang bayad sa delivery ay {$amount}, at kukumpirmahin pa rin po ito ng shop sa inyo."
-                : "The usual delivery fee is {$amount}, and the shop confirms it with you.";
+                ? "ang karaniwang bayad sa delivery ay {$amount}, at kukumpirmahin pa rin po ito ng shop sa inyo."
+                : "the usual delivery fee is {$amount}, and the shop confirms it with you.";
         }
 
         return $tl
-            ? 'Ang shop po ang magtatakda ng bayad sa delivery at kukumpirmahin muna ito sa inyo.'
-            : 'The shop sets the delivery fee and confirms it with you first.';
+            ? 'ang shop po ang magtatakda ng bayad sa delivery at kukumpirmahin muna ito sa inyo.'
+            : 'the shop sets the delivery fee and confirms it with you first.';
     }
 }
