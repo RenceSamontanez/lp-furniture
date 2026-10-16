@@ -4,6 +4,7 @@
 
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/design.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/guide.css') }}"/>
 @endpush
 
 @section('content')
@@ -102,6 +103,13 @@
 
         <fieldset class="cd-size-group">
           <legend class="form-label">Size <span class="cd-required">(optional, leave empty if you are not sure yet)</span></legend>
+          <details class="cd-measure" id="cd-measure">
+            <summary>Need help measuring?</summary>
+            <div class="cd-measure-body">
+              <p class="cd-measure-links"><a href="{{ route('guide') }}" target="_blank" rel="noopener" data-no-loading>Read the full guide: how to request a custom design</a></p>
+              @include('guide._measure')
+            </div>
+          </details>
           <p class="cd-size-hint" id="cd-size-hint">
             <strong>Length</strong> is the longest side across. <strong>Width</strong> is the shorter side across. <strong>Height</strong> is from the floor to the top.
           </p>

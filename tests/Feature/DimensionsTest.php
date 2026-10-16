@@ -93,14 +93,15 @@ class DimensionsTest extends TestCase
         $other = ['cm' => 60, 'mm' => 600, 'in' => 24, 'ft' => 2, 'm' => 0.6];
         $ok = fn ($v, $u) => Dimensions::fromInput($v, $other[$u], $other[$u], $u)['errors'] === [];
 
-        $this->assertTrue($ok('5', 'cm'));
-        $this->assertFalse($ok('4.99', 'cm'));
+        $this->assertTrue($ok('2', 'cm'));
+        $this->assertFalse($ok('1.99', 'cm'));
+        $this->assertTrue($ok('3.5', 'cm'), 'a door is about this thick');
         $this->assertTrue($ok('600', 'cm'));
         $this->assertFalse($ok('600.01', 'cm'));
-        $this->assertTrue($ok('50', 'mm'));
-        $this->assertFalse($ok('49', 'mm'));
-        $this->assertTrue($ok('2', 'in'));            // 5.08 cm
-        $this->assertFalse($ok('1.9', 'in'));         // 4.83 cm
+        $this->assertTrue($ok('20', 'mm'));
+        $this->assertFalse($ok('19', 'mm'));
+        $this->assertTrue($ok('0.8', 'in'));          // 2.03 cm
+        $this->assertFalse($ok('0.7', 'in'));         // 1.78 cm
         $this->assertTrue($ok('19.6', 'ft'));         // 597.41 cm
         $this->assertFalse($ok('20', 'ft'));          // 609.6 cm
         $this->assertTrue($ok('6', 'm'));
@@ -110,10 +111,10 @@ class DimensionsTest extends TestCase
 
     public function test_the_message_names_the_field_and_the_range_in_the_customers_unit(): void
     {
-        $r = Dimensions::fromInput('1', 60, 75, 'in');
-        $this->assertSame('Length must be between 2 in and 236.2 in.', $r['errors']['dimension_length']);
-        $this->assertSame('Length must be between 5 cm and 600 cm.', Dimensions::fromInput('2', 60, 75, 'cm')['errors']['dimension_length']);
-        $this->assertSame('Height must be between 5 cm and 600 cm.', Dimensions::fromInput(100, 60, 1, 'cm')['errors']['dimension_height']);
+        $r = Dimensions::fromInput('0.5', 60, 75, 'in');
+        $this->assertSame('Length must be between 0.8 in and 236.2 in.', $r['errors']['dimension_length']);
+        $this->assertSame('Length must be between 2 cm and 600 cm.', Dimensions::fromInput('1', 60, 75, 'cm')['errors']['dimension_length']);
+        $this->assertSame('Height must be between 2 cm and 600 cm.', Dimensions::fromInput(100, 60, 1, 'cm')['errors']['dimension_height']);
     }
 
     public function test_all_three_or_none(): void
@@ -184,8 +185,8 @@ class DimensionsTest extends TestCase
     {
         $u = $this->flowCustomer();
 
-        $this->submit($u, ['dimension_length' => '1', 'dimension_width' => '24', 'dimension_height' => '30', 'dimension_unit' => 'in'])
-            ->assertSessionHasErrors(['dimension_length' => 'Length must be between 2 in and 236.2 in.']);
+        $this->submit($u, ['dimension_length' => '0.5', 'dimension_width' => '24', 'dimension_height' => '30', 'dimension_unit' => 'in'])
+            ->assertSessionHasErrors(['dimension_length' => 'Length must be between 0.8 in and 236.2 in.']);
         $this->submit($u, ['dimension_length' => '120', 'dimension_width' => '', 'dimension_height' => '75'])
             ->assertSessionHasErrors('dimension_width');
         $this->submit($u, ['dimension_length' => '1000', 'dimension_width' => '60', 'dimension_height' => '75', 'dimension_unit' => 'cm'])

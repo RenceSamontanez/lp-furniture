@@ -1,0 +1,78 @@
+/* ============================================================
+   Measuring guide and the "How to request a custom design" page
+   (Stage 18). Shared by /guide and the panel on the design form.
+============================================================ */
+
+.guide-page { background: var(--cream); padding: 40px 20px 24px; }
+.guide-card {
+  max-width: 860px; margin: 0 auto; padding: 36px 40px;
+  background: var(--warm-white); border: 1px solid var(--border); border-radius: 20px;
+}
+.guide-title { font-family: var(--font-display); font-size: 30px; line-height: 1.2; color: var(--brown-deep); margin: 0 0 8px; }
+.guide-lead { margin: 0 0 28px; max-width: 60ch; font-size: 15px; line-height: 1.6; color: var(--text-muted); }
+.guide-h2 { font-family: var(--font-body); font-size: 18px; font-weight: 700; color: var(--brown-deep); margin: 30px 0 14px; padding-top: 22px; border-top: 1px solid var(--border); }
+.guide-card section:first-of-type .guide-h2 { margin-top: 0; padding-top: 0; border-top: 0; }
+
+/* The steps are a real sequence, so they are numbered */
+.guide-steps { list-style: none; counter-reset: gstep; margin: 0; padding: 0; display: grid; gap: 14px; }
+.guide-steps li { counter-increment: gstep; position: relative; padding-left: 46px; }
+.guide-steps li::before {
+  content: counter(gstep); position: absolute; left: 0; top: 0; width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: #FBF3E3; border: 1.5px solid var(--gold, #C9A24A); color: var(--brown-deep); font-weight: 700; font-size: 14px;
+}
+.guide-steps h3 { margin: 4px 0 2px; font-size: 15px; font-weight: 600; color: var(--brown-deep); }
+.guide-steps p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--text); max-width: 64ch; }
+
+.guide-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; margin: 30px 0 0; padding-top: 22px; border-top: 1px solid var(--border); }
+.guide-btn { display: inline-flex; padding: 12px 22px; border-radius: 12px; background: var(--gold); color: var(--brown-deep); font-weight: 700; font-size: 14px; text-decoration: none; }
+.guide-btn:hover { background: var(--gold-light); }
+.guide-link { font-size: 13.5px; color: var(--brown-mid); text-decoration: underline; text-underline-offset: 2px; }
+
+/* The measuring guide itself */
+.gm { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 28px; align-items: start; }
+.gm-figure { margin: 0; position: sticky; top: 88px; }
+.gm-svg { display: block; width: 100%; height: auto; background: #FFFDF8; border: 1px solid var(--border); border-radius: 16px; padding: 10px 8px 4px; }
+.gm-caption { margin-top: 10px; font-size: 12.5px; line-height: 1.5; color: var(--text-muted); }
+.gm-h { margin: 0 0 8px; font-size: 15px; font-weight: 700; color: var(--brown-deep); }
+.gm-text .gm-h + .gm-steps, .gm-text .gm-h + .gm-p { margin-top: 0; }
+.gm-steps { margin: 0 0 12px; padding-left: 20px; font-size: 14px; line-height: 1.6; color: var(--text); }
+.gm-steps li + li { margin-top: 6px; }
+.gm-p { margin: 0 0 18px; font-size: 14px; line-height: 1.6; color: var(--text); max-width: 64ch; }
+.gm-small { font-size: 12.5px; color: var(--text-muted); margin-bottom: 10px; }
+.gm-types { margin: 0 0 18px; display: grid; gap: 0; }
+.gm-type { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 4px 14px; padding: 10px 0; border-top: 1px solid #F1EADD; }
+.gm-type dt { font-weight: 700; font-size: 13.5px; color: var(--brown-deep); }
+.gm-type dd { margin: 0; display: grid; gap: 2px; font-size: 13px; line-height: 1.5; color: var(--text); }
+.gm-hint { color: var(--text-muted); font-style: italic; }
+.gm-ask { margin: 0; padding: 12px 14px; border-left: 3px solid var(--gold); background: #fff; border-radius: 10px; font-size: 14px; line-height: 1.55; color: var(--brown-deep); }
+.gm-ask a { color: var(--brown-mid); }
+
+/* Collapsible panel on the design form */
+.cd-measure { margin: 0 0 16px; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
+.cd-measure > summary {
+  list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 12px 14px; font-size: 13.5px; font-weight: 600; color: var(--brown-deep); border-radius: 12px; min-height: 44px;
+}
+.cd-measure > summary::-webkit-details-marker { display: none; }
+.cd-measure > summary::after { content: ""; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); transition: transform .15s ease; margin-right: 4px; }
+.cd-measure[open] > summary::after { transform: rotate(-135deg); }
+.cd-measure > summary:focus-visible { outline: 3px solid var(--gold, #C9A24A); outline-offset: 2px; }
+.cd-measure-body { padding: 4px 14px 16px; }
+.cd-measure-body .gm { grid-template-columns: 1fr; gap: 14px; }
+.cd-measure-body .gm-figure { position: static; max-width: 340px; }
+.cd-measure-links { margin: 0 0 12px; font-size: 12.5px; }
+.cd-measure-links a { color: var(--brown-mid); text-decoration: underline; text-underline-offset: 2px; }
+
+@media (max-width: 760px) {
+  .guide-page { padding: 20px 12px 12px; }
+  .guide-card { padding: 22px 18px; border-radius: 16px; }
+  .guide-title { font-size: 24px; }
+  .gm { grid-template-columns: 1fr; }
+  .gm-figure { position: static; max-width: 360px; }
+  .gm-type { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { .cd-measure > summary::after { transition: none; } }
+
+.guide-card, .gm, .cd-measure-body { text-align: left; }
+.guide-card *, .cd-measure-body * { text-align: left; }

@@ -2127,14 +2127,6 @@
 .cd-size-hint strong { color: var(--brown-deep); font-weight: 600; }
 .cd-size-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.25fr); gap: 10px; align-items: end; }
 .cd-size-field label { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 600; color: var(--brown-mid); }
-.cd-size-field .form-input { width: 100
-/* Size: Length x Width x Height with a unit (Stage 18) */
-.cd-size-group { border: 0; margin: 0 0 16px; padding: 0; min-width: 0; }
-.cd-size-group legend { padding: 0; }
-.cd-size-hint { margin: 2px 0 10px; font-size: 12.5px; line-height: 1.5; color: var(--text-muted); }
-.cd-size-hint strong { color: var(--brown-deep); font-weight: 600; }
-.cd-size-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.25fr); gap: 10px; align-items: end; }
-.cd-size-field label { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 600; color: var(--brown-mid); }
 .cd-size-field .form-input { width: 100%; }
 .cd-size-field .form-input.is-invalid { border-color: var(--danger, #B04040); }
 .cd-size-error { margin: 8px 0 0; font-size: 12.5px; color: var(--danger, #B04040); }
@@ -2149,3 +2141,5 @@
 .cd-wood-special .form-input { width: 100%; }
 .cd-wood-supply { display: grid; gap: 8px; margin-top: 10px; }
 .cd-wood-supply .ai-radio-chip { width: 100%; }
+
+.cd-type-hint, .cd-size-hint, .cd-type-check-note { text-align: left; }

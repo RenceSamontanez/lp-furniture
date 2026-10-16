@@ -3092,3 +3092,5 @@ nav .nav-btn:active {
 }
 
 @media (max-width: 640px) { .lp-footer { padding-right: 84px; } }
+
+.lp-footer-links { display: flex; flex-wrap: wrap; gap: 6px 18px; }

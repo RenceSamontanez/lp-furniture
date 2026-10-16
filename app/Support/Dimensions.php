@@ -44,7 +44,8 @@ final class Dimensions
         'mm' => 'mm (millimetres)',
     ];
 
-    public const MIN_CM = 5.0;
+    /** 2 cm: a door is only about 3 to 4 cm thick, so 5 cm would refuse real doors. */
+    public const MIN_CM = 2.0;
     public const MAX_CM = 600.0;
 
     public const SIDES = ['length' => 'Length', 'width' => 'Width', 'height' => 'Height'];

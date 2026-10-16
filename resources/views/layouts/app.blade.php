@@ -87,7 +87,10 @@
 @unless(View::hasSection('hide_site_footer'))
 <footer class="lp-footer">
   <span>&copy; {{ date('Y') }} LP Furniture</span>
-  <a href="{{ route('terms') }}">Terms and Conditions</a>
+  <span class="lp-footer-links">
+    <a href="{{ route('guide') }}">How to request a custom design</a>
+    <a href="{{ route('terms') }}">Terms and Conditions</a>
+  </span>
 </footer>
 @endunless
 

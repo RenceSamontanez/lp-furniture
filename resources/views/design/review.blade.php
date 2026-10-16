@@ -36,9 +36,9 @@
     @include('agreements._terms', ['terms' => $terms])
 
     <p class="co-hint">
-      If you accept now, you must start your payment by
+      If you accept now, you can pay straight away. Please start your payment by
       <strong>{{ $dueIfAccepted->timezone('Asia/Manila')->format('M d, Y h:i A') }}</strong>.
-      Payment is not set up yet; we will let you know when it is ready.
+      Your order is confirmed once we receive your deposit.
     </p>
 
     <form method="POST" action="{{ route('design.quote.accept', [$designRequest->id, $quote->id]) }}" class="co-agree-form">

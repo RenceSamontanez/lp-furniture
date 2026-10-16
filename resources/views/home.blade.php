@@ -581,6 +581,8 @@
     <div class="footer-bottom-links">
       <a href="#">Privacy Policy</a>
       <span class="footer-dot">·</span>
+      <a href="{{ route('guide') }}">How to request a custom design</a>
+      <span class="footer-dot">·</span>
       <a href="{{ route('terms') }}">Terms and Conditions</a>
     </div>
   </div>

@@ -148,7 +148,10 @@
     </div>
     <footer class="lp-footer lp-footer--admin">
       <span>&copy; {{ date('Y') }} LP Furniture</span>
-      <a href="{{ route('terms') }}" target="_blank" rel="noopener" data-no-loading>Terms and Conditions</a>
+      <span class="lp-footer-links">
+        <a href="{{ route('guide') }}" target="_blank" rel="noopener" data-no-loading>How to request a custom design</a>
+        <a href="{{ route('terms') }}" target="_blank" rel="noopener" data-no-loading>Terms and Conditions</a>
+      </span>
     </footer>
   </main>
 
