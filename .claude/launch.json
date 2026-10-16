@@ -1,11 +1,26 @@
-{
-  "version": "0.0.1",
-  "configurations": [
-    {
-      "name": "lp-furniture",
-      "runtimeExecutable": "php",
-      "runtimeArgs": ["artisan", "serve"],
-      "port": 8000
-    }
-  ]
+﻿{
+    "version":  "0.0.1",
+    "configurations":  [
+                           {
+                               "name":  "lp-furniture",
+                               "runtimeExecutable":  "php",
+                               "runtimeArgs":  [
+                                                   "artisan",
+                                                   "serve"
+                                               ],
+                               "port":  8000
+                           },
+                           {
+                               "name":  "lp-furniture-test",
+                               "runtimeExecutable":  "powershell",
+                               "runtimeArgs":  [
+                                                   "-NoProfile",
+                                                   "-ExecutionPolicy",
+                                                   "Bypass",
+                                                   "-File",
+                                                   "tests/Rbac/serve_test.ps1"
+                                               ],
+                               "port":  8011
+                           }
+                       ]
 }
