@@ -87,6 +87,89 @@ foreach ($routes as $r) {
     }
 }
 
+/* ── Stage 21d: the owner-only customer route GET /services/invoices/{id} ──────────────────────────────
+   Not an /admin route, so it is probed separately: guest, the owner, another customer, and an admin who is
+   only signed in on the admin guard, against a cancelled, a sent and a draft invoice and an id that does not exist. */
+$mkNamed = function (string $label) use ($tag) {
+    $u = new App\Models\User();
+    $u->forceFill([
+        'first_name' => 'Rbac', 'last_name' => ucfirst($label), 'email' => "rbac-{$label}-{$tag}@example.test",
+        'password' => 'not-a-real-password', 'role' => 'customer', 'is_validated' => true, 'account_status' => 'active',
+    ])->save();
+
+    return $u;
+};
+$owner = $mkNamed('owner');
+$other = $mkNamed('other');
+$desk = app(App\Support\ServiceInvoiceDesk::class);
+$ownerInvoices = [];
+foreach (['cancelled', 'sent', 'draft'] as $state) {
+    $ticket = App\Models\ServiceInquiry::create([
+        'reference_number' => 'RBAC-' . strtoupper(bin2hex(random_bytes(3))), 'service_type' => 'repair', 'furniture_type' => 'Chair',
+        'concern' => 'Rbac probe ticket.', 'name' => 'Rbac', 'phone' => '09171234567', 'status' => 'new', 'user_id' => $owner->id,
+    ]);
+    $clean = App\Support\ServiceInvoiceDesk::validate([
+        'service_description' => 'Probe', 'service_cost' => '100', 'delivery_option' => 'none',
+        'customer_name' => 'Rbac', 'customer_phone' => '09171234567',
+    ]);
+    $inv = $desk->createDraft($ticket->id, $admin, $clean);
+    if ($state !== 'draft') {
+        $inv = $desk->issue($inv->id, $admin);
+    }
+    if ($state === 'cancelled') {
+        $inv = $desk->void($inv->id, $admin, 'Rbac probe reason');
+    }
+    $ownerInvoices[$state] = $inv->id;
+}
+$ownerInvoices['missing'] = 999999999;
+
+$inv21 = [
+    'cancelled' => ['guest' => 'login', 'owner' => 200, 'other' => 404, 'admin_guard_only' => 'login'],
+    'sent'      => ['guest' => 'login', 'owner' => 200, 'other' => 404, 'admin_guard_only' => 'login'],
+    'draft'     => ['guest' => 'login', 'owner' => 404, 'other' => 404, 'admin_guard_only' => 'login'],
+    'missing'   => ['guest' => 'login', 'owner' => 404, 'other' => 404, 'admin_guard_only' => 'login'],
+];
+$ownerTable = [
+    '| Invoice | guest | owner | another customer | admin (admin guard only) |',
+    '|---|---|---|---|---|',
+];
+$ownerBad = 0;
+$ownerTotal = 0;
+foreach ($inv21 as $state => $expect) {
+    $uri = '/services/invoices/' . $ownerInvoices[$state];
+    $cells = [];
+    foreach (['guest' => ['guest', null], 'owner' => ['customer_web', $owner], 'other' => ['customer_web', $other], 'admin_guard_only' => ['admin', null]] as $who => [$actorName, $asUser]) {
+        $cmd = escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($probe) . ' ' . implode(' ', array_map('escapeshellarg', [
+            $actorName, 'GET', $uri, ($asUser ?? $customer)->email, $admin->email,
+        ])) . ' 2>&1';
+        $lines = preg_split('/\R/', trim((string) shell_exec($cmd)));
+        $x = json_decode(end($lines) ?: '', true) ?: ['status' => 'ERR', 'location' => null];
+        $ownerTotal++;
+        $label = $x['status'] . ($x['location'] ? ' → ' . parse_url($x['location'], PHP_URL_PATH) : '');
+        $ok = $expect[$who] === 'login'
+            ? (in_array($x['status'], [301, 302], true) && parse_url((string) $x['location'], PHP_URL_PATH) === '/login')
+            : $x['status'] === $expect[$who];
+        if (!$ok) {
+            $ownerBad++;
+            $label = '**' . $label . ' FAIL**';
+        } else {
+            $label .= ' ✓';
+        }
+        $cells[] = $label;
+    }
+    $ownerTable[] = '| ' . $state . ' (`GET /services/invoices/{id}`) | ' . implode(' | ', $cells) . ' |';
+}
+
+
+// scratch cleanup. Sent and cancelled invoices are locked at the model layer, so remove them with the query builder (scratch database only).
+$ids = array_values(array_filter($ownerInvoices, fn ($v) => $v !== 999999999));
+$ticketIds = Illuminate\Support\Facades\DB::table('service_invoices')->whereIn('id', $ids)->pluck('service_inquiry_id');
+Illuminate\Support\Facades\DB::table('service_invoice_lines')->whereIn('invoice_id', $ids)->delete();
+Illuminate\Support\Facades\DB::table('service_invoices')->whereIn('id', $ids)->delete();
+Illuminate\Support\Facades\DB::table('service_inquiries')->whereIn('id', $ticketIds)->delete();
+App\Models\Notification::whereIn('user_id', [$owner->id, $other->id])->delete();
+App\Models\User::whereIn('id', [$owner->id, $other->id])->delete();
+
 // remove the scratch users (and anything produced for them)
 App\Models\Notification::whereIn('user_id', [$customer->id, $admin->id])->delete();
 App\Models\User::whereIn('id', [$customer->id, $admin->id])->delete();
@@ -126,15 +209,20 @@ foreach ($routes as $r) {
     $table[] = '| `' . $key . '` | ' . implode(' | ', $cells) . ' |';
 }
 
-$summary = sprintf('%d routes x %d actors = %d probes, %d failures. Database: %s', count($routes), count($actors), $total, $bad, $name);
+$summary = sprintf('%d routes x %d actors = %d probes, plus %d owner-route probes, %d failures. Database: %s', count($routes), count($actors), $total, $ownerTotal, $bad + $ownerBad, $name);
 $doc = "# RBAC matrix (Stage 11)\n\n{$summary}\n\n"
     . "Expected: guest, customer and customer-credentials-on-admin-guard are redirected to /admin/login; "
     . "admin gets anything except that redirect, 401, 403, 419 or 5xx. Routes with an id were sent id 999999999 only. "
     . "One fresh PHP process per actor per route.\n\n"
     . "Stage 21c: no routes were added. \"Send to customer\" from the edit page is the existing `POST /admin/service-invoices/{id}` (update) "
     . "with `then=send`, so that row covers it; the feature test `test_save_and_send_is_admin_only` also probes it with the send flag.\n\n"
-    . implode("\n", $table) . "\n";
+    . "Stage 21d: the customer invoice page `GET /services/invoices/{id}` is owner-only and is probed in the last section of this file. "
+    . "A cancelled invoice now answers its owner with a 200 explanation page; another customer, a draft and an unknown id are all 404; a guest is sent to /login.\n\n"
+    . implode("\n", $table) . "\n\n## Owner-only customer route: `GET /services/invoices/{id}`\n\n"
+    . "Not an /admin route. Each cell is one fresh PHP process. Expected: a guest, and an admin signed in only on the admin guard, are redirected to /login; "
+    . "the owner gets 200 for a cancelled or sent invoice and 404 for a draft or an unknown id; another customer gets 404 for every id.\n\n"
+    . implode("\n", $ownerTable) . "\n";
 
 file_put_contents($root . '/docs/rbac-matrix-stage11.md', $doc);
 echo $summary, "\n";
-exit($bad === 0 ? 0 : 1);
+exit(($bad + $ownerBad) === 0 ? 0 : 1);

@@ -1,10 +1,12 @@
 # RBAC matrix (Stage 11)
 
-95 routes x 4 actors = 380 probes, 0 failures. Database: furniture_db_test
+95 routes x 4 actors = 380 probes, plus 16 owner-route probes, 0 failures. Database: furniture_db_test
 
 Expected: guest, customer and customer-credentials-on-admin-guard are redirected to /admin/login; admin gets anything except that redirect, 401, 403, 419 or 5xx. Routes with an id were sent id 999999999 only. One fresh PHP process per actor per route.
 
 Stage 21c: no routes were added. "Send to customer" from the edit page is the existing `POST /admin/service-invoices/{id}` (update) with `then=send`, so that row covers it; the feature test `test_save_and_send_is_admin_only` also probes it with the send flag.
+
+Stage 21d: the customer invoice page `GET /services/invoices/{id}` is owner-only and is probed in the last section of this file. A cancelled invoice now answers its owner with a 200 explanation page; another customer, a draft and an unknown id are all 404; a guest is sent to /login.
 
 | Route | guest | customer (web guard) | customer creds on admin guard | admin |
 |---|---|---|---|---|
@@ -103,3 +105,14 @@ Stage 21c: no routes were added. "Send to customer" from the edit page is the ex
 | `POST /admin/validations/999999999/approve` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 404 ✓ |
 | `GET /admin/validations/999999999/document/id` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 404 ✓ |
 | `POST /admin/validations/999999999/reject` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 →  ✓ |
+
+## Owner-only customer route: `GET /services/invoices/{id}`
+
+Not an /admin route. Each cell is one fresh PHP process. Expected: a guest, and an admin signed in only on the admin guard, are redirected to /login; the owner gets 200 for a cancelled or sent invoice and 404 for a draft or an unknown id; another customer gets 404 for every id.
+
+| Invoice | guest | owner | another customer | admin (admin guard only) |
+|---|---|---|---|---|
+| cancelled (`GET /services/invoices/{id}`) | 302 → /login ✓ | 200 ✓ | 404 ✓ | 302 → /login ✓ |
+| sent (`GET /services/invoices/{id}`) | 302 → /login ✓ | 200 ✓ | 404 ✓ | 302 → /login ✓ |
+| draft (`GET /services/invoices/{id}`) | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
+| missing (`GET /services/invoices/{id}`) | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
