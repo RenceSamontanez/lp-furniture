@@ -459,10 +459,10 @@ class ServiceInvoiceTest extends TestCase
 
         $this->get('/services/request')->assertOk()
             ->assertSee('Invoice ' . $issued->invoice_number)->assertSee('Unpaid')
-            ->assertDontSee($void->invoice_number);
+            ->assertSee('Cancelled, view why'); // Stage 21d: a cancelled invoice is listed, as cancelled, with no amount due
         $this->get(route('services.invoice', $issued->id))->assertOk()->assertSee($issued->invoice_number);
         $this->get(route('services.invoice', $draft->id))->assertNotFound();
-        $this->get(route('services.invoice', $void->id))->assertNotFound();
+        $this->get(route('services.invoice', $void->id))->assertOk()->assertSee('This invoice was cancelled'); // Stage 21d: explanation page, not a 404
 
         app(ServiceInvoiceDesk::class)->markPaid($issued->id, $this->admin, ['method' => 'cash', 'reference' => null, 'amount' => '1500', 'date' => now('Asia/Manila')->toDateString()]);
         $this->get('/services/request')->assertSee('Paid');

@@ -165,6 +165,20 @@ class ServiceInvoice extends Model
         return self::labelFor($this->status);
     }
 
+    public function isCancelled(): bool
+    {
+        return $this->status === self::VOID;
+    }
+
+    /**
+     * Whether anyone may still act on this invoice (pay it, print it, download it, start an online payment).
+     * Only a sent invoice is payable; a cancelled one never is. Every route that acts on an invoice asks this.
+     */
+    public function isPayable(): bool
+    {
+        return $this->status === self::ISSUED;
+    }
+
     public function deliveryLabel(): string
     {
         return self::DELIVERY_OPTIONS[$this->delivery_option]['label'] ?? (string) $this->delivery_option;
@@ -179,6 +193,12 @@ class ServiceInvoice extends Model
     public function scopeVisibleToCustomer($query)
     {
         return $query->whereIn('status', [self::ISSUED, self::PAID]);
+    }
+
+    /** What the owner may open: sent, paid, or cancelled (which shows an explanation). Never a draft. */
+    public function scopeOpenableByCustomer($query)
+    {
+        return $query->whereIn('status', [self::ISSUED, self::PAID, self::VOID]);
     }
 
     /** A ticket can carry one live invoice at a time: draft, issued or paid. */

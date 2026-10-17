@@ -155,6 +155,10 @@ final class NotificationTemplates
             'title' => 'Your Invoice Is Ready',
             'body'  => 'Invoice {invoice} for {service} is ready. The total is {total}. You can view and print it from your service requests page. {contact}',
         ],
+        'service_invoice_cancelled' => [
+            'title' => 'Your Invoice Was Cancelled',
+            'body'  => 'Invoice {invoice} was cancelled. You do not need to pay it. Tap to see why. {contact}',
+        ],
         'service_invoice_paid' => [
             'title' => 'Payment Recorded',
             'body'  => 'We recorded your payment of {amount} for invoice {invoice} on {when}. Thank you. The paid invoice is available on your service requests page. {contact}',

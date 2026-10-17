@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'validated'     => \App\Http\Middleware\CheckValidated::class,
             'admin'         => \App\Http\Middleware\CheckAdmin::class,
             'admin.timeout' => \App\Http\Middleware\CheckAdminTimeout::class,
+            'invoice.actionable' => \App\Http\Middleware\EnsureInvoiceActionable::class,
         ]);
 
         // Webhooks are POSTed by the payment providers' own servers,

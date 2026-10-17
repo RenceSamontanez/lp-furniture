@@ -167,7 +167,13 @@ class ServiceInvoiceController extends Controller
     public function void(Request $request, $id)
     {
         ServiceInvoice::findOrFail($id);
-        $data = $request->validate(['reason' => 'required|string|max:1000'], ['reason.required' => 'A reason is required to cancel an invoice.']);
+        $data = $request->validate(
+            ['reason' => 'required|string|min:' . ServiceInvoiceDesk::MIN_CANCEL_REASON . '|max:1000'],
+            [
+                'reason.required' => 'A reason is required to cancel an invoice.',
+                'reason.min'      => 'Please give a reason of at least ' . ServiceInvoiceDesk::MIN_CANCEL_REASON . ' characters. The customer will see it.',
+            ]
+        );
 
         return $this->run($id, fn () => $this->desk->void((int) $id, Auth::guard('admin')->user(), $data['reason']), 'Invoice cancelled. You can send a new one from the ticket.');
     }

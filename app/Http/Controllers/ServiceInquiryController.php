@@ -27,7 +27,7 @@ class ServiceInquiryController extends Controller
         $user = Auth::user();
 
         $mine = ServiceInquiry::where('user_id', $user->id)
-            ->with(['invoices' => fn ($q) => $q->visibleToCustomer()])
+            ->with(['invoices' => fn ($q) => $q->openableByCustomer()->orderByDesc('id')])
             ->orderByDesc('id')->limit(10)->get();
 
         return view('services.request', [

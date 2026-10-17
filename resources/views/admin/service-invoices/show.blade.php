@@ -152,8 +152,9 @@
       @csrf
       <p id="inv-cancel-text" class="inv-confirm-text">{{ \App\Models\ServiceInvoice::CANCEL_CONFIRMATION }}</p>
       <label class="co-modal-label" for="inv-cancel-reason">Reason</label>
-      <textarea name="reason" id="inv-cancel-reason" class="form-input" rows="3" maxlength="1000" required
-                placeholder="e.g. Wrong amount. A new invoice will be sent.">{{ old('reason') }}</textarea>
+      <textarea name="reason" id="inv-cancel-reason" class="form-input" rows="3" minlength="5" maxlength="1000" required
+                placeholder="e.g. Wrong amount. A new invoice will be sent." aria-describedby="inv-cancel-help">{{ old('reason') }}</textarea>
+      <p class="si-hint" id="inv-cancel-help" style="margin:6px 0 0;">The customer will see this reason.</p>
       <div class="co-modal-actions">
         <button type="button" class="admin-btn admin-btn-outline" data-close-cancel>Go back</button>
         <button type="submit" class="admin-btn admin-btn-gold" data-loading="Cancelling...">Cancel invoice</button>

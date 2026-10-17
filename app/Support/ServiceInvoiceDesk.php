@@ -26,6 +26,9 @@ final class ServiceInvoiceDesk
 {
     public const TZ = 'Asia/Manila';
     public const MAX_AMOUNT = 999999.99;
+
+    /** The customer reads the cancel reason, so a one-word reason is not enough. */
+    public const MIN_CANCEL_REASON = 5;
     public const MAX_EXTRA_LINES = 20;
 
     public function __construct(private ServiceInquiryDesk $tickets)
@@ -352,6 +355,9 @@ final class ServiceInvoiceDesk
         if ($reason === '') {
             throw new PipelineException('A reason is required to cancel an invoice.');
         }
+        if (mb_strlen($reason) < self::MIN_CANCEL_REASON) {
+            throw new PipelineException('Please give a reason of at least ' . self::MIN_CANCEL_REASON . ' characters. The customer will see it.');
+        }
         if (mb_strlen($reason) > 1000) {
             throw new PipelineException('Please keep the reason under 1,000 characters.');
         }
@@ -359,6 +365,8 @@ final class ServiceInvoiceDesk
         return DB::transaction(function () use ($invoiceId, $admin, $reason) {
             [$ticket, $invoice] = $this->lock($invoiceId);
             $this->requireStatus($invoice, [ServiceInvoice::ISSUED, ServiceInvoice::PAID], 'cancel it');
+
+            $wasSent = $invoice->status === ServiceInvoice::ISSUED;
 
             $invoice->forceFill([
                 'status'      => ServiceInvoice::VOID,
@@ -368,6 +376,12 @@ final class ServiceInvoiceDesk
 
             $this->tickets->appendNote($ticket, $admin, "Invoice {$invoice->invoice_number} cancelled. {$reason}");
             $ticket->save();
+
+            // A sent invoice the customer may be about to pay: tell them they do not need to. (A paid one is
+            // not announced as "nothing to pay"; our team follows that up by phone.)
+            if ($wasSent && $invoice->user_id) {
+                $this->notify($invoice, 'service_invoice_cancelled', []);
+            }
 
             return $invoice;
         });

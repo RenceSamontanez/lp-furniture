@@ -134,12 +134,30 @@
                     <span class="si-chip si-chip--{{ $t->status }}">{{ $t->statusLabel() }}</span>
                   </div>
                   <div class="si-list-sub">{{ $t->serviceLabel() }} · {{ $t->created_at->timezone('Asia/Manila')->format('M d, Y') }}</div>
-                  @foreach($t->invoices as $inv)
-                    <a href="{{ route('services.invoice', $inv->id) }}" class="si-invoice">
-                      <span>Invoice {{ $inv->invoice_number }}</span>
-                      <span>₱{{ number_format((float) $inv->total, 2) }} · {{ $inv->status === 'paid' ? 'Paid' : 'Unpaid' }}</span>
+                  @php
+                    $live    = $t->invoices->first(fn ($inv) => $inv->status !== 'void');
+                    $earlier = $t->invoices->filter(fn ($inv) => $inv->status === 'void');
+                  @endphp
+                  @if($live)
+                    <a href="{{ route('services.invoice', $live->id) }}" class="si-invoice">
+                      <span>Invoice {{ $live->invoice_number }}</span>
+                      <span>₱{{ number_format((float) $live->total, 2) }} · {{ $live->status === 'paid' ? 'Paid' : 'Unpaid' }}</span>
                     </a>
-                  @endforeach
+                    @if($earlier->isNotEmpty())
+                      <p class="si-earlier">Earlier invoices:
+                        @foreach($earlier as $inv)
+                          <a href="{{ route('services.invoice', $inv->id) }}">{{ $inv->invoice_number }} (cancelled)</a>@unless($loop->last), @endunless
+                        @endforeach
+                      </p>
+                    @endif
+                  @else
+                    @foreach($earlier as $inv)
+                      <a href="{{ route('services.invoice', $inv->id) }}" class="si-invoice si-invoice--cancelled">
+                        <span>Invoice {{ $inv->invoice_number }}</span>
+                        <span><span class="si-chip si-chip--cancelled">{{ $inv->statusLabel() }}</span> Cancelled, view why</span>
+                      </a>
+                    @endforeach
+                  @endif
                 </li>
               @endforeach
             </ul>

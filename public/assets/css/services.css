@@ -54,3 +54,35 @@
 
 .si-invoice { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 12.5px; color: var(--brown-deep); text-decoration: none; }
 .si-invoice:hover, .si-invoice:focus-visible { border-color: var(--gold); background: #FBF6EC; }
+
+/* Customer invoice links: comfortable tap size */
+.si-invoice { min-height: 44px; align-items: center; }
+.si-invoice--cancelled { background: #F7F3EC; color: #5C4A3C; }
+.si-invoice--cancelled > span:last-child { text-align: right; }
+.si-chip--cancelled { background: #EDE8E0; color: #5C4A3C; }
+.si-earlier { margin: 8px 0 0; font-size: 12px; line-height: 1.7; color: var(--text-muted); }
+.si-earlier a { display: inline-block; padding: 6px 0; color: var(--brown-mid); text-decoration: underline; text-underline-offset: 2px; }
+
+/* Cancelled invoice page (read-only explanation) */
+.sx-main { padding: 26px 28px; }
+.sx-badge { display: inline-block; padding: 4px 12px; border-radius: 999px; background: #EDE8E0; color: #5C4A3C; font-size: 12.5px; font-weight: 600; }
+.sx-title { font-family: var(--font-display); font-size: 28px; line-height: 1.2; color: var(--brown-deep); margin: 12px 0 10px; }
+.sx-lead { font-size: 15.5px; line-height: 1.6; color: var(--text); margin: 0 0 20px; max-width: 60ch; }
+.sx-facts { margin: 0 0 22px; padding: 4px 16px; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
+.sx-facts > div { display: grid; grid-template-columns: minmax(130px, 38%) 1fr; gap: 12px; padding: 11px 0; border-bottom: 1px solid #EFE7DA; font-size: 14px; }
+.sx-facts > div:last-child { border-bottom: 0; }
+.sx-facts dt { color: var(--text-muted); }
+.sx-facts dd { margin: 0; color: var(--brown-deep); overflow-wrap: anywhere; }
+.sx-facts dd.sx-muted { color: #6B5D52; }
+.sx-h2 { font-family: var(--font-display); font-size: 17px; color: var(--brown-deep); margin: 0 0 6px; }
+.sx-reason, .sx-next { font-size: 14.5px; line-height: 1.6; color: var(--text); margin: 0 0 20px; max-width: 60ch; white-space: pre-line; overflow-wrap: anywhere; }
+.sx-back { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 18px; border: 1px solid var(--brown-mid); border-radius: 10px; background: #fff; color: var(--brown-deep); font-weight: 600; font-size: 14px; text-decoration: none; }
+.sx-back:hover { background: var(--cream); }
+.sx-back:focus-visible { outline: 2px solid var(--brown-deep); outline-offset: 2px; }
+.si-card-line a { display: inline-block; padding: 4px 0; }
+@media (max-width: 640px) {
+  .sx-main { padding: 20px 16px; }
+  .sx-title { font-size: 23px; }
+  .sx-facts > div { grid-template-columns: 1fr; gap: 2px; }
+  .sx-back { width: 100%; justify-content: center; }
+}
