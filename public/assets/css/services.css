@@ -86,3 +86,12 @@
   .sx-facts > div { grid-template-columns: 1fr; gap: 2px; }
   .sx-back { width: 100%; justify-content: center; }
 }
+
+/* Stage 21d polish: stack the invoice link lines in the narrow card, and give contact links a 44px tap area */
+.si-invoice { flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; }
+.si-invoice--cancelled > span:last-child { text-align: left; }
+.si-invoice--cancelled .si-chip { margin-right: 6px; }
+.si-card-line a { display: inline-flex; align-items: center; min-height: 44px; padding: 0; }
+.si-card-line { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
+.si-earlier a { display: inline-flex; align-items: center; min-height: 44px; padding: 0; }
+.sx-lead, .sx-reason, .sx-next, .er-text { text-align: left; }
