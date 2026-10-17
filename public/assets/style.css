@@ -605,8 +605,6 @@ nav {
 .chat-msg.bot .chat-bubble { background: var(--cream); color: var(--text); border-bottom-left-radius: 4px; }
 .chat-msg.user .chat-bubble { background: var(--brown-deep); color: #fff; border-bottom-right-radius: 4px; }
 .chat-suggestions { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 10px; }
-.chat-sugg { font-size: 12px; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border); background: #fff; cursor: pointer; color: var(--brown-mid); transition: all .2s; }
-.chat-sugg:hover { background: var(--gold); color: var(--brown-deep); border-color: var(--gold); }
 .chat-input-row { display: flex; gap: 8px; padding: 12px 14px; border-top: 1px solid var(--border); }
 .chat-input { flex: 1; border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 12px; font-family: var(--font-body); font-size: 13px; outline: none; }
 .chat-input:focus { border-color: var(--gold); }
@@ -3102,9 +3100,55 @@ nav .nav-btn:active {
 .chat-card img { width: 100%; height: 80px; object-fit: cover; display: block; background: var(--cream); }
 .chat-card-name { font-size: 11.5px; font-weight: 500; color: var(--brown-deep); padding: 6px 8px 0; }
 .chat-card-price { font-size: 12px; color: var(--brown-mid); padding: 2px 8px 8px; }
-.chat-buttons { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 0 36px; }
-.chat-link-btn { font-size: 12px; padding: 7px 14px; border-radius: 20px; background: var(--brown-deep); color: #fff; text-decoration: none; }
-.chat-link-btn:hover { background: var(--gold); color: var(--brown-deep); }
-.chat-contact { margin: 6px 0 0 36px; border: 1px solid var(--border); border-radius: 10px; background: #fff; padding: 10px 14px; font-size: 12.5px; line-height: 1.7; }
+/* Luma button system. Why every rule is scoped under .chatbot-window: the site-wide reset
+   "a:visited, a:hover, a:focus, a:active { color: inherit }" (0,1,1) beats a plain one-class
+   rule (0,1,0), so the old pills inherited the dark body colour. Two-class selectors win in every state. */
+.chatbot-window {
+  --luma-primary: #2C1810;        --luma-primary-text: #FDFAF5;
+  --luma-primary-hover: #5C3D2E;  --luma-primary-hover-text: #FFFFFF;
+  --luma-primary-active: #1A0E09;
+  --luma-secondary: #FFFFFF;      --luma-secondary-text: #2C1810;  --luma-secondary-border: #5C3D2E;
+  --luma-secondary-hover: #F5F0E8; --luma-secondary-active: #E0D5C5;
+  --luma-disabled: #E0D5C5;       --luma-disabled-text: #5C4A3C;
+}
+.chatbot-window .chat-buttons { display: flex; flex-direction: column; align-items: stretch; gap: 8px; margin: 6px 0 0 36px; }
+.chatbot-window .chat-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 10px 16px; border: 1px solid transparent; border-radius: 10px;
+  font: 600 13.5px/1.25 var(--font-body); text-align: center; text-decoration: none;
+  overflow-wrap: anywhere; cursor: pointer; transition: background-color .15s, border-color .15s, color .15s;
+}
+.chatbot-window .chat-btn-arrow { width: 14px; height: 14px; flex: none; }
+.chatbot-window .chat-btn--primary,
+.chatbot-window .chat-btn--primary:visited { background: var(--luma-primary); color: var(--luma-primary-text); border-color: var(--luma-primary); }
+.chatbot-window .chat-btn--primary:hover { background: var(--luma-primary-hover); color: var(--luma-primary-hover-text); border-color: var(--luma-primary-hover); }
+.chatbot-window .chat-btn--primary:active { background: var(--luma-primary-active); color: var(--luma-primary-text); border-color: var(--luma-primary-active); }
+.chatbot-window .chat-btn--secondary,
+.chatbot-window .chat-btn--secondary:visited { background: var(--luma-secondary); color: var(--luma-secondary-text); border-color: var(--luma-secondary-border); }
+.chatbot-window .chat-btn--secondary:hover { background: var(--luma-secondary-hover); color: var(--luma-secondary-text); border-color: var(--luma-primary); }
+.chatbot-window .chat-btn--secondary:active { background: var(--luma-secondary-active); color: var(--luma-secondary-text); border-color: var(--luma-primary); }
+.chatbot-window .chat-btn:focus-visible,
+.chatbot-window .chat-chip:focus-visible { outline: 2px solid var(--luma-primary); outline-offset: 2px; box-shadow: 0 0 0 5px #E8B86D; }
+.chatbot-window .chat-btn[aria-disabled="true"],
+.chatbot-window .chat-btn:disabled { background: var(--luma-disabled); color: var(--luma-disabled-text); border-color: var(--luma-disabled); cursor: not-allowed; pointer-events: none; }
+
+/* Quick-reply chips: smaller and lighter than buttons, on purpose */
+.chat-suggestions { gap: 6px; }
+.chatbot-window .chat-chip {
+  min-height: 32px; padding: 4px 12px; border: 1px solid var(--border); border-radius: 999px;
+  background: #FFFFFF; color: var(--brown-mid); font: 400 12px/1.2 var(--font-body); cursor: pointer;
+  transition: background-color .15s, border-color .15s;
+}
+.chatbot-window .chat-chip:hover { background: var(--cream); border-color: var(--brown-light); color: var(--brown-deep); }
+.chatbot-window .chat-chip:active { background: var(--luma-secondary-active); }
+
+/* Contact card: details as text, actions as the same buttons */
+.chat-contact { margin: 6px 0 0 36px; border: 1px solid var(--border); border-radius: 10px; background: #fff; padding: 12px 14px; font-size: 12.5px; line-height: 1.6; }
 .chat-contact-name { font-weight: 600; color: var(--brown-deep); }
-.chat-contact a { color: var(--brown-mid); }
+.chat-contact-line { color: var(--text); overflow-wrap: anywhere; }
+.chat-contact-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+
+/* Inline links in bubble text stay ordinary readable links */
+.chatbot-window .chat-bubble a,
+.chatbot-window .chat-bubble a:visited { color: #5C3D2E; text-decoration: underline; text-underline-offset: 2px; }
+.chatbot-window .chat-bubble a:hover { color: #2C1810; }

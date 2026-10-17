@@ -132,6 +132,6 @@ class LumaServicesTest extends TestCase
 
         $this->assertStringContainsString('chat-contact', $widget);
         $this->assertStringContainsString('tel:', $widget);
-        $this->assertStringContainsString('chat-link-btn', $widget);
+        $this->assertStringContainsString('chat-btn--primary', $widget);
     }
 }
