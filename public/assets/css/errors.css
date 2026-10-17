@@ -1,0 +1,21 @@
+/* Branded 403 / 404 / 419 pages */
+.er-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; align-items: start; max-width: 960px; margin: 0 auto; }
+.er-main { padding: 34px 30px; }
+.er-code { font-family: var(--font-display); font-size: 64px; line-height: 1; color: var(--gold); margin-bottom: 8px; }
+.er-title { font-family: var(--font-display); font-size: 28px; line-height: 1.2; color: var(--brown-deep); margin: 0 0 10px; }
+.er-text { font-size: 15.5px; line-height: 1.6; color: var(--text); margin: 0 0 24px; max-width: 54ch; }
+.er-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.er-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 20px; border-radius: 10px; border: 1px solid var(--brown-deep); font-weight: 600; font-size: 14px; text-decoration: none; }
+.er-btn--primary { background: var(--brown-deep); color: #FDFAF5; }
+.er-btn--primary:hover { background: var(--brown-mid); color: #fff; }
+.er-btn--secondary { background: #fff; color: var(--brown-deep); border-color: var(--brown-mid); }
+.er-btn--secondary:hover { background: var(--cream); }
+.er-btn:focus-visible { outline: 2px solid var(--brown-deep); outline-offset: 2px; }
+@media (max-width: 760px) {
+  .er-grid { grid-template-columns: 1fr; }
+  .er-main { padding: 24px 18px; }
+  .er-code { font-size: 48px; }
+  .er-title { font-size: 23px; }
+  .er-actions { flex-direction: column; }
+  .er-btn { width: 100%; }
+}
