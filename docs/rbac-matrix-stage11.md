@@ -4,6 +4,8 @@
 
 Expected: guest, customer and customer-credentials-on-admin-guard are redirected to /admin/login; admin gets anything except that redirect, 401, 403, 419 or 5xx. Routes with an id were sent id 999999999 only. One fresh PHP process per actor per route.
 
+Stage 21c: no routes were added. "Send to customer" from the edit page is the existing `POST /admin/service-invoices/{id}` (update) with `then=send`, so that row covers it; the feature test `test_save_and_send_is_admin_only` also probes it with the send flag.
+
 | Route | guest | customer (web guard) | customer creds on admin guard | admin |
 |---|---|---|---|---|
 | `GET /admin/agreements/999999999` | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 302 → /admin/login ✓ | 404 ✓ |

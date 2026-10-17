@@ -128,13 +128,21 @@
         <dl class="inv-sum" id="inv-sum" aria-live="polite"></dl>
         <div class="inv-grand"><span>Total</span><strong id="inv-total">₱0.00</strong></div>
         <p class="si-hint" id="inv-delivery-label" style="margin-top:10px;"></p>
-        <button type="submit" class="admin-btn admin-btn-gold co-wide" style="margin-top:14px;" data-loading="Saving...">{{ $editing ? 'Save draft' : 'Save draft' }}</button>
-        <p class="si-hint" style="margin-top:8px;">Saving a draft does not send anything to the customer. You issue it on the next page.</p>
+        <button type="submit" class="admin-btn admin-btn-outline co-wide inv-save" style="margin-top:14px;" data-loading="Saving...">Save draft</button>
+        @if($editing)
+          <button type="button" class="admin-btn admin-btn-gold co-wide" style="margin-top:10px;" data-open-send>Send to customer</button>
+          <p class="si-hint" style="margin-top:8px;">Save draft keeps it private so you can come back and change it. Send to customer saves what is on this page, sends it, and locks it.</p>
+        @else
+          <p class="si-hint" style="margin-top:8px;">Saving a draft does not send anything to the customer. You can edit it again and send it from the next page.</p>
+        @endif
       </div>
     </div>
   </aside>
 </form>
 </div>
+@if($editing)
+  @include('admin.service-invoices._send-modal', ['formId' => 'inv-form'])
+@endif
 @endsection
 
 @push('scripts')

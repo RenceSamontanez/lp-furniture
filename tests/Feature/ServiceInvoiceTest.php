@@ -544,6 +544,126 @@ class ServiceInvoiceTest extends TestCase
         $this->get(route('admin.service-invoices.print', $i->id))->assertSee('iv-mark', false)->assertSee('no longer valid');
     }
 
+
+    /* ───────────── Stage 21c: drafts stay editable ───────────── */
+
+    public function test_a_draft_can_be_edited_again_and_again_and_each_save_keeps_it_a_draft(): void
+    {
+        $t = $this->ticket();
+        $i = $this->draft($t, ['lines' => [['kind' => 'material_fee', 'description' => 'Glue', 'amount' => '100']]]);
+
+        foreach ([['2000', '300'], ['1800', '0'], ['2500', '450']] as $n => [$cost, $fee]) {
+            $this->asAdmin()->get(route('admin.service-invoices.edit', $i->id))->assertOk()
+                ->assertSee('Save draft')->assertSee('Send to customer');
+
+            $res = $this->post(route('admin.service-invoices.update', $i->id), $this->payload([
+                'service_description' => 'Repair v' . $n, 'service_cost' => $cost,
+                'delivery_option' => $fee === '0' ? 'none' : 'delivery_one_way', 'delivery_amount' => $fee === '0' ? null : $fee,
+                'customer_name' => 'Maria Santos', 'notes' => 'Edit ' . $n,
+                'lines' => $fee === '0' ? [] : [['kind' => 'other_fee', 'description' => 'Screws', 'amount' => '50']],
+            ]));
+            $res->assertRedirect(route('admin.service-invoices.show', $i->id))->assertSessionHas('success');
+
+            $i->refresh();
+            $this->assertSame('draft', $i->status);
+            $this->assertNull($i->invoice_number);
+            $this->assertSame('Repair v' . $n, $i->service_description);
+            $this->assertSame('Maria Santos', $i->customer_name);
+            $this->assertSame('Edit ' . $n, $i->notes);
+        }
+
+        $this->assertSame('3000.00', (string) $i->total); // 2500 + 450 delivery + 50 fee
+        $this->assertSame(3, substr_count($t->fresh()->admin_notes, "Invoice draft #{$i->id} updated"));
+        $this->assertSame(0, Notification::where('type', 'general')->count(), 'saving a draft never notifies');
+    }
+
+    public function test_the_edit_page_shows_the_saved_values_and_the_send_confirmation_text(): void
+    {
+        $t = $this->ticket();
+        $i = $this->draft($t, ['delivery_option' => 'home_service', 'delivery_amount' => '300', 'notes' => 'Bring tools']);
+
+        $html = $this->asAdmin()->get(route('admin.service-invoices.edit', $i->id))->assertOk()->getContent();
+
+        $this->assertStringContainsString('value="1500.00"', $html);
+        $this->assertStringContainsString('value="300.00"', $html);
+        $this->assertStringContainsString('Bring tools', $html);
+        $this->assertStringContainsString(e(ServiceInvoice::SEND_CONFIRMATION), $html);
+        $this->assertSame(
+            'Send this invoice to the customer? They will be notified and can pay it online. Once sent, it can no longer be edited. If something is wrong you can cancel it and send a new one.',
+            ServiceInvoice::SEND_CONFIRMATION
+        );
+    }
+
+    public function test_deleting_a_draft_leaves_no_gap_in_the_numbering_and_writes_a_ticket_note(): void
+    {
+        $t = $this->ticket();
+        $d = $this->draft($t);
+        $this->assertNull($d->invoice_number);
+
+        $this->asAdmin()->post(route('admin.service-invoices.delete', $d->id))->assertRedirect(route('admin.service-inquiries.show', $t->id));
+        $this->assertStringContainsString('no gap in the numbering', $t->fresh()->admin_notes);
+
+        $first = $this->issued($this->ticket());
+        $this->assertMatchesRegularExpression('/^INV-\d{4}-0001$/', $first->invoice_number);
+    }
+
+    public function test_save_and_send_in_one_step_sends_what_is_on_the_page_then_locks_it(): void
+    {
+        $customer = $this->makeUser();
+        $t = $this->ticket(['user_id' => $customer->id]);
+        $i = $this->draft($t);
+
+        $this->asAdmin()->post(route('admin.service-invoices.update', $i->id), $this->payload(['service_cost' => '2750', 'then' => 'send']))
+            ->assertRedirect(route('admin.service-invoices.show', $i->id))->assertSessionHas('success');
+
+        $i->refresh();
+        $this->assertSame('issued', $i->status);
+        $this->assertSame('2750.00', (string) $i->total, 'the edit on the page was saved before sending');
+        $this->assertNotNull($i->invoice_number);
+        $this->assertSame(1, Notification::where('user_id', $customer->id)->where('url', route('services.invoice', $i->id))->count());
+
+        // locked: no edit controls on the page, the edit page and the server both refuse
+        $this->get(route('admin.service-invoices.show', $i->id))->assertOk()
+            ->assertDontSee('Edit draft')->assertDontSee('Delete draft')->assertDontSee('Save draft');
+        $this->get(route('admin.service-invoices.edit', $i->id))->assertRedirect(route('admin.service-invoices.show', $i->id));
+        $this->post(route('admin.service-invoices.update', $i->id), $this->payload(['service_cost' => '1', 'then' => 'send']))->assertSessionHasErrors('invoice');
+        $this->post(route('admin.service-invoices.update', $i->id), $this->payload(['service_cost' => '1']))->assertSessionHasErrors('invoice');
+        $this->post(route('admin.service-invoices.delete', $i->id))->assertSessionHasErrors('invoice');
+        $this->assertSame('2750.00', (string) $i->fresh()->total);
+        $this->assertSame(1, Notification::where('user_id', $customer->id)->count(), 'a refused second send notifies nobody again');
+    }
+
+    public function test_the_draft_page_offers_edit_send_and_delete_and_the_customer_never_sees_a_draft(): void
+    {
+        $customer = $this->makeUser();
+        $t = $this->ticket(['user_id' => $customer->id]);
+        $i = $this->draft($t);
+
+        $this->asAdmin()->get(route('admin.service-invoices.show', $i->id))->assertOk()
+            ->assertSee('Edit draft')->assertSee('Send to customer')->assertSee('Delete draft');
+
+        $this->app['auth']->forgetGuards();
+        $this->actingAs($customer);
+        $this->get(route('services.invoice', $i->id))->assertNotFound();
+        $this->get('/services/request')->assertOk()->assertDontSee('Draft')->assertDontSee('Invoice #' . $i->id);
+        $this->assertSame(0, Notification::where('user_id', $customer->id)->count());
+    }
+
+    public function test_save_and_send_is_admin_only(): void
+    {
+        $customer = $this->makeUser();
+        $t = $this->ticket(['user_id' => $customer->id]);
+        $i = $this->draft($t);
+        $uri = route('admin.service-invoices.update', $i->id, false);
+
+        $this->app['auth']->forgetGuards();
+        $this->assertTrue($this->post($uri, $this->payload(['then' => 'send']))->isRedirect(route('admin.login')), 'guest');
+        $this->app['auth']->forgetGuards();
+        $this->actingAs($customer, 'web');
+        $this->assertTrue($this->post($uri, $this->payload(['then' => 'send']))->isRedirect(route('admin.login')), 'customer');
+        $this->assertSame('draft', $i->fresh()->status);
+    }
+
     /* ───────────── RBAC ───────────── */
 
     public function test_every_invoice_route_is_admin_only_and_the_customer_route_is_account_only(): void

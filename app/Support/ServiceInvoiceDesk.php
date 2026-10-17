@@ -245,7 +245,7 @@ final class ServiceInvoiceDesk
             }
             $invoice->delete();
 
-            $this->tickets->appendNote($ticket, $admin, "Invoice draft #{$invoiceId} deleted");
+            $this->tickets->appendNote($ticket, $admin, "Invoice draft #{$invoiceId} deleted (it had no invoice number, so there is no gap in the numbering)");
             $ticket->save();
         });
     }

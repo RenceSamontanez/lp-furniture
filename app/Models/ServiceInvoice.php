@@ -28,6 +28,9 @@ class ServiceInvoice extends Model
         self::VOID   => 'Void',
     ];
 
+    /** Shown in the "Send to customer" confirmation (admin pages). One place, so the wording stays the same everywhere. */
+    public const SEND_CONFIRMATION = 'Send this invoice to the customer? They will be notified and can pay it online. Once sent, it can no longer be edited. If something is wrong you can cancel it and send a new one.';
+
     public const PAID_METHODS = [
         'cash'          => 'Cash',
         'gcash_direct'  => 'GCash (direct to the shop)',

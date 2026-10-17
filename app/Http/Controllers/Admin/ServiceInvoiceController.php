@@ -57,7 +57,7 @@ class ServiceInvoiceController extends Controller
         }
 
         return redirect()->route('admin.service-invoices.show', $invoice->id)
-            ->with('success', 'Draft saved. Check it, then issue it.');
+            ->with('success', 'Draft saved. You can edit it again until you send it to the customer.');
     }
 
     public function show($id)
@@ -106,8 +106,20 @@ class ServiceInvoiceController extends Controller
     {
         ServiceInvoice::findOrFail($id);
         $clean = ServiceInvoiceDesk::validate($request->all());
+        $admin = Auth::guard('admin')->user();
 
-        return $this->run($id, fn () => $this->desk->updateDraft((int) $id, Auth::guard('admin')->user(), $clean), 'Draft updated.');
+        // "Save draft" only saves. "Send to customer" saves what is on the page, then sends exactly that.
+        if ($request->input('then') !== 'send') {
+            return $this->run($id, fn () => $this->desk->updateDraft((int) $id, $admin, $clean), 'Draft saved. You can keep editing it until you send it.');
+        }
+
+        try {
+            $this->desk->updateDraft((int) $id, $admin, $clean);
+        } catch (PipelineException $e) {
+            return redirect()->route('admin.service-invoices.show', $id)->withErrors(['invoice' => $e->getMessage()]);
+        }
+
+        return $this->run($id, fn () => $this->desk->issue((int) $id, $admin), 'Invoice sent to the customer. It can no longer be edited.');
     }
 
     public function destroy($id)
@@ -121,14 +133,14 @@ class ServiceInvoiceController extends Controller
             return redirect()->route('admin.service-invoices.show', $id)->withErrors(['invoice' => $e->getMessage()]);
         }
 
-        return redirect($back)->with('success', 'Draft deleted.');
+        return redirect($back)->with('success', 'Draft deleted. It had no invoice number, so nothing is missing from the numbering.');
     }
 
     public function issue($id)
     {
         ServiceInvoice::findOrFail($id);
 
-        return $this->run($id, fn () => $this->desk->issue((int) $id, Auth::guard('admin')->user()), 'Invoice issued. It is now locked.');
+        return $this->run($id, fn () => $this->desk->issue((int) $id, Auth::guard('admin')->user()), 'Invoice sent to the customer. It can no longer be edited.');
     }
 
     public function pay(Request $request, $id)

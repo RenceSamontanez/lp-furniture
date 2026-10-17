@@ -54,3 +54,9 @@
   .inv-line .inv-money { grid-column: 2; }
   .inv-line .inv-remove { grid-column: 1 / -1; }
 }
+
+/* draft actions and the send confirmation */
+.inv-draft-note { margin: 0 0 12px; }
+.inv-confirm-text { font-size: 14px; line-height: 1.6; color: #2C1810; margin: 0; }
+.inv-delete { color: #8A2B2B; border-color: #D9B4B4; }
+.inv-delete:hover { background: #FBF1F1; }

@@ -130,7 +130,10 @@ $summary = sprintf('%d routes x %d actors = %d probes, %d failures. Database: %s
 $doc = "# RBAC matrix (Stage 11)\n\n{$summary}\n\n"
     . "Expected: guest, customer and customer-credentials-on-admin-guard are redirected to /admin/login; "
     . "admin gets anything except that redirect, 401, 403, 419 or 5xx. Routes with an id were sent id 999999999 only. "
-    . "One fresh PHP process per actor per route.\n\n" . implode("\n", $table) . "\n";
+    . "One fresh PHP process per actor per route.\n\n"
+    . "Stage 21c: no routes were added. \"Send to customer\" from the edit page is the existing `POST /admin/service-invoices/{id}` (update) "
+    . "with `then=send`, so that row covers it; the feature test `test_save_and_send_is_admin_only` also probes it with the send flag.\n\n"
+    . implode("\n", $table) . "\n";
 
 file_put_contents($root . '/docs/rbac-matrix-stage11.md', $doc);
 echo $summary, "\n";

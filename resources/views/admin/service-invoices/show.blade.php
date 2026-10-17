@@ -77,17 +77,15 @@
         <a href="{{ route('admin.service-invoices.print', $i->id) }}" class="admin-btn admin-btn-outline co-wide" target="_blank" rel="noopener" style="margin-bottom:10px;">Open printable invoice</a>
 
         @if($i->status === 'draft')
-          <form method="POST" action="{{ route('admin.service-invoices.issue', $i->id) }}"
-                onsubmit="return confirm('Issue this invoice? Once issued it is locked and can only be voided.')">
+          <p class="si-hint inv-draft-note">This is a draft. The customer cannot see it. You can edit it as many times as you need.</p>
+          <a href="{{ route('admin.service-invoices.edit', $i->id) }}" class="admin-btn admin-btn-outline co-wide" style="margin-bottom:10px;">Edit draft</a>
+          <button type="button" class="admin-btn admin-btn-gold co-wide" data-open-send>Send to customer</button>
+          <form method="POST" action="{{ route('admin.service-invoices.issue', $i->id) }}" id="inv-send-form">@csrf</form>
+          <form method="POST" action="{{ route('admin.service-invoices.delete', $i->id) }}" onsubmit="return confirm('Delete this draft? Drafts have no invoice number, so nothing is lost from the numbering.')">
             @csrf
-            <button type="submit" class="admin-btn admin-btn-gold co-wide" data-loading="Issuing...">Issue invoice</button>
+            <button type="submit" class="admin-btn admin-btn-outline co-wide inv-delete" style="margin-top:10px;">Delete draft</button>
           </form>
-          <a href="{{ route('admin.service-invoices.edit', $i->id) }}" class="admin-btn admin-btn-outline co-wide" style="margin-top:10px;">Edit draft</a>
-          <form method="POST" action="{{ route('admin.service-invoices.delete', $i->id) }}" onsubmit="return confirm('Delete this draft?')">
-            @csrf
-            <button type="submit" class="admin-btn admin-btn-outline co-wide" style="margin-top:10px;">Delete draft</button>
-          </form>
-          <p class="si-hint" style="margin-top:10px;">Issuing gives the invoice its number{{ $i->user_id ? ' and notifies the customer' : '' }}.</p>
+          <p class="si-hint" style="margin-top:10px;">Sending gives the invoice its number{{ $i->user_id ? ' and notifies the customer' : '' }}.</p>
         @endif
 
         @if($i->status === 'issued')
@@ -153,6 +151,9 @@
 </div>
 @endif
 </div>
+@if($i->status === 'draft')
+  @include('admin.service-invoices._send-modal', ['formId' => 'inv-send-form'])
+@endif
 @endsection
 
 @push('scripts')
