@@ -28,7 +28,7 @@ class ServiceInvoiceLine extends Model
         $guard = function (self $line) {
             $status = ServiceInvoice::whereKey($line->invoice_id)->value('status');
             if ($status !== ServiceInvoice::DRAFT) {
-                throw new ImmutableRecordException('The lines of an issued invoice cannot be changed. Void the invoice and issue a new one instead.');
+                throw new ImmutableRecordException('The lines of a sent invoice cannot be changed. Cancel the invoice and send a new one instead.');
             }
         };
 

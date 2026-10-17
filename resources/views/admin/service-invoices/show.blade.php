@@ -39,12 +39,12 @@
           <div><dt>Service availed</dt><dd>{{ $i->service_description }}</dd></div>
           <div><dt>Delivery</dt><dd>{{ $i->deliveryLabel() }}</dd></div>
           <div><dt>Account</dt><dd>{{ $i->user_id ? 'Linked, the customer can open this invoice and is notified' : 'No account, so no in-app notification is sent' }}</dd></div>
-          @if($i->issued_at)<div><dt>Issued</dt><dd>{{ $when($i->issued_at) }}</dd></div>@endif
+          @if($i->issued_at)<div><dt>Sent</dt><dd>{{ $when($i->issued_at) }}</dd></div>@endif
           @if($i->paid_at)
             <div><dt>Paid</dt><dd>{{ $when($i->paid_at) }} · {{ $i->paidMethodLabel() }}@if($i->paid_reference) · ref {{ $i->paid_reference }}@endif · {{ $peso($i->amount_received) }} received</dd></div>
           @endif
           @if($i->voided_at)
-            <div><dt>Voided</dt><dd>{{ $when($i->voided_at) }}. {{ $i->void_reason }}</dd></div>
+            <div><dt>Cancelled</dt><dd>{{ $when($i->voided_at) }}. {{ $i->void_reason }}</dd></div>
           @endif
         </dl>
 
@@ -90,27 +90,17 @@
 
         @if($i->status === 'issued')
           <button type="button" class="admin-btn admin-btn-gold co-wide" id="inv-open-pay">Record payment</button>
-          <p class="si-hint" style="margin-top:10px;">This invoice is locked. To change it, void it and issue a new one.</p>
+          <p class="si-hint" style="margin-top:10px;">This invoice has been sent, so it is locked. To change it, cancel it and send a new one.</p>
         @endif
 
         @if(in_array($i->status, ['issued', 'paid'], true))
-          <details class="co-more">
-            <summary>Void this invoice</summary>
-            <form method="POST" action="{{ route('admin.service-invoices.void', $i->id) }}" class="co-action-form"
-                  onsubmit="return confirm('Void this invoice? This cannot be undone.')">
-              @csrf
-              <label class="co-modal-label" for="inv-void-reason" style="margin-top:0;">Reason</label>
-              <textarea name="reason" id="inv-void-reason" class="form-input" rows="3" maxlength="1000" required
-                        placeholder="e.g. Wrong amount. A new invoice will be issued."></textarea>
-              <button type="submit" class="admin-btn admin-btn-outline co-wide" style="margin-top:8px;" data-loading="Voiding...">Void invoice</button>
-            </form>
-          </details>
+          <button type="button" class="admin-btn admin-btn-outline co-wide inv-delete" id="inv-open-cancel" style="margin-top:10px;">Cancel invoice</button>
         @endif
 
         @if($i->status === 'paid')
           <p class="si-hint">Paid in full. The payment details above stay on the record.</p>
         @elseif($i->status === 'void')
-          <p class="co-note-closed">This invoice is void. It stays on record.</p>
+          <p class="co-note-closed">This invoice was cancelled. It stays on record.</p>
         @endif
       </div>
     </div>
@@ -151,12 +141,50 @@
 </div>
 @endif
 </div>
+@if(in_array($i->status, ['issued', 'paid'], true))
+<div class="co-modal" id="inv-cancel-modal" hidden role="alertdialog" aria-modal="true" aria-labelledby="inv-cancel-title" aria-describedby="inv-cancel-text">
+  <div class="co-modal-box">
+    <div class="co-modal-head">
+      <h2 id="inv-cancel-title">Cancel invoice</h2>
+      <button type="button" class="co-modal-x" data-close-cancel aria-label="Close">&times;</button>
+    </div>
+    <form method="POST" action="{{ route('admin.service-invoices.void', $i->id) }}">
+      @csrf
+      <p id="inv-cancel-text" class="inv-confirm-text">{{ \App\Models\ServiceInvoice::CANCEL_CONFIRMATION }}</p>
+      <label class="co-modal-label" for="inv-cancel-reason">Reason</label>
+      <textarea name="reason" id="inv-cancel-reason" class="form-input" rows="3" maxlength="1000" required
+                placeholder="e.g. Wrong amount. A new invoice will be sent.">{{ old('reason') }}</textarea>
+      <div class="co-modal-actions">
+        <button type="button" class="admin-btn admin-btn-outline" data-close-cancel>Go back</button>
+        <button type="submit" class="admin-btn admin-btn-gold" data-loading="Cancelling...">Cancel invoice</button>
+      </div>
+    </form>
+  </div>
+</div>
+@endif
 @if($i->status === 'draft')
   @include('admin.service-invoices._send-modal', ['formId' => 'inv-send-form'])
 @endif
 @endsection
 
 @push('scripts')
+@if(in_array($i->status, ['issued', 'paid'], true))
+<script>
+(function () {
+  var modal = document.getElementById('inv-cancel-modal');
+  var opener = document.getElementById('inv-open-cancel');
+  function open() { modal.hidden = false; document.getElementById('inv-cancel-reason').focus(); }
+  function close() { modal.hidden = true; opener.focus(); }
+  opener.addEventListener('click', open);
+  modal.querySelectorAll('[data-close-cancel]').forEach(function (b) { b.addEventListener('click', close); });
+  modal.addEventListener('click', function (e) { if (e.target === modal) { close(); } });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) { close(); } });
+  @if($errors->has('reason'))
+  open();
+  @endif
+})();
+</script>
+@endif
 @if($i->status === 'issued')
 <script>
 (function () {

@@ -92,9 +92,9 @@
         @endif
         @if($t->invoices->where('status', '!=', 'void')->isEmpty())
           <a href="{{ route('admin.service-invoices.create', $t->id) }}" class="admin-btn admin-btn-gold co-wide">Create invoice</a>
-          <p class="si-hint" style="margin-top:8px;">Use the price agreed in the call. Nothing is sent to the customer until you issue it.</p>
+          <p class="si-hint" style="margin-top:8px;">Use the price agreed in the call. Nothing is sent to the customer until you send it.</p>
         @else
-          <p class="si-hint">A ticket has one live invoice at a time. Void it to issue a new one.</p>
+          <p class="si-hint">A ticket has one live invoice at a time. Cancel it to send a new one.</p>
         @endif
       </div>
     </div>

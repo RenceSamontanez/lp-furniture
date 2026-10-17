@@ -13,17 +13,17 @@ rules. The owner or accountant must confirm each one before the invoices are use
    It is not an official receipt." Change it in one place only: `config/invoice.php` (or set
    `INVOICE_FOOTER` in `.env`). Do not edit the print view.
 2. **Numbering.** Invoices are numbered `INV-YYYY-NNNN`, restarting each year, given when the
-   invoice is issued. Registered receipts usually need a BIR-approved series. Confirm the series,
+   invoice is sent. Registered receipts usually need a BIR-approved series. Confirm the series,
    the prefix and whether the yearly restart is allowed.
 3. **Required details.** Registered receipts need items the invoice does not have today, such as
    the registered business name and address, TIN, VAT or non-VAT status, and the authorised
    printer details. Confirm the list and give it to the developer.
-4. **Whether this invoice stays a separate document** once official receipts are issued.
+4. **Whether this invoice stays a separate document** once official receipts exist.
 
 ## How invoices behave (for reference)
 
-- Draft: editable. Issued: locked (lines, amounts, customer details and number can never change).
+- Draft: editable, as many times as needed, and can be deleted (drafts have no number). Sent: locked (lines, amounts, customer details and number can never change).
 - Paid: the admin records method, reference, amount received and date. History is kept.
-- Void: needs a reason. An issued invoice is never edited or deleted: void it and issue a new one.
+- Cancelled: needs a reason. A sent invoice is never edited or deleted: cancel it and send a new one.
 - Every action writes a timestamped line in the ticket's admin notes.
-- The customer sees issued and paid invoices (not drafts or void ones) under "My requests".
+- The customer sees sent and paid invoices (not drafts or cancelled ones) under "My requests".

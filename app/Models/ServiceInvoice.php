@@ -23,13 +23,16 @@ class ServiceInvoice extends Model
 
     public const STATUSES = [
         self::DRAFT  => 'Draft',
-        self::ISSUED => 'Issued',
+        self::ISSUED => 'Sent',
         self::PAID   => 'Paid',
-        self::VOID   => 'Void',
+        self::VOID   => 'Cancelled',
     ];
 
     /** Shown in the "Send to customer" confirmation (admin pages). One place, so the wording stays the same everywhere. */
     public const SEND_CONFIRMATION = 'Send this invoice to the customer? They will be notified and can pay it online. Once sent, it can no longer be edited. If something is wrong you can cancel it and send a new one.';
+
+    /** Shown with the reason box when an admin cancels a sent or paid invoice. */
+    public const CANCEL_CONFIRMATION = 'Cancel this invoice? The customer will no longer be able to pay it. This cannot be undone. Please enter a reason.';
 
     public const PAID_METHODS = [
         'cash'          => 'Cash',
@@ -96,7 +99,7 @@ class ServiceInvoice extends Model
             if ($from === self::DRAFT) {
                 // Editable; the only way out is to be issued (which fixes the number).
                 if ($to !== self::DRAFT && $to !== self::ISSUED) {
-                    throw new ImmutableRecordException('A draft invoice can only be issued.');
+                    throw new ImmutableRecordException('A draft invoice can only be sent.');
                 }
 
                 return;
@@ -110,7 +113,7 @@ class ServiceInvoice extends Model
 
             if ($dirty && (array_diff($dirty, $allowed) || $to === $from)) {
                 throw new ImmutableRecordException(
-                    "Invoice #{$invoice->getKey()} is {$from} and cannot be changed. Void it and issue a new invoice instead."
+                    "Invoice #{$invoice->getKey()} is {$from} and cannot be changed. Cancel it and send a new invoice instead."
                 );
             }
         });
@@ -147,9 +150,19 @@ class ServiceInvoice extends Model
         return $this->status === self::DRAFT;
     }
 
+    /**
+     * The one place the stored status values (draft, issued, paid, void) turn into the words people read:
+     * Draft, Sent, Paid, Cancelled. The stored values and constants stay as they are; every screen, message
+     * and note goes through here so the UI never shows "issued" or "void".
+     */
+    public static function labelFor(?string $status): string
+    {
+        return self::STATUSES[$status] ?? (string) $status;
+    }
+
     public function statusLabel(): string
     {
-        return self::STATUSES[$this->status] ?? (string) $this->status;
+        return self::labelFor($this->status);
     }
 
     public function deliveryLabel(): string

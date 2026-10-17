@@ -198,7 +198,7 @@ final class ServiceInvoiceDesk
             $ticket = ServiceInquiry::lockForUpdate()->findOrFail($ticketId);
 
             if ($live = self::activeFor($ticket)) {
-                throw new PipelineException('This ticket already has an invoice (' . ($live->invoice_number ?: 'draft #' . $live->id) . '). Void it first if you need to issue a new one.');
+                throw new PipelineException('This ticket already has an invoice (' . ($live->invoice_number ?: 'draft #' . $live->id) . '). Cancel it first if you need to send a new one.');
             }
 
             $invoice = ServiceInvoice::create($clean['attributes'] + [
@@ -222,7 +222,7 @@ final class ServiceInvoiceDesk
     {
         return DB::transaction(function () use ($invoiceId, $admin, $clean) {
             [$ticket, $invoice] = $this->lock($invoiceId);
-            $this->requireStatus($invoice, [ServiceInvoice::DRAFT], 'edit it. An issued invoice is locked; void it and issue a new one');
+            $this->requireStatus($invoice, [ServiceInvoice::DRAFT], 'edit it. A sent invoice is locked; cancel it and send a new one');
 
             $invoice->fill($clean['attributes'] + ['subtotal' => $clean['subtotal'], 'total' => $clean['total']])->save();
             $this->replaceLines($invoice, $clean['lines']);
@@ -238,7 +238,7 @@ final class ServiceInvoiceDesk
     {
         DB::transaction(function () use ($invoiceId, $admin) {
             [$ticket, $invoice] = $this->lock($invoiceId);
-            $this->requireStatus($invoice, [ServiceInvoice::DRAFT], 'delete it. Only a draft can be deleted; an issued invoice is voided instead');
+            $this->requireStatus($invoice, [ServiceInvoice::DRAFT], 'delete it. Only a draft can be deleted; a sent invoice is cancelled instead');
 
             foreach ($invoice->lines as $line) {
                 $line->delete();
@@ -255,12 +255,12 @@ final class ServiceInvoiceDesk
     {
         return DB::transaction(function () use ($invoiceId, $admin) {
             [$ticket, $invoice] = $this->lock($invoiceId);
-            $this->requireStatus($invoice, [ServiceInvoice::DRAFT], 'issue it');
+            $this->requireStatus($invoice, [ServiceInvoice::DRAFT], 'send it');
 
             // Re-derive the total from the saved lines: an invoice is issued from what is stored, not from a page.
             $cents = self::sumCents($invoice->lines);
             if ($cents <= 0) {
-                throw new PipelineException('An invoice needs a service cost greater than 0 before it can be issued.');
+                throw new PipelineException('An invoice needs a service cost greater than 0 before it can be sent.');
             }
             $total = self::money($cents / 100);
 
@@ -286,7 +286,7 @@ final class ServiceInvoiceDesk
                 }
             }
 
-            $this->tickets->appendNote($ticket, $admin, "Invoice {$invoice->invoice_number} issued, total " . self::peso($invoice->total));
+            $this->tickets->appendNote($ticket, $admin, "Invoice {$invoice->invoice_number} sent to the customer, total " . self::peso($invoice->total));
             $ticket->save();
 
             if ($invoice->user_id) {
@@ -350,7 +350,7 @@ final class ServiceInvoiceDesk
     {
         $reason = trim($reason);
         if ($reason === '') {
-            throw new PipelineException('A reason is required to void an invoice.');
+            throw new PipelineException('A reason is required to cancel an invoice.');
         }
         if (mb_strlen($reason) > 1000) {
             throw new PipelineException('Please keep the reason under 1,000 characters.');
@@ -358,7 +358,7 @@ final class ServiceInvoiceDesk
 
         return DB::transaction(function () use ($invoiceId, $admin, $reason) {
             [$ticket, $invoice] = $this->lock($invoiceId);
-            $this->requireStatus($invoice, [ServiceInvoice::ISSUED, ServiceInvoice::PAID], 'void it');
+            $this->requireStatus($invoice, [ServiceInvoice::ISSUED, ServiceInvoice::PAID], 'cancel it');
 
             $invoice->forceFill([
                 'status'      => ServiceInvoice::VOID,
@@ -366,7 +366,7 @@ final class ServiceInvoiceDesk
                 'void_reason' => $reason,
             ])->save();
 
-            $this->tickets->appendNote($ticket, $admin, "Invoice {$invoice->invoice_number} voided. {$reason}");
+            $this->tickets->appendNote($ticket, $admin, "Invoice {$invoice->invoice_number} cancelled. {$reason}");
             $ticket->save();
 
             return $invoice;
@@ -411,7 +411,7 @@ final class ServiceInvoiceDesk
     private function requireStatus(ServiceInvoice $invoice, array $allowed, string $action): void
     {
         if (!in_array($invoice->status, $allowed, true)) {
-            throw new PipelineException("This invoice is {$invoice->status}, so you cannot {$action}.");
+            throw new PipelineException('This invoice is ' . strtolower(ServiceInvoice::labelFor($invoice->status)) . ", so you cannot {$action}.");
         }
     }
 

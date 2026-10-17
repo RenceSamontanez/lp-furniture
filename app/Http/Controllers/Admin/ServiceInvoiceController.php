@@ -27,7 +27,7 @@ class ServiceInvoiceController extends Controller
 
         if ($live = ServiceInvoiceDesk::activeFor($ticket)) {
             return redirect()->route('admin.service-invoices.show', $live->id)
-                ->withErrors(['invoice' => 'This ticket already has an invoice. Void it first if you need to issue a new one.']);
+                ->withErrors(['invoice' => 'This ticket already has an invoice. Cancel it first if you need to send a new one.']);
         }
 
         return view('admin.service-invoices.form', [
@@ -78,7 +78,7 @@ class ServiceInvoiceController extends Controller
 
         if (!$invoice->isDraft()) {
             return redirect()->route('admin.service-invoices.show', $id)
-                ->withErrors(['invoice' => 'This invoice is ' . $invoice->status . ' and is locked. Void it and issue a new one to change it.']);
+                ->withErrors(['invoice' => 'This invoice is ' . strtolower($invoice->statusLabel()) . ' and is locked. Cancel it and send a new one to change it.']);
         }
 
         $delivery = $invoice->lines->first(fn ($l) => in_array($l->kind, ['delivery_fee', 'home_service_fee'], true));
@@ -167,9 +167,9 @@ class ServiceInvoiceController extends Controller
     public function void(Request $request, $id)
     {
         ServiceInvoice::findOrFail($id);
-        $data = $request->validate(['reason' => 'required|string|max:1000'], ['reason.required' => 'A reason is required to void an invoice.']);
+        $data = $request->validate(['reason' => 'required|string|max:1000'], ['reason.required' => 'A reason is required to cancel an invoice.']);
 
-        return $this->run($id, fn () => $this->desk->void((int) $id, Auth::guard('admin')->user(), $data['reason']), 'Invoice voided. You can issue a new one from the ticket.');
+        return $this->run($id, fn () => $this->desk->void((int) $id, Auth::guard('admin')->user(), $data['reason']), 'Invoice cancelled. You can send a new one from the ticket.');
     }
 
     public function print($id)

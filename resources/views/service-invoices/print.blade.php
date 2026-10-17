@@ -21,7 +21,7 @@
   </div>
 
   <main class="iv-sheet">
-    @if($i->status === 'void')<div class="iv-mark">Void</div>@elseif($i->status === 'draft')<div class="iv-mark">Draft</div>@endif
+    @if($i->status === 'void')<div class="iv-mark">Cancelled</div>@elseif($i->status === 'draft')<div class="iv-mark">Draft</div>@endif
 
     <header class="iv-head">
       <div>
@@ -36,7 +36,7 @@
       </div>
       <div class="iv-title">
         <h1>Invoice</h1>
-        <div class="iv-number">{{ $i->invoice_number ?: 'Not yet issued' }}</div>
+        <div class="iv-number">{{ $i->invoice_number ?: 'Not yet sent' }}</div>
       </div>
     </header>
 
@@ -49,13 +49,13 @@
         @if($i->customer_address)<p class="iv-pre">{{ $i->customer_address }}</p>@endif
       </div>
       <dl>
-        <div><dt>Date issued</dt><dd>{{ $day($i->issued_at) ?? 'Not yet issued' }}</dd></div>
+        <div><dt>Date sent</dt><dd>{{ $day($i->issued_at) ?? 'Not yet sent' }}</dd></div>
         <div><dt>Service request</dt><dd>{{ $i->inquiry?->reference_number }}</dd></div>
         <div>
           <dt>Status</dt>
           <dd>
             @if($i->status === 'paid') Paid
-            @elseif($i->status === 'void') Void
+            @elseif($i->status === 'void') Cancelled
             @elseif($i->status === 'issued') Unpaid
             @else Draft @endif
           </dd>
@@ -92,7 +92,7 @@
         <p><strong>Paid</strong> on {{ $day($i->paid_at) }} by {{ $i->paidMethodLabel() }}.</p>
         <p>Amount received: {{ $peso($i->amount_received) }}@if($i->paid_reference) · Reference: {{ $i->paid_reference }}@endif</p>
       @elseif($i->status === 'void')
-        <p>This invoice was voided on {{ $day($i->voided_at) }} and is no longer valid.</p>
+        <p>This invoice was cancelled on {{ $day($i->voided_at) }} and is no longer valid.</p>
       @else
         <p>Not yet paid. Please contact us to arrange payment.</p>
       @endif

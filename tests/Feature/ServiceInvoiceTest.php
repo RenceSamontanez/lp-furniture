@@ -228,7 +228,7 @@ class ServiceInvoiceTest extends TestCase
 
         $notes = $t->fresh()->admin_notes;
         $this->assertStringContainsString('Invoice draft #' . $i->id . ' updated', $notes);
-        $this->assertStringContainsString("Invoice {$i->invoice_number} issued, total ₱2,300.00", $notes);
+        $this->assertStringContainsString("Invoice {$i->invoice_number} sent to the customer, total ₱2,300.00", $notes);
     }
 
     public function test_an_issued_invoice_cannot_be_changed_or_deleted_at_the_model_layer(): void
@@ -347,7 +347,7 @@ class ServiceInvoiceTest extends TestCase
         $this->assertSame('Wrong amount quoted.', $v->void_reason);
         $this->assertNotNull($v->voided_at);
         $this->assertSame($i->invoice_number, $v->invoice_number);
-        $this->assertStringContainsString("Invoice {$i->invoice_number} voided. Wrong amount quoted.", $t->fresh()->admin_notes);
+        $this->assertStringContainsString("Invoice {$i->invoice_number} cancelled. Wrong amount quoted.", $t->fresh()->admin_notes);
 
         // a void invoice cannot be voided again or paid
         $this->post(route('admin.service-invoices.void', $i->id), ['reason' => 'again'])->assertSessionHasErrors('invoice');
