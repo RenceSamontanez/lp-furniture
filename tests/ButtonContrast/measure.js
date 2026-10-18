@@ -82,7 +82,7 @@
       if (prop === 'color') {
         if (raw && raw !== 'inherit') return toRGB(raw, cur, prop, state);
         if (!raw) { return parse(getComputedStyle(cur).color); }
-      } else if (raw && raw !== 'transparent' && raw !== 'inherit') {
+      } else if (raw && raw !== 'transparent' && raw !== 'none' && raw !== 'initial' && raw !== 'unset' && raw !== 'inherit') {
         const c = toRGB(raw, cur, prop, state);
         if (c.a > 0) return over(c, cur);
       } else if (!raw) {
@@ -109,6 +109,15 @@
       const fg = effective(el, 'color', stateForResolve);
       const bg = effective(el, 'background-color', stateForResolve);
       row[st] = +ratio(fg, bg).toFixed(2);
+    }
+    // Icon-only buttons (a hamburger drawn with <span> bars) have no text: measure the bars against the button's background.
+    const bars = [...el.querySelectorAll('span')].filter(x => parse(getComputedStyle(x).backgroundColor).a > 0);
+    if (!row.text.replace(/menu/i, '').trim() && bars.length) {
+      const barBg = parse(getComputedStyle(bars[0]).backgroundColor);
+      const bg = effective(el, 'background-color', 'default');
+      const r = +ratio(barBg, bg).toFixed(2);
+      row.icon = true;
+      for (const st of STATES) { if (row[st] !== undefined) row[st] = r; }
     }
     const min = Math.min(...STATES.filter(s => row[s] !== undefined).map(s => row[s]));
     row.min = min;

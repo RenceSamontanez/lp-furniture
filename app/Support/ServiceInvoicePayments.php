@@ -207,7 +207,7 @@ final class ServiceInvoicePayments
             ServiceInvoiceDesk::cents($row->amount),
             'LP Furniture Invoice ' . $invoice->invoice_number . $half,
             ['kind' => 'service_invoice', 'service_invoice_payment_id' => (string) $row->id, 'service_invoice_id' => (string) $invoice->id],
-            ['name' => $invoice->customer_name, 'email' => $invoice->customer_email, 'phone' => $invoice->customer_phone],
+            ['name' => $invoice->customer_name, 'email' => $invoice->customer_email ?: $invoice->customer?->email, 'phone' => $invoice->customer_phone],   // PayMongo requires an email on the billing details
             route('services.invoice.payment.return', [$invoice->id, 'success'])
         );
 

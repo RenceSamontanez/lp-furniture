@@ -54,7 +54,7 @@
           <p class="ip-pay-state"><strong>Paid in full.</strong> Amount received: {{ $peso($i->amount_received ?? $i->total) }}@if($i->paid_at) on {{ $day($i->paid_at) }}@endif. Thank you.</p>
         @else
           @if($i->isHalfHalf() && $i->paidCents() > 0)
-            <p class="ip-pay-state"><strong>Half paid.</strong> The balance is due after the service.</p>
+            <p class="ip-pay-state"><strong>Half paid.</strong> {{ $i->service_done_at ? 'Your service is done, so the remaining balance is due now.' : 'The balance is due after the service.' }}</p>
           @endif
 
           @if($due['available'])

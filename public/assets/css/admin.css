@@ -103,6 +103,8 @@
     color: #fff;
     font-size: 18px;
     cursor: pointer;
+    min-width: 44px;
+    min-height: 44px;
   }
   
   .admin-nav {
@@ -185,6 +187,7 @@
     font-size: 13px;
     cursor: pointer;
     padding: 10px 14px;
+    min-height: 44px;
     border-radius: 8px;
     transition: background .2s;
   }
@@ -217,6 +220,10 @@
     display: none;
     flex-direction: column;
     gap: 4px;
+    justify-content: center;
+    align-items: center;
+    min-width: 44px;
+    min-height: 44px;
     background: none;
     border: none;
     cursor: pointer;

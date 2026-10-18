@@ -27,3 +27,20 @@ rules. The owner or accountant must confirm each one before the invoices are use
 - Cancelled: needs a reason. A sent invoice is never edited or deleted: cancel it and send a new one.
 - Every action writes a timestamped line in the ticket's admin notes.
 - The customer sees sent and paid invoices (not drafts or cancelled ones) under "My requests".
+
+## Online payments (Stage 21e): defaults to confirm
+
+Set in one place, `App\Support\InvoicePaymentRules`:
+
+| Setting | Default |
+|---|---|
+| Labor only (customer brings the wood) | full or half and half |
+| Repair or restoration | full or half and half |
+| Something else | full only |
+| Half and half available from an invoice total of | 3,000 pesos |
+| Minimum online payment (GCash or card) | 40 pesos (Stripe's minimum) |
+| Second half becomes payable | when the admin taps "Service done" |
+
+Before going live, fill `STRIPE_WEBHOOK_SECRET` and `PAYMONGO_WEBHOOK_SECRET` in the server `.env`.
+Both webhooks reject every request while their secret is empty, so no online payment can be confirmed until they are set.
+Refunds are never done by the system: record a refund note, then refund in the Stripe dashboard, GCash or cash.

@@ -29,3 +29,4 @@
   .ip-links .lp-btn { width: 100%; }
   .ip-pay { padding: 14px; }
 }
+.ip-pay, .ip-pay p, .ip-pay li { text-align: left; }

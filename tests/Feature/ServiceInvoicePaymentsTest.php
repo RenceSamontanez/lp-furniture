@@ -169,6 +169,7 @@ class ServiceInvoicePaymentsTest extends TestCase
         $this->assertSame('pending', $row->status);
         $this->assertSame('4000.00', (string) $row->amount);
         $this->assertSame('paymongo', $row->method);
+        $this->assertSame($this->owner->email, $this->gateway->lastBilling['email'], 'PayMongo needs an email: the account email is used when the invoice has none');
         $this->assertSame('sent', strtolower($i->fresh()->statusLabel()));
         $this->assertSame('0.00', (string) $i->fresh()->amount_paid, 'nothing is paid just because a checkout was started');
 
@@ -649,6 +650,7 @@ class FakeInvoiceGateway extends InvoiceGateway
     public int $paymongoCreated = 0;
     public int $calls = 0;
     public array $stripeParams = [];
+    public array $lastBilling = [];
     public ?object $stripeSession = null;
     public array $paymongoIntent = ['status' => 'pending', 'amount_cents' => 0];
 
@@ -677,6 +679,7 @@ class FakeInvoiceGateway extends InvoiceGateway
     {
         $this->calls++;
         $this->paymongoCreated++;
+        $this->lastBilling = $billing;
 
         return ['intent_id' => 'pi_pm_fake' . $this->paymongoCreated, 'url' => 'https://gcash.test/' . $this->paymongoCreated];
     }

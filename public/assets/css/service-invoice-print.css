@@ -7,7 +7,7 @@
 
 .iv-body { margin: 0; background: #f1ece3; color: #231a12; font-family: 'DM Sans', Arial, sans-serif; font-size: 13.5px; line-height: 1.55; }
 
-.iv-toolbar { max-width: 794px; margin: 16px auto 0; padding: 0 16px; display: flex; justify-content: space-between; align-items: center; }
+.iv-toolbar { max-width: 794px; margin: 16px auto 0; padding: 0 16px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 
 .iv-sheet { position: relative; max-width: 794px; min-height: 1000px; margin: 12px auto 40px; padding: 48px 56px 40px; background: #fff; border: 1px solid #e3d9c9; display: flex; flex-direction: column; }
 
@@ -63,3 +63,7 @@
   .iv-lines tr, .iv-pay, .iv-meta { break-inside: avoid; }
 }
 .iv-payline { font-size: 12.5px; color: #6b5a47; }
+
+.iv-sheet p, .iv-sheet dd, .iv-sheet td { text-align: left; }
+.iv-sheet .iv-lines td:last-child, .iv-sheet .iv-meta dd { text-align: right; }
+.iv-toolbar .lp-btn { min-width: 96px; }
