@@ -203,7 +203,7 @@ final class NotificationTemplates
         ],
         'refund_problem' => [
             'title' => 'Your Refund Needs Your Attention',
-            'body'  => 'We could not send your refund for request {request}: {problem}. Please send the correct details from the request page and we will try again. {contact}',
+            'body'  => 'We could not send your refund for request {request}. {problem} Please send the correct details from the request page and we will try again. {contact}',
         ],
         'refund_declined' => [
             'title' => 'Your Request Was Not Approved',

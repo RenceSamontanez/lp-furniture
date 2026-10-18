@@ -12,7 +12,9 @@
 .rf-overdue-tag { display: inline-block; margin-top: 3px; font-size: 11.5px; font-weight: 600; color: #7E2E19; }
 .rf-mask { font-variant-numeric: tabular-nums; }
 .rf-thread { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.rf-msg { padding: 10px 12px; border-radius: 10px; background: #F6F1E8; border: 1px solid #E8DECE; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; white-space: pre-line; }
+.rf-msg { padding: 10px 12px; border-radius: 10px; background: #F6F1E8; border: 1px solid #E8DECE; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.rf-msg-body, .rf-msg { text-align: left; }
+.rf-msg-body { display: block; white-space: pre-line; }
 .rf-msg--customer { background: #FFFFFF; }
 .rf-msg--admin { background: #F0E6D2; }
 .rf-msg-meta { display: block; font-size: 11.5px; color: #5C4A3C; margin-bottom: 2px; font-weight: 600; }

@@ -120,8 +120,8 @@
         </div>
 
         <div class="co-actions">
-          <a href="{{ route('home') }}" class="co-btn co-btn--ghost">Cancel</a>
-          <button type="submit" class="co-btn co-btn--primary" id="si-submit" data-loading="Sending...">Send request</button>
+          <a href="{{ route('home') }}" class="lp-btn lp-btn--secondary">Cancel</a>
+          <button type="submit" class="lp-btn lp-btn--primary" id="si-submit" data-loading="Sending...">Send request</button>
         </div>
       </form>
     </div>

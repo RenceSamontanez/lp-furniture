@@ -40,7 +40,7 @@
       </dl>
 
       @if($started)
-        <x-notice variant="problem" title="Work has already started">
+        <x-notice variant="blocked" title="Work has already started">
           Work has already started on this service. Under our terms, refunds are usually not possible once work starts. You can still send your request and our team will review it and reply to you.
         </x-notice>
       @elseif($paid)

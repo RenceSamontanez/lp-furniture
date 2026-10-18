@@ -99,7 +99,7 @@
           @foreach($r->messages as $m)
             <li class="rf-msg rf-msg--{{ $m->sender }}">
               <span class="rf-msg-meta">{{ $m->sender === 'customer' ? $t->name : ($m->sender === 'admin' ? ($m->admin?->first_name ?: 'Team') : 'System') }} · {{ $when($m->created_at) }}</span>
-              {{ $m->body }}
+              <span class="rf-msg-body">{{ $m->body }}</span>
             </li>
           @endforeach
         </ul>

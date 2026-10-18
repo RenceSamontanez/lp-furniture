@@ -94,7 +94,7 @@
         @foreach($r->messages as $m)
           <li class="rq-msg rq-msg--{{ $m->sender }}">
             <span class="rq-msg-meta">{{ $m->sender === 'customer' ? 'You' : ($m->sender === 'admin' ? 'Our team' : 'LP Furniture') }} · {{ $when($m->created_at) }}</span>
-            {{ $m->body }}
+            <span class="rq-msg-body">{{ $m->body }}</span>
           </li>
         @endforeach
       </ul>

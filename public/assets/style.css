@@ -3226,6 +3226,7 @@ nav .nav-btn:active {
 .lp-notice__icon { flex: none; width: 24px; height: 24px; margin-top: 1px; color: var(--n-icon); }
 .lp-notice__body { flex: 1 1 auto; min-width: 0; }
 .lp-notice__title { margin: 0; font-size: 16.5px; font-weight: 600; line-height: 1.35; color: var(--n-title); letter-spacing: 0; text-transform: none; }
+.lp-notice__title, .lp-notice__text { text-align: left; }
 .lp-notice__text { margin: 4px 0 0; font-size: 15px; line-height: 1.5; color: var(--n-text); }
 .lp-notice__text a:not(.lp-btn) { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .lp-notice__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }

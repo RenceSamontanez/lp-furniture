@@ -445,10 +445,10 @@ final class ServiceRefundRequestService
             ]);
             $req->forceFill(['status' => Req::REFUND_PROBLEM])->save();
 
-            $text = mb_strtolower(self::PROBLEMS[$problem]);
-            $this->say($req, 'admin', 'We could not send your refund: ' . $text . '.' . ($note ? ' ' . $note : '') . ' Please send the correct details below.', $admin->id);
-            $this->note($ticket, $admin, "Cancellation request {$req->reference}: refund did not go through ({$text})");
-            $this->notifyCustomer($req, 'refund_problem', ['reference' => $ticket->reference_number, 'problem' => $text]);
+            $text = self::PROBLEMS[$problem];
+            $this->say($req, 'admin', 'We could not send your refund. ' . $text . '.' . ($note ? ' ' . $note : '') . ' Please send the correct details below.', $admin->id);
+            $this->note($ticket, $admin, "Cancellation request {$req->reference}: refund did not go through (" . mb_strtolower($text) . ')');
+            $this->notifyCustomer($req, 'refund_problem', ['reference' => $ticket->reference_number, 'problem' => $text . '.']);
 
             return $req;
         })->refresh();

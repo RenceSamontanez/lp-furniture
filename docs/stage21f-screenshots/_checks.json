@@ -1,0 +1,381 @@
+[
+  {
+    "file": "customer-invoice-second-half-waiting-390.jpg",
+    "title": "Invoice INV-2026-0001 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 11
+  },
+  {
+    "file": "customer-invoice-second-half-waiting-1280.jpg",
+    "title": "Invoice INV-2026-0001 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 9
+  },
+  {
+    "file": "customer-invoice-on-hold-390.jpg",
+    "title": "Invoice INV-2026-0003 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 10
+  },
+  {
+    "file": "customer-invoice-on-hold-1280.jpg",
+    "title": "Invoice INV-2026-0003 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 8
+  },
+  {
+    "file": "customer-invoice-cancelled-by-admin-390.jpg",
+    "title": "This invoice was cancelled — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 8
+  },
+  {
+    "file": "customer-invoice-cancelled-by-admin-1280.jpg",
+    "title": "This invoice was cancelled — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 6
+  },
+  {
+    "file": "customer-invoice-cancelled-with-refund-390.jpg",
+    "title": "This invoice was cancelled — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 9
+  },
+  {
+    "file": "customer-invoice-cancelled-with-refund-1280.jpg",
+    "title": "This invoice was cancelled — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 7
+  },
+  {
+    "file": "customer-form-work-not-started-paid-390.jpg",
+    "title": "Request cancellation or refund — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 9
+  },
+  {
+    "file": "customer-form-work-not-started-paid-1280.jpg",
+    "title": "Request cancellation or refund — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 7
+  },
+  {
+    "file": "customer-form-work-started-390.jpg",
+    "title": "Request cancellation or refund — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 9
+  },
+  {
+    "file": "customer-form-work-started-1280.jpg",
+    "title": "Request cancellation or refund — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 7
+  },
+  {
+    "file": "customer-form-nothing-paid-390.jpg",
+    "title": "Request cancellation or refund — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 9
+  },
+  {
+    "file": "customer-form-nothing-paid-1280.jpg",
+    "title": "Request cancellation or refund — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 7
+  },
+  {
+    "file": "customer-request-new-390.jpg",
+    "title": "Request REF-2026-0001 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 9
+  },
+  {
+    "file": "customer-request-new-1280.jpg",
+    "title": "Request REF-2026-0001 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 7
+  },
+  {
+    "file": "customer-request-approved-390.jpg",
+    "title": "Request REF-2026-0002 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 9
+  },
+  {
+    "file": "customer-request-approved-1280.jpg",
+    "title": "Request REF-2026-0002 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 7
+  },
+  {
+    "file": "customer-request-refunded-390.jpg",
+    "title": "Request REF-2026-0003 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 8
+  },
+  {
+    "file": "customer-request-refunded-1280.jpg",
+    "title": "Request REF-2026-0003 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 6
+  },
+  {
+    "file": "customer-request-declined-390.jpg",
+    "title": "Request REF-2026-0004 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 9
+  },
+  {
+    "file": "customer-request-declined-1280.jpg",
+    "title": "Request REF-2026-0004 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 7
+  },
+  {
+    "file": "customer-request-problem-390.jpg",
+    "title": "Request REF-2026-0005 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 10
+  },
+  {
+    "file": "customer-request-problem-1280.jpg",
+    "title": "Request REF-2026-0005 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 8
+  },
+  {
+    "file": "customer-my-service-requests-390.jpg",
+    "title": "Other Services Request — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 13
+  },
+  {
+    "file": "customer-my-service-requests-1280.jpg",
+    "title": "Other Services Request — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 11
+  },
+  {
+    "file": "customer-other-services-terms-390.jpg",
+    "title": "Other Services terms — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 7
+  },
+  {
+    "file": "customer-other-services-terms-1280.jpg",
+    "title": "Other Services terms — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 5
+  },
+  {
+    "file": "customer-request-summary-390.jpg",
+    "overflow": 0
+  },
+  {
+    "file": "customer-request-confirmation-390.jpg",
+    "title": "Request sent — LP Furniture",
+    "path": "/services/refunds/REF-2026-0007/sent",
+    "overflow": 0
+  },
+  {
+    "file": "customer-request-confirmation-1280.jpg",
+    "title": "Request sent — LP Furniture",
+    "path": "/services/refunds/REF-2026-0007/sent",
+    "overflow": 0
+  },
+  {
+    "file": "customer-request-summary-1280.jpg",
+    "overflow": 0
+  },
+  {
+    "file": "admin-refund-list-1280.jpg",
+    "title": "Cancellations & Refunds — Admin",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 9
+  },
+  {
+    "file": "admin-refund-list-390.jpg",
+    "title": "Cancellations & Refunds — Admin",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 11
+  },
+  {
+    "file": "admin-refund-detail-new-action-panel-1280.jpg",
+    "title": "REF-2026-0001 — Admin",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 6
+  },
+  {
+    "file": "admin-refund-detail-new-action-panel-390.jpg",
+    "title": "REF-2026-0001 — Admin",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 8
+  },
+  {
+    "file": "admin-refund-detail-approved-mark-sent-1280.jpg",
+    "title": "REF-2026-0002 — Admin",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 5
+  },
+  {
+    "file": "admin-refund-detail-problem-1280.jpg",
+    "title": "REF-2026-0005 — Admin",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 3
+  },
+  {
+    "file": "admin-ticket-on-hold-banner-1280.jpg",
+    "title": "Service Ticket — Admin",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 7
+  },
+  {
+    "file": "admin-ticket-on-hold-banner-390.jpg",
+    "title": "Service Ticket — Admin",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 9
+  },
+  {
+    "file": "admin-ticket-work-started-banner-1280.jpg",
+    "title": "Service Ticket — Admin",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 7
+  },
+  {
+    "file": "admin-ticket-work-started-banner-390.jpg",
+    "title": "Service Ticket — Admin",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 9
+  },
+  {
+    "file": "admin-ticket-work-started-button-1280.jpg",
+    "title": "Service Ticket — Admin",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 7
+  },
+  {
+    "file": "admin-invoice-payment-on-it-1280.jpg",
+    "title": "Invoice — Admin",
+    "overflow": 0,
+    "short": [],
+    "contrast": 0,
+    "buttons": 7
+  },
+  {
+    "notice": {
+      "info": {
+        "bg": "rgb(251, 241, 218)",
+        "title": 15.01,
+        "text": 10.33,
+        "icon": 6.03,
+        "bar": 2.37
+      },
+      "waiting": {
+        "bg": "rgb(251, 241, 218)",
+        "title": 15.01,
+        "text": 10.33,
+        "icon": 6.03,
+        "bar": 2.37
+      },
+      "blocked": {
+        "bg": "rgb(239, 233, 226)",
+        "title": 13.99,
+        "text": 9.44,
+        "icon": 8.03,
+        "bar": 4.3
+      },
+      "success": {
+        "bg": "rgb(231, 240, 226)",
+        "title": 12.18,
+        "text": 9.3,
+        "icon": 6.88,
+        "bar": 3.46
+      },
+      "problem": {
+        "bg": "rgb(247, 231, 224)",
+        "title": 13.03,
+        "text": 9.79,
+        "icon": 6.69,
+        "bar": 4.07
+      }
+    }
+  }
+]
