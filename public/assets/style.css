@@ -3152,3 +3152,49 @@ nav .nav-btn:active {
 .chatbot-window .chat-bubble a,
 .chatbot-window .chat-bubble a:visited { color: #5C3D2E; text-decoration: underline; text-underline-offset: 2px; }
 .chatbot-window .chat-bubble a:hover { color: #2C1810; }
+
+/* ══════════════════════════════════════════
+   Shared button system (Stage 21e). Same look as the Luma chat buttons, usable anywhere:
+   <a|button class="lp-btn lp-btn--primary|secondary|danger [lp-btn--chip]">.
+   Every colour rule is written with TWO classes (0,2,0) so it beats the site-wide
+   "a:visited, a:hover, a:focus, a:active { color: inherit }" (0,1,1) in every state.
+   Do not write new one-off button colours: reuse these.
+══════════════════════════════════════════ */
+:root {
+  --btn-primary: #2C1810;        --btn-primary-text: #FDFAF5;
+  --btn-primary-hover: #5C3D2E;  --btn-primary-hover-text: #FFFFFF;
+  --btn-primary-active: #1A0E09;
+  --btn-secondary: #FFFFFF;      --btn-secondary-text: #2C1810;  --btn-secondary-border: #5C3D2E;
+  --btn-secondary-hover: #F5F0E8; --btn-secondary-active: #E0D5C5;
+  --btn-danger: #FFFFFF;         --btn-danger-text: #9A2F2F;     --btn-danger-border: #9A2F2F;
+  --btn-danger-hover: #FBEDED;   --btn-danger-active: #F3D6D6;
+  --btn-disabled: #E0D5C5;       --btn-disabled-text: #5C4A3C;
+}
+.lp-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 10px 20px; border: 1px solid transparent; border-radius: 10px;
+  font: 600 14px/1.25 var(--font-body); text-align: center; text-decoration: none;
+  overflow-wrap: anywhere; cursor: pointer; transition: background-color .15s, border-color .15s, color .15s;
+}
+.lp-btn--block { display: flex; width: 100%; }
+.lp-btn .lp-btn-arrow { width: 14px; height: 14px; flex: none; }
+.lp-btn.lp-btn--primary,
+.lp-btn.lp-btn--primary:visited { background: var(--btn-primary); color: var(--btn-primary-text); border-color: var(--btn-primary); }
+.lp-btn.lp-btn--primary:hover,
+.lp-btn.lp-btn--primary:focus { background: var(--btn-primary-hover); color: var(--btn-primary-hover-text); border-color: var(--btn-primary-hover); }
+.lp-btn.lp-btn--primary:active { background: var(--btn-primary-active); color: var(--btn-primary-text); border-color: var(--btn-primary-active); }
+.lp-btn.lp-btn--secondary,
+.lp-btn.lp-btn--secondary:visited { background: var(--btn-secondary); color: var(--btn-secondary-text); border-color: var(--btn-secondary-border); }
+.lp-btn.lp-btn--secondary:hover,
+.lp-btn.lp-btn--secondary:focus { background: var(--btn-secondary-hover); color: var(--btn-secondary-text); border-color: var(--btn-primary); }
+.lp-btn.lp-btn--secondary:active { background: var(--btn-secondary-active); color: var(--btn-secondary-text); border-color: var(--btn-primary); }
+.lp-btn.lp-btn--danger,
+.lp-btn.lp-btn--danger:visited { background: var(--btn-danger); color: var(--btn-danger-text); border-color: var(--btn-danger-border); }
+.lp-btn.lp-btn--danger:hover,
+.lp-btn.lp-btn--danger:focus { background: var(--btn-danger-hover); color: var(--btn-danger-text); border-color: var(--btn-danger-border); }
+.lp-btn.lp-btn--danger:active { background: var(--btn-danger-active); color: var(--btn-danger-text); border-color: var(--btn-danger-border); }
+.lp-btn.lp-btn--chip { min-height: 32px; padding: 4px 12px; font-size: 12.5px; font-weight: 500; border-radius: 999px; }
+.lp-btn:focus-visible { outline: 2px solid var(--btn-primary); outline-offset: 2px; box-shadow: 0 0 0 5px #E8B86D; }
+.lp-btn.lp-btn[aria-disabled="true"],
+.lp-btn.lp-btn:disabled { background: var(--btn-disabled); color: var(--btn-disabled-text); border-color: var(--btn-disabled); cursor: not-allowed; pointer-events: none; }
+@media (max-width: 640px) { .lp-btn:not(.lp-btn--chip) { min-height: 44px; } }

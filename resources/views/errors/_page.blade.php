@@ -13,8 +13,8 @@
       <h1 class="er-title">{{ $heading }}</h1>
       <p class="er-text">{{ $text }}</p>
       <div class="er-actions">
-        <a href="{{ url('/') }}" class="er-btn er-btn--primary">Go to home</a>
-        <a href="{{ route('catalog') }}" class="er-btn er-btn--secondary">Browse catalog</a>
+        <a href="{{ url('/') }}" class="lp-btn lp-btn--primary">Go to home</a>
+        <a href="{{ route('catalog') }}" class="lp-btn lp-btn--secondary">Browse catalog</a>
       </div>
     </div>
     <div class="er-side">
