@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Exceptions\ImmutableRecordException;
+use App\Support\InvoicePaymentRules;
+use App\Support\ServiceInvoiceDesk;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -16,6 +19,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ServiceInvoice extends Model
 {
+    use HasFactory;
+
     public const DRAFT  = 'draft';
     public const ISSUED = 'issued';
     public const PAID   = 'paid';
@@ -33,6 +38,13 @@ class ServiceInvoice extends Model
 
     /** Shown with the reason box when an admin cancels a sent or paid invoice. */
     public const CANCEL_CONFIRMATION = 'Cancel this invoice? The customer will no longer be able to pay it. This cannot be undone. Please enter a reason.';
+
+    /** Labels for the methods an online or in-person payment row can carry (see ServiceInvoicePayment). */
+    public const PAYMENT_METHOD_LABELS = [
+        'stripe'   => 'Card (online)',
+        'paymongo' => 'GCash (online)',
+        'cash'     => 'Cash',
+    ];
 
     public const PAID_METHODS = [
         'cash'          => 'Cash',
@@ -69,7 +81,9 @@ class ServiceInvoice extends Model
     ];
 
     /** What may change on an issued invoice (nothing else), per status. */
-    private const PAY_FIELDS  = ['status', 'paid_at', 'paid_method', 'paid_reference', 'amount_received'];
+    private const PAY_FIELDS  = ['status', 'paid_at', 'paid_method', 'paid_reference', 'amount_received', 'amount_paid', 'service_done_at'];
+    /** An issued invoice stays issued while payments arrive and when the admin taps "Service done". */
+    private const TRACK_FIELDS = ['amount_paid', 'service_done_at'];
     private const VOID_FIELDS = ['status', 'voided_at', 'void_reason'];
 
     protected $fillable = [
@@ -78,12 +92,15 @@ class ServiceInvoice extends Model
         'service_description', 'delivery_option', 'notes', 'subtotal', 'total',
         'issued_at', 'paid_at', 'paid_method', 'paid_reference', 'amount_received',
         'voided_at', 'void_reason', 'created_by_admin_id',
+        'payment_plan', 'amount_paid', 'service_done_at',
     ];
 
     protected $casts = [
         'subtotal'        => 'decimal:2',
         'total'           => 'decimal:2',
         'amount_received' => 'decimal:2',
+        'amount_paid'     => 'decimal:2',
+        'service_done_at' => 'datetime',
         'issued_at'       => 'datetime',
         'paid_at'         => 'datetime',
         'voided_at'       => 'datetime',
@@ -106,12 +123,12 @@ class ServiceInvoice extends Model
             }
 
             $allowed = match ($from) {
-                self::ISSUED => $to === self::PAID ? self::PAY_FIELDS : ($to === self::VOID ? self::VOID_FIELDS : []),
+                self::ISSUED => $to === self::PAID ? self::PAY_FIELDS : ($to === self::VOID ? self::VOID_FIELDS : self::TRACK_FIELDS),
                 self::PAID   => $to === self::VOID ? self::VOID_FIELDS : [],
                 default      => [],
             };
 
-            if ($dirty && (array_diff($dirty, $allowed) || $to === $from)) {
+            if ($dirty && (array_diff($dirty, $allowed) || ($to === $from && $from !== self::ISSUED))) {
                 throw new ImmutableRecordException(
                     "Invoice #{$invoice->getKey()} is {$from} and cannot be changed. Cancel it and send a new invoice instead."
                 );
@@ -186,7 +203,66 @@ class ServiceInvoice extends Model
 
     public function paidMethodLabel(): ?string
     {
-        return self::PAID_METHODS[$this->paid_method] ?? $this->paid_method;
+        return self::PAID_METHODS[$this->paid_method] ?? self::PAYMENT_METHOD_LABELS[$this->paid_method] ?? $this->paid_method;
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(ServiceInvoicePayment::class, 'service_invoice_id')->orderBy('id');
+    }
+
+    public function refundNotes()
+    {
+        return $this->hasMany(ServiceInvoiceRefundNote::class, 'service_invoice_id')->orderBy('id');
+    }
+
+    public function isHalfHalf(): bool
+    {
+        return $this->payment_plan === InvoicePaymentRules::HALF_HALF;
+    }
+
+    public function totalCents(): int
+    {
+        return ServiceInvoiceDesk::cents($this->total);
+    }
+
+    public function paidCents(): int
+    {
+        return ServiceInvoiceDesk::cents($this->amount_paid);
+    }
+
+    public function balanceCents(): int
+    {
+        return max(0, $this->totalCents() - $this->paidCents());
+    }
+
+    /** Planned installments in centavos: [1 => first] or [1 => first, 2 => second]. */
+    public function installmentCents(): array
+    {
+        return InvoicePaymentRules::installments($this->payment_plan ?: InvoicePaymentRules::FULL, $this->totalCents());
+    }
+
+    /** True once any money is on this invoice: a paid payment row, a recorded amount, or an old-style "marked paid". */
+    public function hasPayment(): bool
+    {
+        return $this->status === self::PAID
+            || $this->paidCents() > 0
+            || $this->payments()->where('status', ServiceInvoicePayment::PAID)->exists();
+    }
+
+    public function isFullyPaid(): bool
+    {
+        return $this->status === self::PAID;
+    }
+
+    /** The word customers and the printed copy use: Paid, Half paid or Unpaid. */
+    public function paymentStateLabel(): string
+    {
+        if ($this->status === self::PAID) {
+            return 'Paid';
+        }
+
+        return $this->paidCents() > 0 ? 'Half paid' : 'Unpaid';
     }
 
     /** Invoices a customer may open: issued and paid ones. */
