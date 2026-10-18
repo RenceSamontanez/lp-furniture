@@ -123,43 +123,70 @@ foreach (['cancelled', 'sent', 'draft'] as $state) {
 }
 $ownerInvoices['missing'] = 999999999;
 
-$inv21 = [
-    'cancelled' => ['guest' => 'login', 'owner' => 200, 'other' => 404, 'admin_guard_only' => 'login'],
+// Expectations per customer route and invoice state. 'login' = redirect to /login, int = that status,
+// 'redirect' = redirected to the invoice page (the cancelled explanation), 'skip' = not probed (see note below the table).
+$pageExpect = fn ($cancelledOwner) => [
+    'cancelled' => ['guest' => 'login', 'owner' => $cancelledOwner, 'other' => 404, 'admin_guard_only' => 'login'],
     'sent'      => ['guest' => 'login', 'owner' => 200, 'other' => 404, 'admin_guard_only' => 'login'],
     'draft'     => ['guest' => 'login', 'owner' => 404, 'other' => 404, 'admin_guard_only' => 'login'],
     'missing'   => ['guest' => 'login', 'owner' => 404, 'other' => 404, 'admin_guard_only' => 'login'],
 ];
+$payExpect = [
+    'cancelled' => ['guest' => 'login', 'owner' => 'redirect', 'other' => 404, 'admin_guard_only' => 'login'],
+    // the owner paying a SENT invoice would call the real Stripe / PayMongo API from this process: covered by PHPUnit with a fake gateway
+    'sent'      => ['guest' => 'login', 'owner' => 'skip', 'other' => 404, 'admin_guard_only' => 'login'],
+    'draft'     => ['guest' => 'login', 'owner' => 404, 'other' => 404, 'admin_guard_only' => 'login'],
+    'missing'   => ['guest' => 'login', 'owner' => 404, 'other' => 404, 'admin_guard_only' => 'login'],
+];
+$customerRoutes = [
+    ['GET',  '/services/invoices/{id}',                 $pageExpect(200)],
+    ['GET',  '/services/invoices/{id}/print',           $pageExpect('redirect')],
+    ['GET',  '/services/invoices/{id}/payment/success',   $pageExpect('redirect')],
+    ['GET',  '/services/invoices/{id}/payment/cancelled', $pageExpect('redirect')],
+    ['GET',  '/services/invoices/{id}/payment/failed',    $pageExpect('redirect')],
+    ['POST', '/services/invoices/{id}/pay/stripe',        $payExpect],
+    ['POST', '/services/invoices/{id}/pay/gcash',         $payExpect],
+];
 $ownerTable = [
-    '| Invoice | guest | owner | another customer | admin (admin guard only) |',
-    '|---|---|---|---|---|',
+    '| Route | Invoice | guest | owner | another customer | admin (admin guard only) |',
+    '|---|---|---|---|---|---|',
 ];
 $ownerBad = 0;
 $ownerTotal = 0;
-foreach ($inv21 as $state => $expect) {
-    $uri = '/services/invoices/' . $ownerInvoices[$state];
-    $cells = [];
-    foreach (['guest' => ['guest', null], 'owner' => ['customer_web', $owner], 'other' => ['customer_web', $other], 'admin_guard_only' => ['admin', null]] as $who => [$actorName, $asUser]) {
-        $cmd = escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($probe) . ' ' . implode(' ', array_map('escapeshellarg', [
-            $actorName, 'GET', $uri, ($asUser ?? $customer)->email, $admin->email,
-        ])) . ' 2>&1';
-        $lines = preg_split('/\R/', trim((string) shell_exec($cmd)));
-        $x = json_decode(end($lines) ?: '', true) ?: ['status' => 'ERR', 'location' => null];
-        $ownerTotal++;
-        $label = $x['status'] . ($x['location'] ? ' → ' . parse_url($x['location'], PHP_URL_PATH) : '');
-        $ok = $expect[$who] === 'login'
-            ? (in_array($x['status'], [301, 302], true) && parse_url((string) $x['location'], PHP_URL_PATH) === '/login')
-            : $x['status'] === $expect[$who];
-        if (!$ok) {
-            $ownerBad++;
-            $label = '**' . $label . ' FAIL**';
-        } else {
-            $label .= ' ✓';
+foreach ($customerRoutes as [$method, $template, $expectations]) {
+    foreach ($expectations as $state => $expect) {
+        $id  = $ownerInvoices[$state];
+        $uri = str_replace('{id}', (string) $id, $template);
+        $cells = [];
+        foreach (['guest' => ['guest', null], 'owner' => ['customer_web', $owner], 'other' => ['customer_web', $other], 'admin_guard_only' => ['admin', null]] as $who => [$actorName, $asUser]) {
+            if ($expect[$who] === 'skip') {
+                $cells[] = 'not probed (PHPUnit)';
+                continue;
+            }
+            $cmd = escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($probe) . ' ' . implode(' ', array_map('escapeshellarg', [
+                $actorName, $method, $uri, ($asUser ?? $customer)->email, $admin->email,
+            ])) . ' 2>&1';
+            $lines = preg_split('/\R/', trim((string) shell_exec($cmd)));
+            $x = json_decode(end($lines) ?: '', true) ?: ['status' => 'ERR', 'location' => null];
+            $ownerTotal++;
+            $label = $x['status'] . ($x['location'] ? ' → ' . parse_url($x['location'], PHP_URL_PATH) : '');
+            $isRedirect = in_array($x['status'], [301, 302], true);
+            $ok = match (true) {
+                $expect[$who] === 'login'    => $isRedirect && parse_url((string) $x['location'], PHP_URL_PATH) === '/login',
+                $expect[$who] === 'redirect' => $isRedirect && parse_url((string) $x['location'], PHP_URL_PATH) === '/services/invoices/' . $id,
+                default                      => $x['status'] === $expect[$who],
+            };
+            if (!$ok) {
+                $ownerBad++;
+                $label = '**' . $label . ' FAIL**';
+            } else {
+                $label .= ' ✓';
+            }
+            $cells[] = $label;
         }
-        $cells[] = $label;
+        $ownerTable[] = '| `' . $method . ' ' . $template . '` | ' . $state . ' | ' . implode(' | ', $cells) . ' |';
     }
-    $ownerTable[] = '| ' . $state . ' (`GET /services/invoices/{id}`) | ' . implode(' | ', $cells) . ' |';
 }
-
 
 // scratch cleanup. Sent and cancelled invoices are locked at the model layer, so remove them with the query builder (scratch database only).
 $ids = array_values(array_filter($ownerInvoices, fn ($v) => $v !== 999999999));
@@ -218,9 +245,13 @@ $doc = "# RBAC matrix (Stage 11)\n\n{$summary}\n\n"
     . "with `then=send`, so that row covers it; the feature test `test_save_and_send_is_admin_only` also probes it with the send flag.\n\n"
     . "Stage 21d: the customer invoice page `GET /services/invoices/{id}` is owner-only and is probed in the last section of this file. "
     . "A cancelled invoice now answers its owner with a 200 explanation page; another customer, a draft and an unknown id are all 404; a guest is sent to /login.\n\n"
-    . implode("\n", $table) . "\n\n## Owner-only customer route: `GET /services/invoices/{id}`\n\n"
-    . "Not an /admin route. Each cell is one fresh PHP process. Expected: a guest, and an admin signed in only on the admin guard, are redirected to /login; "
-    . "the owner gets 200 for a cancelled or sent invoice and 404 for a draft or an unknown id; another customer gets 404 for every id.\n\n"
+    . implode("\n", $table) . "\n\n## Owner-only customer routes: `/services/invoices/{id}` and what hangs off it\n\n"
+    . "Not /admin routes. Each cell is one fresh PHP process. Expected: a guest, and an admin signed in only on the admin guard, are redirected to /login; "
+    . "another customer gets 404 for every id (so a pay attempt reveals nothing); a draft or an unknown id is 404 for the owner too; "
+    . "for a cancelled invoice the owner gets the 200 explanation page on the show route and is redirected to it from print, the return pages and pay (no payment can start). "
+    . "Stage 21e: the owner paying a SENT invoice is deliberately not probed here, because that would call the real Stripe or PayMongo API from this process; it is covered by PHPUnit with a fake gateway.
+
+"
     . implode("\n", $ownerTable) . "\n";
 
 file_put_contents($root . '/docs/rbac-matrix-stage11.md', $doc);

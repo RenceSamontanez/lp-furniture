@@ -160,6 +160,14 @@ final class DefaultIntents
                 'chips' => 'Deposit and installment, Cancel an order, Track my order',
             ],
 
+            'luma_service_invoice_payment' => [
+                'keywords' => 'pay my invoice, pay the invoice, pay an invoice, pay my service invoice, how to pay my invoice, how do i pay my invoice, invoice payment, service invoice, other services invoice, pay for repair, pay for my repair, pay for labor, pay for the repair, pay for the service, pay for my service, half now half later, half payment, half and half, how to pay for other services, bayaran ang invoice, bayad sa invoice, paano bayaran ang invoice, bayad sa repair, bayad sa serbisyo',
+                'en' => 'For Other Services (repairs and labor-only work), we send you an invoice, which you can see in your account under Service Request. You can pay it online by GCash or card, or pay cash in person, and our team records it. You can pay in full, or, for some invoices, half now and the other half when the service is done. The invoice shows which one applies, and the second half becomes payable once we mark the service as done. You can see the status of your payments on the invoice. {{contact}}',
+                'tl' => 'Sa Other Services (pagpapaayos at labor lang), nagpapadala po kami ng invoice na makikita ninyo sa inyong account sa Service Request. Maaari po ninyo itong bayaran online sa GCash o card, o cash nang personal at ire-record po ito ng aming team. Maaari pong magbayad nang buo, o sa ilang invoice, kalahati ngayon at ang kalahati kapag tapos na ang serbisyo. Nakasulat sa invoice kung alin ang para sa inyo, at magiging bayad na ang ikalawang kalahati kapag minarkahan na naming tapos na ang serbisyo. Makikita po ninyo sa invoice ang status ng inyong mga bayad. {{contact}}',
+                'chips' => 'Labor only, Payment options, Contact us',
+                'buttons' => [['Open my service requests', 'Buksan ang aking service requests', 'services.request']],
+            ],
+
             'luma_deposit_rules' => [
                 'keywords' => 'deposit, down payment, reservation, installment, installments, pay in parts, split payment, partial payment, pay later, layaway, how much deposit, minimum deposit, magkano ang down, hulugan, hulog, pwede bang hulugan',
                 'en' => 'For Catalog orders you can pay in full or in installments: the first payment is a {{catalog_down}}% down payment and the rest is split over {{months}} months, every {{frequency}} days. For custom orders, the deposit is written in your quote and is at least {{deposit_min}}% of the total. Production starts once the deposit is received.',

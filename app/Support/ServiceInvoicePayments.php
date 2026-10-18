@@ -196,7 +196,7 @@ final class ServiceInvoicePayments
 
         $session = $this->gateway->createStripeSession($params);
 
-        return [(string) $session->id, (string) $session->url, $at ? Carbon::createFromTimestamp($at) : null];
+        return [(string) $session->id, (string) $session->url, $at ? Carbon::createFromTimestamp($at, config('app.timezone')) : null];
     }
 
     private function createPaymongo(ServiceInvoice $invoice, Payment $row): array
@@ -227,7 +227,7 @@ final class ServiceInvoicePayments
 
         if (!$row) {
             if ($paid) {
-                $this->alertAdmins('Stripe', ((int) ($session->amount_total ?? 0)) / 100, (string) ($session->payment_intent ?: $session->id), 'no invoice payment matches this payment', null);
+                $this->alertAdmins('Stripe', ((int) ($session->amount_total ?? 0)) / 100, (string) (($session->payment_intent ?? null) ?: $session->id), 'no invoice payment matches this payment', null);
             }
 
             return 'unmatched';
@@ -245,7 +245,7 @@ final class ServiceInvoicePayments
             return 'not_paid';
         }
 
-        return $this->confirm($row->id, (int) ($session->amount_total ?? 0), 'Card (Stripe)', (string) ($session->payment_intent ?: $session->id));
+        return $this->confirm($row->id, (int) ($session->amount_total ?? 0), 'Card (Stripe)', (string) (($session->payment_intent ?? null) ?: $session->id));
     }
 
     /** The browser came back from Stripe: check the session with Stripe itself, never trust the query string. */
