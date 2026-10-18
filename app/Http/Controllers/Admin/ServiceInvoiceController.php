@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\ServiceInquiry;
 use App\Models\ServiceInvoice;
 use App\Support\PipelineException;
+use App\Support\InvoicePaymentRules;
 use App\Support\ServiceInvoiceDesk;
+use App\Support\ServiceInvoicePayments;
 use App\Support\ServiceInquiryDesk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +19,7 @@ use Illuminate\Support\Facades\Auth;
  */
 class ServiceInvoiceController extends Controller
 {
-    public function __construct(private ServiceInvoiceDesk $desk)
+    public function __construct(private ServiceInvoiceDesk $desk, private ServiceInvoicePayments $payments)
     {
     }
 
@@ -41,7 +43,9 @@ class ServiceInvoiceController extends Controller
                 'customer_address'    => $ticket->user?->address,
                 'delivery_option'     => null,
                 'lines'               => [],
+                'payment_plan'        => InvoicePaymentRules::FULL,
             ],
+            'halfOk' => InvoicePaymentRules::SERVICE_TYPES[$ticket->service_type] ?? null,
         ]);
     }
 
@@ -62,12 +66,15 @@ class ServiceInvoiceController extends Controller
 
     public function show($id)
     {
-        $invoice = ServiceInvoice::with(['lines', 'inquiry.user', 'createdBy'])->findOrFail($id);
+        $invoice = ServiceInvoice::with(['lines', 'inquiry.user', 'createdBy', 'payments.recorder', 'refundNotes.recorder'])->findOrFail($id);
 
         return view('admin.service-invoices.show', [
             'hideGlobalErrorToast' => true,
             'invoice' => $invoice,
             'ticket'  => $invoice->inquiry,
+            'due'     => ServiceInvoicePayments::due($invoice),
+            'receivedCents' => ServiceInvoicePayments::receivedCents($invoice),
+            'refundMethods' => \App\Models\ServiceInvoiceRefundNote::METHODS,
             'today'   => ServiceInquiryDesk::today()->toDateString(),
         ]);
     }
@@ -85,6 +92,7 @@ class ServiceInvoiceController extends Controller
 
         return view('admin.service-invoices.form', [
             'ticket'  => $invoice->inquiry,
+            'halfOk'  => InvoicePaymentRules::SERVICE_TYPES[$invoice->inquiry->service_type] ?? null,
             'invoice' => $invoice,
             'values'  => [
                 'service_description' => $invoice->service_description,
@@ -96,6 +104,7 @@ class ServiceInvoiceController extends Controller
                 'delivery_option'     => $invoice->delivery_option,
                 'delivery_amount'     => $delivery?->amount,
                 'notes'               => $invoice->notes,
+                'payment_plan'        => $invoice->payment_plan,
                 'lines'               => $invoice->lines->whereIn('kind', ['material_fee', 'other_fee'])
                     ->map(fn ($l) => ['kind' => $l->kind, 'description' => $l->description, 'amount' => $l->amount])->values()->all(),
             ],
@@ -178,9 +187,49 @@ class ServiceInvoiceController extends Controller
         return $this->run($id, fn () => $this->desk->void((int) $id, Auth::guard('admin')->user(), $data['reason']), 'Invoice cancelled. You can send a new one from the ticket.');
     }
 
+    public function serviceDone($id)
+    {
+        ServiceInvoice::findOrFail($id);
+
+        return $this->run($id, fn () => $this->payments->serviceDone((int) $id, Auth::guard('admin')->user()), 'Service marked as done. If the invoice is half and half, the customer has been told the balance is due.');
+    }
+
+    public function recordCash(Request $request, $id)
+    {
+        ServiceInvoice::findOrFail($id);
+        $data = $request->validate([
+            'amount'  => ['required', 'numeric', 'gt:0', 'max:' . ServiceInvoiceDesk::MAX_AMOUNT, 'regex:/^\d+(\.\d{1,2})?$/'],
+            'confirm' => ['accepted'],
+        ], [
+            'amount.required'    => 'Enter the cash amount received.',
+            'amount.regex'       => 'Amounts can have at most 2 decimal places.',
+            'confirm.accepted'   => 'Please confirm that you received this cash payment.',
+        ]);
+
+        return $this->run($id, fn () => $this->payments->recordCash((int) $id, Auth::guard('admin')->user(), $data['amount'], true), 'Cash payment recorded.');
+    }
+
+    public function refundNote(Request $request, $id)
+    {
+        ServiceInvoice::findOrFail($id);
+        $data = $request->validate([
+            'amount' => ['required', 'numeric', 'gt:0', 'max:' . ServiceInvoiceDesk::MAX_AMOUNT, 'regex:/^\d+(\.\d{1,2})?$/'],
+            'method' => ['required', 'in:' . implode(',', array_keys(\App\Models\ServiceInvoiceRefundNote::METHODS))],
+            'note'   => ['required', 'string', 'min:5', 'max:1000'],
+        ], [
+            'amount.required' => 'Enter the refund amount.',
+            'method.required' => 'Choose how the refund was or will be given.',
+            'note.required'   => 'Write a short note about the refund.',
+            'note.min'        => 'Please write a short note about the refund (at least 5 characters).',
+        ]);
+
+        return $this->run($id, fn () => $this->payments->addRefundNote((int) $id, Auth::guard('admin')->user(), $data['amount'], $data['method'], $data['note']),
+            'Refund note saved. It is only a record: the refund itself is done outside the system (Stripe dashboard, GCash or cash).');
+    }
+
     public function print($id)
     {
-        $invoice = ServiceInvoice::with('lines')->findOrFail($id);
+        $invoice = ServiceInvoice::with(['lines', 'payments'])->findOrFail($id);
 
         return view('service-invoices.print', [
             'invoice' => $invoice,

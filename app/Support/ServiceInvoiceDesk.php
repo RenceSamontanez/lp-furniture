@@ -75,6 +75,7 @@ final class ServiceInvoiceDesk
             'customer_phone'      => ['required', 'string', 'max:30', new PhilippineMobile()],
             'customer_email'      => ['nullable', 'email:rfc', 'max:150'],
             'customer_address'    => ['nullable', 'string', 'max:500'],
+            'payment_plan'        => ['nullable', Rule::in(array_keys(InvoicePaymentRules::PLANS))],
         ], [
             'service_description.required' => 'Enter the service the customer availed.',
             'service_cost.required'        => 'Enter the service cost agreed in the call.',
@@ -150,6 +151,7 @@ final class ServiceInvoiceDesk
                 'customer_phone'      => PhilippineMobile::normalize($data['customer_phone']),
                 'customer_email'      => self::blank($data['customer_email'] ?? null),
                 'customer_address'    => self::blank($data['customer_address'] ?? null),
+                'payment_plan'        => ($data['payment_plan'] ?? null) === InvoicePaymentRules::HALF_HALF ? InvoicePaymentRules::HALF_HALF : InvoicePaymentRules::FULL,
             ],
             'lines'    => $lines,
             'subtotal' => $total,
@@ -204,6 +206,8 @@ final class ServiceInvoiceDesk
                 throw new PipelineException('This ticket already has an invoice (' . ($live->invoice_number ?: 'draft #' . $live->id) . '). Cancel it first if you need to send a new one.');
             }
 
+            $this->requirePlanAllowed($ticket, $clean['attributes']['payment_plan'] ?? InvoicePaymentRules::FULL, $clean['total']);
+
             $invoice = ServiceInvoice::create($clean['attributes'] + [
                 'service_inquiry_id'  => $ticket->id,
                 'user_id'             => $ticket->user_id,
@@ -226,6 +230,8 @@ final class ServiceInvoiceDesk
         return DB::transaction(function () use ($invoiceId, $admin, $clean) {
             [$ticket, $invoice] = $this->lock($invoiceId);
             $this->requireStatus($invoice, [ServiceInvoice::DRAFT], 'edit it. A sent invoice is locked; cancel it and send a new one');
+
+            $this->requirePlanAllowed($ticket, $clean['attributes']['payment_plan'] ?? InvoicePaymentRules::FULL, $clean['total']);
 
             $invoice->fill($clean['attributes'] + ['subtotal' => $clean['subtotal'], 'total' => $clean['total']])->save();
             $this->replaceLines($invoice, $clean['lines']);
@@ -266,6 +272,7 @@ final class ServiceInvoiceDesk
                 throw new PipelineException('An invoice needs a service cost greater than 0 before it can be sent.');
             }
             $total = self::money($cents / 100);
+            $this->requirePlanAllowed($ticket, $invoice->payment_plan ?: InvoicePaymentRules::FULL, $total);
 
             $now = Carbon::now(self::TZ);
             for ($attempt = 0; ; $attempt++) {
@@ -317,6 +324,9 @@ final class ServiceInvoiceDesk
         return DB::transaction(function () use ($invoiceId, $admin, $payment, $method, $reference) {
             [$ticket, $invoice] = $this->lock($invoiceId);
             $this->requireStatus($invoice, [ServiceInvoice::ISSUED], 'record a payment for it');
+            if ($invoice->isHalfHalf() || $invoice->paidCents() > 0 || $invoice->payments()->exists()) {
+                throw new PipelineException('This invoice is paid through its payment plan. Use "Record cash payment" in the Payments panel instead.');
+            }
 
             if (self::cents($payment['amount']) < self::cents($invoice->total)) {
                 throw new PipelineException('The amount received must cover the invoice total of ' . self::peso($invoice->total) . '.');
@@ -365,6 +375,9 @@ final class ServiceInvoiceDesk
         return DB::transaction(function () use ($invoiceId, $admin, $reason) {
             [$ticket, $invoice] = $this->lock($invoiceId);
             $this->requireStatus($invoice, [ServiceInvoice::ISSUED, ServiceInvoice::PAID], 'cancel it');
+            if ($invoice->hasPayment()) {
+                throw new PipelineException(ServiceInvoicePayments::CANCEL_BLOCKED);
+            }
 
             $wasSent = $invoice->status === ServiceInvoice::ISSUED;
 
@@ -426,6 +439,14 @@ final class ServiceInvoiceDesk
     {
         if (!in_array($invoice->status, $allowed, true)) {
             throw new PipelineException('This invoice is ' . strtolower(ServiceInvoice::labelFor($invoice->status)) . ", so you cannot {$action}.");
+        }
+    }
+
+    /** A half-and-half plan is only allowed for service types and totals the owner agreed (InvoicePaymentRules). */
+    private function requirePlanAllowed(ServiceInquiry $ticket, string $plan, mixed $total): void
+    {
+        if ($plan === InvoicePaymentRules::HALF_HALF && ($problem = InvoicePaymentRules::halfHalfProblem($ticket->service_type, $total))) {
+            throw new PipelineException($problem);
         }
     }
 

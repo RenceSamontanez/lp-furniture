@@ -141,7 +141,7 @@
                   @if($live)
                     <a href="{{ route('services.invoice', $live->id) }}" class="si-invoice">
                       <span>Invoice {{ $live->invoice_number }}</span>
-                      <span>₱{{ number_format((float) $live->total, 2) }} · {{ $live->status === 'paid' ? 'Paid' : 'Unpaid' }}</span>
+                      <span>₱{{ number_format((float) $live->total, 2) }} · {{ $live->paymentStateLabel() }}</span>
                     </a>
                     @if($earlier->isNotEmpty())
                       <p class="si-earlier">Earlier invoices:

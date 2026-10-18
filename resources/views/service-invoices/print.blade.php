@@ -12,12 +12,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex"/>
 <title>Invoice {{ $i->invoice_number ?: 'draft ' . $i->id }}</title>
+<link rel="stylesheet" href="{{ asset('assets/style.css') }}"/>
 <link rel="stylesheet" href="{{ asset('assets/css/service-invoice-print.css') }}"/>
 </head>
 <body class="iv-body">
   <div class="iv-toolbar">
-    <a href="{{ $backUrl }}">Back</a>
-    <button type="button" onclick="window.print()">Print</button>
+    <a href="{{ $backUrl }}" class="lp-btn lp-btn--secondary">Back</a>
+    <button type="button" class="lp-btn lp-btn--primary" onclick="window.print()">Print</button>
   </div>
 
   <main class="iv-sheet">
@@ -54,10 +55,9 @@
         <div>
           <dt>Status</dt>
           <dd>
-            @if($i->status === 'paid') Paid
-            @elseif($i->status === 'void') Cancelled
-            @elseif($i->status === 'issued') Unpaid
-            @else Draft @endif
+            @if($i->status === 'void') Cancelled
+            @elseif($i->status === 'draft') Draft
+            @else {{ $i->paymentStateLabel() }} @endif
           </dd>
         </div>
       </dl>
@@ -88,13 +88,21 @@
 
     <section class="iv-pay">
       <h2>Payment</h2>
-      @if($i->status === 'paid')
-        <p><strong>Paid</strong> on {{ $day($i->paid_at) }} by {{ $i->paidMethodLabel() }}.</p>
-        <p>Amount received: {{ $peso($i->amount_received) }}@if($i->paid_reference) · Reference: {{ $i->paid_reference }}@endif</p>
-      @elseif($i->status === 'void')
+      @php $paidRows = $i->payments()->where('status', 'paid')->get(); @endphp
+      @if($i->status === 'void')
         <p>This invoice was cancelled on {{ $day($i->voided_at) }} and is no longer valid.</p>
+      @elseif($i->status === 'paid')
+        <p><strong>Paid</strong>@if($i->paid_at) on {{ $day($i->paid_at) }}@endif @if($i->paidMethodLabel()) by {{ $i->paidMethodLabel() }}@endif.</p>
+        <p>Amount received: {{ $peso($i->amount_received ?? $i->total) }}@if($i->paid_reference && $paidRows->isEmpty()) · Reference: {{ $i->paid_reference }}@endif</p>
+      @elseif($i->status === 'issued')
+        <p><strong>{{ $i->paymentStateLabel() }}</strong>@if($i->paidCents() > 0). Paid so far: {{ $peso($i->amount_paid) }}. Balance: {{ $peso($i->balanceCents() / 100) }}@else. Pay online (GCash or card) from your invoice page in your account, or pay in cash in person.@endif</p>
       @else
-        <p>Not yet paid. Please contact us to arrange payment.</p>
+        <p>Not yet sent.</p>
+      @endif
+      @if($paidRows->isNotEmpty())
+        @foreach($paidRows as $p)
+          <p class="iv-payline">{{ $p->paid_at?->timezone('Asia/Manila')->format('M j, Y') }} · {{ $p->methodLabel() }}@if($i->isHalfHalf()) · {{ $p->installment === 1 ? 'first half' : 'remaining balance' }}@endif: {{ $peso($p->amount) }}</p>
+        @endforeach
       @endif
     </section>
 

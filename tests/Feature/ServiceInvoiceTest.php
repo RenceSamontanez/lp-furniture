@@ -387,15 +387,21 @@ class ServiceInvoiceTest extends TestCase
         $this->assertSame('GC-12345', $i->fresh()->paid_reference);
     }
 
-    public function test_cash_needs_no_reference_and_a_paid_invoice_can_still_be_voided_with_its_history_kept(): void
+    public function test_cash_needs_no_reference_and_a_paid_invoice_can_no_longer_be_cancelled(): void
     {
         $i = $this->issued();
         app(ServiceInvoiceDesk::class)->markPaid($i->id, $this->admin, ['method' => 'cash', 'reference' => null, 'amount' => '1600', 'date' => now('Asia/Manila')->subDay()->toDateString()]);
         $this->assertSame('1600.00', (string) $i->fresh()->amount_received);
 
-        app(ServiceInvoiceDesk::class)->void($i->id, $this->admin, 'Customer cancelled; refunded in person.');
+        // Stage 21e rule 5: an invoice with a payment on it is never cancelled; a refund note is recorded instead.
+        try {
+            app(ServiceInvoiceDesk::class)->void($i->id, $this->admin, 'Customer cancelled; refunded in person.');
+            $this->fail('A paid invoice must not be cancellable.');
+        } catch (\App\Support\PipelineException $e) {
+            $this->assertSame('This invoice has a payment on it. If the customer needs a refund, record a refund note instead.', $e->getMessage());
+        }
         $v = $i->fresh();
-        $this->assertSame('void', $v->status);
+        $this->assertSame('paid', $v->status);
         $this->assertSame('cash', $v->paid_method);
         $this->assertSame('1600.00', (string) $v->amount_received);
     }
@@ -540,8 +546,9 @@ class ServiceInvoiceTest extends TestCase
         $this->asAdmin()->get(route('admin.service-invoices.print', $i->id))
             ->assertSee('Bank transfer')->assertSee('BDO-998')->assertSee('Amount received: ₱1,500.00');
 
-        app(ServiceInvoiceDesk::class)->void($i->id, $this->admin, 'Duplicate');
-        $this->get(route('admin.service-invoices.print', $i->id))->assertSee('iv-mark', false)->assertSee('no longer valid');
+        $other = $this->issued();
+        app(ServiceInvoiceDesk::class)->void($other->id, $this->admin, 'Duplicate');
+        $this->get(route('admin.service-invoices.print', $other->id))->assertSee('iv-mark', false)->assertSee('no longer valid');
     }
 
 
@@ -675,7 +682,7 @@ class ServiceInvoiceTest extends TestCase
         $routes = collect(Route::getRoutes()->getRoutes())
             ->filter(fn ($r) => str_starts_with($r->getName() ?? '', 'admin.service-invoices.'))
             ->values();
-        $this->assertCount(10, $routes);
+        $this->assertCount(13, $routes);
 
         foreach ($routes as $route) {
             $method = $route->methods()[0];

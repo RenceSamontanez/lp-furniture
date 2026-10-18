@@ -128,7 +128,8 @@ class CancelledInvoicePageTest extends TestCase
     {
         $i = $this->sent();
         app(ServiceInvoiceDesk::class)->markPaid($i->id, $this->admin, ['method' => 'cash', 'reference' => null, 'amount' => '1500', 'date' => now('Asia/Manila')->toDateString()]);
-        app(ServiceInvoiceDesk::class)->void($i->id, $this->admin, 'Duplicate of another invoice.');
+        // Since Stage 21e a paid invoice can no longer be cancelled, but invoices cancelled earlier still exist: simulate one.
+        \DB::table('service_invoices')->where('id', $i->id)->update(['status' => 'void', 'voided_at' => now(), 'void_reason' => 'Duplicate of another invoice.']);
 
         $this->asOwner()->get(route('services.invoice', $i->id))->assertOk()
             ->assertSee('after a payment was recorded')
@@ -203,8 +204,9 @@ class CancelledInvoicePageTest extends TestCase
         $i = $this->sent();
 
         $this->asOwner()->get(route('services.invoice', $i->id))->assertOk()
-            ->assertSee($i->invoice_number)->assertSee('Unpaid')->assertSee('window.print', false)
+            ->assertSee($i->invoice_number)->assertSee('Unpaid')->assertSee('Pay with GCash')->assertSee('Pay with card')
             ->assertDontSee('This invoice was cancelled');
+        $this->asOwner()->get(route('services.invoice.print', $i->id))->assertOk()->assertSee('window.print', false);
     }
 
     public function test_cancelling_notifies_the_customer_and_old_and_new_links_resolve(): void

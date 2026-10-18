@@ -186,6 +186,13 @@ Route::get('/design-gallery', [CustomDesignController::class, 'gallery'])->name(
     Route::post('/services/request', [\App\Http\Controllers\ServiceInquiryController::class, 'store'])->name('services.request.submit');
     Route::get('/services/request/sent', [\App\Http\Controllers\ServiceInquiryController::class, 'sent'])->name('services.request.sent');
     Route::get('/services/invoices/{id}', [\App\Http\Controllers\ServiceInvoiceController::class, 'show'])->name('services.invoice')->whereNumber('id');
+    // Everything below acts on an invoice: the `invoice.actionable` middleware sends a cancelled one to its explanation page.
+    $invCtl = \App\Http\Controllers\ServiceInvoiceController::class;
+    Route::get('/services/invoices/{id}/print', [$invCtl, 'print'])->name('services.invoice.print')->whereNumber('id')->middleware('invoice.actionable');
+    Route::post('/services/invoices/{id}/pay/{method}', [$invCtl, 'startPayment'])->name('services.invoice.pay')->whereNumber('id')
+        ->where('method', 'stripe|gcash')->middleware('invoice.actionable');
+    Route::get('/services/invoices/{id}/payment/{outcome}', [$invCtl, 'paymentReturn'])->name('services.invoice.payment.return')->whereNumber('id')
+        ->where('outcome', 'success|cancelled|failed')->middleware('invoice.actionable');
 
     // Review and Accept, and the immutable agreement record (Stage 6).
     // There is deliberately no update or delete route for an agreement.
@@ -290,6 +297,9 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     Route::post('/service-invoices/{id}/issue',                 [$inv, 'issue'])->name('service-invoices.issue')->whereNumber('id');
     Route::post('/service-invoices/{id}/paid',                  [$inv, 'pay'])->name('service-invoices.paid')->whereNumber('id');
     Route::post('/service-invoices/{id}/void',                  [$inv, 'void'])->name('service-invoices.void')->whereNumber('id');
+    Route::post('/service-invoices/{id}/service-done',          [$inv, 'serviceDone'])->name('service-invoices.service-done')->whereNumber('id');
+    Route::post('/service-invoices/{id}/cash',                  [$inv, 'recordCash'])->name('service-invoices.cash')->whereNumber('id');
+    Route::post('/service-invoices/{id}/refund-notes',          [$inv, 'refundNote'])->name('service-invoices.refund-note')->whereNumber('id');
     Route::get('/service-invoices/{id}/print',                  [$inv, 'print'])->name('service-invoices.print')->whereNumber('id');
 
     // Agreement records (read only) and the admin's own notifications (Stage 6)

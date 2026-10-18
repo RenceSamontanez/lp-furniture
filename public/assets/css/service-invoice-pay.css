@@ -1,0 +1,31 @@
+/* Customer invoice page: totals, payment panel. Buttons come from the shared .lp-btn system in style.css; nothing here colours a button. */
+.ip-lines { width: 100%; border-collapse: collapse; margin: 0 0 22px; font-size: 14px; }
+.ip-lines td { padding: 9px 0; border-bottom: 1px solid #EFE7DA; color: var(--brown-deep); vertical-align: top; }
+.ip-lines td:last-child { text-align: right; white-space: nowrap; padding-left: 16px; font-variant-numeric: tabular-nums; }
+.ip-lines tfoot td { border-bottom: 0; border-top: 2px solid var(--brown-mid); font-weight: 700; padding-top: 11px; }
+
+.ip-pay { margin: 0 0 22px; padding: 16px 18px; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
+.ip-pay-state { margin: 0 0 10px; font-size: 14.5px; line-height: 1.55; color: var(--brown-deep); }
+.ip-due { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 0 0 12px; font-size: 15px; color: var(--brown-deep); }
+.ip-due strong { font-size: 20px; font-variant-numeric: tabular-nums; }
+.ip-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ip-actions--one { grid-template-columns: 1fr; }
+.ip-form { margin: 0; }
+.ip-hint { margin: 10px 0 0; font-size: 13px; line-height: 1.5; color: #5C4A3C; }
+.ip-sub { margin: 18px 0 6px; font-size: 13px; font-weight: 600; color: #5C4A3C; }
+.ip-payments { list-style: none; margin: 0; padding: 0; }
+.ip-payments li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid #EFE7DA; font-size: 13.5px; color: var(--brown-deep); }
+.ip-payments li:last-child { border-bottom: 0; }
+.ip-links { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.sx-badge--paid { background: #DDF5E8; color: #14532D; }
+.sx-badge--half-paid { background: #FEF0D8; color: #6B4506; }
+.sx-badge--unpaid, .sx-badge--confirming { background: #EDE8E0; color: #5C4A3C; }
+.sx-badge--cancelled, .sx-badge--failed { background: #FBEDED; color: #7F2525; }
+
+@media (max-width: 520px) {
+  .ip-actions { grid-template-columns: 1fr; }
+  .ip-links { flex-direction: column; }
+  .ip-links .lp-btn { width: 100%; }
+  .ip-pay { padding: 14px; }
+}

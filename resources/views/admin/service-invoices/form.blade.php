@@ -21,7 +21,7 @@
 @endphp
 <div class="co-page">
 
-<a href="{{ $back }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">← Back</a>
+<a href="{{ $back }}" class="lp-btn lp-btn--secondary" style="margin-bottom:20px;">← Back</a>
 
 @if($errors->any())
   <div class="co-error" role="alert">
@@ -53,7 +53,7 @@
     <div class="admin-panel">
       <div class="admin-panel-header">
         <div class="admin-panel-title">Material or other fees</div>
-        <button type="button" class="admin-btn admin-btn-outline" id="inv-add-line">Add a fee</button>
+        <button type="button" class="lp-btn lp-btn--secondary" id="inv-add-line">Add a fee</button>
       </div>
       <div class="admin-panel-body si-form">
         <p class="si-hint" id="inv-no-lines" style="margin:0;" @if(count($rows)) hidden @endif>No extra fees. Add one if the customer is charged for materials or anything else.</p>
@@ -66,7 +66,7 @@
               </select>
               <input type="text" name="lines[{{ $i }}][description]" class="form-input" maxlength="200" placeholder="Description" aria-label="Fee description" value="{{ $row['description'] ?? '' }}"/>
               <input type="text" inputmode="decimal" name="lines[{{ $i }}][amount]" class="form-input inv-money" placeholder="0.00" aria-label="Fee amount" autocomplete="off" value="{{ $row['amount'] ?? '' }}"/>
-              <button type="button" class="admin-btn admin-btn-outline inv-remove" aria-label="Remove this fee">Remove</button>
+              <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip inv-remove" aria-label="Remove this fee">Remove</button>
             </div>
           @endforeach
         </div>
@@ -88,6 +88,29 @@
           <label class="co-block-label" for="delivery_amount" style="margin-top:0;">Fee amount (₱)</label>
           <input type="text" inputmode="decimal" id="delivery_amount" name="delivery_amount" class="form-input inv-money" value="{{ $chosen && $chosen !== 'none' ? $v('delivery_amount') : '' }}" placeholder="0.00" autocomplete="off"/>
         </div>
+      </div>
+    </div>
+
+    <div class="admin-panel">
+      <div class="admin-panel-header"><div class="admin-panel-title">How the customer pays</div></div>
+      <div class="admin-panel-body si-form">
+        @php
+          $halfTotalMin = \App\Support\InvoicePaymentRules::HALF_HALF_MIN_TOTAL;
+          $halfType     = ($halfOk ?? null) === \App\Support\InvoicePaymentRules::FULL_OR_HALF;
+          $plan         = $v('payment_plan', 'full');
+        @endphp
+        <p class="si-hint" style="margin:0 0 12px;">The customer can always pay in full, online (GCash or card) or in cash in person. You can also allow half now and half when the service is done. The plan is fixed when you send the invoice.</p>
+        <label class="inv-check">
+          <input type="checkbox" name="payment_plan" value="half_half" @checked($plan === 'half_half') @disabled(!$halfType)/>
+          Allow "Half now, half when the service is done" (50% / 50%)
+        </label>
+        <p class="si-hint" style="margin:8px 0 0;">
+          @if($halfType)
+            Only offered when the total is at least ₱{{ number_format($halfTotalMin, 2) }}. The second half becomes payable when you tap "Service done".
+          @else
+            This type of service must be paid in full, so half and half is not available.
+          @endif
+        </p>
       </div>
     </div>
 
@@ -128,9 +151,9 @@
         <dl class="inv-sum" id="inv-sum" aria-live="polite"></dl>
         <div class="inv-grand"><span>Total</span><strong id="inv-total">₱0.00</strong></div>
         <p class="si-hint" id="inv-delivery-label" style="margin-top:10px;"></p>
-        <button type="submit" class="admin-btn admin-btn-outline co-wide inv-save" style="margin-top:14px;" data-loading="Saving...">Save draft</button>
+        <button type="submit" class="lp-btn lp-btn--secondary lp-btn--block inv-save" style="margin-top:14px;" data-loading="Saving...">Save draft</button>
         @if($editing)
-          <button type="button" class="admin-btn admin-btn-gold co-wide" style="margin-top:10px;" data-open-send>Send to customer</button>
+          <button type="button" class="lp-btn lp-btn--primary lp-btn--block" style="margin-top:10px;" data-open-send>Send to customer</button>
           <p class="si-hint" style="margin-top:8px;">Save draft keeps it private so you can come back and change it. Send to customer saves what is on this page, sends it, and locks it.</p>
         @else
           <p class="si-hint" style="margin-top:8px;">Saving a draft does not send anything to the customer. You can edit it again and send it from the next page.</p>
@@ -197,7 +220,7 @@
       '<select name="lines[' + i + '][kind]" class="form-input" aria-label="Fee type"><option value="material_fee">Material</option><option value="other_fee" selected>Other</option></select>' +
       '<input type="text" name="lines[' + i + '][description]" class="form-input" maxlength="200" placeholder="Description" aria-label="Fee description"/>' +
       '<input type="text" inputmode="decimal" name="lines[' + i + '][amount]" class="form-input inv-money" placeholder="0.00" aria-label="Fee amount" autocomplete="off"/>' +
-      '<button type="button" class="admin-btn admin-btn-outline inv-remove" aria-label="Remove this fee">Remove</button>';
+      '<button type="button" class="lp-btn lp-btn--secondary lp-btn--chip inv-remove" aria-label="Remove this fee">Remove</button>';
     linesBox.appendChild(div);
     div.querySelector('input').focus();
     render();

@@ -7,8 +7,8 @@
     </div>
     <p id="inv-send-text" class="inv-confirm-text">{{ \App\Models\ServiceInvoice::SEND_CONFIRMATION }}</p>
     <div class="co-modal-actions">
-      <button type="button" class="admin-btn admin-btn-outline" data-close-send>Go back</button>
-      <button type="submit" form="{{ $formId }}" name="then" value="send" class="admin-btn admin-btn-gold" data-loading="Sending...">Send invoice</button>
+      <button type="button" class="lp-btn lp-btn--secondary" data-close-send>Go back</button>
+      <button type="submit" form="{{ $formId }}" name="then" value="send" class="lp-btn lp-btn--primary" data-loading="Sending...">Send invoice</button>
     </div>
   </div>
 </div>
@@ -17,7 +17,7 @@
   var modal = document.getElementById('inv-send-modal');
   var openers = document.querySelectorAll('[data-open-send]');
   var last = null;
-  function open(e) { last = e.currentTarget; modal.hidden = false; modal.querySelector('.admin-btn-outline').focus(); }
+  function open(e) { last = e.currentTarget; modal.hidden = false; modal.querySelector('.lp-btn--secondary').focus(); }
   function close() { modal.hidden = true; if (last) { last.focus(); } }
   openers.forEach(function (b) { b.addEventListener('click', open); });
   modal.querySelectorAll('[data-close-send]').forEach(function (b) { b.addEventListener('click', close); });

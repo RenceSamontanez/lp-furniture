@@ -692,6 +692,12 @@ class PaymentController extends Controller
         $sigHeader     = $request->header('Stripe-Signature', '');
         $webhookSecret = config('services.stripe.webhook');
 
+        // With no secret configured the signature can't be trusted at all (an empty key is forgeable): refuse everything.
+        if (!$webhookSecret) {
+            \Log::error('Stripe webhook rejected: STRIPE_WEBHOOK_SECRET is not set.');
+            return response()->json(['error' => 'Webhook not configured'], 400);
+        }
+
         try {
             $event = Webhook::constructEvent($payload, $sigHeader, $webhookSecret);
         } catch (UnexpectedValueException|SignatureVerificationException $e) {
@@ -709,6 +715,16 @@ class PaymentController extends Controller
         if ($record && $record->processed) {
             \Log::info("Stripe webhook {$event->id} already processed - ignoring duplicate.");
             return response()->json(['status' => 'duplicate']);
+        }
+
+        // Other Services invoice payments are a separate flow: they are tagged in the session metadata and
+        // handled by their own service. Custom-order and catalog payments never reach that branch.
+        if (str_starts_with((string) $event->type, 'checkout.session.')
+            && (($event->data->object->metadata->kind ?? null) === 'service_invoice')) {
+            app(\App\Support\ServiceInvoicePayments::class)->handleStripeSession($event->data->object, $event->type);
+            $record?->markProcessed();
+
+            return response()->json(['status' => 'received']);
         }
 
         if (in_array($event->type, ['checkout.session.completed', 'checkout.session.async_payment_succeeded'])) {
@@ -842,6 +858,17 @@ class PaymentController extends Controller
         $eventType = $payload['data']['attributes']['type'] ?? null;
 
         \Log::info('PayMongo webhook received: ' . $eventType);
+
+        // An intent we started for an Other Services invoice belongs to the invoice flow, not to an order.
+        if (in_array($eventType, ['payment.paid', 'payment.failed'], true)) {
+            $res      = $payload['data']['attributes']['data'] ?? [];
+            $invIntent = $res['attributes']['payment_intent_id'] ?? null;
+            if ($invIntent && \App\Models\ServiceInvoicePayment::where('method', 'paymongo')->where('provider_reference', $invIntent)->exists()) {
+                app(\App\Support\ServiceInvoicePayments::class)->handlePaymongo($invIntent, $eventType, (int) ($res['attributes']['amount'] ?? 0));
+
+                return response()->json(['status' => 'received']);
+            }
+        }
 
         if ($eventType === 'payment.paid') {
             $resource = $payload['data']['attributes']['data'] ?? [];

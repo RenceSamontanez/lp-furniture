@@ -153,11 +153,27 @@ final class NotificationTemplates
         /* ── customer: Other Services invoices ── */
         'service_invoice_issued' => [
             'title' => 'Your Invoice Is Ready',
-            'body'  => 'Invoice {invoice} for {service} is ready. The total is {total}. You can view and print it from your service requests page. {contact}',
+            'body'  => 'Invoice {invoice} for {service} is ready. The total is {total}. You can view it and pay it online (GCash or card) from your service requests page, or pay in cash in person. {contact}',
         ],
         'service_invoice_cancelled' => [
             'title' => 'Your Invoice Was Cancelled',
             'body'  => 'Invoice {invoice} was cancelled. You do not need to pay it. Tap to see why. {contact}',
+        ],
+        'service_invoice_payment_received' => [
+            'title' => 'Payment Received',
+            'body'  => 'We received your payment of {amount} for invoice {invoice}.{balance_note} {contact}',
+        ],
+        'service_invoice_balance_due' => [
+            'title' => 'Balance Due Now',
+            'body'  => 'Your service is done. The remaining balance of {amount} for invoice {invoice} is due. You can pay it online from your invoice page. {contact}',
+        ],
+        'service_invoice_fully_paid' => [
+            'title' => 'Invoice Fully Paid',
+            'body'  => 'Invoice {invoice} is fully paid. Thank you. We received {amount} in total. {contact}',
+        ],
+        'service_invoice_payment_failed' => [
+            'title' => 'Payment Could Not Be Completed',
+            'body'  => 'Your payment of {amount} for invoice {invoice} could not be completed and you were not charged. You can try again from your invoice page. {contact}',
         ],
         'service_invoice_paid' => [
             'title' => 'Payment Recorded',

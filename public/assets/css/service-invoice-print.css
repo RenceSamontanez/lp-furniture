@@ -8,9 +8,6 @@
 .iv-body { margin: 0; background: #f1ece3; color: #231a12; font-family: 'DM Sans', Arial, sans-serif; font-size: 13.5px; line-height: 1.55; }
 
 .iv-toolbar { max-width: 794px; margin: 16px auto 0; padding: 0 16px; display: flex; justify-content: space-between; align-items: center; }
-.iv-toolbar a { color: #5c4630; text-decoration: none; font-size: 13px; }
-.iv-toolbar a:focus-visible, .iv-toolbar button:focus-visible { outline: 2px solid #8a6a3a; outline-offset: 2px; }
-.iv-toolbar button { padding: 8px 18px; border: 1px solid #5c4630; background: #fff; color: #5c4630; border-radius: 8px; font: inherit; cursor: pointer; }
 
 .iv-sheet { position: relative; max-width: 794px; min-height: 1000px; margin: 12px auto 40px; padding: 48px 56px 40px; background: #fff; border: 1px solid #e3d9c9; display: flex; flex-direction: column; }
 
@@ -65,3 +62,4 @@
   .iv-pay { background: #fff; }
   .iv-lines tr, .iv-pay, .iv-meta { break-inside: avoid; }
 }
+.iv-payline { font-size: 12.5px; color: #6b5a47; }
