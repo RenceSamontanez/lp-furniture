@@ -90,6 +90,12 @@
         @php $serviceNewCount = \App\Models\ServiceInquiry::where('status','new')->count(); @endphp
         @if($serviceNewCount > 0)<span class="admin-nav-badge">{{ $serviceNewCount }}</span>@endif
       </a>
+      <a href="{{ route('admin.refunds.index') }}" class="admin-nav-link {{ request()->routeIs('admin.refunds.*') ? 'active' : '' }}">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Cancellations &amp; Refunds
+        @php $refundAttention = \App\Models\ServiceRefundRequest::attentionCount(); @endphp
+        @if($refundAttention > 0)<span class="admin-nav-badge">{{ $refundAttention }}</span>@endif
+      </a>
       <a href="{{ route('admin.design-requests.index') }}" class="admin-nav-link {{ request()->routeIs('admin.design-requests.*') ? 'active' : '' }}">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>
         AI Design Requests

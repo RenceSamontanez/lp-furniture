@@ -5,6 +5,7 @@
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/custom-orders.css') }}"/>
   <link rel="stylesheet" href="{{ asset('assets/css/services.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/service-refunds.css') }}"/>
 @endpush
 
 @section('content')
@@ -111,7 +112,12 @@
           </div>
         </fieldset>
 
-        @include('partials.terms-reminder')
+        <div class="co-field" style="margin-bottom:14px;">
+          <label class="co-option" for="si-terms">
+            <input type="checkbox" name="terms" id="si-terms" value="1" required @checked(old('terms'))/>
+            <span>I have read and agree to the <a href="{{ route('services.terms') }}" target="_blank" rel="noopener" data-no-loading>Other Services terms</a>.</span>
+          </label>
+        </div>
 
         <div class="co-actions">
           <a href="{{ route('home') }}" class="co-btn co-btn--ghost">Cancel</a>
@@ -138,6 +144,12 @@
                     $live    = $t->invoices->first(fn ($inv) => $inv->status !== 'void');
                     $earlier = $t->invoices->filter(fn ($inv) => $inv->status === 'void');
                   @endphp
+                  @php $openReq = $t->refundRequests->first(fn ($x) => $x->isOpen()); @endphp
+                  @if($t->isCancelled())
+                    <p class="rq-open-card"><strong>Cancelled.</strong> This service request was cancelled.</p>
+                  @elseif($openReq)
+                    <p class="rq-open-card"><strong>Cancellation requested.</strong> Payments are paused until we reply.<br/><a href="{{ route('services.refund.show', $openReq->reference) }}">See request {{ $openReq->reference }}</a></p>
+                  @endif
                   @if($live)
                     <a href="{{ route('services.invoice', $live->id) }}" class="si-invoice">
                       <span>Invoice {{ $live->invoice_number }}</span>
@@ -157,6 +169,9 @@
                         <span><span class="si-chip si-chip--cancelled">{{ $inv->statusLabel() }}</span> Cancelled, view why</span>
                       </a>
                     @endforeach
+                  @endif
+                  @if($t->isOpen() && !$openReq)
+                    <a href="{{ route('services.refund.create', $t->id) }}" class="lp-btn lp-btn--secondary lp-btn--block" style="margin-top:10px;">Request cancellation or refund</a>
                   @endif
                 </li>
               @endforeach

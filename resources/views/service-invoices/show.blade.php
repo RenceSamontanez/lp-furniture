@@ -33,7 +33,7 @@
         <div><dt>Total</dt><dd><strong>{{ $peso($i->total) }}</strong></dd></div>
         <div><dt>Payment plan</dt><dd>{{ $plan }}</dd></div>
         <div><dt>Paid so far</dt><dd>{{ $peso($i->amount_paid) }}</dd></div>
-        @if($i->status !== 'paid')
+        @if($i->status !== 'paid' && !$block)
           <div><dt>Balance</dt><dd>{{ $peso($i->balanceCents() / 100) }}</dd></div>
         @endif
       </dl>
@@ -52,9 +52,18 @@
       <section class="ip-pay" aria-labelledby="pay-heading">
         @if($i->status === 'paid')
           <p class="ip-pay-state"><strong>Paid in full.</strong> Amount received: {{ $peso($i->amount_received ?? $i->total) }}@if($i->paid_at) on {{ $day($i->paid_at) }}@endif. Thank you.</p>
+        @elseif($block)
+          <x-notice variant="blocked" title="{{ $block === 'on_hold_cancellation_request' ? 'Cancellation requested' : 'Payments are closed' }}">
+            {{ $i->blockMessage($block) }}
+            @if($openRequest)
+              <x-slot:actions><a href="{{ route('services.refund.show', $openRequest->reference) }}" class="lp-btn lp-btn--secondary">See request {{ $openRequest->reference }}</a></x-slot:actions>
+            @endif
+          </x-notice>
         @else
           @if($i->isHalfHalf() && $i->paidCents() > 0)
-            <p class="ip-pay-state"><strong>Half paid.</strong> {{ $i->service_done_at ? 'Your service is done, so the remaining balance is due now.' : 'The balance is due after the service.' }}</p>
+            <x-notice variant="{{ $i->service_done_at ? 'info' : 'waiting' }}" title="{{ $i->service_done_at ? 'Half paid. The rest is due now' : 'Half paid. The balance is due after the service' }}">
+              {{ $i->service_done_at ? 'Your service is done, so the remaining balance is due now.' : 'You will pay the rest once your service is done.' }}
+            </x-notice>
           @endif
 
           @if($due['available'])
@@ -74,11 +83,12 @@
             </div>
             <p class="ip-hint">You can also pay in cash in person. Our team will record it on your invoice.</p>
           @else
-            <p class="ip-due"><span>{{ $due['label'] }}</span> <strong>{{ $peso($due['cents'] / 100) }}</strong></p>
+            <x-notice variant="waiting" title="Pay the rest after the service" id="ip-wait">
+              The second half of {{ $peso($due['cents'] / 100) }} opens when we mark your service as done. We will notify you.
+            </x-notice>
             <div class="ip-actions ip-actions--one">
               <button type="button" class="lp-btn lp-btn--primary lp-btn--block" disabled aria-describedby="ip-wait">{{ $due['label'] }}</button>
             </div>
-            <p class="ip-hint" id="ip-wait">{{ $due['reason'] }}</p>
           @endif
         @endif
 
@@ -94,6 +104,9 @@
 
       <div class="ip-links">
         <a href="{{ route('services.invoice.print', $i->id) }}" class="lp-btn lp-btn--secondary" target="_blank" rel="noopener">View or print invoice</a>
+        @if($ticket && $ticket->isOpen() && !$openRequest)
+          <a href="{{ route('services.refund.create', $ticket->id) }}" class="lp-btn lp-btn--secondary">Request cancellation or refund</a>
+        @endif
         <a href="{{ route('services.request') }}" class="lp-btn lp-btn--secondary">Back to my service request</a>
       </div>
     </div>

@@ -3198,3 +3198,38 @@ nav .nav-btn:active {
 .lp-btn.lp-btn[aria-disabled="true"],
 .lp-btn.lp-btn:disabled { background: var(--btn-disabled); color: var(--btn-disabled-text); border-color: var(--btn-disabled); cursor: not-allowed; pointer-events: none; }
 @media (max-width: 640px) { .lp-btn:not(.lp-btn--chip) { min-height: 44px; } }
+
+/* ══════════════════════════════════════════
+   Important notice (.lp-notice), Stage 21f. For anything the reader must not miss: a bold title, one short
+   sentence, an icon and a 4px accent bar. Calm on purpose: no red fill, no animation, no capitals.
+   Markup: <x-notice variant="info|waiting|blocked|success|problem" title="..."> short sentence </x-notice>
+   Every text/background pair measures at least 4.5:1 (see docs/ui-components.md).
+══════════════════════════════════════════ */
+:root {
+  --notice-info-bg: #FBF1DA;     --notice-info-bar: #C8963E;     --notice-info-icon: #7A5410;     --notice-info-title: #2C1810; --notice-info-text: #4A3426;
+  --notice-wait-bg: #FBF1DA;     --notice-wait-bar: #C8963E;     --notice-wait-icon: #7A5410;     --notice-wait-title: #2C1810; --notice-wait-text: #4A3426;
+  --notice-block-bg: #EFE9E2;    --notice-block-bar: #7A6A5E;    --notice-block-icon: #4F4238;    --notice-block-title: #2C1810; --notice-block-text: #43382F;
+  --notice-ok-bg: #E7F0E2;       --notice-ok-bar: #5B8A4E;       --notice-ok-icon: #2F5A25;       --notice-ok-title: #17301A;   --notice-ok-text: #29432A;
+  --notice-bad-bg: #F7E7E0;      --notice-bad-bar: #B5543A;      --notice-bad-icon: #8A3520;      --notice-bad-title: #3F170D;  --notice-bad-text: #5A2A1D;
+}
+.lp-notice {
+  --n-bg: var(--notice-info-bg); --n-bar: var(--notice-info-bar); --n-icon: var(--notice-info-icon); --n-title: var(--notice-info-title); --n-text: var(--notice-info-text);
+  display: flex; align-items: flex-start; gap: 12px; box-sizing: border-box; width: 100%; min-width: 0;
+  margin: 16px 0; padding: 14px 18px 14px 16px;
+  background: var(--n-bg); border-left: 4px solid var(--n-bar); border-radius: 0 10px 10px 0;
+  color: var(--n-text); overflow-wrap: anywhere;
+}
+.lp-notice--waiting { --n-bg: var(--notice-wait-bg); --n-bar: var(--notice-wait-bar); --n-icon: var(--notice-wait-icon); --n-title: var(--notice-wait-title); --n-text: var(--notice-wait-text); }
+.lp-notice--blocked { --n-bg: var(--notice-block-bg); --n-bar: var(--notice-block-bar); --n-icon: var(--notice-block-icon); --n-title: var(--notice-block-title); --n-text: var(--notice-block-text); }
+.lp-notice--success { --n-bg: var(--notice-ok-bg); --n-bar: var(--notice-ok-bar); --n-icon: var(--notice-ok-icon); --n-title: var(--notice-ok-title); --n-text: var(--notice-ok-text); }
+.lp-notice--problem { --n-bg: var(--notice-bad-bg); --n-bar: var(--notice-bad-bar); --n-icon: var(--notice-bad-icon); --n-title: var(--notice-bad-title); --n-text: var(--notice-bad-text); }
+.lp-notice__icon { flex: none; width: 24px; height: 24px; margin-top: 1px; color: var(--n-icon); }
+.lp-notice__body { flex: 1 1 auto; min-width: 0; }
+.lp-notice__title { margin: 0; font-size: 16.5px; font-weight: 600; line-height: 1.35; color: var(--n-title); letter-spacing: 0; text-transform: none; }
+.lp-notice__text { margin: 4px 0 0; font-size: 15px; line-height: 1.5; color: var(--n-text); }
+.lp-notice__text a:not(.lp-btn) { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.lp-notice__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+@media (max-width: 640px) {
+  .lp-notice { padding: 14px 14px 14px 12px; gap: 10px; border-radius: 0 8px 8px 0; }
+  .lp-notice__actions .lp-btn { width: 100%; }
+}

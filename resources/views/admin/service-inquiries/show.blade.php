@@ -18,8 +18,28 @@
 
 <a href="{{ route('admin.service-inquiries.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">← Back to Other Services</a>
 
-@if($errors->any())
+@php $ctx = $ctx ?? \App\Support\ServiceRefundRequestService::context($t); $work = $ctx['work']; @endphp
+
+@if(session('offer_cancellation_request'))
+  <x-notice variant="blocked" title="This service has a payment on it">
+    This service has a payment on it, so it must go through a cancellation request so the refund is recorded.
+    <x-slot:actions><a href="#cancellation-request" class="lp-btn lp-btn--primary" data-open-cancellation>Open a cancellation request</a></x-slot:actions>
+  </x-notice>
+@elseif($errors->any())
   <div class="co-error" role="alert">{{ $errors->has('ticket') ? $errors->first('ticket') : $errors->first() }}</div>
+@endif
+
+@if($t->isCancelled())
+  <x-notice variant="blocked" title="Cancelled">{{ $t->closed_reason ?: 'This ticket was cancelled.' }}</x-notice>
+@elseif($ctx['open'])
+  <x-notice variant="blocked" title="On hold: cancellation requested">
+    Request {{ $ctx['open']->reference }} is {{ strtolower($ctx['open']->statusLabel()) }}. Payments are paused until it is decided.
+    <x-slot:actions><a href="{{ route('admin.refunds.show', $ctx['open']->id) }}" class="lp-btn lp-btn--primary">Open the request</a></x-slot:actions>
+  </x-notice>
+@elseif($work !== 'not_started' && $t->isOpen())
+  <x-notice variant="info" title="{{ $work === 'done' ? 'Service done' : 'Work started' }}">
+    The customer can no longer get an automatic refund. A refund now needs an exception.
+  </x-notice>
 @endif
 
 <div class="co-detail">
@@ -99,6 +119,67 @@
       </div>
     </div>
 
+    @if($isOpen)
+    <div class="admin-panel">
+      <div class="admin-panel-header"><div class="admin-panel-title">Work</div></div>
+      <div class="admin-panel-body">
+        <p class="si-hint" style="margin-top:0;">{{ \App\Support\ServiceWorkState::label($work) }}@if($t->service_started_at) · since {{ $t->service_started_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}@endif</p>
+        @if($work === 'not_started')
+          <form method="POST" action="{{ route('admin.service-inquiries.work-started', $t->id) }}" onsubmit="return confirm('After this, the customer can no longer get an automatic refund.')">
+            @csrf
+            <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" data-loading="Saving...">Work started</button>
+          </form>
+        @elseif($work === 'started' && !$ctx['open'])
+          <form method="POST" action="{{ route('admin.service-inquiries.work-started-undo', $t->id) }}" onsubmit="return confirm('Undo \"Work started\"? The customer can get an automatic refund again.')">
+            @csrf
+            <button type="submit" class="lp-btn lp-btn--secondary lp-btn--block" data-loading="Saving...">Undo work started</button>
+          </form>
+        @endif
+      </div>
+    </div>
+
+    @if(!$ctx['open'])
+    <div class="admin-panel">
+      <div class="admin-panel-header"><div class="admin-panel-title">Cancellation</div></div>
+      <div class="admin-panel-body">
+        <details class="co-more" id="cancellation-request" @if(session('offer_cancellation_request') || $errors->has('reason_code')) open @endif>
+          <summary>Open a cancellation request for the customer</summary>
+          <p class="si-hint">Use this when the customer asks by phone or in person. It puts the invoice on hold until you decide.@if($ctx['paid_cents'] > 0) {{ \App\Support\ServiceInvoiceDesk::peso($ctx['paid_cents'] / 100) }} has been paid.@endif</p>
+          <form method="POST" action="{{ route('admin.service-inquiries.refund-request', $t->id) }}" class="co-action-form">
+            @csrf
+            <label class="co-modal-label" for="cr-reason" style="margin-top:0;">Reason</label>
+            <select name="reason_code" id="cr-reason" class="form-input" required>
+              @foreach(\App\Models\ServiceRefundRequest::REASONS as $k => $label)
+                <option value="{{ $k }}" @selected(old('reason_code', 'change_of_mind') === $k)>{{ $label }}</option>
+              @endforeach
+            </select>
+            <label class="co-modal-label" for="cr-text">Details (optional)</label>
+            <textarea name="reason_text" id="cr-text" class="form-input" rows="2" maxlength="1000">{{ old('reason_text') }}</textarea>
+            <label class="co-modal-label" for="cr-phone">Customer mobile</label>
+            <input type="text" name="contact_phone" id="cr-phone" class="form-input" required value="{{ old('contact_phone', $t->phone) }}"/>
+            <label class="co-modal-label" for="cr-email">Customer email</label>
+            <input type="email" name="contact_email" id="cr-email" class="form-input" required value="{{ old('contact_email', $t->email ?: optional($t->user)->email) }}"/>
+            @if($ctx['paid_cents'] > 0)
+              <label class="co-modal-label" for="cr-method">Refund method</label>
+              <select name="refund_method" id="cr-method" class="form-input" required>
+                @foreach(\App\Models\ServiceRefundRequest::METHODS as $k => $label)
+                  <option value="{{ $k }}" @selected(old('refund_method') === $k)>{{ $label }}</option>
+                @endforeach
+              </select>
+              <label class="co-modal-label" for="cr-gcash">GCash number (if GCash)</label>
+              <input type="text" name="gcash_number" id="cr-gcash" class="form-input" inputmode="tel" autocomplete="off" value="{{ old('gcash_number') }}"/>
+              <label class="co-modal-label" for="cr-gname">Name on the GCash account (if GCash)</label>
+              <input type="text" name="gcash_account_name" id="cr-gname" class="form-input" autocomplete="off" value="{{ old('gcash_account_name') }}"/>
+            @endif
+            <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" style="margin-top:12px;" data-loading="Saving..."
+                    onclick="return confirm('Open this cancellation request? Payments on this service will be paused.')">Open a cancellation request</button>
+          </form>
+        </details>
+      </div>
+    </div>
+    @endif
+    @endif
+
     <div class="admin-panel">
       <div class="admin-panel-header"><div class="admin-panel-title">Calls</div></div>
       <div class="admin-panel-body">
@@ -115,9 +196,9 @@
           <button type="button" class="admin-btn admin-btn-gold co-wide" id="co-open-call">Send call update</button>
 
           <details class="co-more">
-            <summary>Close this ticket</summary>
+            <summary>Close or cancel this ticket</summary>
             <form method="POST" action="{{ route('admin.service-inquiries.close', $t->id) }}" class="co-action-form"
-                  onsubmit="return confirm('Close this ticket? It can no longer be updated.')">
+                  onsubmit="return confirm('Close this ticket? It can no longer be updated. A sent invoice with no payment on it is cancelled with it and the customer is told.')">
               @csrf
               <label class="co-modal-label" for="si-reason" style="margin-top:0;">Reason</label>
               <textarea name="reason" id="si-reason" class="form-input" rows="3" maxlength="1000" required
@@ -180,6 +261,7 @@
 @endsection
 
 @push('scripts')
+<script>document.querySelectorAll('[data-open-cancellation]').forEach(function (a) { a.addEventListener('click', function () { var d = document.getElementById('cancellation-request'); if (d) { d.open = true; } }); });</script>
 @if($isOpen)
 <script>
 (function () {

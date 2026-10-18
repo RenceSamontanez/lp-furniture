@@ -22,7 +22,14 @@
       <span class="sx-badge" role="status">{{ $i->statusLabel() }}</span>
       <h1 class="sx-title">This invoice was cancelled</h1>
 
-      @if($paidBefore)
+      @if($refund)
+        <p class="sx-lead">You asked us to cancel this service, and your refund was sent. The details are below.</p>
+        @php $sentAttempt = $refund->attempts->firstWhere('outcome', 'sent'); @endphp
+        <x-notice variant="success" title="Your refund was sent">
+          {{ '₱' . number_format((float) ($sentAttempt?->amount ?? $refund->approved_amount), 2) }} by {{ $sentAttempt ? (\App\Models\ServiceRefundRequest::METHODS[$sentAttempt->method] ?? $sentAttempt->method) : $refund->methodLabel() }}@if($sentAttempt?->sent_on) on {{ $sentAttempt->sent_on->format('F j, Y') }}@endif. Transaction number: {{ $sentAttempt?->transaction_number }}.
+          <x-slot:actions><a href="{{ route('services.refund.show', $refund->reference) }}" class="lp-btn lp-btn--secondary">See request {{ $refund->reference }}</a></x-slot:actions>
+        </x-notice>
+      @elseif($paidBefore)
         <p class="sx-lead">We cancelled this invoice after a payment was recorded for it. Please contact us so we can go through it with you.</p>
       @else
         <p class="sx-lead">We cancelled this invoice. You do not need to pay anything for it, and no payment is expected.</p>

@@ -188,6 +188,87 @@ foreach ($customerRoutes as [$method, $template, $expectations]) {
     }
 }
 
+/* ── Stage 21f: owner-only cancellation / refund routes ───────────────────────────────────────────────────
+   Ticket A has no request (form routes); ticket B has an open request created through the real service (request pages).
+   The owner's POSTs send an empty body, so they are refused by validation or by the request status and change nothing. */
+$ticketA = App\Models\ServiceInquiry::create([
+    'reference_number' => 'RBAC-' . strtoupper(bin2hex(random_bytes(3))), 'service_type' => 'repair', 'furniture_type' => 'Chair',
+    'concern' => 'Rbac refund probe A.', 'name' => 'Rbac', 'phone' => '09171234567', 'status' => 'new', 'user_id' => $owner->id,
+]);
+$ticketB = App\Models\ServiceInquiry::create([
+    'reference_number' => 'RBAC-' . strtoupper(bin2hex(random_bytes(3))), 'service_type' => 'repair', 'furniture_type' => 'Chair',
+    'concern' => 'Rbac refund probe B.', 'name' => 'Rbac', 'phone' => '09171234567', 'status' => 'new', 'user_id' => $owner->id,
+]);
+$refundSvc = app(App\Support\ServiceRefundRequestService::class);
+$refundSvc->startWork($ticketB->id, $admin);   // work started + nothing paid = a real open request instead of an instant cancel
+$reqB = $refundSvc->create($ticketB->id, [
+    'reason_code' => 'other', 'contact_phone' => '09171234567', 'contact_email' => 'rbac@example.test', 'terms' => '1',
+], $owner, 'form');
+
+$keys = ['ticket' => $ticketA->id, 'ref' => $reqB->reference, 'missing_ticket' => 999999999, 'missing_ref' => 'REF-2026-9999'];
+$refundRoutes = [
+    // [method, template, key for the existing record, key for the missing one, owner expectation]
+    ['GET',  '/services/requests/{x}/cancellation',         'ticket', 'missing_ticket', 200],
+    ['POST', '/services/requests/{x}/cancellation/review',  'ticket', 'missing_ticket', 'redirect_any'],
+    ['POST', '/services/requests/{x}/cancellation',         'ticket', 'missing_ticket', 'redirect_any'],
+    ['GET',  '/services/refunds/{x}',                       'ref',    'missing_ref',    200],
+    ['GET',  '/services/refunds/{x}/sent',                  'ref',    'missing_ref',    200],
+    ['POST', '/services/refunds/{x}/reply',                 'ref',    'missing_ref',    'redirect_any'],
+];
+$refundTable = [
+    '| Route | Record | guest | owner | another customer | admin (admin guard only) |',
+    '|---|---|---|---|---|---|',
+];
+$refundBad = 0;
+$refundTotal = 0;
+foreach ($refundRoutes as [$method, $template, $existing, $missing, $ownerExpect]) {
+    foreach ([[$existing, 'exists'], [$missing, 'does not exist']] as [$key, $recordLabel]) {
+        $uri = str_replace('{x}', (string) $keys[$key], $template);
+        $expect = $key === $existing
+            ? ['guest' => 'login', 'owner' => $ownerExpect, 'other' => 404, 'admin_guard_only' => 'login']
+            : ['guest' => 'login', 'owner' => 404, 'other' => 404, 'admin_guard_only' => 'login'];
+        $cells = [];
+        foreach (['guest' => ['guest', null], 'owner' => ['customer_web', $owner], 'other' => ['customer_web', $other], 'admin_guard_only' => ['admin', null]] as $who => [$actorName, $asUser]) {
+            $cmd = escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($probe) . ' ' . implode(' ', array_map('escapeshellarg', [
+                $actorName, $method, $uri, ($asUser ?? $customer)->email, $admin->email,
+            ])) . ' 2>&1';
+            $lines = preg_split('/\R/', trim((string) shell_exec($cmd)));
+            $x = json_decode(end($lines) ?: '', true) ?: ['status' => 'ERR', 'location' => null];
+            $refundTotal++;
+            $label = $x['status'] . ($x['location'] ? ' → ' . parse_url($x['location'], PHP_URL_PATH) : '');
+            $isRedirect = in_array($x['status'], [301, 302], true);
+            $path = $x['location'] ? parse_url($x['location'], PHP_URL_PATH) : null;
+            $ok = match (true) {
+                $expect[$who] === 'login'        => $isRedirect && $path === '/login',
+                $expect[$who] === 'redirect_any' => $isRedirect && $path !== '/login',
+                default                          => $x['status'] === $expect[$who],
+            };
+            if (!$ok) {
+                $refundBad++;
+                $label = '**' . $label . ' FAIL**';
+            } else {
+                $label .= ' ✓';
+            }
+            $cells[] = $label;
+        }
+        $refundTable[] = '| `' . $method . ' ' . $template . '` | ' . $recordLabel . ' | ' . implode(' | ', $cells) . ' |';
+    }
+}
+$ownerBad += $refundBad;
+$ownerTotal += $refundTotal;
+$stateAfter = [App\Models\ServiceRefundRequest::count(), $reqB->fresh()->status];
+if ($stateAfter !== [1, 'new']) {
+    $ownerBad++;
+    fwrite(STDERR, 'A probe changed refund request state: ' . json_encode($stateAfter) . "\n");
+}
+
+$rids = App\Models\ServiceRefundRequest::whereIn('service_inquiry_id', [$ticketA->id, $ticketB->id])->pluck('id');
+Illuminate\Support\Facades\DB::table('service_refund_messages')->whereIn('service_refund_request_id', $rids)->delete();
+Illuminate\Support\Facades\DB::table('service_refund_attempts')->whereIn('service_refund_request_id', $rids)->delete();
+Illuminate\Support\Facades\DB::table('service_refund_requests')->whereIn('id', $rids)->delete();
+Illuminate\Support\Facades\DB::table('service_inquiries')->whereIn('id', [$ticketA->id, $ticketB->id])->delete();
+App\Models\Notification::where('title', 'New Cancellation Request')->where('message', 'like', '%Rbac%')->delete();
+
 // scratch cleanup. Sent and cancelled invoices are locked at the model layer, so remove them with the query builder (scratch database only).
 $ids = array_values(array_filter($ownerInvoices, fn ($v) => $v !== 999999999));
 $ticketIds = Illuminate\Support\Facades\DB::table('service_invoices')->whereIn('id', $ids)->pluck('service_inquiry_id');
@@ -252,7 +333,11 @@ $doc = "# RBAC matrix (Stage 11)\n\n{$summary}\n\n"
     . "Stage 21e: the owner paying a SENT invoice is deliberately not probed here, because that would call the real Stripe or PayMongo API from this process; it is covered by PHPUnit with a fake gateway.
 
 "
-    . implode("\n", $ownerTable) . "\n";
+    . implode("\n", $ownerTable) . "\n\n## Stage 21f: owner-only cancellation and refund routes\n\n"
+    . "The request form, summary, confirm, confirmation page, request page and reply route belong to the ticket's owner. Expected: a guest, and an admin signed in only on the admin guard, "
+    . "are redirected to /login; another customer gets 404 for every record (so nothing reveals whether a request exists); the owner reaches the record, and the owner's empty POSTs are refused by validation or by the request status and change nothing. "
+    . "The new /admin routes (Cancellations & Refunds, the actions, opening a request on a customer's behalf, Work started) are in the table above.\n\n"
+    . implode("\n", $refundTable) . "\n";
 
 file_put_contents($root . '/docs/rbac-matrix-stage11.md', $doc);
 echo $summary, "\n";
