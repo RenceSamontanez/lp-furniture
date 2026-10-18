@@ -398,7 +398,7 @@ class ServiceInvoiceTest extends TestCase
             app(ServiceInvoiceDesk::class)->void($i->id, $this->admin, 'Customer cancelled; refunded in person.');
             $this->fail('A paid invoice must not be cancellable.');
         } catch (\App\Support\PipelineException $e) {
-            $this->assertSame('This invoice has a payment on it. If the customer needs a refund, record a refund note instead.', $e->getMessage());
+            $this->assertSame('This invoice has a payment on it. Open a cancellation request so the refund is recorded.', $e->getMessage());
         }
         $v = $i->fresh();
         $this->assertSame('paid', $v->status);
@@ -682,7 +682,7 @@ class ServiceInvoiceTest extends TestCase
         $routes = collect(Route::getRoutes()->getRoutes())
             ->filter(fn ($r) => str_starts_with($r->getName() ?? '', 'admin.service-invoices.'))
             ->values();
-        $this->assertCount(13, $routes);
+        $this->assertCount(12, $routes);
 
         foreach ($routes as $route) {
             $method = $route->methods()[0];

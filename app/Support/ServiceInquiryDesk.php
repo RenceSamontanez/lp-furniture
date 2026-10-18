@@ -109,6 +109,7 @@ final class ServiceInquiryDesk
             'preferred_call_date'   => $data['preferred_call_date'] ?? null,
             'status'                => 'new',
             'created_by_admin_id'   => $admin?->id,
+            'terms_accepted_at'     => !empty($data['terms']) ? now() : null,   // only the customer's own form asks for it
         ];
 
         return DB::transaction(function () use ($attributes, $customer, $admin) {

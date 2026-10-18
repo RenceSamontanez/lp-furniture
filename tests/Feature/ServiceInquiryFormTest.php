@@ -51,6 +51,7 @@ class ServiceInquiryFormTest extends TestCase
             'phone'                 => '09171234567',
             'email'                 => 'rence@example.com',
             'preferred_call_window' => 'morning_8_12',
+            'terms'                 => '1',
         ], $over);
     }
 

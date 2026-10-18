@@ -11,4 +11,10 @@ class TermsController extends Controller
     {
         return view('terms', ['policy' => AgreementPolicy::current()]);
     }
+
+    /** The Other Services terms (cancellation and refunds). Standalone; the main terms version is not touched. */
+    public function services()
+    {
+        return view('services.terms');
+    }
 }

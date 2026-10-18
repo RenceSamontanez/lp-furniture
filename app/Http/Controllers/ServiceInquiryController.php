@@ -27,7 +27,7 @@ class ServiceInquiryController extends Controller
         $user = Auth::user();
 
         $mine = ServiceInquiry::where('user_id', $user->id)
-            ->with(['invoices' => fn ($q) => $q->openableByCustomer()->orderByDesc('id')])
+            ->with(['invoices' => fn ($q) => $q->openableByCustomer()->orderByDesc('id'), 'refundRequests'])
             ->orderByDesc('id')->limit(10)->get();
 
         return view('services.request', [
@@ -57,7 +57,9 @@ class ServiceInquiryController extends Controller
             ]);
         }
 
-        $data = $request->validate(ServiceInquiryDesk::rules(true), ServiceInquiryDesk::messages());
+        $data = $request->validate(ServiceInquiryDesk::rules(true) + ['terms' => ['accepted']], ServiceInquiryDesk::messages() + [
+            'terms.accepted' => 'Please confirm that you have read and agree to the Other Services terms.',
+        ]);
 
         $inquiry = $this->desk->create($data, Auth::user());
         RateLimiter::hit($key, 3600);

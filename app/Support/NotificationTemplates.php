@@ -180,6 +180,50 @@ final class NotificationTemplates
             'body'  => 'We recorded your payment of {amount} for invoice {invoice} on {when}. Thank you. The paid invoice is available on your service requests page. {contact}',
         ],
 
+        /* ── customer: Other Services cancellations and refunds (Stage 21f) ── */
+        'service_request_cancelled' => [
+            'title' => 'Your Service Request Was Cancelled',
+            'body'  => 'Our team cancelled your service request {reference}. You do not need to pay anything more for it. Tap to see the details. {contact}',
+        ],
+        'refund_received' => [
+            'title' => 'Cancellation Request Received',
+            'body'  => 'We received your cancellation request {request} for service request {reference}. Payments on this service are paused until we reply. If a refund is approved, it takes up to 7 days after approval. {contact}',
+        ],
+        'refund_needs_info' => [
+            'title' => 'We Need a Little More Information',
+            'body'  => 'About your cancellation request {request}: {message} Please reply from the request page. {contact}',
+        ],
+        'refund_approved' => [
+            'title' => 'Your Request Was Approved',
+            'body'  => 'Your cancellation request {request} was approved. {refund_line} {contact}',
+        ],
+        'refund_refunded' => [
+            'title' => 'Your Refund Was Sent',
+            'body'  => 'We sent your refund of {amount} for request {request} by {method}. Transaction number: {transaction}. {contact}',
+        ],
+        'refund_problem' => [
+            'title' => 'Your Refund Needs Your Attention',
+            'body'  => 'We could not send your refund for request {request}: {problem}. Please send the correct details from the request page and we will try again. {contact}',
+        ],
+        'refund_declined' => [
+            'title' => 'Your Request Was Not Approved',
+            'body'  => 'We could not approve your cancellation request {request}. {explanation} Your service request stays open. {contact}',
+        ],
+        'refund_cancelled_no_refund' => [
+            'title' => 'Service Request Cancelled',
+            'body'  => 'Your service request {reference} was cancelled (request {request}). No payment was made, so there is nothing to refund. {contact}',
+        ],
+
+        /* ── admin: cancellations and refunds ── */
+        'admin_refund_request' => [
+            'title' => 'New Cancellation Request',
+            'body'  => '{customer} asked to cancel service request {reference} ({request}). {amount_line} Work state: {work}.',
+        ],
+        'admin_refund_reply' => [
+            'title' => 'Customer Replied on a Cancellation Request',
+            'body'  => '{customer} replied on cancellation request {request}.',
+        ],
+
         /* ── admin ── */
         'admin_new_request' => [
             'title' => 'New Custom Order Request',

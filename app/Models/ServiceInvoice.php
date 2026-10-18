@@ -124,11 +124,12 @@ class ServiceInvoice extends Model
 
             $allowed = match ($from) {
                 self::ISSUED => $to === self::PAID ? self::PAY_FIELDS : ($to === self::VOID ? self::VOID_FIELDS : self::TRACK_FIELDS),
-                self::PAID   => $to === self::VOID ? self::VOID_FIELDS : [],
+                self::PAID   => $to === self::VOID ? self::VOID_FIELDS : ['service_done_at'],   // a paid invoice may still be marked "Service done"
                 default      => [],
             };
+            $onlyServiceDone = $from === self::PAID && $dirty === ['service_done_at'];
 
-            if ($dirty && (array_diff($dirty, $allowed) || ($to === $from && $from !== self::ISSUED))) {
+            if ($dirty && (array_diff($dirty, $allowed) || ($to === $from && $from !== self::ISSUED && !$onlyServiceDone))) {
                 throw new ImmutableRecordException(
                     "Invoice #{$invoice->getKey()} is {$from} and cannot be changed. Cancel it and send a new invoice instead."
                 );
@@ -187,13 +188,77 @@ class ServiceInvoice extends Model
         return $this->status === self::VOID;
     }
 
+    /** Plain-words explanations for each reason a payment cannot start (customer wording). */
+    public const BLOCK_MESSAGES = [
+        'draft'                        => 'This invoice has not been sent yet.',
+        'invoice_cancelled'            => 'This invoice was cancelled, so it can no longer be paid.',
+        'ticket_cancelled'             => 'This service request was cancelled, so nothing more can be paid.',
+        'on_hold_cancellation_request' => 'Cancellation requested. Payments are paused until we reply.',
+        'already_paid'                 => 'This invoice is already paid.',
+        'installment_not_open'         => 'The next payment opens when the service is done.',
+    ];
+
     /**
-     * Whether anyone may still act on this invoice (pay it, print it, download it, start an online payment).
-     * Only a sent invoice is payable; a cancelled one never is. Every route that acts on an invoice asks this.
+     * The one place that decides whether a payment may start. Null when it may, otherwise a code:
+     * draft, invoice_cancelled, ticket_cancelled, on_hold_cancellation_request, already_paid, installment_not_open.
+     * Every payment start route, pay button and checkout creation asks this (directly or through isPayable()).
      */
+    public function paymentBlockReason(): ?string
+    {
+        return $this->hardBlockReason() ?? $this->installmentGateReason();
+    }
+
+    /** Reasons that block the invoice itself (as opposed to just the next installment not being open yet). */
+    public function hardBlockReason(): ?string
+    {
+        if ($this->status === self::DRAFT) {
+            return 'draft';
+        }
+        if ($this->status === self::VOID) {
+            return 'invoice_cancelled';
+        }
+        if ($this->status === self::PAID) {
+            return 'already_paid';
+        }
+
+        $ticket = $this->inquiry;
+        if ($ticket && in_array($ticket->status, ['cancelled', 'closed'], true)) {
+            return 'ticket_cancelled';
+        }
+        if ($this->refundRequests()->open()->exists()) {
+            return 'on_hold_cancellation_request';
+        }
+
+        return null;
+    }
+
+    /** The second half opens only after "Service done". */
+    private function installmentGateReason(): ?string
+    {
+        $plan = $this->installmentCents();
+        if (count($plan) > 1 && $this->paidCents() >= $plan[1] && !$this->service_done_at) {
+            return 'installment_not_open';
+        }
+
+        return null;
+    }
+
+    public function blockMessage(?string $code = null): ?string
+    {
+        $code ??= $this->paymentBlockReason();
+
+        return $code ? (self::BLOCK_MESSAGES[$code] ?? 'This invoice cannot be paid right now.') : null;
+    }
+
+    /** Whether a payment can be started on this invoice right now. A cancelled, held, draft or paid invoice never is. */
     public function isPayable(): bool
     {
-        return $this->status === self::ISSUED;
+        return $this->paymentBlockReason() === null;
+    }
+
+    public function refundRequests()
+    {
+        return $this->hasMany(ServiceRefundRequest::class, 'service_invoice_id')->orderByDesc('id');
     }
 
     public function deliveryLabel(): string

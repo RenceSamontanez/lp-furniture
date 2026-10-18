@@ -201,6 +201,9 @@ final class ServiceInvoiceDesk
     {
         return DB::transaction(function () use ($ticketId, $admin, $clean) {
             $ticket = ServiceInquiry::lockForUpdate()->findOrFail($ticketId);
+            if (!$ticket->isOpen()) {
+                throw new PipelineException('This ticket is closed or cancelled, so it cannot get a new invoice.');
+            }
 
             if ($live = self::activeFor($ticket)) {
                 throw new PipelineException('This ticket already has an invoice (' . ($live->invoice_number ?: 'draft #' . $live->id) . '). Cancel it first if you need to send a new one.');
@@ -265,6 +268,9 @@ final class ServiceInvoiceDesk
         return DB::transaction(function () use ($invoiceId, $admin) {
             [$ticket, $invoice] = $this->lock($invoiceId);
             $this->requireStatus($invoice, [ServiceInvoice::DRAFT], 'send it');
+            if (!$ticket->isOpen()) {
+                throw new PipelineException('This ticket is closed or cancelled, so its invoice cannot be sent.');
+            }
 
             // Re-derive the total from the saved lines: an invoice is issued from what is stored, not from a page.
             $cents = self::sumCents($invoice->lines);
@@ -372,11 +378,14 @@ final class ServiceInvoiceDesk
             throw new PipelineException('Please keep the reason under 1,000 characters.');
         }
 
-        return DB::transaction(function () use ($invoiceId, $admin, $reason) {
+        $voided = DB::transaction(function () use ($invoiceId, $admin, $reason) {
             [$ticket, $invoice] = $this->lock($invoiceId);
             $this->requireStatus($invoice, [ServiceInvoice::ISSUED, ServiceInvoice::PAID], 'cancel it');
             if ($invoice->hasPayment()) {
                 throw new PipelineException(ServiceInvoicePayments::CANCEL_BLOCKED);
+            }
+            if ($open = $ticket->openRefundRequest()) {
+                throw new PipelineException("A cancellation request is open on this service ({$open->reference}). Decide that request first.");
             }
 
             $wasSent = $invoice->status === ServiceInvoice::ISSUED;
@@ -398,6 +407,11 @@ final class ServiceInvoiceDesk
 
             return $invoice;
         });
+
+        // Anything the customer could still complete online is closed now that the invoice is cancelled.
+        app(ServiceInvoicePayments::class)->closeOpenCheckouts($voided->id, 'The invoice was cancelled');
+
+        return $voided;
     }
 
     /* ───────────── internals ───────────── */

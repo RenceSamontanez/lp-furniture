@@ -271,7 +271,7 @@ class ServiceInvoicePaymentsTest extends TestCase
         // the second half cannot be paid before Service done (online or cash), and no gateway is called
         $this->assertFalse(ServiceInvoicePayments::due($i)['available']);
         $this->asOwner()->get(route('services.invoice', $i->id))->assertOk()
-            ->assertSee('Available when the service is done')->assertSee('Pay remaining balance')->assertSee('Half paid');
+            ->assertSee('Pay the rest after the service')->assertSee('opens when we mark your service as done. We will notify you.')->assertSee('Pay remaining balance')->assertSee('Half paid');
         $created = $this->gateway->paymongoCreated + $this->gateway->stripeCreated;
         $this->pay($i, 'stripe')->assertRedirect(route('services.invoice', $i->id))->assertSessionHas('error');
         $this->pay($i, 'gcash')->assertSessionHas('error');
@@ -287,7 +287,7 @@ class ServiceInvoicePaymentsTest extends TestCase
         $this->assertStringContainsString('Your service is done', $n->message);
         $this->assertStringContainsString('2,000.01', $n->message);
         $this->assertStringContainsString('0917-222-3333', $n->message);
-        $this->asOwner()->get(route('services.invoice', $i->id))->assertOk()->assertSee('Pay remaining balance')->assertSee('Pay with GCash')->assertDontSee('Available when the service is done');
+        $this->asOwner()->get(route('services.invoice', $i->id))->assertOk()->assertSee('Pay remaining balance')->assertSee('Pay with GCash')->assertDontSee('Pay the rest after the service');
 
         // second half
         $this->pay($i, 'stripe')->assertRedirect('https://checkout.stripe.test/1');
@@ -356,9 +356,8 @@ class ServiceInvoicePaymentsTest extends TestCase
         $this->stripeWebhook('evt_late', 'checkout.session.completed', $row)->assertJson(['status' => 'duplicate']);
         $this->assertSame(1, $this->adminAlerts());
 
-        // and the refund note flow works on it
-        $this->asAdmin()->post(route('admin.service-invoices.refund-note', $i->id), ['amount' => '4000', 'method' => 'stripe', 'note' => 'Refunded in the Stripe dashboard.'])
-            ->assertSessionHas('success');
+        // and a refund can still be recorded on it (the old note service stays; the admin form was replaced by cancellation requests)
+        app(ServiceInvoicePayments::class)->addRefundNote($i->id, $this->admin, '4000', 'stripe', 'Refunded in the Stripe dashboard.');
         $this->assertSame(1, ServiceInvoiceRefundNote::where('service_invoice_id', $i->id)->count());
     }
 
@@ -552,8 +551,9 @@ class ServiceInvoicePaymentsTest extends TestCase
         $i = $this->invoice('4000', 'half_half');
         $this->asAdmin()->post(route('admin.service-invoices.cash', $i->id), ['amount' => '2000', 'confirm' => '1'])->assertSessionHas('success');
 
-        $msg = 'This invoice has a payment on it. If the customer needs a refund, record a refund note instead.';
-        $this->get(route('admin.service-invoices.show', $i->id))->assertOk()->assertSee($msg)->assertDontSee('id="inv-open-cancel"', false);
+        $msg = 'This invoice has a payment on it. Open a cancellation request so the refund is recorded.';
+        $this->get(route('admin.service-invoices.show', $i->id))->assertOk()->assertSee('This invoice has a payment on it')
+            ->assertSee('Open a cancellation request so the refund is recorded.')->assertDontSee('id="inv-open-cancel"', false);
 
         $this->post(route('admin.service-invoices.void', $i->id), ['reason' => 'Customer changed their mind.'])->assertSessionHasErrors(['invoice' => $msg]);
         $this->assertSame('issued', $i->fresh()->status);
@@ -564,28 +564,24 @@ class ServiceInvoicePaymentsTest extends TestCase
         $this->assertSame('void', $free->fresh()->status);
     }
 
-    public function test_refund_notes_are_records_only_and_never_call_a_gateway(): void
+    public function test_old_refund_notes_stay_readable_but_the_form_and_route_are_gone_and_no_gateway_is_called(): void
     {
         $i = $this->invoice('4000');
         $this->asAdmin()->post(route('admin.service-invoices.cash', $i->id), ['amount' => '4000', 'confirm' => '1']);
         $calls = $this->gateway->calls;
-        $url = route('admin.service-invoices.refund-note', $i->id);
+        $this->assertFalse(\Illuminate\Support\Facades\Route::has('admin.service-invoices.refund-note'), 'the admin refund note form was replaced by cancellation requests');
 
-        $this->post($url, ['amount' => '1000', 'method' => 'gcash', 'note' => 'Refunded 1,000 through GCash.'])->assertSessionHas('success');
+        $svc = app(ServiceInvoicePayments::class);
+        $svc->addRefundNote($i->id, $this->admin, '1000', 'gcash', 'Refunded 1,000 through GCash.');
         $note = ServiceInvoiceRefundNote::sole();
         $this->assertSame(['1000.00', 'gcash', $this->admin->id], [(string) $note->amount, $note->method, $note->recorded_by]);
-        $this->assertStringContainsString('refund note recorded', $i->inquiry->fresh()->admin_notes);
 
-        $this->post($url, ['amount' => '3500', 'method' => 'cash', 'note' => 'More than was paid.'])->assertSessionHasErrors('invoice');
-        $this->post($url, ['amount' => '100', 'method' => 'bitcoin', 'note' => 'Not a method.'])->assertSessionHasErrors('method');
-        $this->post($url, ['amount' => '100', 'method' => 'cash', 'note' => 'abc'])->assertSessionHasErrors('note');
-        $this->assertSame(1, ServiceInvoiceRefundNote::count());
+        // the table and its data are untouched, and show read-only on the invoice page
+        $this->get(route('admin.service-invoices.show', $i->id))->assertOk()->assertSee('Earlier refund notes')->assertSee('Refunded 1,000 through GCash.')
+            ->assertDontSee('Save refund note');
+
         $this->assertSame($calls, $this->gateway->calls, 'no gateway call of any kind');
         $this->assertFalse(method_exists(InvoiceGateway::class, 'refund'));
-
-        // nothing to refund on an unpaid invoice
-        $unpaid = $this->invoice('4000');
-        $this->post(route('admin.service-invoices.refund-note', $unpaid->id), ['amount' => '100', 'method' => 'cash', 'note' => 'No payment here.'])->assertSessionHasErrors('invoice');
     }
 
     /* ───────────── printed invoice, wording, Luma ───────────── */

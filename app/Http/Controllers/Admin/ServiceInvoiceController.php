@@ -74,7 +74,8 @@ class ServiceInvoiceController extends Controller
             'ticket'  => $invoice->inquiry,
             'due'     => ServiceInvoicePayments::due($invoice),
             'receivedCents' => ServiceInvoicePayments::receivedCents($invoice),
-            'refundMethods' => \App\Models\ServiceInvoiceRefundNote::METHODS,
+            'work'    => \App\Support\ServiceWorkState::for($invoice->inquiry),
+            'openRequest' => $invoice->inquiry->openRefundRequest(),
             'today'   => ServiceInquiryDesk::today()->toDateString(),
         ]);
     }
@@ -209,24 +210,6 @@ class ServiceInvoiceController extends Controller
         return $this->run($id, fn () => $this->payments->recordCash((int) $id, Auth::guard('admin')->user(), $data['amount'], true), 'Cash payment recorded.');
     }
 
-    public function refundNote(Request $request, $id)
-    {
-        ServiceInvoice::findOrFail($id);
-        $data = $request->validate([
-            'amount' => ['required', 'numeric', 'gt:0', 'max:' . ServiceInvoiceDesk::MAX_AMOUNT, 'regex:/^\d+(\.\d{1,2})?$/'],
-            'method' => ['required', 'in:' . implode(',', array_keys(\App\Models\ServiceInvoiceRefundNote::METHODS))],
-            'note'   => ['required', 'string', 'min:5', 'max:1000'],
-        ], [
-            'amount.required' => 'Enter the refund amount.',
-            'method.required' => 'Choose how the refund was or will be given.',
-            'note.required'   => 'Write a short note about the refund.',
-            'note.min'        => 'Please write a short note about the refund (at least 5 characters).',
-        ]);
-
-        return $this->run($id, fn () => $this->payments->addRefundNote((int) $id, Auth::guard('admin')->user(), $data['amount'], $data['method'], $data['note']),
-            'Refund note saved. It is only a record: the refund itself is done outside the system (Stripe dashboard, GCash or cash).');
-    }
-
     public function print($id)
     {
         $invoice = ServiceInvoice::with(['lines', 'payments'])->findOrFail($id);
@@ -242,7 +225,8 @@ class ServiceInvoiceController extends Controller
         try {
             $action();
         } catch (PipelineException $e) {
-            return redirect()->route('admin.service-invoices.show', $id)->withErrors(['invoice' => $e->getMessage()]);
+            return redirect()->route('admin.service-invoices.show', $id)->withErrors(['invoice' => $e->getMessage()])
+                ->with('offer_cancellation_request', $e->getMessage() === ServiceInvoicePayments::CANCEL_BLOCKED);
         }
 
         return redirect()->route('admin.service-invoices.show', $id)->with('success', $message);

@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\DB;
  */
 final class ServiceInvoicePayments
 {
-    public const CANCEL_BLOCKED = 'This invoice has a payment on it. If the customer needs a refund, record a refund note instead.';
+    public const CANCEL_BLOCKED = 'This invoice has a payment on it. Open a cancellation request so the refund is recorded.';
 
     public function __construct(private ServiceInquiryDesk $tickets, private InvoiceGateway $gateway)
     {
@@ -57,13 +57,15 @@ final class ServiceInvoicePayments
         if ($next === null || $invoice->status === ServiceInvoice::PAID) {
             return ['installment' => null] + $base;
         }
-        if (!$invoice->isPayable()) {
-            $base['reason'] = 'This invoice can no longer be paid.';
+        if ($code = $invoice->hardBlockReason()) {
+            $base['reason'] = rtrim($invoice->blockMessage($code), '.');
+            $base['block'] = $code;
 
             return $base;
         }
-        if ($next === 2 && !$invoice->service_done_at) {
+        if ($invoice->paymentBlockReason() === 'installment_not_open') {
             $base['reason'] = 'Available when the service is done';
+            $base['block'] = 'installment_not_open';
 
             return $base;
         }
@@ -103,9 +105,8 @@ final class ServiceInvoicePayments
 
             // Belt and braces: the route middleware already refuses these, but a payment must never start on a
             // cancelled, draft or paid invoice even if a route is ever missed.
-            if (!$invoice->isPayable()) {
-                throw new PipelineException($invoice->status === ServiceInvoice::PAID
-                    ? 'This invoice is already paid.' : 'This invoice can no longer be paid.');
+            if ($code = $invoice->hardBlockReason()) {
+                throw new PipelineException($invoice->blockMessage($code));
             }
 
             $due = self::due($invoice);
@@ -351,6 +352,11 @@ final class ServiceInvoicePayments
                 return;
             }
 
+            $onHold = $invoice->refundRequests()->open()->exists() || ($invoice->inquiry && in_array($invoice->inquiry->status, ['cancelled', 'closed'], true));
+            if ($onHold) {
+                $alert = [$via, $receivedCents / 100, $gatewayRef, "invoice {$invoice->invoice_number} is on hold for a cancellation request, but this payment arrived anyway and was recorded. Include it in the refund if the request is approved", $invoice->id];
+            }
+
             $expected = $invoice->installmentCents()[$row->installment] ?? null;
             if ($expected === null || $receivedCents !== $expected || ServiceInvoiceDesk::cents($row->amount) !== $expected) {
                 $row->forceFill(['status' => Payment::FAILED, 'amount' => $money,
@@ -433,12 +439,33 @@ final class ServiceInvoicePayments
         if ($changed) {
             $row = Payment::find($rowId);
             $inv = ServiceInvoice::find($row->service_invoice_id);
-            if ($inv && $inv->user_id && $inv->isPayable()) {
+            if ($inv && $inv->user_id && $inv->hardBlockReason() === null) {
                 $this->notify($inv, 'service_invoice_payment_failed', ['amount' => $row->amount]);
             }
         }
 
         return $changed ? 'failed' : 'ignored';
+    }
+
+    /**
+     * The invoice became blocked (cancelled, ticket cancelled, put on hold): close every checkout the customer could still
+     * complete. Pending rows become expired; open Stripe sessions are expired at Stripe (best effort). PayMongo has no
+     * expire call, so an old GCash page may still be paid: that money is recorded and raises the admin alert (see confirm()).
+     * Call this AFTER the transaction that blocked the invoice has committed.
+     */
+    public function closeOpenCheckouts(int $invoiceId, string $note): void
+    {
+        $rows = Payment::where('service_invoice_id', $invoiceId)->where('status', Payment::PENDING)->get();
+        foreach ($rows as $row) {
+            Payment::whereKey($row->id)->where('status', Payment::PENDING)->update(['status' => Payment::EXPIRED, 'note' => $note, 'updated_at' => now()]);
+            if ($row->method === Payment::STRIPE && $row->provider_reference) {
+                try {
+                    $this->gateway->expireStripeSession($row->provider_reference);
+                } catch (\Throwable $e) {
+                    \Log::warning("Invoice {$invoiceId}: could not expire a Stripe session: " . StripeErrors::describe($e));
+                }
+            }
+        }
     }
 
     /* ───────────── cash, recorded by an admin ───────────── */
@@ -461,8 +488,10 @@ final class ServiceInvoicePayments
             $ticket  = ServiceInquiry::lockForUpdate()->findOrFail($ticketId);
             $invoice = ServiceInvoice::lockForUpdate()->findOrFail($invoiceId);
 
-            if (!$invoice->isPayable()) {
-                throw new PipelineException('This invoice is ' . strtolower($invoice->statusLabel()) . ', so you cannot record a payment for it.');
+            if ($code = $invoice->hardBlockReason()) {
+                throw new PipelineException($code === 'on_hold_cancellation_request'
+                    ? 'A cancellation request is open on this service, so payments are paused. Decide the request first.'
+                    : 'This invoice is ' . strtolower($invoice->statusLabel()) . ', so you cannot record a payment for it. ' . $invoice->blockMessage($code));
             }
 
             $due = self::due($invoice);
@@ -527,6 +556,9 @@ final class ServiceInvoicePayments
             }
 
             $invoice->forceFill(['service_done_at' => now()])->save();
+            if (!$ticket->service_started_at) {
+                $ticket->service_started_at = now();   // "Service done" implies the work started
+            }
 
             $notifyBalance = $invoice->isHalfHalf() && $invoice->status === ServiceInvoice::ISSUED && $invoice->paidCents() > 0 && $invoice->balanceCents() > 0;
 

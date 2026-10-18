@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Support\CallUpdateMessage;
 use App\Support\PipelineException;
 use App\Support\ServiceInquiryDesk;
+use App\Support\ServiceRefundRequestService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,7 +21,7 @@ class ServiceInquiryController extends Controller
 {
     private const PER_PAGE = 15;
 
-    public function __construct(private ServiceInquiryDesk $desk)
+    public function __construct(private ServiceInquiryDesk $desk, private ServiceRefundRequestService $refunds)
     {
     }
 
@@ -69,6 +70,7 @@ class ServiceInquiryController extends Controller
             'hideGlobalErrorToast' => true, // errors are shown inline on this page
             'ticket'      => $ticket,
             'isOpen'      => $ticket->isOpen(),
+            'ctx'         => ServiceRefundRequestService::context($ticket),
             'callPreview' => ServiceInquiryDesk::previewData($ticket),
         ]);
     }
@@ -170,9 +172,9 @@ class ServiceInquiryController extends Controller
         $data = $request->validate(['reason' => 'required|string|max:1000'], ['reason.required' => 'A reason is required to close a ticket.']);
 
         return $this->run($id, function () use ($id, $data) {
-            $this->desk->close((int) $id, Auth::guard('admin')->user(), $data['reason']);
+            $ticket = $this->refunds->adminClose((int) $id, Auth::guard('admin')->user(), $data['reason']);
 
-            return 'Ticket closed.';
+            return $ticket->isCancelled() ? 'Ticket cancelled. Its invoice was cancelled with it and the customer was told.' : 'Ticket closed.';
         });
     }
 
@@ -184,7 +186,9 @@ class ServiceInquiryController extends Controller
         try {
             $message = $action();
         } catch (PipelineException $e) {
-            return redirect()->route('admin.service-inquiries.show', $id)->withErrors(['ticket' => $e->getMessage()]);
+            // A ticket with money on it cannot just be cancelled: offer to open a cancellation request instead.
+            return redirect()->route('admin.service-inquiries.show', $id)->withErrors(['ticket' => $e->getMessage()])
+                ->with('offer_cancellation_request', $e->getMessage() === ServiceRefundRequestService::PAYMENT_ON_TICKET);
         }
 
         return redirect()->route('admin.service-inquiries.show', $id)->with('success', $message);

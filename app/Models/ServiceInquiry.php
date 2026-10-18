@@ -22,6 +22,7 @@ class ServiceInquiry extends Model
         'unreachable' => 'Unreachable',
         'called'      => 'Called',
         'closed'      => 'Closed',
+        'cancelled'   => 'Cancelled',
     ];
 
     /** Statuses a ticket can still be worked in. */
@@ -31,11 +32,14 @@ class ServiceInquiry extends Model
         'user_id', 'reference_number', 'service_type', 'furniture_type', 'concern',
         'name', 'phone', 'email', 'preferred_call_window', 'preferred_call_date',
         'status', 'admin_notes', 'attempts', 'last_contacted_at', 'closed_reason', 'created_by_admin_id',
+        'service_started_at', 'terms_accepted_at',
     ];
 
     protected $casts = [
         'preferred_call_date' => 'date',
         'last_contacted_at'   => 'datetime',
+        'service_started_at'  => 'datetime',
+        'terms_accepted_at'   => 'datetime',
         'attempts'            => 'integer',
     ];
 
@@ -52,6 +56,23 @@ class ServiceInquiry extends Model
     public function invoices()
     {
         return $this->hasMany(ServiceInvoice::class, 'service_inquiry_id')->orderByDesc('id');
+    }
+
+    public function refundRequests()
+    {
+        return $this->hasMany(ServiceRefundRequest::class, 'service_inquiry_id')->orderByDesc('id');
+    }
+
+    /** The request that currently holds this ticket's invoice, if any. */
+    public function openRefundRequest(): ?ServiceRefundRequest
+    {
+        return $this->refundRequests()->open()->first();
+    }
+
+    /** Cancelled by the shop or through a cancellation request. (A ticket merely "closed" was finished or settled by phone.) */
+    public function isCancelled(): bool
+    {
+        return $this->status === 'cancelled';
     }
 
     public function serviceLabel(): string

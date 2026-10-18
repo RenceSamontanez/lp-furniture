@@ -39,6 +39,7 @@ class ServiceInvoiceController extends Controller
             return response()->view('service-invoices.cancelled', [
                 'invoice' => $invoice,
                 'ticket'  => $invoice->inquiry,
+                'refund'  => $invoice->refundRequests()->where('status', 'refunded')->with('attempts')->first(),
             ])->header('Cache-Control', 'no-store, private');
         }
 
@@ -46,6 +47,8 @@ class ServiceInvoiceController extends Controller
             'invoice' => $invoice,
             'ticket'  => $invoice->inquiry,
             'due'     => ServiceInvoicePayments::due($invoice),
+            'block'   => $invoice->hardBlockReason(),
+            'openRequest' => $invoice->inquiry?->openRefundRequest(),
         ])->header('Cache-Control', 'no-store, private');
     }
 
@@ -65,9 +68,8 @@ class ServiceInvoiceController extends Controller
         $invoice = $this->mine($id);
 
         // The route middleware already turns a cancelled invoice away; this and the service check are the second and third lock.
-        if (!$invoice->isPayable()) {
-            return redirect()->route('services.invoice', $invoice->id)
-                ->with('error', $invoice->isCancelled() ? 'This invoice was cancelled, so it can no longer be paid.' : 'This invoice is already paid, or cannot be paid right now.');
+        if ($reason = $invoice->paymentBlockReason()) {
+            return redirect()->route('services.invoice', $invoice->id)->with('error', $invoice->blockMessage($reason));
         }
 
         try {

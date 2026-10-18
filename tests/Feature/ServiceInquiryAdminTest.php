@@ -341,7 +341,7 @@ class ServiceInquiryAdminTest extends TestCase
         $routes = collect(Route::getRoutes()->getRoutes())
             ->filter(fn ($r) => str_starts_with($r->getName() ?? '', 'admin.service-inquiries.'))
             ->values();
-        $this->assertCount(8, $routes);
+        $this->assertCount(11, $routes);
 
         foreach ($routes as $route) {
             $method = $route->methods()[0];

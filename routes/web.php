@@ -35,6 +35,8 @@ Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.s
 Route::get('/product/{id}/quick-view', [ProductController::class, 'quickView'])->name('product.quickview');
 Route::get('/reviews', [FeedbackController::class, 'index'])->name('feedback.index');
 Route::get('/terms', [\App\Http\Controllers\TermsController::class, 'show'])->name('terms');
+// Other Services terms (Stage 21f): separate from the main terms; furniture order acceptance is not touched.
+Route::get('/services/terms', [\App\Http\Controllers\TermsController::class, 'services'])->name('services.terms');
 Route::get('/guide', [\App\Http\Controllers\GuideController::class, 'show'])->name('guide');
 Route::post('/chatbot', [ChatbotController::class, 'respond'])->name('chatbot.respond');
 // ============================================================
@@ -194,6 +196,15 @@ Route::get('/design-gallery', [CustomDesignController::class, 'gallery'])->name(
     Route::get('/services/invoices/{id}/payment/{outcome}', [$invCtl, 'paymentReturn'])->name('services.invoice.payment.return')->whereNumber('id')
         ->where('outcome', 'success|cancelled|failed')->middleware('invoice.actionable');
 
+    // Cancellation and refund requests for Other Services (Stage 21f). Owner only: anyone else gets a 404.
+    $rfCtl = \App\Http\Controllers\ServiceRefundRequestController::class;
+    Route::get('/services/requests/{id}/cancellation',          [$rfCtl, 'create'])->name('services.refund.create')->whereNumber('id');
+    Route::post('/services/requests/{id}/cancellation/review',  [$rfCtl, 'review'])->name('services.refund.review')->whereNumber('id')->middleware('throttle:20,1');
+    Route::post('/services/requests/{id}/cancellation',         [$rfCtl, 'store'])->name('services.refund.store')->whereNumber('id')->middleware('throttle:6,1');
+    Route::get('/services/refunds/{reference}',                 [$rfCtl, 'show'])->name('services.refund.show')->where('reference', 'REF-\d{4}-\d{4,}');
+    Route::get('/services/refunds/{reference}/sent',            [$rfCtl, 'sent'])->name('services.refund.sent')->where('reference', 'REF-\d{4}-\d{4,}');
+    Route::post('/services/refunds/{reference}/reply',          [$rfCtl, 'reply'])->name('services.refund.reply')->where('reference', 'REF-\d{4}-\d{4,}')->middleware('throttle:12,1');
+
     // Review and Accept, and the immutable agreement record (Stage 6).
     // There is deliberately no update or delete route for an agreement.
     Route::get('/design/{id}/quotes/{quote}',          [CustomAgreementController::class, 'review'])->name('design.quote.review')->whereNumber(['id', 'quote']);
@@ -299,7 +310,19 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     Route::post('/service-invoices/{id}/void',                  [$inv, 'void'])->name('service-invoices.void')->whereNumber('id');
     Route::post('/service-invoices/{id}/service-done',          [$inv, 'serviceDone'])->name('service-invoices.service-done')->whereNumber('id');
     Route::post('/service-invoices/{id}/cash',                  [$inv, 'recordCash'])->name('service-invoices.cash')->whereNumber('id');
-    Route::post('/service-invoices/{id}/refund-notes',          [$inv, 'refundNote'])->name('service-invoices.refund-note')->whereNumber('id');
+    // Other Services cancellations and refunds (Stage 21f). The old per-invoice refund note form was replaced by this.
+    $rf = \App\Http\Controllers\Admin\ServiceRefundRequestController::class;
+    Route::get('/refund-requests',                              [$rf, 'index'])->name('refunds.index');
+    Route::get('/refund-requests/{id}',                         [$rf, 'show'])->name('refunds.show')->whereNumber('id');
+    Route::post('/refund-requests/{id}/approve',                [$rf, 'approve'])->name('refunds.approve')->whereNumber('id');
+    Route::post('/refund-requests/{id}/approve-exception',      [$rf, 'approveException'])->name('refunds.approve-exception')->whereNumber('id');
+    Route::post('/refund-requests/{id}/decline',                [$rf, 'decline'])->name('refunds.decline')->whereNumber('id');
+    Route::post('/refund-requests/{id}/ask-info',               [$rf, 'askInfo'])->name('refunds.ask-info')->whereNumber('id');
+    Route::post('/refund-requests/{id}/mark-refunded',          [$rf, 'markRefunded'])->name('refunds.mark-refunded')->whereNumber('id');
+    Route::post('/refund-requests/{id}/refund-failed',          [$rf, 'refundFailed'])->name('refunds.refund-failed')->whereNumber('id');
+    Route::post('/service-inquiries/{id}/refund-request',       [$rf, 'openForCustomer'])->name('service-inquiries.refund-request')->whereNumber('id');
+    Route::post('/service-inquiries/{id}/work-started',         [$rf, 'workStarted'])->name('service-inquiries.work-started')->whereNumber('id');
+    Route::post('/service-inquiries/{id}/work-started/undo',    [$rf, 'undoWorkStarted'])->name('service-inquiries.work-started-undo')->whereNumber('id');
     Route::get('/service-invoices/{id}/print',                  [$inv, 'print'])->name('service-invoices.print')->whereNumber('id');
 
     // Agreement records (read only) and the admin's own notifications (Stage 6)
