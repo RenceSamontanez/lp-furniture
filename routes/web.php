@@ -39,6 +39,8 @@ Route::get('/terms', [\App\Http\Controllers\TermsController::class, 'show'])->na
 Route::get('/services/terms', [\App\Http\Controllers\TermsController::class, 'services'])->name('services.terms');
 Route::get('/guide', [\App\Http\Controllers\GuideController::class, 'show'])->name('guide');
 Route::post('/chatbot', [ChatbotController::class, 'respond'])->name('chatbot.respond');
+// Luma's cancellation / refund form card (Stage 21i). Signed-in customers only; the controller answers a guest with a JSON 401.
+Route::post('/chatbot/refund', [ChatbotController::class, 'refund'])->name('chatbot.refund')->middleware('throttle:20,1');
 // ============================================================
 // GUEST ONLY ROUTES
 // ============================================================

@@ -248,7 +248,7 @@ class LumaDefaultsTest extends TestCase
             'pay' => ['what payment methods do you accept', 'luma_payment_methods'],
             'deposit' => ['how much is the deposit', 'luma_deposit_rules'],
             'cancel' => ['can I cancel my order', 'luma_cancel_refund'],
-            'refund' => ['do you give refunds', 'luma_cancel_refund'],
+            'refund' => ['do you give refunds on orders', 'luma_cancel_refund'],   // a bare "refund" now asks once: see LumaOtherServicesTest
             'track' => ['where is my order', 'luma_track_order'],
             'change' => ['how do I change my phone number', 'luma_change_contact'],
             'warranty' => ['is there a warranty', 'luma_warranty'],
@@ -295,9 +295,9 @@ class LumaDefaultsTest extends TestCase
         }
 
         $this->assertContains('/guide', array_column($this->ask('how to measure')['buttons'], 'url'));
-        $this->assertContains('/terms', array_column($this->ask('can I cancel')['buttons'], 'url'));
+        $this->assertContains('/terms', array_column($this->ask('can I cancel my order')['buttons'], 'url'));
         $this->assertContains('/terms', array_column($this->ask('is there a warranty')['buttons'], 'url'));
-        $this->assertStringNotContainsString('%', $this->ask('can I cancel')['response']);
+        $this->assertStringNotContainsString('%', $this->ask('can I cancel my order')['response']);
 
         $wood = $this->ask('which wood is best')['response'];
         foreach (['Gmelina', 'Mahogany', 'Acacia', 'Special request'] as $w) {

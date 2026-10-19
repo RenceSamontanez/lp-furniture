@@ -210,14 +210,14 @@ class ServiceNotificationDetailsTest extends TestCase
             ->assertSee('Related service request');
     }
 
-    public function test_the_ask_luma_button_is_hidden_until_the_flag_is_on(): void
+    public function test_the_ask_luma_button_is_on_by_default_and_the_flag_can_hide_it(): void
     {
         $n = $this->allKinds()['approved'];
-        $this->assertFalse(config('luma.notification_ask_button'), 'off by default');
-        $this->as($this->owner)->get(route('notifications.show', $n->id))->assertOk()->assertDontSee('Ask Luma about this')->assertDontSee('id="nd-ask-luma"', false);
+        $this->assertTrue(config('luma.notification_ask_button'), 'on since Luma can look up a reference number (Stage 21i)');
+        $this->as($this->owner)->get(route('notifications.show', $n->id))->assertOk()->assertSee('Ask Luma about this')->assertSee('data-ref="REF-', false);
 
-        config(['luma.notification_ask_button' => true]);
-        $this->get(route('notifications.show', $n->id))->assertSee('Ask Luma about this')->assertSee('data-ref="REF-', false);
+        config(['luma.notification_ask_button' => false]);
+        $this->get(route('notifications.show', $n->id))->assertOk()->assertDontSee('Ask Luma about this')->assertDontSee('id="nd-ask-luma"', false);
     }
 
     public function test_old_notifications_without_any_stored_snapshot_work(): void

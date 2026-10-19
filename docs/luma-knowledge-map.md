@@ -28,7 +28,7 @@ Tagalog title: Tungkol sa Other Services
 - ano po ang serbisyo ninyo sa pagpapaayos
 - may repair po ba kayo
 - anong other service
-- paano po ang pagpapaayos
+- ano po ang pagpapaayos ninyo
 
 *Example phrasings, Taglish:*
 - other service po
@@ -391,7 +391,7 @@ Tagalog title: Tingnan ang status ng ticket
 *Example phrasings, Tagalog:*
 - ano na po ang status ng ticket ko
 - kumusta na ang request ko
-- nasaan na ang service request ko
+- kumusta na ang service request ko
 - ano na ang lagay ng pagpapaayos
 - update po sa ticket
 - tingnan ang status ng ticket
@@ -446,7 +446,7 @@ Tagalog title: Ano ang invoice
 
 **Answer (Tagalog):** Ang invoice po ay ang singil para sa inyong Other Services na trabaho. Nakasulat dito ang serbisyo, presyo, anumang bayad sa pagpunta o pagkuha, ang kabuuan at ang plano ng bayad. Ipinapadala ito ng aming team pagkatapos tingnan ang ticket ninyo. Babayaran ninyo ito online o cash, at ang status nito ay Sent, Paid o Cancelled.
 
-**Follow-up buttons:** `luma_os_invoice_find` (Where is my invoice), `luma_os_invoice_status_words` (Sent, Paid, Cancelled), `luma_os_pay_how` (How to pay my invoice), `luma_os_invoice_print` (Print my invoice)
+**Follow-up buttons:** `luma_os_invoice_find` (Where is my invoice), `luma_os_invoice_status_words` (Invoice statuses), `luma_os_pay_how` (How to pay my invoice), `luma_os_invoice_print` (Print my invoice)
 
 #### `luma_os_invoice_find`: Where is my invoice
 
@@ -482,37 +482,37 @@ Tagalog title: Nasaan ang invoice ko
 
 **Answer (Tagalog):** Makikita po ninyo ang invoice sa inyong account sa Service Request. Lumalabas ito kapag naipadala na ng aming team, at makakatanggap din kayo ng notification kapag handa na ito. Kung sinusuri pa ang ticket ninyo, wala pa pong invoice.
 
-**Follow-up buttons:** `luma_os_invoice_status_words` (Sent, Paid, Cancelled), `luma_os_after_ticket` (What happens after my ticket), `luma_os_pay_how` (How to pay my invoice)
+**Follow-up buttons:** `luma_os_invoice_status_words` (Invoice statuses), `luma_os_after_ticket` (What happens after my ticket), `luma_os_pay_how` (How to pay my invoice)
 
 **Link buttons:** Open my service requests -> `services.request`
 
-#### `luma_os_invoice_status_words`: Sent, Paid, Cancelled
+#### `luma_os_invoice_status_words`: Invoice statuses
 
-Tagalog title: Sent, Paid, Cancelled
+Tagalog title: Mga status ng invoice
 
 *Example phrasings, English:*
 - what does sent mean on my invoice
 - what does paid mean
-- why is my invoice cancelled
+- what does a cancelled invoice mean
 - invoice status meaning
 - what do the invoice statuses mean
-- my invoice says cancelled
+- my invoice status says cancelled what does it mean
 
 *Example phrasings, Tagalog:*
 - ano ang ibig sabihin ng sent sa invoice
 - ano ang ibig sabihin ng paid
-- bakit cancelled ang invoice ko
+- ano ang ibig sabihin ng cancelled sa invoice
 - ibig sabihin ng status ng invoice
 - ano ang mga status ng invoice
-- cancelled po ang invoice ko
+- ano po ang cancelled na status
 
 *Example phrasings, Taglish:*
 - ano meaning ng sent sa invoice
-- bakit cancelled yung invoice ko
+- ano meaning ng cancelled sa invoice
 - invoice status meaning po
 - ano ibig sabihin ng paid status
 - paid na ba pag sent
-- cancelled invoice ko bakit
+- ano meaning ng cancelled status
 
 **Answer (English):** Your invoice shows one of three statuses. Sent: the invoice is ready and waiting for your payment. Paid: it is fully paid. Cancelled: it was cancelled, so it can no longer be paid, for example after a cancellation request or because the service request was closed. If the invoice has a payment plan of two halves, it can show as half paid until the second half is done.
 
@@ -717,7 +717,7 @@ Tagalog title: Pinakamababang bayad
 - may minimum bang halaga sa online na bayad
 - pwede bang 20 pesos lang online
 - pinakamaliit na halagang pwedeng bayaran
-- bakit hindi tinanggap ang maliit kong bayad
+- bakit ayaw tanggapin ang maliit kong bayad
 - minimum sa gcash
 
 *Example phrasings, Taglish:*
@@ -725,7 +725,7 @@ Tagalog title: Pinakamababang bayad
 - may minimum ba sa online payment
 - pwede ba 20 pesos lang
 - minimum amount sa gcash po
-- bakit rejected small payment ko
+- bakit hindi pumasok ang small payment ko
 - smallest payment pwede
 
 **Answer (English):** The smallest online payment (GCash or card) is {{min_online}}. If a payment on your invoice would be less than that, please pay in cash with our team instead, and they will record it. This is a limit of the online payment, not of the shop.
@@ -1065,7 +1065,7 @@ Tagalog title: Ano ang ibig sabihin ng nagsimula
 - how do i know if the work has started
 - when is work considered started
 - what counts as started
-- when does the work start
+- what does started mean for my ticket
 - has the work started on my ticket
 
 *Example phrasings, Tagalog:*
@@ -1073,7 +1073,7 @@ Tagalog title: Ano ang ibig sabihin ng nagsimula
 - paano ko malalaman kung nagsimula na
 - kailan masasabing nagsimula na ang trabaho
 - ano ang itinuturing na nagsimula
-- kailan nagsisimula ang trabaho
+- ano ang kahulugan ng nagsimula na
 - nagsimula na ba ang trabaho sa ticket ko
 
 *Example phrasings, Taglish:*
@@ -1304,11 +1304,11 @@ Tagalog title: Refund kapag nagsimula na
 
 **Link buttons:** Read the Other Services terms -> `services.terms`
 
-#### `luma_os_cancel_unpaid`: Cancel, nothing paid
+#### `luma_os_cancel_unpaid`: Cancel when nothing is paid
 
 **handler:** `refund_flow`
 
-Tagalog title: Kanselahin, wala pang bayad
+Tagalog title: Kanselahin kung wala pang bayad
 
 *Example phrasings, English:*
 - i have not paid yet can i cancel
@@ -1428,7 +1428,7 @@ Tagalog title: Nagbago ang isip ko
 
 *Example phrasings, Tagalog:*
 - nagbago ang isip ko
-- ayoko na po ng repair
+- hindi ko na po gusto ang repair
 - hindi ko na kailangan ang serbisyo
 - may nahanap na akong ibang mag-aayos
 - huwag na lang ituloy
@@ -1436,7 +1436,7 @@ Tagalog title: Nagbago ang isip ko
 
 *Example phrasings, Taglish:*
 - nagbago isip ko po
-- ayaw ko na ituloy ang repair
+- di ko na ituloy ang repair
 - di ko na need ang service
 - may iba na akong nahanap
 - stop na lang ang service po
@@ -1446,7 +1446,7 @@ Tagalog title: Nagbago ang isip ko
 
 **Answer (Tagalog):** Ayos lang po iyan, nangyayari talaga. Ang magagawa ninyo ay depende kung nakabayad na kayo at kung nagsimula na ang trabaho. Maaari ko pong tingnan iyon at tulungan kayong ipadala ang tamang request.
 
-**Follow-up buttons:** `luma_os_refund_rule` (Refund rules), `luma_os_cancel_unpaid` (Cancel, nothing paid)
+**Follow-up buttons:** `luma_os_refund_rule` (Refund rules), `luma_os_cancel_unpaid` (Cancel when nothing is paid)
 
 #### `luma_os_duplicate_request`: I sent two requests
 
@@ -1951,7 +1951,7 @@ Tagalog title: Nakatanggap ako ng cancellation notice
 - bakit na-cancel ang service request ko
 - na-cancel ang ticket ko
 - may mensahe na kinansela ang request ko
-- cancelled na notification ano ang ibig sabihin
+- may cancelled na notification ako
 - nakansela ang invoice ko
 
 *Example phrasings, Taglish:*

@@ -3,7 +3,10 @@
 namespace App\Support\Luma;
 
 use App\Models\BusinessSetting;
+use App\Models\ServiceRefundRequest;
 use App\Support\InstallmentScheduler;
+use App\Support\InvoicePaymentRules;
+use App\Support\ServiceInvoiceDesk;
 
 /**
  * The shop facts an answer can mention, as {{tokens}}. Answers never carry a number or a place of
@@ -35,6 +38,9 @@ final class Facts
             '{{catalog_down}}' => (string) InstallmentScheduler::CATALOG_DOWNPAYMENT_PERCENT,
             '{{deposit_min}}' => (string) InstallmentScheduler::MIN_DEPOSIT_PERCENT,
             '{{months}}'      => min(InstallmentScheduler::ALLOWED_DURATION_MONTHS) . ($tl ? ' hanggang ' : ' to ') . max(InstallmentScheduler::ALLOWED_DURATION_MONTHS),
+            '{{min_online}}'  => ServiceInvoiceDesk::peso(InvoicePaymentRules::MIN_ONLINE_PAYMENT),
+            '{{half_min}}'    => ServiceInvoiceDesk::peso(InvoicePaymentRules::HALF_HALF_MIN_TOTAL),
+            '{{refund_days}}' => (string) ServiceRefundRequest::REFUND_DAYS,
             '{{frequency}}'   => implode($tl ? ' o ' : ' or ', InstallmentScheduler::ALLOWED_FREQUENCY_DAYS),
         ];
     }

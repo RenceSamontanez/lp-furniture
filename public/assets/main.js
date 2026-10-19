@@ -73,6 +73,239 @@ function chatSafeUrl(url) {
   return /^https?:\/\//i.test(url) ? url : '#';
 }
 
+/* ── Luma: the guided cancellation / refund form card ───────────────────────────────────────────────
+   Drawn from a "form" reply. It posts to the form's post_url (CSRF protected, signed-in customers only) in two steps:
+   "review" (the server validates with the same rules as the web form and returns field errors or a summary) and "confirm"
+   (creates the request once). Everything the customer typed is set with .value / textContent, never innerHTML. The GCash
+   number and name stay in the form fields and in the server's encrypted, single-use token: they are never put in a chat
+   bubble, in storage or in the log. All styles live under .chatbot-window so the look can change later. */
+let lumaFormSeq = 0;
+
+function lumaEl(tag, attrs, children) {
+  const el = document.createElement(tag);
+  Object.keys(attrs || {}).forEach(k => {
+    if (k === 'text') el.textContent = attrs[k];
+    else el.setAttribute(k, attrs[k]);
+  });
+  (children || []).forEach(c => { if (c) el.appendChild(c); });
+  return el;
+}
+
+/* The shared .lp-notice, built in script (same markup as resources/views/components/notice.blade.php) */
+function lumaNotice(variant, title, text) {
+  const icon = variant === 'problem'
+    ? '<path d="M12 4 3 19h18L12 4Z"/><path d="M12 10v4"/><path d="M12 17h.01"/>'
+    : (variant === 'blocked' ? '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'
+      : '<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/>');
+  const box = lumaEl('div', { class: 'lp-notice lp-notice--' + variant, role: variant === 'problem' ? 'alert' : 'status' });
+  box.innerHTML = '<svg class="lp-notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + icon + '</svg>';
+  const body = lumaEl('div', { class: 'lp-notice__body' }, [lumaEl('p', { class: 'lp-notice__title', text: title })]);
+  if (text) body.appendChild(lumaEl('div', { class: 'lp-notice__text', text: text }));
+  box.appendChild(body);
+  return box;
+}
+
+function lumaReferenceBlock(ref) {
+  const tl = window.lumaLang === 'tl';
+  return lumaEl('div', { class: 'chat-ref', role: 'status' }, [
+    lumaEl('span', { class: 'chat-ref-label', text: tl ? 'Reference number ng request ninyo' : 'Your request reference number' }),
+    lumaEl('strong', { class: 'chat-ref-number', text: ref }),
+  ]);
+}
+
+/* label + control + a hidden error line the server's messages are written into */
+function lumaField(n, name, labelText, control, hint) {
+  control.id = 'cf' + n + '-' + name;
+  control.setAttribute('aria-describedby', control.id + '-err');
+  const err = lumaEl('p', { class: 'chat-field-error', id: control.id + '-err', role: 'alert' });
+  err.hidden = true;
+  const field = lumaEl('div', { class: 'chat-field' }, [lumaEl('label', { for: control.id, text: labelText }), control]);
+  if (hint) field.appendChild(lumaEl('p', { class: 'chat-field-hint', text: hint }));
+  field.appendChild(err);
+  return field;
+}
+
+function lumaShowErrors(root, n, errors, generic) {
+  root.querySelectorAll('.chat-field-error').forEach(e => { e.hidden = true; e.textContent = ''; });
+  let first = null;
+  Object.keys(errors || {}).forEach(key => {
+    const el = root.querySelector('#cf' + n + '-' + key + '-err');
+    if (el) {
+      el.textContent = errors[key][0];
+      el.hidden = false;
+      const input = root.querySelector('#cf' + n + '-' + key);
+      if (input) { input.setAttribute('aria-invalid', 'true'); if (!first) first = input; }
+    } else if (generic) {
+      generic.textContent = errors[key][0];
+      generic.hidden = false;
+    }
+  });
+  if (first) first.focus();
+}
+
+async function lumaPost(url, payload) {
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': APP.csrfToken },
+    body: JSON.stringify(payload),
+  });
+  let data = {};
+  try { data = await res.json(); } catch (e) { /* not JSON */ }
+  return { status: res.status, data: data };
+}
+
+function lumaRefundForm(form) {
+  const n = ++lumaFormSeq;
+  const L = form.labels;
+  const wrap = lumaEl('div', { class: 'chat-form-wrap' });
+  const f = lumaEl('form', { class: 'chat-form', novalidate: 'novalidate', 'aria-label': form.title }, [lumaEl('h4', { class: 'chat-form-title', text: form.title })]);
+
+  const reason = lumaEl('select', { name: 'reason_code', required: 'required' });
+  reason.appendChild(lumaEl('option', { value: '', text: L.choose }));
+  form.reasons.forEach(r => reason.appendChild(lumaEl('option', { value: r.value, text: r.label })));
+  f.appendChild(lumaField(n, 'reason_code', L.reason, reason));
+
+  const details = lumaEl('textarea', { name: 'reason_text', rows: '3', maxlength: '1000' });
+  f.appendChild(lumaField(n, 'reason_text', L.details, details));
+
+  const phone = lumaEl('input', { name: 'contact_phone', type: 'tel', inputmode: 'tel', autocomplete: 'tel', maxlength: '30' });
+  phone.value = form.defaults.phone || '';
+  f.appendChild(lumaField(n, 'contact_phone', L.phone, phone));
+
+  const email = lumaEl('input', { name: 'contact_email', type: 'email', autocomplete: 'email', maxlength: '150' });
+  email.value = form.defaults.email || '';
+  f.appendChild(lumaField(n, 'contact_email', L.email, email));
+
+  let gcashBox = null;
+  if (form.paid) {
+    const fs = lumaEl('fieldset', { class: 'chat-fieldset' }, [lumaEl('legend', { text: L.method })]);
+    form.methods.forEach(m => {
+      const id = 'cf' + n + '-method-' + m.value;
+      const radio = lumaEl('input', { type: 'radio', name: 'refund_method', value: m.value, id: id });
+      fs.appendChild(lumaEl('label', { class: 'chat-radio', for: id }, [radio, lumaEl('span', { text: m.label })]));
+    });
+    fs.appendChild(lumaEl('p', { class: 'chat-field-hint', text: L.hint_method }));
+    const merr = lumaEl('p', { class: 'chat-field-error', id: 'cf' + n + '-refund_method-err', role: 'alert' });
+    merr.hidden = true;
+    fs.appendChild(merr);
+    f.appendChild(fs);
+
+    gcashBox = lumaEl('div', { class: 'chat-gcash' });
+    gcashBox.hidden = true;
+    gcashBox.appendChild(lumaField(n, 'gcash_number', L.gcash_number, lumaEl('input', { name: 'gcash_number', type: 'tel', inputmode: 'tel', autocomplete: 'off', maxlength: '30', placeholder: '09XX XXX XXXX' })));
+    gcashBox.appendChild(lumaField(n, 'gcash_account_name', L.gcash_name, lumaEl('input', { name: 'gcash_account_name', type: 'text', autocomplete: 'off', maxlength: '120' })));
+    f.appendChild(gcashBox);
+    fs.addEventListener('change', () => { gcashBox.hidden = (f.elements.refund_method.value !== 'gcash'); });
+  }
+
+  const terms = lumaEl('input', { type: 'checkbox', name: 'terms', value: '1', id: 'cf' + n + '-terms' });
+  const termsLink = lumaEl('a', { href: form.terms_url, target: '_blank', rel: 'noopener', class: 'lp-link', text: L.terms_link });
+  const termsRow = lumaEl('div', { class: 'chat-field' }, [
+    lumaEl('label', { class: 'chat-check', for: 'cf' + n + '-terms' }, [terms, lumaEl('span', { text: L.terms })]),
+    termsLink,
+  ]);
+  const terr = lumaEl('p', { class: 'chat-field-error', id: 'cf' + n + '-terms-err', role: 'alert' });
+  terr.hidden = true;
+  termsRow.appendChild(terr);
+  f.appendChild(termsRow);
+
+  const generic = lumaEl('p', { class: 'chat-field-error chat-form-error', role: 'alert' });
+  generic.hidden = true;
+  f.appendChild(generic);
+
+  const submit = lumaEl('button', { type: 'submit', class: 'lp-btn lp-btn--primary lp-btn--block', text: L.submit });
+  f.appendChild(submit);
+  wrap.appendChild(f);
+
+  f.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    if (submit.disabled) return;
+    generic.hidden = true;
+    f.querySelectorAll('[aria-invalid]').forEach(e => e.removeAttribute('aria-invalid'));
+    submit.disabled = true;
+    submit.textContent = L.sending;
+    const payload = { step: 'review', ticket_id: form.ticket_id, lang: window.lumaLang || 'en' };
+    Array.from(f.elements).forEach(el => {
+      if (!el.name) return;
+      if ((el.type === 'radio') && !el.checked) return;
+      if (el.type === 'checkbox') { if (el.checked) payload[el.name] = '1'; return; }
+      payload[el.name] = el.value;
+    });
+    try {
+      const r = await lumaPost(form.post_url, payload);
+      if (r.status === 200 && r.data.summary) {
+        f.hidden = true;
+        const card = lumaRefundSummary(r.data.summary, n, () => { card.remove(); f.hidden = false; submit.disabled = false; submit.textContent = L.submit; reason.focus(); }, wrap);
+        wrap.appendChild(card);
+        card.querySelector('input[type=checkbox]').focus();
+        document.getElementById('chat-body').scrollTop = document.getElementById('chat-body').scrollHeight;
+        return;
+      }
+      if (r.data.errors) {
+        lumaShowErrors(f, n, r.data.errors, generic);
+      } else {
+        generic.textContent = r.data.message || 'Something went wrong. Please try again.';
+        generic.hidden = false;
+      }
+    } catch (e) {
+      generic.textContent = 'Something went wrong. Please try again.';
+      generic.hidden = false;
+    }
+    submit.disabled = false;
+    submit.textContent = L.submit;
+  });
+
+  return wrap;
+}
+
+/* The confirm step: what will be sent, the warning, "I checked these details", then Confirm. */
+function lumaRefundSummary(s, n, goBack, wrap) {
+  const card = lumaEl('div', { class: 'chat-summary', role: 'group', 'aria-label': s.title }, [lumaEl('h4', { class: 'chat-form-title', text: s.title })]);
+  const dl = lumaEl('dl', { class: 'chat-summary-rows' });
+  s.rows.forEach(r => { dl.appendChild(lumaEl('dt', { text: r[0] })); dl.appendChild(lumaEl('dd', { text: r[1] })); });
+  card.appendChild(dl);
+  card.appendChild(lumaNotice(s.instant ? 'blocked' : 'problem', s.warning_title, s.warning));
+
+  const check = lumaEl('input', { type: 'checkbox', id: 'cf' + n + '-checked' });
+  card.appendChild(lumaEl('label', { class: 'chat-check', for: 'cf' + n + '-checked' }, [check, lumaEl('span', { text: s.check_label })]));
+  const err = lumaEl('p', { class: 'chat-field-error', role: 'alert', text: s.check_error });
+  err.hidden = true;
+  card.appendChild(err);
+
+  const confirm = lumaEl('button', { type: 'button', class: 'lp-btn lp-btn--primary lp-btn--block', text: s.confirm_label });
+  const back = lumaEl('button', { type: 'button', class: 'lp-btn lp-btn--secondary lp-btn--block', text: s.back_label });
+  card.appendChild(confirm);
+  card.appendChild(back);
+  back.addEventListener('click', goBack);
+  check.addEventListener('change', () => { if (check.checked) err.hidden = true; });
+
+  let busy = false;
+  confirm.addEventListener('click', async () => {
+    if (busy) return;
+    if (!check.checked) { err.hidden = false; check.focus(); return; }
+    busy = true;
+    confirm.disabled = true;
+    back.disabled = true;
+    try {
+      const r = await lumaPost(s.post_url, { step: 'confirm', token: s.token, checked: true, lang: window.lumaLang || 'en' });
+      if (r.status === 200 && r.data.reply) {
+        wrap.remove();
+        addBotMessage(r.data.reply.text, [], [], { reference: r.data.reply.reference || r.data.reference, buttons: r.data.reply.buttons || [], lang: window.lumaLang });
+        return;
+      }
+      err.textContent = (r.data.errors && r.data.errors.check && r.data.errors.check[0]) || r.data.message || 'Something went wrong. Please try again.';
+      err.hidden = false;
+    } catch (e) {
+      err.textContent = 'Something went wrong. Please try again.';
+      err.hidden = false;
+    }
+    busy = false;
+    confirm.disabled = false;
+    back.disabled = false;
+  });
+  return card;
+}
+
 /* Add a message bubble from the bot side.
    extra = { cards: [{name, price_label, old_price_label, image, url}], buttons: [{label, url}], contact: {phone, email} } */
 function addBotMessage(msg, suggestions, products, extra) {
@@ -100,6 +333,12 @@ function addBotMessage(msg, suggestions, products, extra) {
       </a>`).join('') + '</div>';
     body.appendChild(cardsEl);
   }
+
+  if (extra.lang) { window.lumaLang = extra.lang; }
+
+  // The guided cancellation / refund form (a "form" reply) and the big reference number after it was sent
+  if (extra.reference) { body.appendChild(lumaReferenceBlock(extra.reference)); }
+  if (extra.form) { body.appendChild(lumaRefundForm(extra.form)); }
 
   // The shop's contact details, business-card style
   if (extra.contact && (extra.contact.phone || extra.contact.email)) {

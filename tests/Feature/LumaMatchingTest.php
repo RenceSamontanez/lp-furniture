@@ -223,13 +223,13 @@ class LumaMatchingTest extends TestCase
 
     /* ───────────── fallback and logging ───────────── */
 
-    public function test_the_fallback_offers_four_topics_and_the_shop_contact_details(): void
+    public function test_the_fallback_offers_topics_and_the_shop_contact_details(): void
     {
         BusinessSetting::query()->first()->update(['phone' => '0917-123-4567', 'email' => 'shop@lp.test']);
 
         $json = $this->ask('xyzzy plugh');
 
-        $this->assertCount(4, $json['suggestions']);
+        $this->assertCount(5, $json['suggestions']);   // four topics and "Talk to a person"
         $this->assertStringContainsString('0917-123-4567', $json['response']);
         $this->assertStringContainsString('shop@lp.test', $json['response']);
         $this->assertSame('unmatched', $this->loggedAs());

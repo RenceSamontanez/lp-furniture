@@ -94,6 +94,7 @@ class AdminController extends Controller
 
     public function logout(Request $request)
     {
+        \App\Support\Luma\ChatState::forget();
         Auth::guard('admin')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

@@ -80,12 +80,15 @@ class LumaLanguageTest extends TestCase
     {
         $this->intent('price', 'Prices depend on the piece.', 'Nag-iiba po ang presyo.');
 
-        foreach (['what is the price', 'magkano po', 'xyzzy', 'hindi ko alam po', 'ewan po'] as $text) {
-            $reply   = $this->ask($text)['response'];
-            $closing = Language::detect($text) === 'tl' ? self::CLOSING_TL : self::CLOSING_EN;
+        // an answer ends "You're welcome! ..."; a miss ends with the fallback line, which never says "You're welcome"
+        foreach ([
+            'what is the price' => self::CLOSING_EN, 'magkano po' => self::CLOSING_TL,
+            'xyzzy' => 'Luma is always here to help.', 'hindi ko alam po' => 'Nandito lang po si Luma para tumulong.', 'ewan po' => 'Nandito lang po si Luma para tumulong.',
+        ] as $text => $closing) {
+            $reply = $this->ask($text)['response'];
 
             $this->assertStringEndsWith($closing, $reply, $text);
-            $this->assertSame(1, substr_count($reply, 'Luma is always here to help') + substr_count($reply, 'Nandito lang si Luma'), $text);
+            $this->assertSame(1, substr_count($reply, 'Luma is always here to help') + substr_count($reply, 'Nandito lang'), $text);
         }
     }
 
@@ -120,13 +123,15 @@ class LumaLanguageTest extends TestCase
         $tl = $this->ask('ewan ko po xyzzy');
 
         $this->assertStringContainsString("I couldn't quite find an answer", $en['response']);
-        $this->assertStringEndsWith(self::CLOSING_EN, $en['response']);
+        $this->assertStringEndsWith('Luma is always here to help.', $en['response']);
+        $this->assertStringNotContainsString("You're welcome", $en['response']);
 
         $this->assertStringContainsString('Pasensya na po', $tl['response']);
         $this->assertStringContainsString('website', $tl['response']);
-        $this->assertStringEndsWith(self::CLOSING_TL, $tl['response']);
-        $this->assertContains('Paano mag-order', $tl['suggestions']);
-        $this->assertCount(4, $tl['suggestions']);
+        $this->assertStringEndsWith('Nandito lang po si Luma para tumulong.', $tl['response']);
+        $this->assertStringNotContainsString('Walang anuman', $tl['response']);
+        $this->assertContains('Makausap ang isang tao', $tl['suggestions']);
+        $this->assertCount(5, $tl['suggestions']);
     }
 
     public function test_finish_adds_the_closing_in_the_language_of_the_answer(): void

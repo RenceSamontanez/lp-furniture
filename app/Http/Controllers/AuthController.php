@@ -224,6 +224,7 @@ return redirect($intended)
     ════════════════════════════════════════ */
     public function logout(Request $request)
     {
+        \App\Support\Luma\ChatState::forget();   // Luma's conversation never outlives the sign-in
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

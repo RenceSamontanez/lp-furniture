@@ -84,9 +84,13 @@
   var ask = document.getElementById('nd-ask-luma');
   if (ask) {
     ask.addEventListener('click', function () {
+      // Opens Luma with the reference number typed in and sends it, so she answers with the real status straight away.
       if (typeof openChatbot === 'function') { openChatbot(); }
       var input = document.getElementById('chat-input');
-      if (input) { input.value = ask.getAttribute('data-ref') + ' '; input.focus(); }
+      if (input) {
+        input.value = ask.getAttribute('data-ref');
+        if (typeof sendChat === 'function') { sendChat(); } else { input.focus(); }
+      }
     });
   }
 </script>

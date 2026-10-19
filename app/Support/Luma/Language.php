@@ -18,6 +18,9 @@ final class Language
         'pintuan', 'pinto', 'mesa', 'upuan', 'kama', 'ipagawa', 'pagawa', 'bayad', 'hulugan', 'kayo',
         'ninyo', 'niyo', 'nyo', 'namin', 'natin', 'hindi', 'wala', 'sino', 'ilang', 'magandang', 'tulong',
         'sukat', 'aparador', 'silya', 'lamesa', 'estante', 'sopa',
+        'kanselahin', 'kansela', 'ibalik', 'pera', 'ayoko', 'ayaw', 'tagal', 'matagal', 'nagbayad', 'nabayaran', 'kalahati', 'tiket',
+        'sira', 'ayos', 'nasaan', 'asan', 'mali', 'maling', 'magkansela', 'natanggap', 'dumating', 'sumipot', 'larawan', 'litrato',
+        'pakibalik', 'bahay', 'ilarawan', 'magbayad', 'bayaran', 'tulungan', 'hinihintay', 'naghihintay', 'nagbago', 'isip', 'hulog', 'humiling',
     ];
 
     private const WEAK = [
@@ -33,6 +36,14 @@ final class Language
     ];
 
     public static function detect(string $message): string
+    {
+        [$tl, $en] = self::scores($message);
+
+        return $tl > 0 && $tl >= $en ? self::TL : self::EN;
+    }
+
+    /** @return array{0: int, 1: int} the Tagalog and the English points of a message (both 0 for "yes", "ok", a reference number) */
+    public static function scores(string $message): array
     {
         $tl = 0;
         $en = 0;
@@ -52,6 +63,6 @@ final class Language
             }
         }
 
-        return $tl > 0 && $tl >= $en ? self::TL : self::EN;
+        return [$tl, $en];
     }
 }

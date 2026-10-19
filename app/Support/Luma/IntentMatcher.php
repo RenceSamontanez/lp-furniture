@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
  *
  * A trained keyword matches only when all its words appear in the message as whole words, in order
  * ("hi" no longer matches inside "which"). Each matched keyword scores 2 points per word plus a
- * little for its length, so a phrase beats a single word, and an intent adds up its matched
+ * little for its length, so a phrase beats a single word ("a&b" needs both a and b anywhere in the message), and an intent adds up its matched
  * keywords. The best intent at or above the minimum score wins; ties go to the intent with more
  * matched keywords, then the most recently edited, then the newest id.
  */
@@ -54,6 +54,22 @@ final class IntentMatcher
         $found = [];
 
         foreach (explode(',', $keywordList) as $keyword) {
+            // "a&b" = both parts must appear as whole words, in any order and anywhere in the message
+            if (str_contains($keyword, '&')) {
+                $parts = array_filter(array_map(fn ($part) => Text::words($part), explode('&', $keyword)));
+                $kw    = array_merge(...array_values($parts ?: [[]]));
+                $all   = $parts !== [];
+                foreach ($parts as $part) {
+                    $all = $all && Text::containsSequence($messageWords, $part);
+                }
+                $key = implode(' ', $kw);
+                if ($all && $kw !== [] && !isset($found[$key])) {
+                    $found[$key] = $kw;
+                }
+
+                continue;
+            }
+
             $kw = Text::words($keyword);
             if ($kw === []) {
                 continue; // empty, or made only of filler words

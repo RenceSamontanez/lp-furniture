@@ -3319,3 +3319,56 @@ a.lp-link.lp-link--tap, button.lp-link.lp-link--tap { display: inline-flex; alig
   .lp-stepper__short { display: inline; }
   .lp-stepper__label { font-size: 12px; }
 }
+
+/* ══════════════════════════════════════════
+   Luma form card (Stage 21i): the guided cancellation / refund form, its confirm summary and the reference number.
+   Everything is scoped under .chatbot-window so Prompt 9a can restyle the chat without touching the site. Buttons are the
+   shared .lp-btn; the warning is the shared .lp-notice. Controls are at least 44px high with 16px text (no zoom on phones).
+══════════════════════════════════════════ */
+.chatbot-window .chat-form-wrap { width: 100%; margin: 6px 0 0; }
+.chatbot-window .chat-form,
+.chatbot-window .chat-summary { box-sizing: border-box; width: 100%; padding: 14px; background: #fff; border: 1px solid var(--border); border-radius: 12px; }
+.chatbot-window .chat-form-title { margin: 0 0 10px; font-size: 15.5px; font-weight: 600; color: var(--brown-deep); }
+.chatbot-window .chat-field { margin: 0 0 12px; }
+.chatbot-window .chat-form label,
+.chatbot-window .chat-summary label { display: block; margin: 0 0 4px; font-size: 14px; font-weight: 500; line-height: 1.35; color: #2C1810; }
+.chatbot-window .chat-form input[type=text],
+.chatbot-window .chat-form input[type=tel],
+.chatbot-window .chat-form input[type=email],
+.chatbot-window .chat-form select,
+.chatbot-window .chat-form textarea { box-sizing: border-box; display: block; width: 100%; min-height: 44px; padding: 9px 12px; border: 1.5px solid #8A7566; border-radius: 8px; background: #fff; color: #2C1810; font: 400 16px/1.3 var(--font-body); }
+.chatbot-window .chat-form textarea { min-height: 76px; resize: vertical; }
+.chatbot-window .chat-form input:focus-visible,
+.chatbot-window .chat-form select:focus-visible,
+.chatbot-window .chat-form textarea:focus-visible,
+.chatbot-window .chat-summary input:focus-visible { outline: 2px solid #2C1810; outline-offset: 1px; box-shadow: 0 0 0 4px #E8B86D; }
+.chatbot-window .chat-form [aria-invalid="true"] { border-color: #8A3520; }
+.chatbot-window .chat-fieldset { margin: 0 0 12px; padding: 0; border: 0; min-width: 0; }
+.chatbot-window .chat-fieldset legend { padding: 0; margin: 0 0 4px; font-size: 14px; font-weight: 500; color: #2C1810; }
+.chatbot-window .chat-radio,
+.chatbot-window .chat-check { display: flex !important; align-items: center; gap: 10px; min-height: 44px; margin: 0 !important; font-weight: 400 !important; cursor: pointer; }
+.chatbot-window .chat-radio input,
+.chatbot-window .chat-check input { flex: none; width: 22px; height: 22px; margin: 0; accent-color: #2C1810; }
+.chatbot-window .chat-check span { font-size: 14px; line-height: 1.35; }
+.chatbot-window .chat-field-hint { margin: 4px 0 0; font-size: 13px; line-height: 1.4; color: #4A3426; }
+.chatbot-window .chat-field-error { margin: 4px 0 0; font-size: 13.5px; line-height: 1.4; font-weight: 500; color: #8A3520; }
+.chatbot-window .chat-field-error[hidden] { display: none; }
+.chatbot-window .chat-form .lp-link { display: inline-block; padding: 6px 0; font-size: 14px; }
+.chatbot-window .chat-form .lp-btn,
+.chatbot-window .chat-summary .lp-btn { margin-top: 8px; }
+.chatbot-window .chat-summary-rows { display: grid; grid-template-columns: max-content 1fr; gap: 6px 12px; margin: 0 0 10px; font-size: 14px; }
+.chatbot-window .chat-summary-rows dt { font-weight: 600; color: #4A3426; }
+.chatbot-window .chat-summary-rows dd { margin: 0; color: #2C1810; overflow-wrap: anywhere; }
+.chatbot-window .chat-summary .lp-notice { margin: 10px 0; padding: 10px 12px; gap: 10px; }
+.chatbot-window .chat-summary .lp-notice__title { font-size: 15px; }
+.chatbot-window .chat-summary .lp-notice__text { font-size: 14px; }
+.chatbot-window .chat-ref { margin: 6px 0 0 36px; padding: 12px 14px; background: #E7F0E2; border-left: 4px solid #5B8A4E; border-radius: 0 10px 10px 0; }
+.chatbot-window .chat-ref-label { display: block; font-size: 13px; color: #29432A; }
+.chatbot-window .chat-ref-number { display: block; margin-top: 2px; font: 700 24px/1.2 var(--font-body); letter-spacing: .5px; color: #17301A; overflow-wrap: anywhere; }
+@media (max-width: 480px) {
+  /* the chat fills the phone width instead of sitting 28px from the edge at a fixed 360px */
+  .chatbot-window { right: 8px; left: 8px; width: auto; bottom: 84px; height: min(560px, calc(100dvh - 100px)); }
+  .chatbot-window .chat-buttons,
+  .chatbot-window .chat-contact,
+  .chatbot-window .chat-ref { margin-left: 0; }
+}

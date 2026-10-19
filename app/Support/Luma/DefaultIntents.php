@@ -34,7 +34,7 @@ final class DefaultIntents
             }
         }
 
-        return [
+        return array_merge([
             'luma_greeting' => [
                 'keywords' => 'hello, hi, hey, kumusta, good morning, good afternoon, good evening, magandang umaga, magandang hapon, magandang gabi, who are you, who is luma, what is your name, sino ka, sino si luma, ano pangalan mo, what can you do, luma',
                 'en' => "Hi, I'm Luma, LP Furniture Shop's assistant. I can help with prices, ready-made designs, custom designs, wood choices, delivery, payment and your orders. What would you like to know?",
@@ -213,7 +213,39 @@ final class DefaultIntents
                 'tl' => '{{contact}} Bukas po kami {{hours}}. {{open_status}}',
                 'chips' => 'Shop hours, Custom design, Labor only',
             ],
-        ];
+        ], self::otherServices());
+    }
+
+    /** True when the reply for this intent carries the shop's contact card. */
+    public static function isCard(?string $name): bool
+    {
+        return in_array($name, self::CARD, true) || ($name && !empty(OtherServicesKnowledge::nodes()[$name]['card']));
+    }
+
+    /**
+     * The Other Services knowledge nodes (luma_os_*) as default intents. The node's own title is always a keyword, in
+     * English and Tagalog, because its follow-up chip sends the title back as the customer's next message.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    private static function otherServices(): array
+    {
+        $titles = OtherServicesKnowledge::titles();
+        $out    = [];
+
+        foreach (OtherServicesKnowledge::nodes() as $id => $node) {
+            $out[$id] = [
+                'keywords' => $node['kw'] . ', ' . $node['title'] . ', ' . $node['title_tl'],
+                'en'       => $node['en'],
+                'tl'       => $node['tl'],
+                'chips'    => implode(', ', array_map(fn ($child) => $titles[$child]['en'], $node['next'] ?? [])),
+                'buttons'  => $node['buttons'] ?? [],
+                'handler'  => $node['handler'] ?? null,
+                'lead'     => $node['lead'] ?? false,
+            ];
+        }
+
+        return $out;
     }
 
     public static function find(?string $name): ?array

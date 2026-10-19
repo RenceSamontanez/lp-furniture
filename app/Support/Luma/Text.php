@@ -15,6 +15,9 @@ final class Text
     /** @var array{phrases: array<string,string>, words: array<string,string>}|null */
     private static ?array $synonyms = null;
 
+    /** @var array<string, list<string>> */
+    private static array $memo = [];
+
     /** The plain lower-case, accent-free text with every punctuation mark turned into a space. */
     public static function plain(string $text): string
     {
@@ -28,6 +31,20 @@ final class Text
      * @return list<string>
      */
     public static function words(string $text): array
+    {
+        // Keywords are re-read for every message, so the result is remembered per text (cleared by reset()).
+        if (isset(self::$memo[$text])) {
+            return self::$memo[$text];
+        }
+        if (count(self::$memo) > 20000) {
+            self::$memo = [];
+        }
+
+        return self::$memo[$text] = self::compute($text);
+    }
+
+    /** @return list<string> */
+    private static function compute(string $text): array
     {
         $plain = ' ' . self::plain($text) . ' ';
         $map   = self::synonyms();
@@ -111,5 +128,6 @@ final class Text
     public static function reset(): void
     {
         self::$synonyms = null;
+        self::$memo     = [];
     }
 }

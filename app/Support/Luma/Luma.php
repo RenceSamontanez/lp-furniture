@@ -4,6 +4,8 @@ namespace App\Support\Luma;
 
 use App\Models\ChatbotIntent;
 use App\Models\Product;
+use App\Models\ServiceInquiry;
+use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -11,57 +13,365 @@ use Illuminate\Support\Facades\Route;
 /**
  * Luma, LP Furniture Shop's AI Assistant: turns one customer message into a structured reply.
  * Everything returned is plain text (the widget escapes it); nothing from the database is trusted as HTML.
+ *
+ * ── How a message is handled (first match wins) ───────────────────────────────────────────────────────────────
+ *   1. an open guided flow (cancellation / refund) gets the message first;
+ *   2. a reference number (REF-/INV-/SI-YYYY-NNNN) is looked up for the signed-in owner, nobody else;
+ *   3. the answer to a question Luma just asked ("Other Services job or custom furniture order?");
+ *   4. thanks, goodbye, and follow-ups to the last topic ("yes", "how", "when", "sige", "ano po?");
+ *   5. the trained intents (IntentMatcher), where a bare "refund", "cancel", "payment" or "status" is asked about once;
+ *   6. product size, budget and furniture-type questions; 7. the fallback.
+ *
+ * ── Tone rules (docs/luma-tone-rules.md; tests/Feature/LumaToneTest.php) ─────────────────────────────────────
+ *   Calm and never defensive. Apologise once, never repeatedly, never blame the customer. Never promise a refund or a
+ *   date, and never use the words "approved" or "guaranteed": a request is "sent", the team "reviews it and replies".
+ *   Stressed or angry message: one empathy line first, then the facts, then the next step. Plain words, short
+ *   sentences, "po" in Tagalog (Taglish gets simple Tagalog with the customer's English words). Numbers come from
+ *   Facts tokens, never typed in. A button only for something the code allows.
  */
 final class Luma
 {
+    /** What "yes" / "sige" does after a topic: show this next node (or start the flow). */
+    private const OFFERS = [
+        'luma_os_what_is'           => 'luma_os_make_ticket',
+        'luma_os_make_ticket'       => 'luma_os_describe_problem',
+        'luma_os_describe_problem'  => 'luma_os_make_ticket',
+        'luma_os_after_ticket'      => 'luma_os_invoice_what',
+        'luma_os_where_work'        => 'luma_os_visit_pickup_fee',
+        'luma_os_duration'          => 'luma_os_check_status',
+        'luma_os_invoice_what'      => 'luma_os_invoice_find',
+        'luma_os_pay_how'           => 'luma_os_pay_full_half',
+        'luma_os_pay_full_half'     => 'luma_os_second_half',
+        'luma_os_second_half'       => 'luma_os_pay_status',
+        'luma_os_no_pay_no_work'    => 'luma_os_pay_how',
+        'luma_os_refund_rule'       => 'refund_flow',
+        'luma_os_refund_after_start' => 'refund_flow',
+        'luma_os_work_started_meaning' => 'luma_os_check_status',
+        'luma_os_refund_timeline'   => 'luma_os_refund_status',
+        'luma_os_cancel_notice'     => 'luma_os_refund_status',
+        'luma_os_taking_too_long'   => 'refund_flow',
+        'luma_os_partial_refund'    => 'refund_flow',
+    ];
+
+    /** What "how" / "paano po" / "ano po?" does after a topic. */
+    private const HOW = [
+        'luma_os_refund_rule'       => 'refund_flow',
+        'luma_os_refund_after_start' => 'refund_flow',
+        'luma_os_refund_declined'   => 'luma_os_refund_status',
+        'luma_os_taking_too_long'   => 'refund_flow',
+        'luma_os_pay_how'           => 'luma_os_pay_full_half',
+        'luma_os_what_is'           => 'luma_os_make_ticket',
+    ];
+
+    private const REFUND_FAMILY = [
+        'luma_os_refund_rule', 'luma_os_work_started_meaning', 'luma_os_refund_how', 'luma_os_refund_timeline', 'luma_os_refund_status',
+        'luma_os_wrong_gcash', 'luma_os_refund_declined', 'luma_os_refund_after_start', 'luma_os_cancel_unpaid', 'luma_os_half_paid_cancel',
+        'luma_os_partial_refund', 'luma_os_change_of_mind', 'luma_os_duplicate_request', 'luma_os_taking_too_long', 'luma_os_cancel_notice',
+    ];
+
+    /** Furniture answers that settle the conversation on the furniture side once Luma has shown them. */
+    private const FURNITURE_ANSWERS = ['luma_cancel_refund', 'luma_payment_methods', 'luma_track_order', 'luma_deposit_rules'];
+
     /**
-     * @return array{text: string, suggestions: list<string>, products: list<array>, cards: list<array>, buttons: list<array{label: string, url: string}>, contact: ?array, lang: string, detected: string}
+     * @return array{text: string, suggestions: list<string>, products: list<array>, cards: list<array>, buttons: list<array{label: string, url: string}>, contact: ?array, form: ?array, reference: ?string, lang: string, detected: string}
      */
     public static function reply(string $message): array
     {
         $message = trim($message);
-        $lang    = Language::detect($message);
+        $state   = ChatState::load();
+        $user    = Auth::user();   // the customer guard only: Luma never answers from an admin session
+        $lang    = self::languageFor($message, $state);
+        $turn    = $state->nextTurn();
 
+        $reply = self::route($message, $lang, $state, $user);
+        $reply = self::withEmpathy($reply, $message, $state, $turn);
+
+        $state->set('misses', ($reply['detected'] ?? '') === 'unmatched' ? (int) $state->get('misses', 0) + 1 : 0);
+        $state->set('lang', $lang);
+        $state->save();
+
+        return self::finish($reply);
+    }
+
+    /** English or Tagalog (Taglish counts as Tagalog and gets simple Tagalog with the customer's English words). */
+    private static function languageFor(string $message, ChatState $state): string
+    {
+        [$tl, $en] = Language::scores($message);
+
+        // "yes", "ok", "how", a reference number: no language of their own, so keep the one the conversation is in.
+        $neutral = Context::isAffirmation($message) || Context::isHow($message) || Context::isWhen($message)
+            || Context::isThanks($message) || Context::isGoodbye($message) || Reference::strip($message) === '';
+        if ($tl === 0 && $en === 0 && $neutral && $state->get('lang')) {
+            return (string) $state->get('lang');
+        }
+
+        return $tl > 0 && $tl >= $en ? Language::TL : Language::EN;
+    }
+
+    private static function route(string $message, string $lang, ChatState $state, ?User $user): array
+    {
+        // 1. an open guided flow
+        if ($state->inFlow() && ($body = RefundFlow::handle($message, $lang, $state, $user))) {
+            return self::wrap($body, $lang, 'flow:refund');
+        }
+
+        // 2. reference numbers
+        if ($refs = Reference::find($message)) {
+            return self::referenceReply($refs, $message, $lang, $state, $user);
+        }
+
+        $words = Text::words($message);
+
+        // 3. the answer to the question just asked
+        if ($pending = $state->get('pending')) {
+            $state->set('pending', null);
+            if ($side = Disambiguation::answer($words)) {
+                return self::resolveAsked((string) $pending, $side, $message, $lang, $state, $user);
+            }
+        }
+
+        // 4. thanks, goodbye, follow-ups
+        if (Context::isThanks($message) || Context::isGoodbye($message)) {
+            return self::build($lang === Language::TL ? 'Walang anuman po!' : "You're welcome!", [], 'goodbye', $lang, closing: 'goodbye');
+        }
+        if (($topic = $state->get('topic')) && ($follow = self::followUp($message, (string) $topic, $lang, $state, $user))) {
+            return $follow;
+        }
+
+        // 5. trained intents
         $intents = ChatbotIntent::query()->where('is_active', true)->get();
         $hit     = IntentMatcher::best($message, $intents);
 
         if ($hit) {
-            return self::finish(self::fromIntent($hit['intent'], $message, $lang));
+            $category = (string) $hit['intent']->category;
+
+            // Bare words that mean two different things: ask once (unless the conversation already says which).
+            if ($kind = self::ambiguousKind($category, $words)) {
+                return self::askOrRoute($kind, $message, $lang, $state, $user, $hit['intent']);
+            }
+
+            return self::fromIntent($hit['intent'], $message, $lang, $state, $user);
         }
 
         $more = self::chips(['View all products', 'Custom design', 'Delivery info'], $lang);
 
         if ($size = self::sizeAnswer($message, $lang)) {
-            return self::finish(self::build($size, $more, 'product_size', $lang));
+            return self::build($size, $more, 'product_size', $lang);
         }
 
         if ($budget = self::budgetAnswer($message, $lang)) {
-            return self::finish(self::build($budget['text'], $more, 'budget', $lang, cards: $budget['cards'], buttons: $budget['buttons']));
+            return self::build($budget['text'], $more, 'budget', $lang, cards: $budget['cards'], buttons: $budget['buttons']);
         }
 
         // "doors" on its own: show the doors (a type we have nothing of is an unanswered question, so it is logged as one)
         if (($type = ProductFinder::detectType($message)) && ProductFinder::available($type)->isNotEmpty()) {
-            $reply = self::productsReply(self::build('', self::chips(['Prices', 'Custom design', 'Delivery'], $lang), 'product_type', $lang), $type, false);
-
-            return self::finish($reply);
+            return self::productsReply(self::build('', self::chips(['Prices', 'Custom design', 'Delivery'], $lang), 'product_type', $lang), $type, false);
         }
 
-        return self::fallback($lang);
+        // Nothing matched, but the whole message is one payment or status word ("payment"): still ask, never a miss.
+        if (Disambiguation::isBarePayment($words)) {
+            return self::askOrRoute('payment', $message, $lang, $state, $user, new ChatbotIntent());
+        }
+        if (Disambiguation::isBareStatus($words)) {
+            return self::askOrRoute('status', $message, $lang, $state, $user, new ChatbotIntent());
+        }
+
+        return self::fallback($lang, $message, (int) $state->get('misses', 0));
     }
 
-    /** Adds Luma's closing line, in the language of the answer. The one place it is ever added. */
-    public static function finish(array $reply): array
-    {
-        $closing = config('luma.closing');
-        $text    = rtrim($reply['text']);
+    /* ───────────── asking once, and remembering the answer ───────────── */
 
-        foreach ($closing as $line) {
-            if (str_ends_with($text, $line)) {
-                $text = rtrim(substr($text, 0, -strlen($line)));
+    /** refund | cancel | payment | status when the winning intent is a furniture answer to a bare, context-free word. */
+    private static function ambiguousKind(string $category, array $words): ?string
+    {
+        if (Disambiguation::mentionsFurniture($words) || Disambiguation::mentionsOtherServices($words)) {
+            return null;
+        }
+
+        return match (true) {
+            $category === 'luma_cancel_refund' => in_array('refund', $words, true) ? 'refund' : 'cancel',
+            $category === 'luma_payment_methods' && Disambiguation::isBarePayment($words) => 'payment',
+            in_array($category, ['luma_os_check_status', 'luma_track_order'], true) && Disambiguation::isBareStatus($words) => 'status',
+            default => null,
+        };
+    }
+
+    private static function askOrRoute(string $kind, string $message, string $lang, ChatState $state, ?User $user, ChatbotIntent $intent): array
+    {
+        // The conversation already says which side this is on: no question.
+        if ($side = $state->domain()) {
+            return self::resolveAsked($kind, $side, $message, $lang, $state, $user);
+        }
+
+        $state->set('pending', $kind);
+        $ask = Disambiguation::ask($kind, $lang);
+
+        return self::build($ask['text'], $ask['suggestions'], $ask['detected'], $lang, closing: 'flow');
+    }
+
+    private static function resolveAsked(string $kind, string $side, string $message, string $lang, ChatState $state, ?User $user): array
+    {
+        $state->set('domain', $side);
+
+        $category = match ([$kind, $side]) {
+            ['payment', Disambiguation::OS]        => 'luma_os_pay_how',
+            ['payment', Disambiguation::FURNITURE] => 'luma_payment_methods',
+            ['status', Disambiguation::OS]         => 'luma_os_check_status',
+            ['status', Disambiguation::FURNITURE]  => 'luma_track_order',
+            [$kind, Disambiguation::OS]            => 'luma_os_refund_how',
+            default                                => 'luma_cancel_refund',
+        };
+
+        return self::nodeReply($category, $message, $lang, $state, $user);
+    }
+
+    /** The reply of one named intent (the stored row if active, otherwise the built-in default). */
+    private static function nodeReply(string $category, string $message, string $lang, ChatState $state, ?User $user): array
+    {
+        $intent = ChatbotIntent::query()->where('is_active', true)->where('category', $category)->first();
+
+        if (!$intent && ($def = DefaultIntents::find($category))) {
+            $intent = new ChatbotIntent(['category' => $category, 'keywords' => $def['keywords'], 'response' => $def['en'], 'answer_tl' => $def['tl'], 'suggestions' => $def['chips'] ?? null]);
+        }
+        if (!$intent) {
+            return self::fallback($lang, $message, 0);
+        }
+
+        return self::fromIntent($intent, $message, $lang, $state, $user);
+    }
+
+    /* ───────────── reference numbers and follow-ups ───────────── */
+
+    private static function referenceReply(array $refs, string $message, string $lang, ChatState $state, ?User $user): array
+    {
+        $ref = $refs[0];
+        $state->set('domain', Disambiguation::OS)->set('topic', 'reference');
+
+        // "cancel SI-2026-0003": go straight to the guided flow for that ticket (owner only).
+        $rest = Text::words(Reference::strip($message));
+        if ($user && array_intersect($rest, ['cancel', 'refund']) !== []) {
+            if ($ticket = RefundFlow::ticketForReference($ref, $user)) {
+                return self::wrap(RefundFlow::afterPick($ticket, $state, $user, $lang), $lang, 'flow:refund');
             }
         }
 
-        $reply['text'] = $text . "\n\n" . ($closing[$reply['lang']] ?? $closing['en']);
+        // A ticket picked from "which one?": answer the question that was being asked about it.
+        if ($user && ($pickFor = $state->get('pick_for'))) {
+            $ticket = RefundFlow::ticketForReference($ref, $user);
+            if ($ticket) {
+                $state->set('pick_for', null)->set('ticket_id', $ticket->id);
+
+                return self::wrap(StatusAnswers::forTicket((string) $pickFor, $ticket, $lang), $lang, 'reference:' . $ref['type']);
+            }
+        }
+
+        if ($user && $ref['type'] === 'SI' && ($t = ServiceInquiry::where('user_id', $user->id)->where('reference_number', $ref['number'])->first())) {
+            $state->set('ticket_id', $t->id);
+        }
+
+        return self::wrap(StatusAnswers::forReference($ref, $user, $lang), $lang, 'reference:' . $ref['type']);
+    }
+
+    private static function followUp(string $message, string $topic, string $lang, ChatState $state, ?User $user): ?array
+    {
+        $target = null;
+
+        if (Context::isAffirmation($message)) {
+            $target = self::OFFERS[$topic] ?? (OtherServicesKnowledge::nodes()[$topic]['next'][0] ?? null);
+        } elseif (Context::isHow($message)) {
+            $target = self::HOW[$topic] ?? self::OFFERS[$topic] ?? null;
+        } elseif (Context::isWhen($message)) {
+            $target = in_array($topic, self::REFUND_FAMILY, true) ? 'luma_os_refund_timeline' : (str_starts_with($topic, 'luma_os_pay') || $topic === 'luma_os_second_half' ? 'luma_os_second_half' : (str_starts_with($topic, 'luma_os_') ? 'luma_os_duration' : null));
+        } elseif (Context::isPaidFollowUp($message) && in_array($topic, self::REFUND_FAMILY, true)) {
+            $target = $user ? 'refund_flow' : 'luma_os_refund_rule';
+        }
+
+        if ($target === null) {
+            return null;
+        }
+        if ($target === 'refund_flow') {
+            return self::nodeReply('luma_os_refund_how', $message, $lang, $state, $user);
+        }
+
+        return self::nodeReply($target, $message, $lang, $state, $user);
+    }
+
+    /* ───────────── building replies ───────────── */
+
+    /** One empathy line first when the customer sounds stressed or angry; one apology at most, never stacked. */
+    private static function withEmpathy(array $reply, string $message, ChatState $state, int $turn): array
+    {
+        $apologised = Context::startsWithApology($reply['text']);
+
+        if (!$apologised && Context::isStressed($message) && $reply['text'] !== '') {
+            $recent = $turn - (int) $state->get('apologised_turn', -99) <= 2;
+            $line   = Context::empathyLine($reply['lang'], !$recent);
+            $reply['text'] = $line . ' ' . $reply['text'];
+            if (!$recent) {
+                $state->set('apologised_turn', $turn);
+            }
+        } elseif ($apologised) {
+            $state->set('apologised_turn', $turn);
+        }
+
+        return $reply;
+    }
+
+    /** Turns a body from StatusAnswers / RefundFlow (text, buttons, cards, chips, contact flag, form, reference) into a reply. */
+    private static function wrap(array $b, string $lang, string $detected): array
+    {
+        $contact = $b['contact'] ?? null;
+        if ($contact === true) {
+            $contact = (Contact::phone() || Contact::email()) ? Contact::card() : null;
+        } elseif (!is_array($contact)) {
+            $contact = null;
+        }
+
+        $reply = self::build(
+            $b['text'], $b['suggestions'] ?? [], $b['detected'] ?? $detected, $lang,
+            cards: $b['cards'] ?? [], buttons: array_values(array_filter($b['buttons'] ?? [])),
+            closing: str_ends_with((string) ($b['detected'] ?? ''), 'exit') ? 'goodbye' : 'flow',
+        );
+        $reply['contact']   = $contact;
+        $reply['form']      = $b['form'] ?? null;
+        $reply['reference'] = $b['reference'] ?? null;
+
+        return $reply;
+    }
+
+    /**
+     * Adds Luma's closing line, in the language of the answer. The one place it is ever added. The line depends on
+     * the situation (config luma.closing): after a normal answer, after a fallback, in the middle of a flow, at goodbye.
+     */
+    public static function finish(array $reply): array
+    {
+        $closing = config('luma.closing');
+        $lang    = ($reply['lang'] ?? 'en') === 'tl' ? 'tl' : 'en';
+        $kind    = $reply['closing'] ?? match (true) {
+            ($reply['detected'] ?? '') === 'unmatched' => 'fallback',
+            default                                    => 'answer',
+        };
+
+        $known = [$closing['en'], $closing['tl']];
+        foreach ($closing['situations'] ?? [] as $line) {
+            $known[] = $line['en'];
+            $known[] = $line['tl'];
+        }
+
+        $text = rtrim($reply['text']);
+        do {
+            $stripped = false;
+            foreach ($known as $line) {
+                if ($line !== '' && str_ends_with($text, $line)) {
+                    $text     = rtrim(substr($text, 0, -strlen($line)));
+                    $stripped = true;
+                }
+            }
+        } while ($stripped);
+
+        $line = $kind === 'answer' ? $closing[$lang] : ($closing['situations'][$kind][$lang] ?? $closing[$lang]);
+
+        $reply['text'] = ($text === '' ? '' : $text . "\n\n") . $line;
 
         return $reply;
     }
@@ -73,38 +383,120 @@ final class Luma
             return $chips;
         }
 
-        return array_map(fn ($c) => config('luma.chips_tl')[$c] ?? $c, $chips);
+        $map = config('luma.chips_tl') + OtherServicesKnowledge::chipTranslations();
+
+        return array_map(fn ($c) => $map[$c] ?? $c, $chips);
     }
 
-    /** The answer of one trained intent, plus the buttons, contact card and live products that go with a built-in one. */
-    private static function fromIntent(ChatbotIntent $intent, string $message, string $lang): array
+    /**
+     * The answer of one trained intent, plus the buttons, contact card, live products and personal status that go
+     * with a built-in one. A node that reads the customer's own data shows a Log in button to a guest instead.
+     */
+    private static function fromIntent(ChatbotIntent $intent, string $message, string $lang, ChatState $state, ?User $user): array
     {
-        $answer = $lang === Language::TL && filled($intent->answer_tl) ? $intent->answer_tl : $intent->response;
+        $category = (string) $intent->category;
+        $answer   = $lang === Language::TL && filled($intent->answer_tl) ? $intent->answer_tl : $intent->response;
 
         $reply = self::build(
             text: self::fill((string) $answer, $lang),
             suggestions: self::chips($intent->suggestions_array, $lang),
-            detected: 'intent:' . $intent->id,
+            detected: 'intent:' . ($intent->id ?? $category),
             lang: $lang,
         );
 
-        $def = DefaultIntents::find($intent->category);
+        if ($category !== '') {
+            $state->set('topic', $category);
+            if (str_starts_with($category, 'luma_os_')) {
+                $state->set('domain', Disambiguation::OS);
+            } elseif (in_array($category, self::FURNITURE_ANSWERS, true)) {
+                $state->set('domain', Disambiguation::FURNITURE);
+            }
+        }
+
+        $def = DefaultIntents::find($category);
         if (!$def) {
             return $reply;
         }
 
         $reply['buttons'] = self::buttons($def['buttons'] ?? [], $lang);
 
-        if (in_array($intent->category, DefaultIntents::CARD, true) && (Contact::phone() || Contact::email())) {
+        if (DefaultIntents::isCard($category) && (Contact::phone() || Contact::email())) {
             $reply['contact'] = Contact::card();
         }
 
         return match ($def['handler'] ?? null) {
-            'products' => self::productsReply($reply, ProductFinder::detectType($message), $intent->category === 'luma_ready_made'),
-            'range'    => self::rangeReply($reply, ProductFinder::detectType($message)),
-            'labor'    => self::laborReply($reply),
-            default    => $reply,
+            'products'     => self::productsReply($reply, ProductFinder::detectType($message), $category === 'luma_ready_made'),
+            'range'        => self::rangeReply($reply, ProductFinder::detectType($message)),
+            'labor'        => self::laborReply($reply),
+            'refund_flow'  => self::refundFlowReply($reply, $state, $user, $lang),
+            'status_ticket', 'status_invoice', 'status_pay', 'status_refund', 'status_schedule', 'status_late'
+                           => self::personalReply($reply, (string) $def['handler'], !empty($def['lead']), $state, $user, $lang),
+            default        => $reply,
         };
+    }
+
+    /** The node's own short lead-in, then the guided flow (or the guest's Log in buttons). */
+    private static function refundFlowReply(array $reply, ChatState $state, ?User $user, string $lang): array
+    {
+        $flow = RefundFlow::start($state, $user, $lang);
+
+        $reply['text'] = rtrim($reply['text']) . "\n\n" . $flow['text'];
+        $reply['buttons'] = array_slice(array_merge(array_values(array_filter($flow['buttons'] ?? [])), $reply['buttons']), 0, 3);
+        $reply['cards'] = $flow['cards'] ?? [];
+        $reply['form'] = $flow['form'] ?? null;
+        if (!empty($flow['suggestions'])) {
+            $reply['suggestions'] = $flow['suggestions'];
+        }
+        if (!empty($flow['contact'])) {
+            $reply['contact'] = Contact::card();
+        }
+        $reply['closing'] = 'flow';
+
+        return $reply;
+    }
+
+    /** The signed-in customer's own status after the node's general answer. A guest gets the general answer and Log in / Register. */
+    private static function personalReply(array $reply, string $handler, bool $lead, ChatState $state, ?User $user, string $lang): array
+    {
+        $tl = $lang === Language::TL;
+
+        if (!$user) {
+            $reply['buttons'] = array_slice(array_merge(
+                [['label' => $tl ? 'Mag-log in' : 'Log in', 'url' => route('login', [], false)], ['label' => $tl ? 'Gumawa ng account' : 'Create an account', 'url' => route('register', [], false)]],
+                $reply['buttons'],
+            ), 0, 3);
+
+            return $reply;
+        }
+
+        $body = StatusAnswers::personal($handler, $user, $lang, $state->get('ticket_id') ? (int) $state->get('ticket_id') : null);
+        $state->set('pick_for', !empty($body['cards']) ? $handler : null);
+
+        // A lead-in node ("I can check your ticket") is replaced by the facts; it keeps only an opening apology.
+        $general = rtrim($reply['text']);
+        if ($lead) {
+            $first   = preg_split('/(?<=[.!?])\s+/u', $general)[0] ?? '';
+            $general = Context::startsWithApology($first) ? $first : '';
+        }
+        $reply['text'] = trim($general . "\n\n" . $body['text']);
+
+        $buttons = array_values(array_filter(array_merge($body['buttons'] ?? [], $reply['buttons'])));
+        $seen    = [];
+        $reply['buttons'] = array_slice(array_values(array_filter($buttons, function ($b) use (&$seen) {
+            return !isset($seen[$b['url']]) && ($seen[$b['url']] = true);
+        })), 0, 3);
+
+        if (!empty($body['cards'])) {
+            $reply['cards'] = $body['cards'];
+        }
+        if (!empty($body['suggestions'])) {
+            $reply['suggestions'] = $body['suggestions'];
+        }
+        if (!empty($body['contact'])) {
+            $reply['contact'] = (Contact::phone() || Contact::email()) ? Contact::card() : null;
+        }
+
+        return $reply;
     }
 
     /**
@@ -263,14 +655,57 @@ final class Luma
         return $out;
     }
 
-    /** The friendly dead-end answer: four topics to pick and how to reach the shop. */
-    public static function fallback(string $lang): array
+    /**
+     * The friendly dead-end answer: topic chips that match the words typed (always ending in "Talk to a person"), and
+     * after two misses in a row the shop's contact card and an offer to talk to a person. Not the "You're welcome"
+     * closing: a miss gets the fallback closing line.
+     */
+    public static function fallback(string $lang, string $message = '', int $misses = 0): array
     {
-        $text = $lang === Language::TL
-            ? 'Pasensya na po, hindi ko po masagot iyan ngayon, pero matutulungan ko po kayo sa mga paksang ito. Pumili po sa ibaba o subukang itanong sa ibang paraan. ' . Contact::sentence($lang)
-            : "I couldn't quite find an answer to that, but I can help with these topics. Pick one below or try asking in a different way. " . Contact::sentence($lang);
+        $tl     = $lang === Language::TL;
+        $second = $misses >= 1;
 
-        return self::finish(self::build($text, self::chips(['How to order', 'Custom design', 'Prices', 'Delivery'], $lang), 'unmatched', $lang));
+        $text = $tl
+            ? 'Pasensya na po, hindi ko po masagot iyan ngayon, pero matutulungan ko po kayo sa mga paksang ito. Pumili po sa ibaba o subukang itanong sa ibang paraan.'
+            : "I couldn't quite find an answer to that, but I can help with these topics. Pick one below or try asking in a different way.";
+        $text .= ' ' . Contact::sentence($lang);
+        if ($second) {
+            $text .= $tl ? ' Kung gusto ninyo, maaari po kayong makausap ng isang tao.' : ' If you like, a real person can help you directly.';
+        }
+
+        $reply = self::build($text, self::chips(self::fallbackChips($message), $lang), 'unmatched', $lang);
+        if ($second && (Contact::phone() || Contact::email())) {
+            $reply['contact'] = Contact::card();
+        }
+
+        return $reply;
+    }
+
+    /** Chips that fit what was typed first, then the usual topics, then always the way to a person. */
+    public static function fallbackChips(string $message): array
+    {
+        $w     = Text::words($message);
+        $chips = [];
+        if (array_intersect($w, ['refund', 'cancel', 'return', 'money', 'cancelled']) !== []) {
+            $chips[] = 'Refund or cancel';
+        }
+        if (array_intersect($w, ['pay', 'payment', 'invoice', 'gcash', 'cash', 'card', 'paid', 'receipt']) !== []) {
+            $chips[] = 'Pay my invoice';
+        }
+        if (array_intersect($w, ['service', 'repair', 'labor', 'ticket', 'request', 'photo', 'restoration', 'fix']) !== []) {
+            $chips[] = 'Other Services';
+        }
+        foreach (['Other Services', 'Refund or cancel', 'Pay my invoice', 'How to order', 'Custom design'] as $default) {
+            if (count($chips) >= 4) {
+                break;
+            }
+            if (!in_array($default, $chips, true)) {
+                $chips[] = $default;
+            }
+        }
+        $chips[] = 'Talk to a person';
+
+        return $chips;
     }
 
     /** Fills the {{tokens}} (contact details, hours, estimates...) as plain text. See Facts. */
@@ -285,7 +720,8 @@ final class Luma
         return str_replace(array_keys($tokens), array_values($tokens), $text);
     }
 
-    private static function build(string $text, array $suggestions, string $detected, string $lang, array $cards = [], array $buttons = []): array
+    /** @param ?string $closing  which closing line to end on: answer (default), fallback, flow or goodbye */
+    private static function build(string $text, array $suggestions, string $detected, string $lang, array $cards = [], array $buttons = [], ?string $closing = null): array
     {
         return [
             'text'        => $text,
@@ -294,8 +730,11 @@ final class Luma
             'cards'       => $cards,
             'buttons'     => $buttons,
             'contact'     => null,
+            'form'        => null,
+            'reference'   => null,
             'lang'        => $lang,
             'detected'    => $detected,
+            'closing'     => $closing,
         ];
     }
 

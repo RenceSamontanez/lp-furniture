@@ -10,9 +10,9 @@ return [
 
     'timezone' => 'Asia/Manila',
 
-    // Show "Ask Luma about this" on Other Services notification details pages. Keep false until Luma can look up
-    // a request by its reference number (Prompt 8f). Switch on with LUMA_NOTIFICATION_ASK_BUTTON=true in .env.
-    'notification_ask_button' => (bool) env('LUMA_NOTIFICATION_ASK_BUTTON', false),
+    // Show "Ask Luma about this" on Other Services notification details pages. On since Stage 21i, when Luma learned to
+    // look up a request by its reference number. Switch off with LUMA_NOTIFICATION_ASK_BUTTON=false in .env.
+    'notification_ask_button' => (bool) env('LUMA_NOTIFICATION_ASK_BUTTON', true),
 
     // Shop hours: 8:00 AM to 5:00 PM, Monday to Friday (ISO weekdays, 1 = Monday)
     'hours' => [
@@ -41,12 +41,20 @@ return [
     'stop_words' => [
         'a', 'an', 'the', 'is', 'are', 'po', 'opo', 'ba', 'naman', 'lang', 'ang', 'ng', 'nang', 'ay',
         'pls', 'please', 'kindly', 'sir', 'maam', 'mam',
+        // Filipino particles that carry no meaning of their own (Stage 21i)
+        'ko', 'mo', 'ninyo', 'niyo', 'nyo', 'na', 'pa', 'sa', 'mga', 'din', 'rin', 'daw', 'raw', 'eh', 'bang', 'yung', 'iyong', 'kong', 'mong', 'akong', 'ninyong', 'niyong', 'nyong',
     ],
 
-    // One closing line, added in one place (Luma::finish) to every answer
+    // One closing line, added in one place (Luma::finish) to every reply. `en` / `tl` are the default after a normal
+    // answer; `situations` are the variants chosen by what just happened (a fallback never says "You're welcome").
     'closing' => [
         'en' => "You're welcome! Luma is always here to help.",
         'tl' => 'Walang anuman po! Nandito lang si Luma para tumulong.',
+        'situations' => [
+            'fallback' => ['en' => 'Luma is always here to help.', 'tl' => 'Nandito lang po si Luma para tumulong.'],
+            'flow'     => ['en' => 'I am right here if you need anything.', 'tl' => 'Nandito lang po ako kung may kailangan kayo.'],
+            'goodbye'  => ['en' => 'Take care, and come back anytime. Luma is always here to help.', 'tl' => 'Ingat po, balik lang kayo anumang oras. Nandito lang si Luma para tumulong.'],
+        ],
     ],
 
     // The furniture types Luma recognises in a question. The key is the one word or phrase she
@@ -87,6 +95,10 @@ return [
         'Free delivery'    => 'Libre ba ang delivery',
         'Cancel an order'  => 'Cancel ng order',
         'Deposit and installment' => 'Hulugan',
+        'Other Services'   => 'Other Services',
+        'Refund or cancel' => 'Refund o kanselahin',
+        'Pay my invoice'   => 'Bayaran ang invoice ko',
+        'Talk to a person' => 'Makausap ang isang tao',
     ],
 
     // Values the owner has not confirmed yet. Luma never states these as fact; each answer
