@@ -31,6 +31,7 @@ rules. The owner or accountant must confirm each one before the invoices are use
 ## Online payments (Stage 21e): defaults to confirm
 
 Set in one place, `App\Support\InvoicePaymentRules`:
+
 | Setting | Default |
 |---|---|
 | Half and half, all service types (Labor only, Repair or restoration, Something else, any future type) | allowed from an invoice total of 3,000 pesos (rule changed in Stage 21h; below it, full payment only) |
