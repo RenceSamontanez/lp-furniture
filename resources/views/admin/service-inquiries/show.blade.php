@@ -206,7 +206,7 @@
         <details class="co-more" id="cancellation-request" @if(session('offer_cancellation_request') || $errors->has('reason_code')) open @endif>
           <summary>Open a cancellation request for the customer</summary>
           <p class="si-hint">Use this when the customer asks by phone or in person. It puts the invoice on hold until you decide.@if($ctx['paid_cents'] > 0) {{ \App\Support\ServiceInvoiceDesk::peso($ctx['paid_cents'] / 100) }} has been paid.@endif</p>
-          <form method="POST" action="{{ route('admin.service-inquiries.refund-request', $t->id) }}" class="co-action-form">
+          <form method="POST" action="{{ route('admin.service-inquiries.refund-request', $t->id) }}" class="co-action-form" id="cr-form" data-lp-gate="cr-modal">
             @csrf
             <label class="co-modal-label" for="cr-reason" style="margin-top:0;">Reason</label>
             <select name="reason_code" id="cr-reason" class="form-input" required>
@@ -232,8 +232,7 @@
               <label class="co-modal-label" for="cr-gname">Name on the GCash account (if GCash)</label>
               <input type="text" name="gcash_account_name" id="cr-gname" class="form-input" autocomplete="off" value="{{ old('gcash_account_name') }}"/>
             @endif
-            <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" style="margin-top:12px;" data-loading="Saving..."
-                    onclick="return confirm('Open this cancellation request? Payments on this service will be paused.')">Open a cancellation request</button>
+            <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" style="margin-top:12px;">Open a cancellation request</button>
           </form>
         </details>
       </div>
@@ -258,13 +257,12 @@
 
           <details class="co-more">
             <summary>Close or cancel this ticket</summary>
-            <form method="POST" action="{{ route('admin.service-inquiries.close', $t->id) }}" class="co-action-form"
-                  onsubmit="return confirm('Close this ticket? It can no longer be updated. A sent invoice with no payment on it is cancelled with it and the customer is told.')">
+            <form method="POST" action="{{ route('admin.service-inquiries.close', $t->id) }}" class="co-action-form" id="si-close-form" data-lp-gate="si-close-modal">
               @csrf
               <label class="co-modal-label" for="si-reason" style="margin-top:0;">Reason</label>
               <textarea name="reason" id="si-reason" class="form-input" rows="3" maxlength="1000" required
                         placeholder="e.g. Agreed on a price by phone, customer will visit the shop"></textarea>
-              <button type="submit" class="admin-btn admin-btn-outline co-wide" style="margin-top:8px;" data-loading="Closing...">Mark closed</button>
+              <button type="submit" class="admin-btn admin-btn-outline co-wide" style="margin-top:8px;">Mark closed</button>
             </form>
           </details>
         @else
@@ -319,6 +317,25 @@
 </div>
 @endif
 </div>
+
+@if($isOpen)
+<x-modal id="si-close-modal" title="Close this ticket?">
+  <p>It can no longer be updated. A sent invoice with no payment on it is cancelled with it and the customer is told.</p>
+  <x-slot:footer>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+    <button type="button" class="lp-btn lp-btn--primary" data-lp-gate-submit="si-close-form" data-lp-confirm>Close ticket</button>
+  </x-slot:footer>
+</x-modal>
+@if(!$ctx['open'])
+<x-modal id="cr-modal" title="Open this cancellation request?">
+  <p>Payments on this service will be paused until you decide.</p>
+  <x-slot:footer>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+    <button type="button" class="lp-btn lp-btn--primary" data-lp-gate-submit="cr-form" data-lp-confirm>Open request</button>
+  </x-slot:footer>
+</x-modal>
+@endif
+@endif
 @endsection
 
 @push('scripts')

@@ -127,6 +127,8 @@
       if (!form || modal.hasAttribute('data-busy')) { return; }
       modal.setAttribute('data-busy', ''); btn.disabled = true; btn.setAttribute('aria-busy', 'true');
       form.setAttribute('data-lp-confirmed', '');
+      var finalAction = form.getAttribute('data-lp-final-action');
+      if (finalAction) { form.action = finalAction; }
       form.submit();
     });
   });

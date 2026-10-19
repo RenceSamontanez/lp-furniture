@@ -107,7 +107,7 @@ body {
   flex-direction: column;
 }
 
-/* Justify readable body text (keep headings/buttons as designed) */
+/* Body text is left-aligned (Stage 21h): justified text left ugly word gaps in narrow cards. */
 p,
 li,
 .hero-v2-sub,
@@ -118,9 +118,7 @@ li,
 .page-header p,
 .empty-state p,
 .gallery-story {
-  text-align: justify;
-  text-justify: inter-word;
-  text-align-last: left;
+  text-align: left;
 }
 
 main {
@@ -3253,6 +3251,7 @@ nav .nav-btn:active {
 .lp-modal__facts { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 10px 0; padding: 12px 14px; background: #FAF6EE; border: 1px solid #EFE7DA; border-radius: 10px; font-size: 14.5px; }
 .lp-modal__facts dt { color: #5C4A3E; font-weight: 500; }
 .lp-modal__facts dd { margin: 0; font-weight: 600; color: var(--brown-deep); min-width: 0; }
+.lp-modal__row { display: contents; }
 .lp-modal__facts [hidden] { display: none; }
 .lp-modal__check { display: flex; align-items: flex-start; gap: 10px; min-height: 44px; margin: 12px 0 4px; padding: 10px 12px; border: 1.5px solid #D8CBB8; border-radius: 10px; background: #FFFCF6; cursor: pointer; font-weight: 500; }
 .lp-modal__check input { flex: none; width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--brown-deep); }
@@ -3284,3 +3283,39 @@ a.lp-link:hover, .lp-link a:hover, button.lp-link:hover { color: var(--link-hove
 a.lp-link:focus-visible, .lp-link a:focus-visible, button.lp-link:focus-visible { outline: 2px solid var(--brown-deep); outline-offset: 3px; box-shadow: 0 0 0 5px #E8B86D; }
 a.lp-link--tap, button.lp-link--tap { display: inline-flex; align-items: center; min-height: 44px; }
 .lp-notice__text a.lp-link { color: var(--link); text-decoration: underline; text-decoration-color: var(--link-underline); }
+
+/* ══════════════════════════════════════════
+   Progress stepper: .lp-stepper (Stage 21h). Markup: resources/views/components/stepper.blade.php
+   Equal-width columns. The circle is centred in its column, the label is centred under it, and the connector line runs
+   between circle centres (a per-step line from the previous circle's centre to this one). tests/UiLinks/stepper-align.js measures it.
+══════════════════════════════════════════ */
+.lp-stepper { --dot: 30px; list-style: none; margin: 6px 0 22px; padding: 0; display: grid; grid-template-columns: repeat(var(--steps, 4), minmax(0, 1fr)); }
+.lp-stepper__step { position: relative; display: flex; flex-direction: column; align-items: center; min-width: 0; padding: 0 4px; text-align: center; }
+.lp-stepper__step + .lp-stepper__step::before {
+  content: ""; position: absolute; z-index: 0; top: calc(var(--dot) / 2 - 1px); right: 50%; width: 100%; height: 2px; background: #DCCFBC;
+}
+.lp-stepper__step.is-done::before, .lp-stepper__step.is-current::before, .lp-stepper__step.is-problem::before, .lp-stepper__step.is-stopped::before { background: var(--brown-mid); }
+.lp-stepper__dot {
+  position: relative; z-index: 1; box-sizing: border-box; width: var(--dot); height: var(--dot); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; background: #EDE8E0; color: #4F4238; border: 2px solid #EDE8E0;
+  font-size: 13px; font-weight: 700; line-height: 1;
+}
+.lp-stepper__dot svg { width: 16px; height: 16px; display: block; }
+.lp-stepper__num { display: block; line-height: 1; }
+.lp-stepper__label { display: block; margin-top: 8px; font-size: 13px; line-height: 1.3; color: #5C4A3C; text-align: center; overflow-wrap: anywhere; }
+.lp-stepper__short { display: none; }
+.lp-stepper__step.is-done .lp-stepper__dot { background: var(--brown-mid); border-color: var(--brown-mid); color: #FDFAF5; }
+.lp-stepper__step.is-current .lp-stepper__dot { background: var(--brown-deep); border-color: var(--gold); color: #FDFAF5; box-shadow: 0 0 0 4px rgba(200, 150, 62, 0.28); }
+.lp-stepper__step.is-current .lp-stepper__label { color: var(--brown-deep); font-weight: 700; }
+.lp-stepper__step.is-problem .lp-stepper__dot { background: #FBE9D9; border-color: #B5543A; color: #8A3520; box-shadow: 0 0 0 4px rgba(181, 84, 58, 0.16); }
+.lp-stepper__step.is-problem .lp-stepper__label { color: #6B2A18; font-weight: 700; }
+.lp-stepper__step.is-stopped .lp-stepper__dot { background: #EFE9E2; border-color: #7A6A5E; color: #43382F; box-shadow: 0 0 0 4px rgba(122, 106, 94, 0.18); }
+.lp-stepper__step.is-stopped .lp-stepper__label { color: #43382F; font-weight: 700; }
+.lp-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+@media (max-width: 480px) {
+  .lp-stepper { --dot: 28px; }
+  .lp-stepper__step { padding: 0 2px; }
+  .lp-stepper__long { display: none; }
+  .lp-stepper__short { display: inline; }
+  .lp-stepper__label { font-size: 12px; }
+}

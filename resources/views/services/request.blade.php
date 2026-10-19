@@ -115,7 +115,7 @@
         <div class="co-field" style="margin-bottom:14px;">
           <label class="co-option" for="si-terms">
             <input type="checkbox" name="terms" id="si-terms" value="1" required @checked(old('terms'))/>
-            <span>I have read and agree to the <a href="{{ route('services.terms') }}" target="_blank" rel="noopener" data-no-loading>Other Services terms</a>.</span>
+            <span>I have read and agree to the <a href="{{ route('services.terms') }}" class="lp-link" target="_blank" rel="noopener" data-no-loading>Other Services terms</a>.</span>
           </label>
         </div>
 
@@ -132,46 +132,52 @@
       @if($mine->isNotEmpty())
           <section class="si-card" aria-label="My requests">
             <h2 class="si-card-title">My requests</h2>
-            <ul class="si-list">
+            <ul class="si-list rq-mini-list">
               @foreach($mine as $t)
-                <li>
-                  <div class="si-list-top">
+                @php
+                  $live    = $t->invoices->first(fn ($inv) => $inv->status !== 'void');
+                  $earlier = $t->invoices->filter(fn ($inv) => $inv->status === 'void');
+                  $openReq = $t->refundRequests->first(fn ($x) => $x->isOpen());
+                  $lastReq = $t->refundRequests->first();
+                @endphp
+                <li class="rq-mini">
+                  <div class="rq-mini__top">
                     <strong>{{ $t->reference_number }}</strong>
                     <span class="si-chip si-chip--{{ $t->status }}">{{ $t->statusLabel() }}</span>
                   </div>
                   <div class="si-list-sub">{{ $t->serviceLabel() }} · {{ $t->created_at->timezone('Asia/Manila')->format('M d, Y') }}</div>
-                  @php
-                    $live    = $t->invoices->first(fn ($inv) => $inv->status !== 'void');
-                    $earlier = $t->invoices->filter(fn ($inv) => $inv->status === 'void');
-                  @endphp
-                  @php $openReq = $t->refundRequests->first(fn ($x) => $x->isOpen()); @endphp
+
                   @if($t->isCancelled())
-                    <p class="rq-open-card"><strong>Cancelled.</strong> This service request was cancelled.</p>
+                    <p class="rq-mini__info">This service request was cancelled.</p>
                   @elseif($openReq)
-                    <p class="rq-open-card"><strong>Cancellation requested.</strong> Payments are paused until we reply.<br/><a href="{{ route('services.refund.show', $openReq->reference) }}">See request {{ $openReq->reference }}</a></p>
+                    <p class="rq-mini__info"><strong>Cancellation requested.</strong> Payments are paused until we reply.</p>
+                  @elseif($live)
+                    <p class="rq-mini__info">Invoice {{ $live->invoice_number }} · ₱{{ number_format((float) $live->total, 2) }} · {{ $live->paymentStateLabel() }}</p>
                   @endif
-                  @if($live)
-                    <a href="{{ route('services.invoice', $live->id) }}" class="si-invoice">
-                      <span>Invoice {{ $live->invoice_number }}</span>
-                      <span>₱{{ number_format((float) $live->total, 2) }} · {{ $live->paymentStateLabel() }}</span>
-                    </a>
-                    @if($earlier->isNotEmpty())
-                      <p class="si-earlier">Earlier invoices:
-                        @foreach($earlier as $inv)
-                          <a href="{{ route('services.invoice', $inv->id) }}">{{ $inv->invoice_number }} (cancelled)</a>@unless($loop->last), @endunless
-                        @endforeach
-                      </p>
+
+                  <div class="rq-mini__actions">
+                    @if($openReq)
+                      <a href="{{ route('services.refund.show', $openReq->reference) }}" class="lp-link lp-link--tap">See request {{ $openReq->reference }}</a>
                     @endif
-                  @else
-                    @foreach($earlier as $inv)
-                      <a href="{{ route('services.invoice', $inv->id) }}" class="si-invoice si-invoice--cancelled">
-                        <span>Invoice {{ $inv->invoice_number }}</span>
-                        <span><span class="si-chip si-chip--cancelled">{{ $inv->statusLabel() }}</span> Cancelled, view why</span>
-                      </a>
-                    @endforeach
-                  @endif
-                  @if($t->isOpen() && !$openReq)
-                    <a href="{{ route('services.refund.create', $t->id) }}" class="lp-btn lp-btn--secondary lp-btn--block" style="margin-top:10px;">Request cancellation or refund</a>
+                    @if($live && !$t->isCancelled())
+                      <a href="{{ route('services.invoice', $live->id) }}" class="lp-link lp-link--tap">View invoice {{ $live->invoice_number }}</a>
+                    @endif
+                    @if($t->isOpen() && !$openReq)
+                      <a href="{{ route('services.refund.create', $t->id) }}" class="lp-link lp-link--tap">Request cancellation or refund</a>
+                    @endif
+                    @if($t->isCancelled())
+                      @php $why = $lastReq && !$earlier->count() ? route('services.refund.show', $lastReq->reference) : ($earlier->first() ? route('services.invoice', $earlier->first()->id) : null); @endphp
+                      @if($why)<a href="{{ $why }}" class="lp-link lp-link--tap">See what happened</a>@endif
+                    @endif
+                  </div>
+
+                  @if($earlier->isNotEmpty())
+                    <p class="si-earlier">@if($live)Earlier invoices:@else Cancelled invoice:@endif
+                      @foreach($earlier as $inv)
+                        <a href="{{ route('services.invoice', $inv->id) }}" class="lp-link">{{ $inv->invoice_number }} (cancelled)</a>@unless($loop->last), @endunless
+                      @endforeach
+                      @unless($live) · <a href="{{ route('services.invoice', $earlier->first()->id) }}" class="lp-link">Cancelled, view why</a>@endunless
+                    </p>
                   @endif
                 </li>
               @endforeach

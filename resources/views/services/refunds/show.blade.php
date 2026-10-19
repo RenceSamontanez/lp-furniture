@@ -18,15 +18,14 @@
   $when  = fn ($d) => $d?->timezone('Asia/Manila')->format('M j, Y g:i A');
   $sentAttempt = $r->attempts->firstWhere('outcome', 'sent');
 
-  // Sent -> Under review -> Approved -> Refunded (or Declined / Closed in place of the last step)
-  $labels = ['Sent', 'Under review', 'Approved', match ($r->status) { 'declined' => 'Declined', 'closed' => 'Closed', default => 'Refunded' }];
-  $at = match ($r->status) {
-      'new', 'needs_info'        => 2,
-      'approved', 'refund_problem' => 3,
-      'refunded'                 => 4,
-      'declined'                 => 4,
-      'closed'                   => 4,
-      default                    => 1,
+  // Sent -> Under review -> Approved -> Refunded. Declined stops at step 3; an instant cancellation is Sent -> Cancelled.
+  [$steps, $at, $stepVariant] = match ($r->status) {
+      'new', 'needs_info' => [[['Sent', 'Sent'], ['Under review', 'Review'], ['Approved', 'Approved'], ['Refunded', 'Refunded']], 2, 'normal'],
+      'approved'          => [[['Sent', 'Sent'], ['Under review', 'Review'], ['Approved', 'Approved'], ['Refunded', 'Refunded']], 3, 'normal'],
+      'refund_problem'    => [[['Sent', 'Sent'], ['Under review', 'Review'], ['Refund problem', 'Problem'], ['Refunded', 'Refunded']], 3, 'problem'],
+      'refunded'          => [[['Sent', 'Sent'], ['Under review', 'Review'], ['Approved', 'Approved'], ['Refunded', 'Refunded']], 4, 'complete'],
+      'declined'          => [[['Sent', 'Sent'], ['Under review', 'Review'], ['Declined', 'Declined']], 3, 'stopped'],
+      default             => [[['Sent', 'Sent'], ['Cancelled', 'Cancelled']], 2, 'complete'],
   };
   $statusTitle = match ($r->status) {
       'new'            => 'We are reviewing your request',
@@ -47,17 +46,7 @@
       <h1 class="rq-title" style="margin-top:2px;">{{ $r->reference }}</h1>
       <p class="rq-lead">For service request {{ $t->reference_number }} · {{ $t->serviceLabel() }}</p>
 
-      <ol class="rq-steps" aria-label="Progress">
-        @foreach($labels as $i => $label)
-          @php
-            $n = $i + 1;
-            $cls = $n < $at ? 'is-done' : ($n === $at ? 'is-current' : '');
-            if ($n === $at && $r->status === 'refund_problem') { $cls .= ' is-problem'; }
-            if ($n === 4 && in_array($r->status, ['declined', 'closed'], true)) { $cls .= ' is-stopped'; }
-          @endphp
-          <li class="{{ $cls }}" @if($n === $at) aria-current="step" @endif>{{ $label }}</li>
-        @endforeach
-      </ol>
+      <x-stepper :steps="$steps" :current="$at" :variant="$stepVariant" label="Progress of your request"/>
 
       @switch($r->status)
         @case('new')

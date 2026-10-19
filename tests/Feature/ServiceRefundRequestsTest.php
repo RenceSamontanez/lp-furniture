@@ -688,7 +688,11 @@ class ServiceRefundRequestsTest extends TestCase
         $this->asOwner()->get(route('services.invoice', $i->id))->assertOk()->assertSee('Request cancellation or refund');
 
         $form = $this->get(route('services.refund.create', $tid))->assertOk()
-            ->assertSee('You can get back the full amount you paid')->assertSee('Other Services cancellation and refund terms');
+            ->assertSee('Refunds are for the full amount')->assertSee('Other Services cancellation and refund terms')
+            ->assertSee('I checked these details')->assertSee('Go back and edit')->assertSee('Confirm and send request')
+            ->assertSee('Please check your GCash number and name.')->assertSee('Once a refund is sent, it cannot be recalled or sent again.')
+            ->assertSee('Name or initials on your GCash account')->assertSee('As it appears when someone sends you money, for example Juan D.')
+            ->assertSee('data-lp-gate="rq-confirm-modal"', false);
         $this->assertStringNotContainsString('Work has already started', $form->getContent());
 
         $this->post(route('services.refund.review', $tid), $this->payload(['terms' => null]))->assertSessionHasErrors('terms');
@@ -712,10 +716,10 @@ class ServiceRefundRequestsTest extends TestCase
         $i = $this->invoice('half_half', true);
         $this->startWork($i);
         $this->asOwner()->get(route('services.refund.create', $i->service_inquiry_id))->assertOk()
-            ->assertSee('Work has already started on this service. Under our terms, refunds are usually not possible once work starts. You can still send your request and our team will review it and reply to you.');
+            ->assertSee('Work has already started')->assertSee('Refunds are usually not possible once work starts. Our team will still review your request.');
 
         $free = $this->invoice('half_half');
-        $this->get(route('services.refund.create', $free->service_inquiry_id))->assertOk()->assertSee('Cancel this service request')
+        $this->get(route('services.refund.create', $free->service_inquiry_id))->assertOk()->assertSee('Cancel this service request')->assertSee('Your service request and invoice are cancelled right away.')
             ->assertDontSee('Where should we send your refund?');
     }
 
