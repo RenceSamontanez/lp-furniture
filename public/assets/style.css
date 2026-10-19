@@ -3372,3 +3372,15 @@ a.lp-link.lp-link--tap, button.lp-link.lp-link--tap { display: inline-flex; alig
   .chatbot-window .chat-contact,
   .chatbot-window .chat-ref { margin-left: 0; }
 }
+
+/* Stage 21i: the chat's own close and send buttons, and the text box, meet the 44px tap target (the ✕ was 27px, the ➤ 37px) */
+.chatbot-window .chat-close { margin-left: auto; min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 8px; background: none; color: #EFE6D8; font-size: 20px; line-height: 1; cursor: pointer; }
+.chatbot-window .chat-close:hover { background: rgba(255, 255, 255, .12); color: #fff; }
+.chatbot-window .chat-close:focus-visible,
+.chatbot-window .chat-send:focus-visible { outline: 2px solid #fff; outline-offset: 1px; box-shadow: 0 0 0 4px #E8B86D; }
+.chatbot-window .chat-send { min-width: 44px; min-height: 44px; }
+.chatbot-window .chat-input { min-height: 44px; font-size: 16px; }
+
+/* Stage 21i: the chat's buttons and chips are the shared .lp-btn (the chat-btn / chat-chip classes stay for the chat's own spacing) */
+.chatbot-window .chat-send.lp-btn { min-width: 44px; padding: 0 14px; font-size: 16px; }
+.chatbot-window .chat-chip.lp-btn { min-height: 32px; padding: 4px 12px; font: 500 12.5px/1.2 var(--font-body); }

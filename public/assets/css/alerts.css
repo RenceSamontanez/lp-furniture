@@ -49,10 +49,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 44px;                 /* 44px tap target (Stage 21i); the negative margin keeps the toast the same height */
+  height: 44px;
   padding: 0;
-  margin: -2px 0 0;
+  margin: -12px -8px -12px 0;
   background: transparent;
   color: inherit;
   border: 0;

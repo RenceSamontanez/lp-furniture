@@ -1700,9 +1700,9 @@ Tagalog title: Magdagdag ng larawan sa ticket
 - add photos sa request po
 - send photo later pwede ba
 
-**Answer (English):** A clear photo helps a lot. If you forgot to add one, please send it to our team by email or message with your ticket number, and they will attach it to your request. {{contact}}
+**Answer (English):** A clear photo helps a lot. If you did not add one yet, please send it to our team by email or message with your ticket number, and they will attach it to your request. {{contact}}
 
-**Answer (Tagalog):** Malaking tulong po ang malinaw na larawan. Kung nakalimutan ninyong maglagay, ipadala po sa aming team sa email o message kasama ang ticket number ninyo, at ilalagay nila ito sa request ninyo. {{contact}}
+**Answer (Tagalog):** Malaking tulong po ang malinaw na larawan. Kung hindi pa kayo nakapaglagay, ipadala po sa aming team sa email o message kasama ang ticket number ninyo, at ilalagay nila ito sa request ninyo. {{contact}}
 
 **Follow-up buttons:** `luma_os_describe_problem` (How to describe the problem), `luma_os_change_contact` (Wrong phone or email)
 

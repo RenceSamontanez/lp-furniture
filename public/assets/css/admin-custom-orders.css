@@ -146,7 +146,7 @@
 .co-modal-box { width: 100%; max-width: 520px; max-height: calc(100vh - 32px); overflow-y: auto; background: #fff; border-radius: 14px; padding: 22px; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25); }
 .co-modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
 .co-modal-head h2 { margin: 0; font-size: 17px; }
-.co-modal-x { border: 0; background: none; font-size: 24px; line-height: 1; cursor: pointer; color: var(--text-muted); }
+.co-modal-x { border: 0; background: none; font-size: 24px; line-height: 1; cursor: pointer; color: var(--text-muted); min-width: 44px; min-height: 44px; }   /* 44px tap target (Stage 21i) */
 .co-modal-label { display: block; font-size: 12px; color: var(--text-muted); margin: 14px 0 6px; }
 .co-preview { white-space: pre-line; font-size: 13px; line-height: 1.55; padding: 12px 14px; background: #FAF6EE; border: 1px solid #EFE7DA; border-radius: 10px; }
 .co-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }

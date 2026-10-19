@@ -35,8 +35,11 @@ final class RefundFlow
 {
     public const TOKEN_MINUTES = 15;
 
-    public const WARNING_EN = 'Please check your GCash number and name. Once a refund is sent, it cannot be recalled or sent again.';
-    public const WARNING_TL = 'Pakisuri po ang GCash number at pangalan ninyo. Kapag naipadala na ang refund, hindi na ito maibabalik o maipapadala ulit.';
+    /** The same warning as the web form's confirm modal: a bold title and one sentence under it. */
+    public const WARNING_TITLE_EN = 'Please check your GCash number and name.';
+    public const WARNING_TEXT_EN  = 'Once a refund is sent, it cannot be recalled or sent again.';
+    public const WARNING_TITLE_TL = 'Pakisuri po ang GCash number at pangalan ninyo.';
+    public const WARNING_TEXT_TL  = 'Kapag naipadala na ang refund, hindi na ito maibabalik o maipapadala ulit.';
 
     private const EXIT = ['never mind', 'nevermind', 'cancel that', 'forget it', 'stop', 'exit', 'quit', 'sige huwag na', 'huwag na', 'wag na', 'hindi na', 'di na', 'ayoko na pala', 'talk to a person', 'talk to a human', 'talk to someone', 'real person', 'human', 'makausap', 'kausapin', 'nevermind po', 'iwan na'];
 
@@ -310,15 +313,18 @@ final class RefundFlow
             }
         }
 
-        $warning = $instant
-            ? ($tl ? 'Agad itong makakansela at hindi na ito mababawi.' : "Cancelling is instant, and this can't be undone.")
-            : ($paid && $clean['refund_method'] === 'gcash' ? ($tl ? self::WARNING_TL : self::WARNING_EN) : ($tl ? 'Pakisuri po ang mga detalye bago kumpirmahin.' : 'Please check the details before you confirm.'));
+        $gcash = $paid && $clean['refund_method'] === 'gcash';
+        [$warningTitle, $warning] = match (true) {
+            $instant => $tl ? ['Hindi na ito mababawi.', 'Agad na makakansela ang service request ninyo.'] : ["Cancelling can't be undone.", 'Your service request will be cancelled right away.'],
+            $gcash   => $tl ? [self::WARNING_TITLE_TL, self::WARNING_TEXT_TL] : [self::WARNING_TITLE_EN, self::WARNING_TEXT_EN],
+            default  => $tl ? ['Pakisuri po ang mga detalye.', 'Susuriin ng aming team ang request ninyo at sasagot sila.'] : ['Please check the details.', 'Our team will review your request and reply to you.'],
+        };
 
         return [200, ['summary' => [
             'title'         => $tl ? 'Suriin ang request ninyo' : 'Check your request',
             'rows'          => $rows,
             'warning'       => $warning,
-            'warning_title' => $paid && $clean['refund_method'] === 'gcash' ? ($tl ? 'Pakisuri ang GCash number at pangalan.' : 'Please check your GCash number and name.') : ($instant ? ($tl ? 'Hindi na ito mababawi.' : "This can't be undone.") : ($tl ? 'Pakisuri ang mga detalye.' : 'Please check the details.')),
+            'warning_title' => $warningTitle,
             'check_label'   => $tl ? 'Sinuri ko ang mga detalyeng ito' : 'I checked these details',
             'confirm_label' => $instant ? ($tl ? 'Kanselahin ngayon' : 'Cancel it now') : ($tl ? 'Ipadala ang request' : 'Send my request'),
             'back_label'    => $tl ? 'Bumalik at baguhin' : 'Go back and change',
@@ -401,13 +407,13 @@ final class RefundFlow
 
         if ($req->status === Req::CLOSED) {
             $text = $tl
-                ? "Nakansela na po ang {$ticket->reference_number}. Walang nabayaran kaya walang ire-refund. Ito ang reference ng inyong request:"
-                : "{$ticket->reference_number} is now cancelled. Nothing was paid, so there is nothing to refund. This is the reference of your request:";
+                ? "Nakansela na po ang {$ticket->reference_number}. Walang nabayaran kaya walang ire-refund. Nasa ibaba ang reference number ng request ninyo."
+                : "{$ticket->reference_number} is now cancelled. Nothing was paid, so there is nothing to refund. Your reference number is below.";
         } else {
             $method = $req->refund_method === 'gcash' ? 'GCash' : ($req->refund_method === 'cash' ? 'cash' : null);
             $text = $tl
-                ? "Naipadala na po ang request ninyo para sa {$ticket->reference_number}. Susuriin ito ng aming team at sasagot sila sa inyo. Naka-pause ang mga bayad sa serbisyong ito habang naghihintay." . ($paid && $method ? " Kung kukumpirmahin nila, ibabalik ang refund sa {$method} sa loob ng {$days} araw pagkatapos ng kumpirmasyon." : '') . ' Ito ang reference ng request ninyo:'
-                : "Your request for {$ticket->reference_number} was sent. Our team will review it and reply to you. Payments on this service are paused while you wait." . ($paid && $method ? " If they confirm it, the refund goes back by {$method} within {$days} days after that." : '') . ' This is the reference of your request:';
+                ? "Naipadala na po ang request ninyo para sa {$ticket->reference_number}. Susuriin ito ng aming team at sasagot sila sa inyo. Naka-pause ang mga bayad sa serbisyong ito habang naghihintay." . ($paid && $method ? " Kung kukumpirmahin nila, ibabalik ang refund sa {$method} sa loob ng {$days} araw pagkatapos ng kumpirmasyon." : '') . ' Nasa ibaba ang reference number ng request ninyo.'
+                : "Your request for {$ticket->reference_number} was sent. Our team will review it and reply to you. Payments on this service are paused while you wait." . ($paid && $method ? " If they confirm it, the refund goes back by {$method} within {$days} days after that." : '') . ' Your reference number is below.';
         }
 
         $reply = [

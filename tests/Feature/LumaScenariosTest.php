@@ -88,7 +88,8 @@ class LumaScenariosTest extends TestCase
         [$status, $body] = $this->review($this->formValues($ticket, ['lang' => 'tl']));
         $this->assertSame('Suriin ang request ninyo', $body['summary']['title']);
         $this->assertSame('Sinuri ko ang mga detalyeng ito', $body['summary']['check_label']);
-        $this->assertSame('Pakisuri po ang GCash number at pangalan ninyo. Kapag naipadala na ang refund, hindi na ito maibabalik o maipapadala ulit.', $body['summary']['warning']);
+        $this->assertSame('Pakisuri po ang GCash number at pangalan ninyo.', $body['summary']['warning_title']);
+        $this->assertSame('Kapag naipadala na ang refund, hindi na ito maibabalik o maipapadala ulit.', $body['summary']['warning']);
 
         $no = $this->postJson(route('chatbot.refund'), ['step' => 'confirm', 'token' => $body['summary']['token'], 'checked' => false, 'lang' => 'tl']);
         $this->assertSame('Pakitiyak muna na sinuri ninyo ang mga detalye.', $no->json('errors.check.0'));

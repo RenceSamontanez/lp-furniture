@@ -351,8 +351,8 @@ function addBotMessage(msg, suggestions, products, extra) {
       ${c.phone ? `<div class="chat-contact-line">${chatEsc(c.phone)}</div>` : ''}
       ${c.email ? `<div class="chat-contact-line">${chatEsc(c.email)}</div>` : ''}
       <div class="chat-contact-actions">
-        ${c.phone ? `<a class="chat-btn chat-btn--primary" href="tel:${chatEsc(tel)}">Call us</a>` : ''}
-        ${c.email ? `<a class="chat-btn ${c.phone ? 'chat-btn--secondary' : 'chat-btn--primary'}" href="mailto:${chatEsc(c.email)}">Send an email</a>` : ''}
+        ${c.phone ? `<a class="chat-btn chat-btn--primary lp-btn lp-btn--primary" href="tel:${chatEsc(tel)}">Call us</a>` : ''}
+        ${c.email ? `<a class="chat-btn lp-btn ${c.phone ? 'chat-btn--secondary lp-btn--secondary' : 'chat-btn--primary lp-btn--primary'}" href="mailto:${chatEsc(c.email)}">Send an email</a>` : ''}
       </div>
     </div>`;
     body.appendChild(cardEl);
@@ -365,7 +365,7 @@ function addBotMessage(msg, suggestions, products, extra) {
     // First button is the main action, the rest are secondary; three at most
     const arrow = '<svg class="chat-btn-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     btnEl.innerHTML = extra.buttons.slice(0, 3).map((b, i) =>
-      `<a class="chat-btn ${i === 0 ? 'chat-btn--primary' : 'chat-btn--secondary'}" href="${chatEsc(chatSafeUrl(b.url))}"><span>${chatEsc(b.label)}</span>${arrow}</a>`).join('');
+      `<a class="chat-btn lp-btn ${i === 0 ? 'chat-btn--primary lp-btn--primary' : 'chat-btn--secondary lp-btn--secondary'}" href="${chatEsc(chatSafeUrl(b.url))}"><span>${chatEsc(b.label)}</span>${arrow}</a>`).join('');
     body.appendChild(btnEl);
   }
 
@@ -404,7 +404,7 @@ function addUserMessage(msg) {
 function setSuggestions(list) {
   const el = document.getElementById('chat-suggestions');
   el.innerHTML = list
-    .map(s => `<button type="button" class="chat-chip" data-sugg="${chatEsc(s)}" onclick="handleSugg(this.dataset.sugg)">${chatEsc(s)}</button>`)
+    .map(s => `<button type="button" class="chat-chip lp-btn lp-btn--secondary lp-btn--chip" data-sugg="${chatEsc(s)}" onclick="handleSugg(this.dataset.sugg)">${chatEsc(s)}</button>`)
     .join('');
 }
 

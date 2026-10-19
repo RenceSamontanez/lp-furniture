@@ -111,13 +111,13 @@
       <h4>LP Furniture Assistant</h4>
       <p>Always here to help</p>
     </div>
-    <button onclick="toggleChatbot()" style="background:none;border:none;color:#ccc;font-size:20px;cursor:pointer;margin-left:auto;">✕</button>
+    <button type="button" onclick="toggleChatbot()" class="chat-close" aria-label="Close chat">✕</button>
   </div>
   <div class="chat-body" id="chat-body"></div>
   <div class="chat-suggestions" id="chat-suggestions"></div>
   <div class="chat-input-row">
-    <input class="chat-input" id="chat-input" placeholder="Ask about furniture..." onkeydown="if(event.key==='Enter')sendChat()"/>
-    <button class="chat-send" onclick="sendChat()">➤</button>
+    <input class="chat-input" id="chat-input" placeholder="Ask about furniture..." aria-label="Type your question" onkeydown="if(event.key==='Enter')sendChat()"/>
+    <button type="button" class="chat-send lp-btn lp-btn--primary" onclick="sendChat()" aria-label="Send">➤</button>
   </div>
 </div>
 

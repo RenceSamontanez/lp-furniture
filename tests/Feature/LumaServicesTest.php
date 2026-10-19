@@ -87,7 +87,7 @@ class LumaServicesTest extends TestCase
 
         // and a request made through that form is recorded
         $this->post(route('services.request.submit'), [
-            'service_type' => 'labor_only_own_wood', 'concern' => 'Door from my own narra wood.',
+            'service_type' => 'labor_only_own_wood', 'concern' => 'A door built from my own narra wood, about 90 cm wide.',
             'name' => 'Juan Dela Cruz', 'phone' => '09171234567', 'email' => 'juan@example.com', 'terms' => '1',
         ])->assertRedirect(route('services.request.sent'));
         $this->assertSame(1, \App\Models\ServiceInquiry::count());

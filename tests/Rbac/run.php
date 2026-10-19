@@ -311,6 +311,41 @@ if (!$notifRow->fresh()->is_read) {
 $ownerBad += $notifBad;
 $ownerTotal += $notifTotal;
 
+/* ── Stage 21i: Luma's cancellation / refund form endpoint, POST /chatbot/refund ──────────────────────────────
+   Signed-in customers only. The probes send an empty body, so nothing can be created: a guest and an admin signed in only on the admin
+   guard get a JSON 401; a customer gets a 422 ("Unknown step") and nothing changes. The real ownership checks (another customer's
+   ticket is a 404, a token made for someone else is refused, a double submit makes one request) are in tests/Feature/LumaOtherServicesTest. */
+$chatTable = [
+    '| Route | guest | customer (web guard) | admin (admin guard only) |',
+    '|---|---|---|---|',
+];
+$chatBad = 0;
+$chatTotal = 0;
+$chatCells = [];
+foreach (['guest' => ['guest', 401], 'customer' => ['customer_web', 422], 'admin_guard_only' => ['admin', 401]] as $who => [$actorName, $want]) {
+    $cmd = escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($probe) . ' ' . implode(' ', array_map('escapeshellarg', [
+        $actorName, 'POST', '/chatbot/refund', $owner->email, $admin->email,
+    ])) . ' 2>&1';
+    $lines = preg_split('/\R/', trim((string) shell_exec($cmd)));
+    $x = json_decode(end($lines) ?: '', true) ?: ['status' => 'ERR', 'location' => null];
+    $chatTotal++;
+    $label = (string) $x['status'];
+    if ($x['status'] === $want) {
+        $label .= ' ✓';
+    } else {
+        $chatBad++;
+        $label = '**' . $label . ' FAIL (wanted ' . $want . ')**';
+    }
+    $chatCells[$who] = $label;
+}
+$chatTable[] = '| `POST /chatbot/refund` | ' . implode(' | ', [$chatCells['guest'], $chatCells['customer'], $chatCells['admin_guard_only']]) . ' |';
+if (App\Models\ServiceRefundRequest::whereIn('service_inquiry_id', [$ticketA->id, $ticketB->id])->count() !== 1) {
+    $chatBad++;
+    fwrite(STDERR, "a chat form probe created a refund request\n");
+}
+$ownerBad += $chatBad;
+$ownerTotal += $chatTotal;
+
 $rids = App\Models\ServiceRefundRequest::whereIn('service_inquiry_id', [$ticketA->id, $ticketB->id])->pluck('id');
 Illuminate\Support\Facades\DB::table('service_refund_messages')->whereIn('service_refund_request_id', $rids)->delete();
 Illuminate\Support\Facades\DB::table('service_refund_attempts')->whereIn('service_refund_request_id', $rids)->delete();
@@ -389,7 +424,10 @@ $doc = "# RBAC matrix (Stage 11)\n\n{$summary}\n\n"
     . implode("\n", $refundTable) . "\n\n## Stage 21h: owner-only notification details\n\n"
     . "`GET /notifications/{id}` shows a read-only details page for an Other Services notification. Expected: a guest, and an admin signed in only on the admin guard, are redirected to /login; "
     . "another customer gets 404 (and does not mark it read); the owner gets 200 and the notification is marked read. No new /admin routes were added in Stage 21h: the Start work, Mark service done, Approve, Decline, Mark refund as sent and related modals post to the existing routes in the table above, and the 'Ready to start' filter is a query string on `GET /admin/service-inquiries`.\n\n"
-    . implode("\n", $notifTable) . "\n";
+    . implode("\n", $notifTable) . "\n\n## Stage 21i: Luma's cancellation form endpoint\n\n"
+    . "`POST /chatbot/refund` is the chat's refund form (review, then confirm). Signed-in customers only, CSRF protected, rate limited (20 a minute). Empty-body probes: a guest and an admin signed in only on the admin guard get 401; a customer gets 422 and nothing is created. "
+    . "The new admin route `GET /admin/service-inquiries/{id}/photos/{n}` (a ticket's private reference photo) is in the table above and is admin only.\n\n"
+    . implode("\n", $chatTable) . "\n";
 
 file_put_contents($root . '/docs/rbac-matrix-stage11.md', $doc);
 echo $summary, "\n";

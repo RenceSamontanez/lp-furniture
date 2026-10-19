@@ -102,26 +102,26 @@ final class StatusAnswers
 
         $lines = match ($req->status) {
             Req::NEW => $tl
-                ? "{$head} ay natanggap namin at hindi pa sumasagot ang aming team. Naka-pause ang mga bayad sa serbisyong ito habang sinusuri."
+                ? "{$head} ay natanggap po namin at hindi pa sumasagot ang aming team. Naka-pause po ang mga bayad sa serbisyong ito habang sinusuri."
                 : "{$head} was received and our team has not replied yet. Payments on this service are paused while they review it.",
             Req::NEEDS_INFO => $tl
                 ? "{$head} ay nangangailangan ng dagdag na impormasyon mula sa inyo. Buksan po ang request at mag-reply."
                 : "{$head} needs more information from you. Please open the request and reply.",
             Req::APPROVED => $tl
-                ? "May sagot na ang aming team sa {$req->reference}." . ($paid ? " Ang refund na {$amount} ay dapat maipadala sa {$method}" . ($due ? " bago ang {$due}" : '') . ' (sa loob ng ' . Req::REFUND_DAYS . ' araw pagkatapos ng kumpirmasyon).' : '')
+                ? "May sagot na po ang aming team sa {$req->reference}." . ($paid ? " Ang refund na {$amount} ay dapat maipadala sa {$method}" . ($due ? " bago ang {$due}" : '') . ' (sa loob ng ' . Req::REFUND_DAYS . ' araw pagkatapos ng kumpirmasyon).' : '')
                 : "Our team has replied to {$req->reference}." . ($paid ? " The refund of {$amount} is due to be sent to you by {$method}" . ($due ? " by {$due}" : '') . ' (within ' . Req::REFUND_DAYS . ' days after they confirmed it).' : ''),
             Req::REFUNDED => $tl
-                ? "Naipadala na ang refund na {$amount} sa {$method}." . ($sentTx?->transaction_number ? " Transaction number: {$sentTx->transaction_number}." : '')
-                : "The refund of {$amount} was sent by {$method}." . ($sentTx?->transaction_number ? " Transaction number: {$sentTx->transaction_number}." : ''),
+                ? "Naipadala na po ang refund na {$amount} para sa {$req->reference} sa {$method}." . ($sentTx?->transaction_number ? " Transaction number: {$sentTx->transaction_number}." : '')
+                : "The refund of {$amount} for {$req->reference} was sent by {$method}." . ($sentTx?->transaction_number ? " Transaction number: {$sentTx->transaction_number}." : ''),
             Req::REFUND_PROBLEM => $tl
                 ? "May problema sa pagpapadala ng refund para sa {$req->reference}. Buksan po ang request para makita ang detalye at mag-reply (halimbawa, ang tamang GCash number)."
                 : "There was a problem sending the refund for {$req->reference}. Please open the request to see the details and reply, for example with the correct GCash number.",
             Req::DECLINED => $tl
-                ? "Hindi natuloy ang {$req->reference}. Nakasulat sa pahina ng request ang dahilan ng aming team."
+                ? "Hindi po natuloy ang {$req->reference}. Nakasulat sa pahina ng request ang dahilan ng aming team."
                 : "{$req->reference} was declined by our team. The reason is written on the request page.",
             default => $paid
-                ? ($tl ? "Sarado na ang {$req->reference}." : "{$req->reference} is closed.")
-                : ($tl ? "Sarado na ang {$req->reference}. Walang bayad na nagawa kaya walang ire-refund, at kinansela ang service request." : "{$req->reference} is closed. Nothing had been paid, so there is nothing to refund, and the service request was cancelled."),
+                ? ($tl ? "Sarado na po ang {$req->reference}." : "{$req->reference} is closed.")
+                : ($tl ? "Sarado na po ang {$req->reference}. Walang bayad na nagawa kaya walang ire-refund, at kinansela ang service request." : "{$req->reference} is closed. Nothing had been paid, so there is nothing to refund, and the service request was cancelled."),
         };
 
         $r = self::blank($lines);

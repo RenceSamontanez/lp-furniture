@@ -71,7 +71,8 @@ class LumaButtonSystemTest extends TestCase
         $js = $this->js();
         $this->assertStringContainsString('chat-btn--primary', $js);
         $this->assertStringContainsString('chat-btn--secondary', $js);
-        $this->assertStringContainsString('class="chat-chip"', $js);
+        $this->assertStringContainsString('class="chat-chip lp-btn lp-btn--secondary lp-btn--chip"', $js);   // Stage 21i: chips are the shared .lp-btn chip
+        $this->assertStringContainsString('lp-btn lp-btn--primary', $js);
         $this->assertStringContainsString('extra.buttons.slice(0, 3)', $js);
         $this->assertStringNotContainsString('chat-link-btn', $js);
     }

@@ -471,7 +471,7 @@ class LumaOtherServicesTest extends TestCase
         [$status, $body] = $this->formPost($this->formValues($ticket, ['refund_method' => null, 'gcash_number' => null, 'gcash_account_name' => null]));
         $this->assertSame(200, $status);
         $this->assertTrue($body['summary']['instant']);
-        $this->assertStringContainsString("can't be undone", $body['summary']['warning']);
+        $this->assertSame("Cancelling can't be undone.", $body['summary']['warning_title']);
         $this->assertSame('new', $ticket->refresh()->status);
 
         $reply = $this->confirm($body['summary']['token']);
@@ -550,7 +550,9 @@ class LumaOtherServicesTest extends TestCase
         $s = $body['summary'];
 
         $this->assertSame('Please check your GCash number and name.', $s['warning_title']);
-        $this->assertSame('Once a refund is sent, it cannot be recalled or sent again.', substr($s['warning'], strlen('Please check your GCash number and name. ')));
+        $this->assertSame('Once a refund is sent, it cannot be recalled or sent again.', $s['warning']);   // the web form's modal: this title, this sentence
+        $this->assertStringContainsString('Please check your GCash number and name.', file_get_contents(resource_path('views/services/refunds/form.blade.php')));
+        $this->assertStringContainsString('Once a refund is sent, it cannot be recalled or sent again.', file_get_contents(resource_path('views/services/refunds/form.blade.php')));
         $this->assertSame('I checked these details', $s['check_label']);
         $flat = json_encode($s['rows']);
         $this->assertStringContainsString('0918 *** 2222', $flat);

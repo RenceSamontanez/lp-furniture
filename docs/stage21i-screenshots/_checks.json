@@ -1,0 +1,402 @@
+[
+  {
+    "file": "chat-other-service-answer-390.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 19,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-fallback-chips-390.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 20,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-fallback-second-miss-contact-card-390.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 20,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-ambiguity-question-390.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 17,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-ambiguity-other-services-guest-390.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 20,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-tagalog-exchange-390.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 23,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-status-answer-with-cards-390.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 24,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-reference-number-lookup-390.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 19,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-invoice-number-lookup-390.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 21,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-refund-pick-a-request-390.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 23,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-refund-form-card-390.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 18,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-refund-form-errors-390.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 18,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-refund-confirm-summary-390.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 19,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-refund-success-reply-390.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 18,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "notification-details-ask-luma-button-390.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 12,
+    "minContrast": 9.71,
+    "buttonFailures": []
+  },
+  {
+    "file": "notification-ask-luma-answer-390.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 15,
+    "minContrast": 9.71,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-other-service-answer-1280.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 20,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-fallback-chips-1280.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 21,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-fallback-second-miss-contact-card-1280.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 21,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-ambiguity-question-1280.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 18,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-ambiguity-other-services-guest-1280.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 21,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-tagalog-exchange-1280.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 24,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-status-answer-with-cards-1280.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 24,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-reference-number-lookup-1280.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 19,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-invoice-number-lookup-1280.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 21,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-refund-pick-a-request-1280.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 23,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-refund-form-card-1280.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 18,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-refund-form-errors-1280.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 18,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-refund-confirm-summary-1280.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 19,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "chat-refund-success-reply-1280.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 18,
+    "minContrast": 5.75,
+    "buttonFailures": []
+  },
+  {
+    "file": "notification-details-ask-luma-button-1280.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 10,
+    "minContrast": 9.71,
+    "buttonFailures": []
+  },
+  {
+    "file": "notification-ask-luma-answer-1280.jpg",
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "windowInside": true,
+    "short": [],
+    "buttons": 13,
+    "minContrast": 9.71,
+    "buttonFailures": []
+  },
+  {
+    "file": "ticket-form-coaching-photos-location-390.jpg",
+    "pageOverflow": 0,
+    "short": [],
+    "buttons": 9,
+    "minContrast": 9.71,
+    "buttonFailures": []
+  },
+  {
+    "file": "ticket-form-vague-error-shown-390.jpg",
+    "pageOverflow": 0,
+    "short": [],
+    "buttons": 9,
+    "minContrast": 9.71,
+    "buttonFailures": []
+  },
+  {
+    "file": "admin-ticket-vague-warning-390.jpg",
+    "pageOverflow": 0,
+    "short": [],
+    "buttons": 9,
+    "minContrast": 1,
+    "buttonFailures": []
+  },
+  {
+    "file": "admin-ticket-photo-and-place-390.jpg",
+    "pageOverflow": 0,
+    "short": [],
+    "buttons": 9,
+    "minContrast": 7.47,
+    "buttonFailures": []
+  },
+  {
+    "file": "admin-invoice-send-modal-needs-tick-390.jpg",
+    "pageOverflow": 0,
+    "short": [],
+    "buttons": 11,
+    "minContrast": 5.2,
+    "buttonFailures": []
+  },
+  {
+    "file": "ticket-form-coaching-photos-location-1280.jpg",
+    "pageOverflow": 0,
+    "short": [],
+    "buttons": 7,
+    "minContrast": 9.71,
+    "buttonFailures": []
+  },
+  {
+    "file": "ticket-form-vague-error-shown-1280.jpg",
+    "pageOverflow": 0,
+    "short": [],
+    "buttons": 7,
+    "minContrast": 9.71,
+    "buttonFailures": []
+  },
+  {
+    "file": "admin-ticket-vague-warning-1280.jpg",
+    "pageOverflow": 0,
+    "short": [],
+    "buttons": 7,
+    "minContrast": 1,
+    "buttonFailures": []
+  },
+  {
+    "file": "admin-ticket-photo-and-place-1280.jpg",
+    "pageOverflow": 0,
+    "short": [],
+    "buttons": 7,
+    "minContrast": 7.47,
+    "buttonFailures": []
+  },
+  {
+    "file": "admin-invoice-send-modal-needs-tick-1280.jpg",
+    "pageOverflow": 0,
+    "short": [],
+    "buttons": 9,
+    "minContrast": 5.2,
+    "buttonFailures": []
+  }
+]

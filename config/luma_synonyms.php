@@ -158,6 +158,8 @@ return [
         'kailangan' => 'need', 'di' => 'hindi', 'wag' => 'huwag',
         'nagsimula' => 'started', 'nasimulan' => 'started', 'sinimulan' => 'started', 'nagstart' => 'started',
         'started' => 'started', 'simulan' => 'start', 'magsimula' => 'start', 'sisimulan' => 'start',
+        'bagal' => 'slow', 'mabagal' => 'slow', 'napakabagal' => 'slow', 'showed' => 'show', 'pupuntahan' => 'punta', 'puntahan' => 'punta',
+        'pumunta' => 'punta', 'pupunta' => 'punta', 'babaguhin' => 'baguhin', 'papalitan' => 'palitan', 'nagsisimula' => 'start',
         'natanggap' => 'received', 'tinanggihan' => 'declined', 'decline' => 'declined', 'rejected' => 'declined',
         'reject' => 'declined', 'denied' => 'declined', 'began' => 'started', 'begun' => 'started', 'begin' => 'start',
         'magbabayad' => 'pay', 'pwedeng' => 'can', 'puwedeng' => 'can',

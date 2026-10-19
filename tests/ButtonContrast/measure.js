@@ -66,7 +66,8 @@
   function ratio(a, b) { const l1 = lum(a), l2 = lum(b); return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05); }
   function toRGB(v, el, prop, state) {
     if (!v || v === 'inherit') { return el.parentElement ? effective(el.parentElement, prop, 'default') : parse('rgb(255,255,255)'); }
-    const probe = document.createElement('i'); probe.style.color = v; document.body.appendChild(probe);
+    // The probe lives INSIDE the element, so a colour written as var(--x) resolves custom properties scoped to a container (the Luma chat window)
+    const probe = document.createElement('i'); probe.style.color = v; (el.parentElement || document.body).appendChild(probe);
     const c = getComputedStyle(probe).color; probe.remove(); return parse(c);
   }
   // A translucent background is blended over whatever is behind it.
