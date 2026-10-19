@@ -1787,8 +1787,8 @@ nav {
   border: none;
   color: #fff;
   font-size: 18px;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -3342,3 +3342,8 @@ a.lp-link.lp-link--tap, button.lp-link.lp-link--tap { display: inline-flex; alig
   .lp-pager__row { flex-wrap: nowrap; width: 100%; justify-content: space-between; }
   .lp-pager__info { order: 2; }
 }
+
+/* the pager is a <nav>; undo the site header's `nav { ... }` rules for it */
+nav.lp-pager { position: static; z-index: auto; background: transparent; box-shadow: none; height: auto; padding: 14px 0 0; justify-content: center; }
+@media (min-width: 641px) { nav.lp-pager { justify-content: space-between; } }
+@media (max-width: 860px) { .nav-brand { display: inline-flex; align-items: center; min-height: 44px; } }

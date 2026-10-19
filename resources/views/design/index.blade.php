@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Custom Design — LP Furniture')
+@section('title', 'Customize — LP Furniture')
 
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/design.css') }}"/>
@@ -30,7 +30,7 @@
     ═══════════════════════════════════ --}}
     <div class="cd-form-panel">
       <div class="cd-form-title-row">
-        <h1 class="cd-form-title">Custom Design</h1>
+        <h1 class="cd-form-title">Customize your furniture</h1>
         <button type="button" class="cd-howitworks-btn" onclick="openCdHowItWorks()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 2-3 4"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           How it works

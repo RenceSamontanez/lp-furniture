@@ -1,0 +1,634 @@
+[
+  {
+    "file": "nav-guest-390.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 13,
+    "minContrast": 5.75,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "nav-guest-open-390.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 13,
+    "minContrast": 5.75,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "nav-customer-390.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 15,
+    "minContrast": 5.75,
+    "fails": [],
+    "navH": 64,
+    "navLinks": [
+      {
+        "t": "Home",
+        "l": 410,
+        "r": 710,
+        "b": 131,
+        "h": 51
+      },
+      {
+        "t": "Catalog",
+        "l": 410,
+        "r": 710,
+        "b": 182,
+        "h": 51
+      },
+      {
+        "t": "Customize",
+        "l": 410,
+        "r": 710,
+        "b": 233,
+        "h": 51
+      },
+      {
+        "t": "",
+        "l": 410,
+        "r": 710,
+        "b": 286,
+        "h": 53
+      },
+      {
+        "t": "",
+        "l": 410,
+        "r": 710,
+        "b": 339,
+        "h": 53
+      },
+      {
+        "t": "Reviews",
+        "l": 410,
+        "r": 710,
+        "b": 441,
+        "h": 51
+      },
+      {
+        "t": "My Account",
+        "l": 410,
+        "r": 710,
+        "b": 492,
+        "h": 51
+      }
+    ]
+  },
+  {
+    "file": "nav-customer-open-390.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 15,
+    "minContrast": 5.75,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "customize-page-390.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 12,
+    "minContrast": 6.33,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "home-customize-390.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 15,
+    "minContrast": 5.75,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "catalog-390.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 8,
+    "minContrast": 8.56,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "orders-first-390.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 9,
+    "minContrast": 5.8,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "notifications-first-390.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 31,
+    "minContrast": 5.8,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "orders-middle-390.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 9,
+    "minContrast": 10.5,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "notifications-middle-390.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 31,
+    "minContrast": 8.77,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "orders-last-390.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 9,
+    "minContrast": 5.8,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "notifications-last-390.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 18,
+    "minContrast": 5.8,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "id-check-from-services-390.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 9,
+    "minContrast": 3.59,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "id-check-notice-390.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 8,
+    "minContrast": 3.59,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "admin-list-first-390.jpg",
+    "overflow": 0,
+    "short": [
+      {
+        "t": "Mark all as read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      }
+    ],
+    "buttons": 12,
+    "minContrast": 1,
+    "fails": [],
+    "navH": 674
+  },
+  {
+    "file": "admin-list-middle-390.jpg",
+    "overflow": 0,
+    "short": [
+      {
+        "t": "Mark all as read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      }
+    ],
+    "buttons": 11,
+    "minContrast": 6.34,
+    "fails": [],
+    "navH": 674
+  },
+  {
+    "file": "admin-list-last-390.jpg",
+    "overflow": 0,
+    "short": [
+      {
+        "t": "Mark all as read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      },
+      {
+        "t": "Mark read",
+        "h": 36
+      }
+    ],
+    "buttons": 22,
+    "minContrast": 6.34,
+    "fails": [],
+    "navH": 674
+  },
+  {
+    "file": "nav-guest-360.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 13,
+    "minContrast": 5.75,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "nav-guest-open-360.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 13,
+    "minContrast": 5.75,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "nav-customer-360.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 15,
+    "minContrast": 5.75,
+    "fails": [],
+    "navH": 64,
+    "navLinks": [
+      {
+        "t": "Home",
+        "l": 380,
+        "r": 680,
+        "b": 131,
+        "h": 51
+      },
+      {
+        "t": "Catalog",
+        "l": 380,
+        "r": 680,
+        "b": 182,
+        "h": 51
+      },
+      {
+        "t": "Customize",
+        "l": 380,
+        "r": 680,
+        "b": 233,
+        "h": 51
+      },
+      {
+        "t": "",
+        "l": 380,
+        "r": 680,
+        "b": 286,
+        "h": 53
+      },
+      {
+        "t": "",
+        "l": 380,
+        "r": 680,
+        "b": 339,
+        "h": 53
+      },
+      {
+        "t": "Reviews",
+        "l": 380,
+        "r": 680,
+        "b": 441,
+        "h": 51
+      },
+      {
+        "t": "My Account",
+        "l": 380,
+        "r": 680,
+        "b": 492,
+        "h": 51
+      }
+    ]
+  },
+  {
+    "file": "nav-customer-open-360.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 15,
+    "minContrast": 5.75,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "customize-page-360.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 12,
+    "minContrast": 6.33,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "home-customize-360.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 15,
+    "minContrast": 5.75,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "nav-guest-1280.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 14,
+    "minContrast": 5.75,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "nav-customer-1280.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 15,
+    "minContrast": 5.75,
+    "fails": [],
+    "navH": 64,
+    "navLinks": [
+      {
+        "t": "Home",
+        "l": 609,
+        "r": 669,
+        "b": 49,
+        "h": 33
+      },
+      {
+        "t": "Catalog",
+        "l": 671,
+        "r": 742,
+        "b": 49,
+        "h": 33
+      },
+      {
+        "t": "Customize",
+        "l": 744,
+        "r": 833,
+        "b": 49,
+        "h": 33
+      },
+      {
+        "t": "",
+        "l": 835,
+        "r": 912,
+        "b": 50,
+        "h": 36
+      },
+      {
+        "t": "",
+        "l": 914,
+        "r": 1042,
+        "b": 50,
+        "h": 36
+      },
+      {
+        "t": "Reviews",
+        "l": 1044,
+        "r": 1117,
+        "b": 49,
+        "h": 33
+      },
+      {
+        "t": "My Account",
+        "l": 1119,
+        "r": 1217,
+        "b": 49,
+        "h": 33
+      }
+    ]
+  },
+  {
+    "file": "customize-page-1280.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 10,
+    "minContrast": 6.33,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "home-customize-1280.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 15,
+    "minContrast": 5.75,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "catalog-1280.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 6,
+    "minContrast": 8.56,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "orders-first-1280.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 7,
+    "minContrast": 5.8,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "notifications-first-1280.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 29,
+    "minContrast": 5.8,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "orders-middle-1280.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 7,
+    "minContrast": 10.5,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "notifications-middle-1280.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 29,
+    "minContrast": 8.77,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "orders-last-1280.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 7,
+    "minContrast": 5.8,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "notifications-last-1280.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 16,
+    "minContrast": 5.8,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "id-check-from-services-1280.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 7,
+    "minContrast": 3.59,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "id-check-notice-1280.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 6,
+    "minContrast": 3.59,
+    "fails": [],
+    "navH": 64
+  },
+  {
+    "file": "admin-list-first-1280.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 10,
+    "minContrast": 1,
+    "fails": [],
+    "navH": 747
+  },
+  {
+    "file": "admin-list-middle-1280.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 9,
+    "minContrast": 6.34,
+    "fails": [],
+    "navH": 747
+  },
+  {
+    "file": "admin-list-last-1280.jpg",
+    "overflow": 0,
+    "short": [],
+    "buttons": 20,
+    "minContrast": 6.34,
+    "fails": [],
+    "navH": 747
+  }
+]

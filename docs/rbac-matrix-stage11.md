@@ -130,27 +130,27 @@ Not /admin routes. Each cell is one fresh PHP process. Expected: a guest, and an
 | `GET /services/invoices/{id}` | sent | 302 → /login ✓ | 200 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}` | draft | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}` | missing | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
-| `GET /services/invoices/{id}/print` | cancelled | 302 → /login ✓ | 302 → /services/invoices/1 ✓ | 404 ✓ | 302 → /login ✓ |
+| `GET /services/invoices/{id}/print` | cancelled | 302 → /login ✓ | 302 → /services/invoices/5 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/print` | sent | 302 → /login ✓ | 200 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/print` | draft | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/print` | missing | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
-| `GET /services/invoices/{id}/payment/success` | cancelled | 302 → /login ✓ | 302 → /services/invoices/1 ✓ | 404 ✓ | 302 → /login ✓ |
+| `GET /services/invoices/{id}/payment/success` | cancelled | 302 → /login ✓ | 302 → /services/invoices/5 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/payment/success` | sent | 302 → /login ✓ | 200 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/payment/success` | draft | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/payment/success` | missing | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
-| `GET /services/invoices/{id}/payment/cancelled` | cancelled | 302 → /login ✓ | 302 → /services/invoices/1 ✓ | 404 ✓ | 302 → /login ✓ |
+| `GET /services/invoices/{id}/payment/cancelled` | cancelled | 302 → /login ✓ | 302 → /services/invoices/5 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/payment/cancelled` | sent | 302 → /login ✓ | 200 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/payment/cancelled` | draft | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/payment/cancelled` | missing | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
-| `GET /services/invoices/{id}/payment/failed` | cancelled | 302 → /login ✓ | 302 → /services/invoices/1 ✓ | 404 ✓ | 302 → /login ✓ |
+| `GET /services/invoices/{id}/payment/failed` | cancelled | 302 → /login ✓ | 302 → /services/invoices/5 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/payment/failed` | sent | 302 → /login ✓ | 200 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/payment/failed` | draft | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/payment/failed` | missing | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
-| `POST /services/invoices/{id}/pay/stripe` | cancelled | 302 → /login ✓ | 302 → /services/invoices/1 ✓ | 404 ✓ | 302 → /login ✓ |
+| `POST /services/invoices/{id}/pay/stripe` | cancelled | 302 → /login ✓ | 302 → /services/invoices/5 ✓ | 404 ✓ | 302 → /login ✓ |
 | `POST /services/invoices/{id}/pay/stripe` | sent | 302 → /login ✓ | not probed (PHPUnit) | 404 ✓ | 302 → /login ✓ |
 | `POST /services/invoices/{id}/pay/stripe` | draft | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `POST /services/invoices/{id}/pay/stripe` | missing | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
-| `POST /services/invoices/{id}/pay/gcash` | cancelled | 302 → /login ✓ | 302 → /services/invoices/1 ✓ | 404 ✓ | 302 → /login ✓ |
+| `POST /services/invoices/{id}/pay/gcash` | cancelled | 302 → /login ✓ | 302 → /services/invoices/5 ✓ | 404 ✓ | 302 → /login ✓ |
 | `POST /services/invoices/{id}/pay/gcash` | sent | 302 → /login ✓ | not probed (PHPUnit) | 404 ✓ | 302 → /login ✓ |
 | `POST /services/invoices/{id}/pay/gcash` | draft | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `POST /services/invoices/{id}/pay/gcash` | missing | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
@@ -165,7 +165,7 @@ The request form, summary, confirm, confirmation page, request page and reply ro
 | `GET /services/requests/{x}/cancellation` | does not exist | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `POST /services/requests/{x}/cancellation/review` | exists | 302 → /login ✓ | 302 →  ✓ | 404 ✓ | 302 → /login ✓ |
 | `POST /services/requests/{x}/cancellation/review` | does not exist | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
-| `POST /services/requests/{x}/cancellation` | exists | 302 → /login ✓ | 302 → /services/requests/4/cancellation ✓ | 404 ✓ | 302 → /login ✓ |
+| `POST /services/requests/{x}/cancellation` | exists | 302 → /login ✓ | 302 → /services/requests/16/cancellation ✓ | 404 ✓ | 302 → /login ✓ |
 | `POST /services/requests/{x}/cancellation` | does not exist | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/refunds/{x}` | exists | 302 → /login ✓ | 200 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/refunds/{x}` | does not exist | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |

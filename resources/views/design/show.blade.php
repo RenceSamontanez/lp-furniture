@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Your Custom Design — LP Furniture')
+@section('title', 'Your Customized Design — LP Furniture')
 
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/design.css') }}"/>
@@ -13,7 +13,7 @@
   <div class="cd-top-bar">
     <a href="{{ route('design.index') }}" class="cd-back-btn">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-      Back to Custom Design
+      Back to Customize
     </a>
 
     <a href="{{ route('design.gallery', ['tab' => 'history']) }}" class="cd-history-btn">

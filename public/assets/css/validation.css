@@ -484,3 +484,6 @@
     font-size: 22px;
   }
 }
+
+/* Stage 21j: 44px tap targets */
+.btn-val-modal-agree, .btn-val-submit { min-height: 44px; }

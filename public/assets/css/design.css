@@ -2143,3 +2143,9 @@
 .cd-wood-supply .ai-radio-chip { width: 100%; }
 
 .cd-type-hint, .cd-size-hint, .cd-type-check-note { text-align: left; }
+
+/* Stage 21j: hover/focus states keep 4.5:1 (gold text on cream was ~2.5:1) */
+.cd-back-btn:hover, .cd-back-btn:focus-visible,
+.cd-howitworks-btn:hover, .cd-howitworks-btn:focus-visible { border-color: var(--brown-mid); background: #EFE6D8; color: var(--brown-deep); }
+.cd-history-btn:hover, .cd-history-btn:focus-visible { background: var(--brown-mid); border-color: var(--brown-mid); color: #fff; }
+.cd-back-btn, .cd-history-btn, .cd-howitworks-btn { min-height: 44px; }
