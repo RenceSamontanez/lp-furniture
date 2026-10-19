@@ -555,6 +555,14 @@ final class ServiceInvoicePayments
                 throw new PipelineException('This service is already marked as done.');
             }
 
+            if (!$ticket->service_started_at) {
+                // "Service done" must not start work that was not allowed to start.
+                $can = ServiceWorkState::canStart($ticket);
+                if ($can !== ServiceWorkState::ALLOWED) {
+                    throw new PipelineException(ServiceWorkState::START_MESSAGES[$can] ?? 'Work cannot be started now.');
+                }
+            }
+
             $invoice->forceFill(['service_done_at' => now()])->save();
             if (!$ticket->service_started_at) {
                 $ticket->service_started_at = now();   // "Service done" implies the work started

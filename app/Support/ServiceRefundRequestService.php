@@ -577,11 +577,12 @@ final class ServiceRefundRequestService
             if (!$ticket->isOpen()) {
                 throw new PipelineException('This ticket is closed or cancelled, so work cannot be started.');
             }
-            if ($ticket->service_started_at) {
-                throw new PipelineException('Work is already marked as started.');
+            $can = ServiceWorkState::canStart($ticket);
+            if ($can !== ServiceWorkState::ALLOWED) {
+                throw new PipelineException(ServiceWorkState::START_MESSAGES[$can] ?? 'Work cannot be started now.');
             }
             $ticket->service_started_at = now();
-            $this->tickets->appendNote($ticket, $admin, 'Work started. After this, the customer can no longer get an automatic refund');
+            $this->tickets->appendNote($ticket, $admin, 'Work started (payment received). After this, the customer can no longer get an automatic refund');
             $ticket->save();
 
             return $ticket;

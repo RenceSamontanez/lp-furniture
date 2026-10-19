@@ -123,20 +123,81 @@
     <div class="admin-panel">
       <div class="admin-panel-header"><div class="admin-panel-title">Work</div></div>
       <div class="admin-panel-body">
-        <p class="si-hint" style="margin-top:0;">{{ \App\Support\ServiceWorkState::label($work) }}@if($t->service_started_at) · since {{ $t->service_started_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}@endif</p>
-        @if($work === 'not_started')
-          <form method="POST" action="{{ route('admin.service-inquiries.work-started', $t->id) }}" onsubmit="return confirm('After this, the customer can no longer get an automatic refund.')">
-            @csrf
-            <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" data-loading="Saving...">Work started</button>
-          </form>
-        @elseif($work === 'started' && !$ctx['open'])
-          <form method="POST" action="{{ route('admin.service-inquiries.work-started-undo', $t->id) }}" onsubmit="return confirm('Undo \"Work started\"? The customer can get an automatic refund again.')">
-            @csrf
-            <button type="submit" class="lp-btn lp-btn--secondary lp-btn--block" data-loading="Saving...">Undo work started</button>
-          </form>
+        @php
+          $can     = \App\Support\ServiceWorkState::canStart($t);
+          $peso    = fn ($v) => \App\Support\ServiceInvoiceDesk::peso($v);
+          $wInv    = $ctx['invoice'] ?? \App\Support\ServiceRefundRequestService::liveInvoice($t);
+          $pendingInv = $t->invoices->whereIn('status', ['draft', 'issued'])->first();
+          $startedBy  = \App\Support\ServiceWorkState::startedBy($t);
+          $doneInv    = $wInv && in_array($wInv->status, ['issued', 'paid'], true) && !$wInv->service_done_at ? $wInv : null;
+        @endphp
+        @if($work === 'done')
+          <x-notice variant="success" title="Service done">Marked done on {{ $wInv?->service_done_at?->timezone('Asia/Manila')->format('M d, Y h:i A') }}.</x-notice>
+        @elseif($t->service_started_at)
+          <p class="si-work-line"><strong>Work started {{ $t->service_started_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}@if($startedBy), by {{ $startedBy }}@endif</strong></p>
+          @if(\App\Support\ServiceWorkState::startedWithoutPayment($t))
+            <x-notice variant="blocked" title="Started before payments were required">Work was marked as started before this rule existed, so nothing needs to be done.</x-notice>
+          @endif
+          @if($doneInv && !$ctx['open'])
+            <button type="button" class="lp-btn lp-btn--primary lp-btn--block" data-lp-modal-open="si-done-modal">Mark service done</button>
+          @endif
+          @if(!$ctx['open'] && $work === 'started')
+            <button type="button" class="lp-btn lp-btn--secondary lp-btn--block" style="margin-top:10px;" data-lp-modal-open="si-undo-modal">Undo work started</button>
+          @endif
+        @elseif($can === 'allowed')
+          <button type="button" class="lp-btn lp-btn--primary lp-btn--block" data-lp-modal-open="si-start-modal">Start work</button>
+        @elseif($can === 'no_invoice')
+          <x-notice variant="info" title="Create an invoice first">Work starts after the customer pays.</x-notice>
+        @elseif($can === 'invoice_draft' || $can === 'awaiting_payment')
+          <x-notice variant="waiting" title="Waiting for payment of {{ $pendingInv?->invoice_number ?: 'the invoice' }}, {{ $pendingInv ? $peso(($pendingInv->installmentCents()[1] ?? $pendingInv->totalCents()) / 100) : '' }}">
+            @if($can === 'invoice_draft') The invoice has not been sent yet. @else Work starts as soon as {{ $pendingInv && $pendingInv->isHalfHalf() ? 'the first half is' : 'it is' }} paid. @endif
+          </x-notice>
+        @elseif($can === 'on_hold')
+          <x-notice variant="blocked" title="On hold">A cancellation request is open. Work cannot start until it is decided.</x-notice>
+        @else
+          <x-notice variant="blocked" title="Work cannot start">The invoice or the service request was cancelled.</x-notice>
         @endif
       </div>
     </div>
+
+    @if($can === 'allowed' && $wInv)
+    <x-modal id="si-start-modal" title="Start work on {{ $t->reference_number }}?">
+      <dl class="lp-modal__facts">
+        <dt>Invoice</dt><dd>{{ $wInv->invoice_number }}</dd>
+        <dt>Payment</dt>
+        <dd>@if($wInv->status === 'paid') Paid in full: {{ $peso($wInv->paidCents() / 100) }}
+            @else Half paid: {{ $peso($wInv->paidCents() / 100) }} of {{ $peso($wInv->totalCents() / 100) }}. The balance of {{ $peso($wInv->balanceCents() / 100) }} is due after the service.@endif</dd>
+      </dl>
+      <x-notice variant="info" title="After this, the customer can no longer get an automatic refund." />
+      <x-slot:footer>
+        <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+        <button type="submit" form="si-start-form" class="lp-btn lp-btn--primary" data-lp-confirm>Start work</button>
+      </x-slot:footer>
+    </x-modal>
+    <form method="POST" action="{{ route('admin.service-inquiries.work-started', $t->id) }}" id="si-start-form">@csrf</form>
+    @endif
+
+    @if($doneInv && !$ctx['open'])
+    <x-modal id="si-done-modal" title="Mark the service as done?">
+      <p>{{ $doneInv->isHalfHalf() && $doneInv->balanceCents() > 0 ? 'The customer will be told the remaining balance of ' . $peso($doneInv->balanceCents() / 100) . ' is now due.' : 'This is recorded on the ticket.' }}</p>
+      <x-slot:footer>
+        <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+        <button type="submit" form="si-done-form" class="lp-btn lp-btn--primary" data-lp-confirm>Mark service done</button>
+      </x-slot:footer>
+    </x-modal>
+    <form method="POST" action="{{ route('admin.service-invoices.service-done', $doneInv->id) }}" id="si-done-form">@csrf</form>
+    @endif
+
+    @if($t->service_started_at && !$ctx['open'] && $work === 'started')
+    <x-modal id="si-undo-modal" title="Undo &quot;Work started&quot;?">
+      <p>The customer can get an automatic refund again.</p>
+      <x-slot:footer>
+        <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+        <button type="submit" form="si-undo-form" class="lp-btn lp-btn--primary" data-lp-confirm>Undo work started</button>
+      </x-slot:footer>
+    </x-modal>
+    <form method="POST" action="{{ route('admin.service-inquiries.work-started-undo', $t->id) }}" id="si-undo-form">@csrf</form>
+    @endif
 
     @if(!$ctx['open'])
     <div class="admin-panel">

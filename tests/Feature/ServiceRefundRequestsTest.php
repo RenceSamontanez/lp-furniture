@@ -113,7 +113,7 @@ class ServiceRefundRequestsTest extends TestCase
 
     private function startWork(ServiceInvoice $i): void
     {
-        $this->svc->startWork($i->service_inquiry_id, $this->admin);
+        ServiceInquiry::whereKey($i->service_inquiry_id)->update(["service_started_at" => now()]);   // legacy-style start; the rule itself is tested in NoPayNoWorkTest
     }
 
     private function msgs(Req $r): string

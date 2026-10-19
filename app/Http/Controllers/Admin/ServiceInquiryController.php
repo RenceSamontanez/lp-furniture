@@ -39,6 +39,15 @@ class ServiceInquiryController extends Controller
             $query->where('status', $status);
         }
 
+        // "Ready to start": paid enough, work not started yet (so paid jobs are not forgotten).
+        $readyIds = ServiceInquiry::whereIn('status', ServiceInquiry::OPEN)->whereNull('service_started_at')
+            ->whereHas('invoices', fn ($q) => $q->whereIn('status', ['issued', 'paid']))
+            ->get()->filter(fn ($t) => \App\Support\ServiceWorkState::canStart($t) === \App\Support\ServiceWorkState::ALLOWED)->pluck('id');
+        $ready = (bool) $request->query('ready');
+        if ($ready) {
+            $query->whereIn('id', $readyIds);
+        }
+
         if ($search !== '') {
             $like = '%' . addcslashes($search, '\\%_') . '%';
             $query->where(function ($q) use ($like) {
@@ -59,6 +68,8 @@ class ServiceInquiryController extends Controller
             'search'  => $search,
             'counts'  => $counts,
             'total'   => $counts->sum(),
+            'ready'   => $ready,
+            'readyCount' => $readyIds->count(),
         ]);
     }
 

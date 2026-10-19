@@ -303,7 +303,8 @@ class ServiceInvoicePaymentsTest extends TestCase
 
     public function test_service_done_cannot_be_repeated_and_needs_a_live_invoice(): void
     {
-        $i = $this->invoice('4000', 'half_half');
+        $i = $this->invoice("4000", "half_half");
+        ServiceInquiry::whereKey($i->service_inquiry_id)->update(["service_started_at" => now()]);   // legacy start; the payment rule is tested in NoPayNoWorkTest
         $this->asAdmin()->post(route('admin.service-invoices.service-done', $i->id))->assertSessionHas('success');
         $this->post(route('admin.service-invoices.service-done', $i->id))->assertSessionHasErrors('invoice');
         $this->assertStringContainsString('service marked as done', $i->inquiry->fresh()->admin_notes);

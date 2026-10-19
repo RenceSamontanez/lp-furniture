@@ -95,10 +95,7 @@
           <a href="{{ route('admin.service-invoices.edit', $i->id) }}" class="lp-btn lp-btn--secondary lp-btn--block">Edit draft</a>
           <button type="button" class="lp-btn lp-btn--primary lp-btn--block" data-open-send>Send to customer</button>
           <form method="POST" action="{{ route('admin.service-invoices.issue', $i->id) }}" id="inv-send-form">@csrf</form>
-          <form method="POST" action="{{ route('admin.service-invoices.delete', $i->id) }}" onsubmit="return confirm('Delete this draft? Drafts have no invoice number, so nothing is lost from the numbering.')">
-            @csrf
-            <button type="submit" class="lp-btn lp-btn--danger lp-btn--block inv-delete">Delete draft</button>
-          </form>
+          <button type="button" class="lp-btn lp-btn--danger lp-btn--block inv-delete" data-lp-modal-open="inv-delete-modal">Delete draft</button>
           <p class="si-hint">Sending gives the invoice its number{{ $i->user_id ? ' and notifies the customer' : '' }}.</p>
         @endif
 
@@ -181,20 +178,14 @@
 
     @if($i->status === 'paid' && !$i->service_done_at)
       <div class="inv-pay-actions">
-        <form method="POST" action="{{ route('admin.service-invoices.service-done', $i->id) }}" onsubmit="return confirm('Mark the service as done? This is recorded on the ticket.')">
-          @csrf
-          <button type="submit" class="lp-btn lp-btn--primary">Service done</button>
-        </form>
+        <button type="button" class="lp-btn lp-btn--primary" data-lp-modal-open="inv-done-modal">Service done</button>
       </div>
     @endif
 
     @if($i->status === 'issued')
       <div class="inv-pay-actions">
         @if(!$i->service_done_at)
-          <form method="POST" action="{{ route('admin.service-invoices.service-done', $i->id) }}" onsubmit="return confirm('Mark the service as done? {{ $i->isHalfHalf() ? 'The customer will be told the remaining balance is due.' : 'This is recorded on the ticket.' }}')">
-            @csrf
-            <button type="submit" class="lp-btn lp-btn--primary">Service done</button>
-          </form>
+          <button type="button" class="lp-btn lp-btn--primary" data-lp-modal-open="inv-done-modal">Service done</button>
         @endif
         @if($due['installment'] !== null)
           <button type="button" class="lp-btn lp-btn--secondary" id="inv-open-cash" @disabled(!$due['available'])>Record cash payment</button>
@@ -269,6 +260,27 @@
 @endif
 @if($i->status === 'draft')
   @include('admin.service-invoices._send-modal', ['formId' => 'inv-send-form'])
+@endif
+
+@if($i->status === 'draft')
+<x-modal id="inv-delete-modal" title="Delete this draft?">
+  <p>Drafts have no invoice number, so nothing is lost from the numbering.</p>
+  <x-slot:footer>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+    <button type="submit" form="inv-delete-form" class="lp-btn lp-btn--danger" data-lp-confirm>Delete draft</button>
+  </x-slot:footer>
+</x-modal>
+<form method="POST" action="{{ route('admin.service-invoices.delete', $i->id) }}" id="inv-delete-form">@csrf</form>
+@endif
+@if(in_array($i->status, ['issued', 'paid'], true) && !$i->service_done_at)
+<x-modal id="inv-done-modal" title="Mark the service as done?">
+  <p>{{ $i->isHalfHalf() && $i->balanceCents() > 0 ? 'The customer will be told the remaining balance of ' . \App\Support\ServiceInvoiceDesk::peso($i->balanceCents() / 100) . ' is now due.' : 'This is recorded on the ticket.' }}</p>
+  <x-slot:footer>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+    <button type="submit" form="inv-done-form" class="lp-btn lp-btn--primary" data-lp-confirm>Mark service done</button>
+  </x-slot:footer>
+</x-modal>
+<form method="POST" action="{{ route('admin.service-invoices.service-done', $i->id) }}" id="inv-done-form">@csrf</form>
 @endif
 @endsection
 

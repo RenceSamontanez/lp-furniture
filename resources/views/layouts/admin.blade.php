@@ -174,6 +174,7 @@
 @endif
 
 <script src="{{ asset('assets/js/admin.js') }}"></script>
+<script src="{{ asset('assets/js/lp-modal.js') }}"></script>
 @stack('scripts')
 @include('partials.co-loading')
 </body>

@@ -17,9 +17,13 @@
 </div>
 
 <div class="co-counts">
-  <a href="{{ route('admin.service-inquiries.index', array_filter(['q' => $search])) }}" class="co-count {{ !$status ? 'active' : '' }}">
+  <a href="{{ route('admin.service-inquiries.index', array_filter(['q' => $search])) }}" class="co-count {{ !$status && !$ready ? 'active' : '' }}">
     <div class="co-count-num">{{ $total }}</div>
     <div class="co-count-label">All tickets</div>
+  </a>
+  <a href="{{ route('admin.service-inquiries.index', array_filter(['ready' => 1, 'q' => $search])) }}" class="co-count {{ $ready ? 'active' : '' }}">
+    <div class="co-count-num">{{ $readyCount }}</div>
+    <div class="co-count-label">Ready to start ({{ $readyCount }})</div>
   </a>
   @foreach($labels as $key => $label)
     <a href="{{ route('admin.service-inquiries.index', array_filter(['status' => $key, 'q' => $search])) }}" class="co-count {{ $status === $key ? 'active' : '' }}">
@@ -31,6 +35,7 @@
 
 <form method="GET" action="{{ route('admin.service-inquiries.index') }}" class="co-search">
   @if($status)<input type="hidden" name="status" value="{{ $status }}"/>@endif
+  @if($ready)<input type="hidden" name="ready" value="1"/>@endif
   <input type="search" name="q" value="{{ $search }}" class="form-input" placeholder="Search by name, reference or phone"/>
   <button type="submit" class="admin-btn admin-btn-outline">Search</button>
   @if($search !== '')

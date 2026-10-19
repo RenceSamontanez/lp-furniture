@@ -3234,3 +3234,53 @@ nav .nav-btn:active {
   .lp-notice { padding: 14px 14px 14px 12px; gap: 10px; border-radius: 0 8px 8px 0; }
   .lp-notice__actions .lp-btn { width: 100%; }
 }
+
+/* ══════════════════════════════════════════
+   Confirmation modal: .lp-modal (Stage 21h). See docs/ui-components.md.
+   Markup: resources/views/components/modal.blade.php, behaviour: public/assets/js/lp-modal.js
+══════════════════════════════════════════ */
+.lp-modal { position: fixed; inset: 0; z-index: 1200; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(44, 24, 16, 0.55); }
+.lp-modal[hidden] { display: none; }
+.lp-modal__box { display: flex; flex-direction: column; width: 100%; max-width: 540px; max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); background: #fff; border-radius: 14px; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.3); border-top: 4px solid var(--gold); color: var(--brown-deep); }
+.lp-modal__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 18px 20px 6px; }
+.lp-modal__title { margin: 0; font-family: var(--font-display, inherit); font-size: 21px; font-weight: 600; line-height: 1.3; color: var(--brown-deep); text-align: left; }
+.lp-modal__x { flex: none; width: 44px; height: 44px; margin: -8px -10px 0 0; border: 0; border-radius: 8px; background: none; font-size: 28px; line-height: 1; color: var(--brown-mid); cursor: pointer; }
+.lp-modal__x:hover { background: #F5F0E8; color: var(--brown-deep); }
+.lp-modal__x:focus-visible { outline: 2px solid var(--brown-deep); outline-offset: 1px; }
+.lp-modal__body { padding: 4px 20px 8px; overflow-y: auto; -webkit-overflow-scrolling: touch; font-size: 15px; line-height: 1.55; color: #3B2A1F; text-align: left; overflow-wrap: anywhere; }
+.lp-modal__body p { margin: 8px 0; }
+.lp-modal__body .lp-notice { margin: 12px 0; }
+.lp-modal__facts { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 10px 0; padding: 12px 14px; background: #FAF6EE; border: 1px solid #EFE7DA; border-radius: 10px; font-size: 14.5px; }
+.lp-modal__facts dt { color: #5C4A3E; font-weight: 500; }
+.lp-modal__facts dd { margin: 0; font-weight: 600; color: var(--brown-deep); min-width: 0; }
+.lp-modal__facts [hidden] { display: none; }
+.lp-modal__check { display: flex; align-items: flex-start; gap: 10px; min-height: 44px; margin: 12px 0 4px; padding: 10px 12px; border: 1.5px solid #D8CBB8; border-radius: 10px; background: #FFFCF6; cursor: pointer; font-weight: 500; }
+.lp-modal__check input { flex: none; width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--brown-deep); }
+.lp-modal__foot { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px 18px; flex-wrap: wrap; }
+.lp-modal__foot .lp-btn { min-width: 140px; justify-content: center; }
+@media (max-width: 520px) {
+  .lp-modal { padding: 10px; align-items: flex-end; }
+  .lp-modal__box { max-height: calc(100dvh - 20px); border-radius: 14px 14px 10px 10px; }
+  .lp-modal__foot { flex-direction: column-reverse; }
+  .lp-modal__foot .lp-btn { width: 100%; }
+  .lp-modal__facts { grid-template-columns: 1fr; gap: 0; }
+  .lp-modal__facts dd { margin-bottom: 8px; }
+}
+body.lp-modal-open { overflow: hidden; }
+
+/* ══════════════════════════════════════════
+   Text links inside content: .lp-link (Stage 21h)
+   Brown on cream, white and gold-tint backgrounds, gold underline, same look when visited.
+   Not for buttons (use .lp-btn), the main navigation or card-as-link elements.
+══════════════════════════════════════════ */
+:root { --link: #6A3E1E; --link-hover: #2C1810; --link-underline: #C8963E; }
+a.lp-link, .lp-link a, button.lp-link {
+  color: var(--link); font-weight: 600; text-decoration: underline; text-decoration-color: var(--link-underline);
+  text-decoration-thickness: 1.5px; text-underline-offset: 3px; border-radius: 2px; overflow-wrap: anywhere;
+}
+button.lp-link { background: none; border: 0; padding: 0; font: inherit; font-weight: 600; cursor: pointer; text-align: left; }
+a.lp-link:visited, .lp-link a:visited { color: var(--link); }
+a.lp-link:hover, .lp-link a:hover, button.lp-link:hover { color: var(--link-hover); text-decoration-thickness: 3px; }
+a.lp-link:focus-visible, .lp-link a:focus-visible, button.lp-link:focus-visible { outline: 2px solid var(--brown-deep); outline-offset: 3px; box-shadow: 0 0 0 5px #E8B86D; }
+a.lp-link--tap, button.lp-link--tap { display: inline-flex; align-items: center; min-height: 44px; }
+.lp-notice__text a.lp-link { color: var(--link); text-decoration: underline; text-decoration-color: var(--link-underline); }
