@@ -95,22 +95,20 @@
       <div class="admin-panel-header"><div class="admin-panel-title">How the customer pays</div></div>
       <div class="admin-panel-body si-form">
         @php
-          $halfTotalMin = \App\Support\InvoicePaymentRules::HALF_HALF_MIN_TOTAL;
-          $halfType     = ($halfOk ?? null) === \App\Support\InvoicePaymentRules::FULL_OR_HALF;
+          $halfTotalMin = $halfMin ?? \App\Support\InvoicePaymentRules::HALF_HALF_MIN_TOTAL;
           $plan         = $v('payment_plan', 'full');
         @endphp
-        <p class="si-hint" style="margin:0 0 12px;">The customer can always pay in full, online (GCash or card) or in cash in person. You can also allow half now and half when the service is done. The plan is fixed when you send the invoice.</p>
-        <label class="inv-check">
-          <input type="checkbox" name="payment_plan" value="half_half" @checked($plan === 'half_half') @disabled(!$halfType)/>
+        <p class="si-hint" style="margin:0 0 12px;">The customer can always pay in full, online (GCash or card) or in cash in person. For a total of {{ \App\Support\ServiceInvoiceDesk::peso($halfTotalMin) }} or more you can also allow half now and half when the service is done. The plan is fixed when you send the invoice.</p>
+        <label class="inv-check" id="inv-half-label">
+          <input type="checkbox" name="payment_plan" id="inv-half" value="half_half" @checked($plan === 'half_half') data-min="{{ $halfTotalMin }}"/>
           Allow "Half now, half when the service is done" (50% / 50%)
         </label>
-        <p class="si-hint" style="margin:8px 0 0;">
-          @if($halfType)
-            Only offered when the total is at least ₱{{ number_format($halfTotalMin, 2) }}. The second half becomes payable when you tap "Service done".
-          @else
-            This type of service must be paid in full, so half and half is not available.
-          @endif
-        </p>
+        <div id="inv-half-off" hidden>
+          <x-notice variant="waiting" title="Half and half is not available yet"><span id="inv-half-off-text">Half and half needs a total of {{ \App\Support\ServiceInvoiceDesk::peso($halfTotalMin) }} or more.</span></x-notice>
+        </div>
+        <div id="inv-half-on" hidden>
+          <x-notice variant="info" title="Half and half is available"><span id="inv-half-on-text">The second half becomes payable when you tap "Service done".</span></x-notice>
+        </div>
       </div>
     </div>
 
@@ -191,6 +189,27 @@
     d.appendChild(a); d.appendChild(b); sum.appendChild(d);
   }
 
+  // Half and half: re-evaluated on every edit, not only on page load (the total starts at 0 on a new invoice).
+  var half = document.getElementById('inv-half');
+  var halfOff = document.getElementById('inv-half-off');
+  var halfOn = document.getElementById('inv-half-on');
+  function syncHalf(total) {
+    var min = parseFloat(half.getAttribute('data-min'));
+    var ok = Math.round(total * 100) >= Math.round(min * 100);
+    half.disabled = !ok;
+    if (!ok) { half.checked = false; }
+    halfOff.hidden = ok;
+    halfOn.hidden = !ok;
+    document.getElementById('inv-half-label').classList.toggle('is-disabled', !ok);
+    if (!ok) {
+      document.getElementById('inv-half-off-text').textContent =
+        'Half and half needs a total of ' + peso(min) + ' or more. This invoice is ' + peso(total) + '.';
+    } else {
+      var first = Math.floor(Math.round(total * 100) / 2) / 100;
+      document.getElementById('inv-half-on-text').textContent =
+        peso(first) + ' now and ' + peso(total - first) + ' when you tap "Service done".';
+    }
+  }
   function render() {
     var chosen = form.querySelector('input[name="delivery_option"]:checked');
     var key = chosen ? chosen.value : '';
@@ -209,6 +228,7 @@
     });
     if (hasFee) { var f = num(amountInput.value); if (f > 0) { row(optionLabels[key], f); total += f; } }
     totalEl.textContent = peso(total);
+    syncHalf(total);
     none.hidden = linesBox.children.length > 0;
   }
 

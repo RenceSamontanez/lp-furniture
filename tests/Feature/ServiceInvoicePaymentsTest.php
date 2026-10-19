@@ -131,8 +131,8 @@ class ServiceInvoicePaymentsTest extends TestCase
         $this->assertTrue(InvoicePaymentRules::allowsHalfHalf('repair', '3000.00'));
         $this->assertTrue(InvoicePaymentRules::allowsHalfHalf('labor_only_own_wood', '12000'));
         $this->assertFalse(InvoicePaymentRules::allowsHalfHalf('repair', '2999.99'));
-        $this->assertFalse(InvoicePaymentRules::allowsHalfHalf('other', '9000'));
-        $this->assertFalse(InvoicePaymentRules::allowsHalfHalf('something_new', '9000'), 'an unknown service type is full only');
+        $this->assertTrue(InvoicePaymentRules::allowsHalfHalf('other', '9000'), 'Something else may split too (Stage 21h)');
+        $this->assertTrue(InvoicePaymentRules::allowsHalfHalf('something_new', '3000'), 'any future type may split');
         $this->assertSame([1 => 200000], InvoicePaymentRules::installments('full', 200000));
         $this->assertSame([1 => 150000, 2 => 150000], InvoicePaymentRules::installments('half_half', 300000));
         $this->assertSame([1 => 150000, 2 => 150001], InvoicePaymentRules::installments('half_half', 300001), 'the odd centavo goes to the second half');
@@ -144,7 +144,7 @@ class ServiceInvoicePaymentsTest extends TestCase
         $this->assertSame('half_half', $i->fresh()->payment_plan);
         $this->assertSame('full', $this->invoice('4000', 'full')->payment_plan);
 
-        foreach ([['2999', 'repair'], ['9000', 'other']] as [$cost, $type]) {
+        foreach ([['2999', 'repair'], ['1200', 'other']] as [$cost, $type]) {
             try {
                 $this->invoice($cost, 'half_half', $type);
                 $this->fail("half and half must be refused for {$type} {$cost}");

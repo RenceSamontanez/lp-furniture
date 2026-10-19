@@ -45,7 +45,7 @@ class ServiceInvoiceController extends Controller
                 'lines'               => [],
                 'payment_plan'        => InvoicePaymentRules::FULL,
             ],
-            'halfOk' => InvoicePaymentRules::SERVICE_TYPES[$ticket->service_type] ?? null,
+            'halfMin' => InvoicePaymentRules::HALF_HALF_MIN_TOTAL,
         ]);
     }
 
@@ -93,7 +93,7 @@ class ServiceInvoiceController extends Controller
 
         return view('admin.service-invoices.form', [
             'ticket'  => $invoice->inquiry,
-            'halfOk'  => InvoicePaymentRules::SERVICE_TYPES[$invoice->inquiry->service_type] ?? null,
+            'halfMin' => InvoicePaymentRules::HALF_HALF_MIN_TOTAL,
             'invoice' => $invoice,
             'values'  => [
                 'service_description' => $invoice->service_description,

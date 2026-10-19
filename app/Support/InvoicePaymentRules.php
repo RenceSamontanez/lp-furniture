@@ -19,21 +19,7 @@ final class InvoicePaymentRules
         self::HALF_HALF => 'Half now, half when the service is done',
     ];
 
-    public const FULL_ONLY    = 'full_only';
-    public const FULL_OR_HALF = 'full_or_half';
-
-    /**
-     * Per service type (the ticket's service_type): may the customer split the invoice?
-     * A service type that is "paid when we arrive" would be listed as full_only. Any service type
-     * not listed here is treated as full_only.
-     */
-    public const SERVICE_TYPES = [
-        'labor_only_own_wood' => self::FULL_OR_HALF,   // Labor only (customer brings the wood)
-        'repair'              => self::FULL_OR_HALF,   // Repair or restoration
-        'other'               => self::FULL_ONLY,      // Something else (scope unknown, so full payment)
-    ];
-
-    /** Half and half is only offered when the invoice total is at least this many pesos. */
+    /** Half and half is offered for EVERY service type, but only when the invoice total is at least this many pesos. Below it: full payment only. */
     public const HALF_HALF_MIN_TOTAL = 3000.00;
 
     /** Online payments (Stripe card, GCash through PayMongo) must be at least this many pesos. Stripe needs 40. */
@@ -44,14 +30,14 @@ final class InvoicePaymentRules
         return self::halfHalfProblem($serviceType, $total) === null;
     }
 
-    /** Why half and half is not allowed here, or null when it is. */
+    /**
+     * Why half and half is not allowed here, or null when it is. The service type does not matter any more
+     * (Labor only, Repair, Something else and any future type are treated the same): only the total does.
+     */
     public static function halfHalfProblem(?string $serviceType, mixed $total): ?string
     {
-        if ((self::SERVICE_TYPES[$serviceType] ?? self::FULL_ONLY) !== self::FULL_OR_HALF) {
-            return 'This type of service must be paid in full, so half and half is not available.';
-        }
         if (ServiceInvoiceDesk::cents($total) < ServiceInvoiceDesk::cents(self::HALF_HALF_MIN_TOTAL)) {
-            return 'Half and half is only available when the invoice total is at least ' . ServiceInvoiceDesk::peso(self::HALF_HALF_MIN_TOTAL) . '.';
+            return 'Half and half needs a total of ' . ServiceInvoiceDesk::peso(self::HALF_HALF_MIN_TOTAL) . ' or more. This invoice is ' . ServiceInvoiceDesk::peso(ServiceInvoiceDesk::cents($total) / 100) . '.';
         }
 
         return null;

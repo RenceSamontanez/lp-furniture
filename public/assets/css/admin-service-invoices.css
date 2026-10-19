@@ -67,8 +67,8 @@
 .inv-pay-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
 .inv-pay-actions form { margin: 0; }
 .inv-installments { margin-bottom: 14px; }
-.inv-check { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; font-size: 14px; line-height: 1.5; color: #2C1810; }
-.inv-check input { margin-top: 4px; width: 18px; height: 18px; flex: none; }
+.inv-check { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; min-height: 44px; align-items: center; font-size: 14px; line-height: 1.5; color: #2C1810; }
+.inv-check input { margin-top: 4px; width: 22px; height: 22px; flex: none; }
 .inv-refunds { list-style: none; margin: 0 0 12px; padding: 0; }
 .inv-refunds li { padding: 9px 0; border-bottom: 1px solid #EFE7DA; font-size: 13.5px; line-height: 1.5; color: #2C1810; }
 .inv-refund-form { max-width: 460px; }
@@ -76,3 +76,4 @@
 .inv-pay--half-paid { background: #FEF0D8; color: #6B4506; }
 .inv-pay--unpaid { background: #EDE8E0; color: #5C4A3C; }
 @media (max-width: 560px) { .inv-pay-actions .lp-btn { width: 100%; } }
+.inv-check.is-disabled { color: #5C4A3E; }
