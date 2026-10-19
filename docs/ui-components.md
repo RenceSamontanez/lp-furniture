@@ -41,3 +41,48 @@ Colours are CSS variables (`--notice-*`) at the end of `style.css`. Measured con
 ### Where it is used
 
 Customer: the half-and-half invoice page (second half waiting, "Half paid" lines, blocked/on-hold invoice), the cancelled invoice page (refund details), the cancellation form (work state, refund expectation), the confirmation page, and every status of the request page. Admin: ticket and invoice banners (Cancelled, On hold, Work started), the "payment on this service" prompt, and the request detail page.
+
+## Confirmation modal: `.lp-modal` (Stage 21h)
+
+One accessible modal replaces every native `confirm()` on risky Other Services actions (Start work, Mark service done, Record cash payment, Cancel invoice, Decline, Approve, Approve as exception, Mark refund as sent, Refund did not go through, Close ticket, Open a cancellation request, Delete draft, and the customer's cancellation or refund confirmation). Markup `resources/views/components/modal.blade.php`, behaviour `public/assets/js/lp-modal.js` (loaded by both layouts), styles at the end of `style.css`.
+
+```blade
+<button type="button" class="lp-btn lp-btn--primary" data-lp-modal-open="my-modal">Start work</button>
+<x-modal id="my-modal" title="Start work on SI-2026-1001?" summary-form="my-form">   {{-- summary-form is optional --}}
+  <p>The sentence the reader must see.</p>
+  <x-notice variant="info" title="After this, the customer can no longer get an automatic refund."/>
+  <x-slot:footer>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+    <button type="submit" form="my-form" class="lp-btn lp-btn--primary" data-lp-confirm>Start work</button>
+  </x-slot:footer>
+</x-modal>
+```
+
+Behaviour: backdrop, `role="dialog"` + `aria-modal="true"` + `aria-labelledby` the title, focus moves into the modal (to the secondary button, so the safe choice is focused) and is trapped with Tab/Shift+Tab, ESC and a click outside close it, focus returns to the button that opened it, the page behind does not scroll, the body scrolls inside the box on a 390px screen (the box is a bottom sheet there), buttons are `.lp-btn` and 44px tall on phones.
+
+Hooks (all optional):
+
+* `form[data-lp-gate="modalId"]` + a button with `data-lp-gate-submit="formId"`: the form's own validation runs first, then the modal opens; the confirm button submits the real form. `data-lp-final-action="url"` on the form changes where the confirmed form posts (the customer cancellation form posts to the review page without JavaScript and straight to the store route with it).
+* `data-lp-summary-form="formId"` on the modal: `[data-summary="field"]` elements receive that field's value (select and radio show their label text), `[data-summary-if="field=value"]` elements show only when the field has that value (for example the GCash lines).
+* `data-lp-requires="checkboxId"` on the confirm button: it stays disabled until the box is ticked. The modal un-ticks `[data-lp-reset]` boxes each time it opens.
+* After the first confirm the modal is locked (`data-busy`): it cannot be closed and the button is disabled, so a request cannot be sent twice.
+
+The server never relies on the modal: every route validates everything again (the modal-backed routes are the existing ones).
+
+## Text links: `.lp-link` (Stage 21h)
+
+For every inline text link in content: `<a href="..." class="lp-link">Other Services terms</a>`. Brown `#6A3E1E` (hover `#2C1810`), weight 600, a 1.5px gold underline with a 3px offset (3px thick on hover), the same look when visited, and a visible focus ring. Measured against cream `#F5F0E8`, white and the gold tint `#FBF1DA`: all four states are at least 4.5:1 (run `tests/UiLinks/measure-links.js` in the browser). `.lp-link--tap` makes a link its own 44px tap target (quiet row actions such as "Request cancellation or refund"). The rules are written with `:any-link` so they beat page-level link rules. Do not use it on buttons (`.lp-btn`), the main navigation, filter tiles or card-as-link elements.
+
+`php tests/UiLinks/audit.php` lists every `<a>` in the Other Services, refund, invoice and notification views (customer and admin) that is neither a button nor an `.lp-link`, and exits 1 if any remain.
+
+## Progress stepper: `.lp-stepper` (Stage 21h)
+
+```blade
+<x-stepper :steps="[['Sent','Sent'], ['Under review','Review'], ['Approved','Approved'], ['Refunded','Refunded']]" :current="2" variant="normal"/>
+```
+
+Steps are `[long label, short label]` (the short label shows at 480px and below). `variant`: `normal` (steps before `current` are done, `current` is emphasised), `problem` (the current step shows a warning icon: Refund problem), `stopped` (the current step shows an X: Declined), `complete` (every step done with a check). Equal-width columns, circle and label centred, the number or icon centred in the circle, the connector running between circle centres. `tests/UiLinks/stepper-align.js` measures all of this with `getBoundingClientRect` at 390px and 1280px.
+
+## Half and half control, manual live check
+
+The admin invoice form has no JavaScript test runner behind it, so the live behaviour is covered by markup assertions in `tests/Feature/HalfAndHalfRuleTest.php` plus this manual check: open an invoice form, type a service cost of 1,200: the box is disabled, unticked, and a notice says "Half and half needs a total of ₱3,000.00 or more. This invoice is ₱1,200.00."; change the cost to 3,000 or add a fee that takes the total there: the box enables with no reload and the notice reads "₱1,500.00 now and ₱1,500.00 when you tap "Service done"."; go back under 3,000: it unticks and disables again. Works the same when editing a draft.

@@ -111,6 +111,26 @@ Req::whereKey($r9->id)->update(['refund_due_at' => now()->subDays(2)]); $ids['ov
 // 10. ticket cancelled by the admin (no payment): blocked invoice
 $t10 = $ticket('Bench'); $i10 = $invoice($t10, 'full', false); app(App\Support\ServiceRefundRequestService::class)->adminClose($t10->id, $admin, 'Customer could not be reached.'); $ids['cancelled'] = ['ticket' => $t10->id, 'invoice' => $i10->id];
 
+// Stage 21h: the Work panel states, an instant cancellation and demo notifications for the details pages
+$t11 = $ticket('Console');                                                       $ids['work_no_invoice'] = ['ticket' => $t11->id];
+$t12 = $ticket('Mirror Frame'); $i12 = $invoice($t12, 'half_half', false);       $ids['work_waiting'] = ['ticket' => $t12->id, 'invoice' => $i12->id];
+$t13 = $ticket('Bookshelf');    $i13 = $invoice($t13, 'half_half', true);        $ids['work_ready'] = ['ticket' => $t13->id, 'invoice' => $i13->id];
+$t14 = $ticket('Nightstand');   $i14 = $invoice($t14, 'half_half', false);
+$r14 = $svc->create($t14->id, $payload(['refund_method' => null, 'gcash_number' => null, 'gcash_account_name' => null]), $customer, 'form'); $ids['instant_closed'] = ['ticket' => $t14->id, 'invoice' => $i14->id, 'ref' => $r14->reference, 'req' => $r14->id];
+$t15 = $ticket('Stool'); $i15 = $invoice($t15, 'full', false);                   $ids['form_unpaid_second'] = ['ticket' => $t15->id, 'invoice' => $i15->id];
+
+$notif = function (string $template, string $url, array $values) use ($customer) {
+    $t = App\Support\NotificationTemplates::render($template, $values + ['contact' => '']);
+
+    return App\Models\Notification::create(['user_id' => $customer->id, 'title' => $t['title'], 'message' => $t['message'], 'type' => 'general', 'url' => $url, 'is_read' => false]);
+};
+$ids['notifications'] = [
+    'cancelled' => $notif('service_request_cancelled', route('services.invoice', $i10->id), ['reference' => $t10->reference_number])->id,
+    'refund'    => $notif('refund_refunded', route('services.refund.show', $r5->reference), ['request' => $r5->reference, 'amount' => 2000, 'method' => 'GCash', 'transaction' => '6028871884223'])->id,
+    'approved'  => $notif('refund_approved', route('services.refund.show', $r4->reference), ['request' => $r4->reference, 'refund_line' => 'You get back ₱2,000.00 by GCash.'])->id,
+    'declined'  => $notif('refund_declined', route('services.refund.show', $r6->reference), ['request' => $r6->reference, 'explanation' => 'Work has already started on this service.'])->id,
+    'received'  => $notif('inquiry_received', route('services.request'), ['reference' => $t1->reference_number, 'phone' => '09171234567', 'window' => null])->id,
+];
 $out = ['customer_email' => $customer->email, 'customer_password' => $pw['customer'], 'admin_email' => $admin->email, 'admin_password' => $pw['admin'], 'ids' => $ids];
 file_put_contents($root . '/storage/app/screenshot-login.json', json_encode($out, JSON_PRETTY_PRINT));
 echo "seeded; login details are in storage/app/screenshot-login.json (scratch database {$name})\n";

@@ -200,7 +200,7 @@ $ticketB = App\Models\ServiceInquiry::create([
     'concern' => 'Rbac refund probe B.', 'name' => 'Rbac', 'phone' => '09171234567', 'status' => 'new', 'user_id' => $owner->id,
 ]);
 $refundSvc = app(App\Support\ServiceRefundRequestService::class);
-$refundSvc->startWork($ticketB->id, $admin);   // work started + nothing paid = a real open request instead of an instant cancel
+App\Models\ServiceInquiry::whereKey($ticketB->id)->update(['service_started_at' => now()]);   // work started + nothing paid = a real open request instead of an instant cancel (set directly: Stage 21h made startWork() require payment)
 $reqB = $refundSvc->create($ticketB->id, [
     'reason_code' => 'other', 'contact_phone' => '09171234567', 'contact_email' => 'rbac@example.test', 'terms' => '1',
 ], $owner, 'form');
@@ -261,6 +261,55 @@ if ($stateAfter !== [1, 'new']) {
     $ownerBad++;
     fwrite(STDERR, 'A probe changed refund request state: ' . json_encode($stateAfter) . "\n");
 }
+
+/* ── Stage 21h: owner-only Other Services notification details, GET /notifications/{id} ──────────────────
+   One real service notification (an invoice-ready one, linked to the owner's cancelled probe invoice) and one id that does
+   not exist. Expected: guest and an admin signed in only on the admin guard go to /login; another customer gets 404 and does not
+   mark it read; the owner gets 200 and marks it read. */
+$notifRow = App\Models\Notification::create([
+    'user_id' => $owner->id, 'title' => 'Your Invoice Is Ready', 'message' => 'Invoice RBAC is ready. The total is ₱100.00.', 'type' => 'general',
+    'url' => '/services/invoices/' . $ownerInvoices['sent'], 'is_read' => false,
+]);
+$notifTable = [
+    '| Route | Record | guest | owner | another customer | admin (admin guard only) |',
+    '|---|---|---|---|---|---|',
+];
+$notifBad = 0;
+$notifTotal = 0;
+foreach ([[$notifRow->id, 'exists', ['guest' => 'login', 'owner' => 200, 'other' => 404, 'admin_guard_only' => 'login']],
+          [999999999, 'does not exist', ['guest' => 'login', 'owner' => 404, 'other' => 404, 'admin_guard_only' => 'login']]] as [$nid, $recordLabel, $expect]) {
+    $uri = '/notifications/' . $nid;
+    $cells = [];
+    foreach (['guest' => ['guest', null], 'other' => ['customer_web', $other], 'admin_guard_only' => ['admin', null], 'owner' => ['customer_web', $owner]] as $who => [$actorName, $asUser]) {
+        $cmd = escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($probe) . ' ' . implode(' ', array_map('escapeshellarg', [
+            $actorName, 'GET', $uri, ($asUser ?? $customer)->email, $admin->email,
+        ])) . ' 2>&1';
+        $lines = preg_split('/\R/', trim((string) shell_exec($cmd)));
+        $x = json_decode(end($lines) ?: '', true) ?: ['status' => 'ERR', 'location' => null];
+        $notifTotal++;
+        $label = $x['status'] . ($x['location'] ? ' → ' . parse_url($x['location'], PHP_URL_PATH) : '');
+        $isRedirect = in_array($x['status'], [301, 302], true);
+        $ok = $expect[$who] === 'login' ? ($isRedirect && parse_url((string) $x['location'], PHP_URL_PATH) === '/login') : $x['status'] === $expect[$who];
+        if ($who === 'other' && $nid === $notifRow->id && $notifRow->fresh()->is_read) {
+            $ok = false;
+            $label .= ' (marked read by a stranger)';
+        }
+        if (!$ok) {
+            $notifBad++;
+            $label = '**' . $label . ' FAIL**';
+        } else {
+            $label .= ' ✓';
+        }
+        $cells[$who] = $label;
+    }
+    $notifTable[] = '| `GET /notifications/{id}` | ' . $recordLabel . ' | ' . implode(' | ', [$cells['guest'], $cells['owner'], $cells['other'], $cells['admin_guard_only']]) . ' |';
+}
+if (!$notifRow->fresh()->is_read) {
+    $notifBad++;
+    fwrite(STDERR, "the owner's visit did not mark the notification read\n");
+}
+$ownerBad += $notifBad;
+$ownerTotal += $notifTotal;
 
 $rids = App\Models\ServiceRefundRequest::whereIn('service_inquiry_id', [$ticketA->id, $ticketB->id])->pluck('id');
 Illuminate\Support\Facades\DB::table('service_refund_messages')->whereIn('service_refund_request_id', $rids)->delete();
@@ -337,7 +386,10 @@ $doc = "# RBAC matrix (Stage 11)\n\n{$summary}\n\n"
     . "The request form, summary, confirm, confirmation page, request page and reply route belong to the ticket's owner. Expected: a guest, and an admin signed in only on the admin guard, "
     . "are redirected to /login; another customer gets 404 for every record (so nothing reveals whether a request exists); the owner reaches the record, and the owner's empty POSTs are refused by validation or by the request status and change nothing. "
     . "The new /admin routes (Cancellations & Refunds, the actions, opening a request on a customer's behalf, Work started) are in the table above.\n\n"
-    . implode("\n", $refundTable) . "\n";
+    . implode("\n", $refundTable) . "\n\n## Stage 21h: owner-only notification details\n\n"
+    . "`GET /notifications/{id}` shows a read-only details page for an Other Services notification. Expected: a guest, and an admin signed in only on the admin guard, are redirected to /login; "
+    . "another customer gets 404 (and does not mark it read); the owner gets 200 and the notification is marked read. No new /admin routes were added in Stage 21h: the Start work, Mark service done, Approve, Decline, Mark refund as sent and related modals post to the existing routes in the table above, and the 'Ready to start' filter is a query string on `GET /admin/service-inquiries`.\n\n"
+    . implode("\n", $notifTable) . "\n";
 
 file_put_contents($root . '/docs/rbac-matrix-stage11.md', $doc);
 echo $summary, "\n";
