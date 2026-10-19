@@ -371,8 +371,8 @@ final class ServiceRefundRequestService
     public function markRefunded(int $id, User $admin, array $in): Req
     {
         $tx = trim((string) ($in['transaction_number'] ?? ''));
-        if (mb_strlen($tx) < 4) {
-            throw new PipelineException('Enter the transaction number (the GCash reference or the cash receipt number, at least 4 characters).');
+        if ($tx === '') {
+            throw new PipelineException('Enter the transaction number (the GCash reference or the cash receipt number).');
         }
         if (mb_strlen($tx) > 60) {
             throw new PipelineException('The transaction number is too long.');
@@ -394,6 +394,7 @@ final class ServiceRefundRequestService
             if (!isset(Req::METHODS[$method])) {
                 throw new PipelineException('Choose GCash or cash.');
             }
+            [$tx, $override] = self::checkTransactionNumber($method, $tx, !empty($in['reference_override']), (string) ($in['reference_override_reason'] ?? ''));
             $cents    = ServiceInvoiceDesk::cents($in['amount']);
             $approved = ServiceInvoiceDesk::cents($req->approved_amount);
             if ($cents !== $approved && ($note === null || mb_strlen($note) < 10)) {
@@ -404,7 +405,7 @@ final class ServiceRefundRequestService
             ServiceRefundAttempt::create([
                 'service_refund_request_id' => $req->id, 'amount' => ServiceInvoiceDesk::money($cents / 100), 'method' => $method,
                 'transaction_number' => $tx, 'sent_on' => $sentOn->toDateString(), 'outcome' => ServiceRefundAttempt::SENT,
-                'note' => $note, 'admin_id' => $admin->id,
+                'note' => $override ? trim(($note ? $note . ' ' : '') . 'Reference override: ' . $override) : $note, 'admin_id' => $admin->id,
             ]);
 
             $req->forceFill(['status' => Req::REFUNDED, 'open_slot' => null])->save();
@@ -413,13 +414,45 @@ final class ServiceRefundRequestService
             $amount = ServiceInvoiceDesk::peso($cents / 100);
             $label  = Req::METHODS[$method];
             $this->say($req, 'system', "Refund of {$amount} sent by {$label} on {$sentOn->format('F j, Y')}. Transaction number: {$tx}.");
-            $this->note($ticket, $admin, "Cancellation request {$req->reference}: refund of {$amount} marked as sent by {$label}, transaction {$tx}. The service request and invoice were cancelled");
+            $this->note($ticket, $admin, "Cancellation request {$req->reference}: refund of {$amount} marked as sent by {$label}, transaction {$tx}. The service request and invoice were cancelled" . ($override ? ". The transaction number did not look like a normal GCash reference; the admin continued anyway: {$override}" : ''));
             $this->notifyCustomer($req, 'refund_refunded', ['reference' => $ticket->reference_number, 'amount' => $cents / 100, 'method' => $label, 'transaction' => $tx]);
 
             return $req;
         });
 
         return $req->refresh();
+    }
+
+    /**
+     * The transaction number rules. GCash: spaces and dashes are ignored, then 10 to 13 digits (digits stored). If it does not
+     * match, the admin may continue with an override and a written reason (at least 10 characters): that is a warning, not a block.
+     * Cash: a receipt or voucher number of 4 to 20 letters, digits or dashes. Returns [cleaned number, override reason or null].
+     *
+     * @return array{0: string, 1: ?string}
+     */
+    public static function checkTransactionNumber(string $method, string $tx, bool $override = false, string $reason = ''): array
+    {
+        if ($method === 'cash') {
+            if (!preg_match('/^[A-Za-z0-9-]{4,20}$/', $tx)) {
+                throw new PipelineException('A cash receipt or voucher number is 4 to 20 letters, digits or dashes.');
+            }
+
+            return [$tx, null];
+        }
+
+        $digits = preg_replace('/[\s\-]/', '', $tx);
+        if (preg_match('/^\d{10,13}$/', $digits)) {
+            return [$digits, null];
+        }
+        if (!$override) {
+            throw new PipelineException('GCash reference numbers are usually 10 to 13 digits, for example 6028 871 884223. Check the number, or tick "This reference does not look like a normal GCash number" and write a reason.');
+        }
+        $reason = trim(preg_replace('/\s+/u', ' ', $reason));
+        if (mb_strlen($reason) < 10) {
+            throw new PipelineException('Write a short reason (at least 10 characters) for using a reference that does not look like a normal GCash number.');
+        }
+
+        return [$tx, $reason];
     }
 
     /** "Refund did not go through": the customer is told and can send corrected details. The attempt stays in the history. */

@@ -103,6 +103,8 @@ class ServiceRefundRequestController extends Controller
             'amount'             => 'required|numeric|gt:0|max:999999.99',
             'method'             => 'nullable|in:' . implode(',', array_keys(ServiceRefundRequest::METHODS)),
             'transaction_number' => 'required|string|max:60',
+            'reference_override' => 'nullable|boolean',
+            'reference_override_reason' => 'nullable|string|max:300',
             'sent_on'            => 'required|date_format:Y-m-d',
             'note'               => 'nullable|string|max:1000',
         ], [

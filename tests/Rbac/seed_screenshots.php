@@ -96,7 +96,7 @@ $t3 = $ticket('Cabinet'); $i3 = $invoice($t3); $r3 = $svc->create($t3->id, $payl
 $t4 = $ticket('Bed Frame'); $i4 = $invoice($t4); $r4 = $svc->create($t4->id, $payload(), $customer, 'form'); $svc->approve($r4->id, $admin); $ids['approved'] = ['ticket' => $t4->id, 'invoice' => $i4->id, 'ref' => $r4->reference, 'req' => $r4->id];
 // 5. refunded
 $t5 = $ticket('Sofa'); $i5 = $invoice($t5); $r5 = $svc->create($t5->id, $payload(), $customer, 'form'); $svc->approve($r5->id, $admin);
-$svc->markRefunded($r5->id, $admin, ['amount' => '2000', 'method' => 'gcash', 'transaction_number' => 'GC-20261019-7788', 'sent_on' => now('Asia/Manila')->toDateString(), 'note' => null]);
+$svc->markRefunded($r5->id, $admin, ['amount' => '2000', 'method' => 'gcash', 'transaction_number' => '6028871884223', 'sent_on' => now('Asia/Manila')->toDateString(), 'note' => null]);
 $ids['refunded'] = ['ticket' => $t5->id, 'invoice' => $i5->id, 'ref' => $r5->reference, 'req' => $r5->id];
 // 6. declined (work started)
 $t6 = $ticket('Wardrobe'); $i6 = $invoice($t6); $svc->startWork($t6->id, $admin); $r6 = $svc->create($t6->id, $payload(), $customer, 'form');

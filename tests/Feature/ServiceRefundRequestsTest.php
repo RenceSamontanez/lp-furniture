@@ -477,14 +477,14 @@ class ServiceRefundRequestsTest extends TestCase
     {
         $i = $this->invoice('half_half', true);
         $r = $this->svc->approve($this->request($i)->id, $this->admin);
-        $ok = ['amount' => '2000', 'method' => 'gcash', 'transaction_number' => 'GC-778899', 'sent_on' => now('Asia/Manila')->toDateString(), 'note' => null];
+        $ok = ['amount' => '2000', 'method' => 'gcash', 'transaction_number' => '6028871884223', 'sent_on' => now('Asia/Manila')->toDateString(), 'note' => null];
 
         foreach (['', 'abc'] as $tx) {
             try {
                 $this->svc->markRefunded($r->id, $this->admin, ['transaction_number' => $tx] + $ok);
                 $this->fail('transaction number is required');
             } catch (PipelineException $e) {
-                $this->assertStringContainsString('transaction number', $e->getMessage());
+                $this->assertMatchesRegularExpression("/transaction number|GCash reference/", $e->getMessage());
             }
         }
         try {
@@ -521,7 +521,7 @@ class ServiceRefundRequestsTest extends TestCase
 
         $r = $this->svc->approve($this->request($i)->id, $this->admin);
         $this->assertSame('issued', $i->fresh()->status, 'approval alone does not cancel');
-        $r = $this->svc->markRefunded($r->id, $this->admin, ['amount' => '2000', 'method' => 'gcash', 'transaction_number' => 'GC-778899', 'sent_on' => '2026-10-19', 'note' => null]);
+        $r = $this->svc->markRefunded($r->id, $this->admin, ['amount' => '2000', 'method' => 'gcash', 'transaction_number' => '6028871884223', 'sent_on' => '2026-10-19', 'note' => null]);
 
         $this->assertSame('refunded', $r->status);
         $this->assertNull($r->open_slot);
@@ -531,14 +531,14 @@ class ServiceRefundRequestsTest extends TestCase
         $this->assertSame('cancelled', $i->inquiry->fresh()->status);
         $this->assertSame('invoice_cancelled', $inv->paymentBlockReason());
         $n = Notification::where('user_id', $this->owner->id)->where('title', 'Your Refund Was Sent')->sole();
-        $this->assertStringContainsString('GC-778899', $n->message);
+        $this->assertStringContainsString('6028871884223', $n->message);
         $this->assertSame(route('services.refund.show', $r->reference), $n->url);
 
         // the explanation page now shows the refund
         $this->asOwner()->get(route('services.invoice', $i->id))->assertOk()->assertSee('Your refund was sent')
-            ->assertSee('₱2,000.00')->assertSee('GCash')->assertSee('GC-778899')->assertSee('October 19, 2026')->assertSee($r->reference);
+            ->assertSee('₱2,000.00')->assertSee('GCash')->assertSee('6028871884223')->assertSee('October 19, 2026')->assertSee($r->reference);
         // the request page shows it too
-        $this->get(route('services.refund.show', $r->reference))->assertOk()->assertSee('GC-778899')->assertSee('Refunded');
+        $this->get(route('services.refund.show', $r->reference))->assertOk()->assertSee('6028871884223')->assertSee('Refunded');
     }
 
     public function test_the_wrong_gcash_number_path_asks_for_the_right_one_and_keeps_the_history(): void
@@ -564,7 +564,7 @@ class ServiceRefundRequestsTest extends TestCase
         $this->assertSame(['approved', '09175550000'], [$r->status, $r->gcash_number]);
         $this->assertSame(1, ServiceRefundAttempt::count(), 'the old attempt stays in the history');
 
-        $this->asAdmin()->post(route('admin.refunds.mark-refunded', $r->id), ['amount' => '2000', 'method' => 'gcash', 'transaction_number' => 'GC-100200', 'sent_on' => now('Asia/Manila')->toDateString()])
+        $this->asAdmin()->post(route('admin.refunds.mark-refunded', $r->id), ['amount' => '2000', 'method' => 'gcash', 'transaction_number' => '60288718842', 'sent_on' => now('Asia/Manila')->toDateString()])
             ->assertSessionHas('success');
         $this->assertSame(2, ServiceRefundAttempt::count());
         $this->assertSame('refunded', $r->fresh()->status);
@@ -597,7 +597,7 @@ class ServiceRefundRequestsTest extends TestCase
         $r = $this->svc->approve($r->id, $this->admin);
         $r = $this->svc->markRefundFailed($r->id, $this->admin, 'gcash_not_found', null);
         $r = $this->svc->customerReply($r->id, $this->owner, ['gcash_number' => '09175550000', 'gcash_account_name' => 'Juan']);
-        $r = $this->svc->markRefunded($r->id, $this->admin, ['amount' => '2000', 'method' => 'gcash', 'transaction_number' => 'GC-555666', 'sent_on' => now('Asia/Manila')->toDateString()]);
+        $r = $this->svc->markRefunded($r->id, $this->admin, ['amount' => '2000', 'method' => 'gcash', 'transaction_number' => '6028871884', 'sent_on' => now('Asia/Manila')->toDateString()]);
 
         $titles = ['Cancellation Request Received', 'Your Request Was Approved', 'Your Refund Needs Your Attention', 'Your Refund Was Sent'];
         foreach ($titles as $title) {
@@ -637,7 +637,7 @@ class ServiceRefundRequestsTest extends TestCase
 
         // lists show it masked, only the detail page shows it in full
         $this->asAdmin()->get(route('admin.refunds.index'))->assertOk()->assertSee('0918 *** 2222')->assertDontSee(self::GCASH);
-        $this->get(route('admin.refunds.show', $r->id))->assertOk()->assertSee(self::GCASH)->assertSee('Copy number');
+        $this->get(route('admin.refunds.show', $r->id))->assertOk()->assertSee(self::GCASH)->assertSee('GCash Number')->assertSee('data-copy-from="rf-gcash"', false);
 
         // never in the activity log, notifications, the thread, chatbot logs or the application log
         $this->assertStringNotContainsString(self::GCASH, (string) $i->inquiry->fresh()->admin_notes);
@@ -674,7 +674,7 @@ class ServiceRefundRequestsTest extends TestCase
         $i = $this->invoice('half_half', true);
         $calls = $this->gateway->calls;
         $r = $this->svc->approve($this->request($i)->id, $this->admin);
-        $this->svc->markRefunded($r->id, $this->admin, ['amount' => '2000', 'method' => 'gcash', 'transaction_number' => 'GC-1234', 'sent_on' => now('Asia/Manila')->toDateString()]);
+        $this->svc->markRefunded($r->id, $this->admin, ['amount' => '2000', 'method' => 'gcash', 'transaction_number' => '602887188422', 'sent_on' => now('Asia/Manila')->toDateString()]);
         $this->assertSame($calls, $this->gateway->calls);
     }
 

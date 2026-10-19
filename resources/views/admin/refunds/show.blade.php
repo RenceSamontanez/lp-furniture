@@ -70,14 +70,16 @@
             <dt>Refund method</dt>
             <dd>
               {{ $r->methodLabel() ?? 'No refund needed (nothing paid)' }}
-              @if($r->refund_method === 'gcash')
-                <div class="rf-copy">
-                  <span>Number: <strong id="rf-gcash" class="rf-mask">{{ $r->gcash_number }}</strong> · {{ $r->gcash_account_name }}</span>
-                  <button type="button" class="lp-btn lp-btn--chip lp-btn--secondary" id="rf-copy" data-copy-from="rf-gcash">Copy number</button>
-                </div>
-              @endif
             </dd>
           </div>
+          @if($r->refund_method === 'gcash')
+            <div>
+              <dt>GCash Number</dt>
+              <dd class="rf-copy"><strong id="rf-gcash" class="rf-mask">{{ $r->gcash_number }}</strong>
+                <button type="button" class="lp-btn lp-btn--chip lp-btn--secondary" id="rf-copy" data-copy-from="rf-gcash">Copy</button></dd>
+            </div>
+            <div><dt>GCash Initials</dt><dd>{{ $r->gcash_account_name ?: '—' }}</dd></div>
+          @endif
           @if($r->approved_amount !== null)<div><dt>Approved amount</dt><dd>{{ $peso($r->approved_amount) }} · by {{ $day($r->refund_due_at) }}@if($r->decider) · approved by {{ $r->decider->first_name }}@endif</dd></div>@endif
         </dl>
 
@@ -135,31 +137,26 @@
       <div class="admin-panel-body rf-actions">
         @if(in_array($r->status, ['new', 'needs_info'], true))
           @if($work === 'not_started')
-            <form method="POST" action="{{ route('admin.refunds.approve', $r->id) }}"
-                  onsubmit="return confirm('Approve this request? {{ $paidCents > 0 ? 'The customer will get back the full ' . $peso($paidCents / 100) . ' by ' . $r->methodLabel() . ', within ' . \App\Models\ServiceRefundRequest::REFUND_DAYS . ' days.' : 'Nothing was paid, so the service request will be cancelled.' }}')">
-              @csrf
-              <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" data-loading="Approving...">Approve{{ $paidCents > 0 ? ' and refund ' . $peso($paidCents / 100) : '' }}</button>
-            </form>
+            <button type="button" class="lp-btn lp-btn--primary lp-btn--block" data-lp-modal-open="rf-approve-modal">Approve{{ $paidCents > 0 ? ' and refund ' . $peso($paidCents / 100) : '' }}</button>
+            <form method="POST" action="{{ route('admin.refunds.approve', $r->id) }}" id="rf-approve-form">@csrf</form>
           @else
             <x-notice variant="blocked" title="Work has already started">
               A normal approval is not offered. You can decline with an explanation, or approve as an exception.
             </x-notice>
             <details class="rf-action">
               <summary>Approve as an exception</summary>
-              <form method="POST" action="{{ route('admin.refunds.approve-exception', $r->id) }}"
-                    onsubmit="return confirm('Approve as an exception? This is flagged and logged.')">
+              <form method="POST" action="{{ route('admin.refunds.approve-exception', $r->id) }}" id="rf-exc-form" data-lp-gate="rf-exc-modal">
                 @csrf
                 <label class="co-modal-label" for="rf-exc" style="margin-top:0;">Why is this an exception? (required)</label>
                 <textarea name="reason" id="rf-exc" class="form-input" rows="3" minlength="10" maxlength="1000" required>{{ old('reason') }}</textarea>
-                <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" style="margin-top:10px;" data-loading="Approving...">Approve as an exception</button>
+                <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" style="margin-top:10px;">Approve as an exception</button>
               </form>
             </details>
           @endif
 
           <details class="rf-action">
             <summary>Decline with an explanation</summary>
-            <form method="POST" action="{{ route('admin.refunds.decline', $r->id) }}"
-                  onsubmit="return confirm('Decline this request? The customer will read your explanation and payments open again.')">
+            <form method="POST" action="{{ route('admin.refunds.decline', $r->id) }}" id="rf-decline-form" data-lp-gate="rf-decline-modal">
               @csrf
               <label class="co-modal-label" for="rf-starter" style="margin-top:0;">Start from</label>
               <select id="rf-starter" class="form-input">
@@ -169,13 +166,13 @@
               </select>
               <label class="co-modal-label" for="rf-expl">Explanation for the customer (at least 20 characters)</label>
               <textarea name="explanation" id="rf-expl" class="form-input" rows="4" minlength="20" maxlength="1000" required>{{ old('explanation') }}</textarea>
-              <button type="submit" class="lp-btn lp-btn--danger lp-btn--block" style="margin-top:10px;" data-loading="Declining...">Decline</button>
+              <button type="submit" class="lp-btn lp-btn--danger lp-btn--block" style="margin-top:10px;">Decline</button>
             </form>
           </details>
 
           <details class="rf-action">
             <summary>Ask the customer for more information</summary>
-            <form method="POST" action="{{ route('admin.refunds.ask-info', $r->id) }}" onsubmit="return confirm('Send this question to the customer?')">
+            <form method="POST" action="{{ route('admin.refunds.ask-info', $r->id) }}">
               @csrf
               <label class="co-modal-label" for="rf-ask" style="margin-top:0;">Your question</label>
               <textarea name="message" id="rf-ask" class="form-input" rows="3" minlength="5" maxlength="1000" required>{{ old('message') }}</textarea>
@@ -186,8 +183,7 @@
         @elseif($r->status === 'approved')
           <details class="rf-action" open>
             <summary>Mark refund as sent</summary>
-            <form method="POST" action="{{ route('admin.refunds.mark-refunded', $r->id) }}"
-                  onsubmit="return confirm('Mark this refund as sent? The service request and invoice will be cancelled and the customer told.')">
+            <form method="POST" action="{{ route('admin.refunds.mark-refunded', $r->id) }}" id="mr-form" data-lp-gate="rf-sent-modal" novalidate>
               @csrf
               <label class="co-modal-label" for="mr-amount" style="margin-top:0;">Amount sent (₱)</label>
               <input type="text" inputmode="decimal" name="amount" id="mr-amount" class="form-input" required value="{{ old('amount', number_format((float) $r->approved_amount, 2, '.', '')) }}"/>
@@ -195,19 +191,29 @@
               <select name="method" id="mr-method" class="form-input" required>
                 @foreach(\App\Models\ServiceRefundRequest::METHODS as $k => $label)<option value="{{ $k }}" @selected(old('method', $r->refund_method) === $k)>{{ $label }}</option>@endforeach
               </select>
-              <label class="co-modal-label" for="mr-tx">Transaction number (GCash reference or cash receipt number)</label>
-              <input type="text" name="transaction_number" id="mr-tx" class="form-input" minlength="4" maxlength="60" required autocomplete="off" value="{{ old('transaction_number') }}"/>
+              <label class="co-modal-label" for="mr-tx">Transaction number</label>
+              <input type="text" name="transaction_number" id="mr-tx" class="form-input" maxlength="60" required autocomplete="off" aria-describedby="mr-tx-hint mr-tx-error" value="{{ old('transaction_number') }}"/>
+              <p class="si-hint rf-tx-hint" id="mr-tx-hint">GCash reference numbers are usually 10 to 13 digits, for example 6028 871 884223. Spaces and dashes are ignored.</p>
+              <p class="rf-tx-error" id="mr-tx-error" role="alert" hidden></p>
+              <div id="mr-override-wrap" hidden>
+                <label class="lp-modal__check" for="mr-override" style="margin-top:6px;">
+                  <input type="checkbox" name="reference_override" id="mr-override" value="1" @checked(old('reference_override'))/>
+                  <span>This reference does not look like a normal GCash number</span>
+                </label>
+                <label class="co-modal-label" for="mr-override-reason">Why is it still correct? (at least 10 characters)</label>
+                <textarea name="reference_override_reason" id="mr-override-reason" class="form-input" rows="2" maxlength="300">{{ old('reference_override_reason') }}</textarea>
+              </div>
               <label class="co-modal-label" for="mr-date">Date sent</label>
               <input type="date" name="sent_on" id="mr-date" class="form-input" required max="{{ now('Asia/Manila')->toDateString() }}" value="{{ old('sent_on', now('Asia/Manila')->toDateString()) }}"/>
               <label class="co-modal-label" for="mr-note">Note (required only if the amount differs from the approved amount)</label>
               <textarea name="note" id="mr-note" class="form-input" rows="2" maxlength="1000">{{ old('note') }}</textarea>
-              <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" style="margin-top:10px;" data-loading="Saving...">Mark refund as sent</button>
+              <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" style="margin-top:10px;">Mark refund as sent</button>
             </form>
           </details>
 
           <details class="rf-action">
             <summary>Refund did not go through</summary>
-            <form method="POST" action="{{ route('admin.refunds.refund-failed', $r->id) }}" onsubmit="return confirm('Record that the refund did not go through? The customer will be asked to send the right details.')">
+            <form method="POST" action="{{ route('admin.refunds.refund-failed', $r->id) }}" id="rf-failed-form" data-lp-gate="rf-failed-modal">
               @csrf
               <label class="co-modal-label" for="rf-problem" style="margin-top:0;">What went wrong</label>
               <select name="problem" id="rf-problem" class="form-input" required>
@@ -215,7 +221,7 @@
               </select>
               <label class="co-modal-label" for="rf-pnote">Note</label>
               <textarea name="note" id="rf-pnote" class="form-input" rows="2" maxlength="1000"></textarea>
-              <button type="submit" class="lp-btn lp-btn--danger lp-btn--block" style="margin-top:10px;" data-loading="Saving...">Refund did not go through</button>
+              <button type="submit" class="lp-btn lp-btn--danger lp-btn--block" style="margin-top:10px;">Refund did not go through</button>
             </form>
           </details>
 
@@ -228,6 +234,60 @@
     </div>
   </div>
 </div>
+
+@if(in_array($r->status, ['new', 'needs_info'], true))
+  @if($work === 'not_started')
+  <x-modal id="rf-approve-modal" title="Approve this request?">
+    <p>{{ $paidCents > 0 ? 'The customer will get back the full ' . $peso($paidCents / 100) . ' by ' . $r->methodLabel() . ', within ' . \App\Models\ServiceRefundRequest::REFUND_DAYS . ' days.' : 'Nothing was paid, so the service request will be cancelled.' }}</p>
+    <x-slot:footer>
+      <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+      <button type="submit" form="rf-approve-form" class="lp-btn lp-btn--primary" data-lp-confirm>Approve</button>
+    </x-slot:footer>
+  </x-modal>
+  @else
+  <x-modal id="rf-exc-modal" title="Approve as an exception?">
+    <p>Work has already started. This is flagged and logged with your reason.</p>
+    <x-slot:footer>
+      <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+      <button type="button" class="lp-btn lp-btn--primary" data-lp-gate-submit="rf-exc-form" data-lp-confirm>Approve as an exception</button>
+    </x-slot:footer>
+  </x-modal>
+  @endif
+  <x-modal id="rf-decline-modal" title="Decline this request?">
+    <p>The customer will read your explanation and payments open again.</p>
+    <x-slot:footer>
+      <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+      <button type="button" class="lp-btn lp-btn--danger" data-lp-gate-submit="rf-decline-form" data-lp-confirm>Decline</button>
+    </x-slot:footer>
+  </x-modal>
+@elseif($r->status === 'approved')
+  <x-modal id="rf-sent-modal" title="Mark this refund as sent?" summary-form="mr-form">
+    <dl class="lp-modal__facts">
+      <dt>Amount</dt><dd>₱<span data-summary="amount"></span></dd>
+      <dt>Method</dt><dd data-summary="method"></dd>
+      @if($r->refund_method === 'gcash')
+        <dt>GCash number</dt><dd>{{ $r->gcash_number }}</dd>
+        <dt>GCash name</dt><dd>{{ $r->gcash_account_name }}</dd>
+      @endif
+      <dt>Transaction no.</dt><dd data-summary="transaction_number"></dd>
+      <dt>Date sent</dt><dd data-summary="sent_on"></dd>
+      <dt data-summary-if="reference_override=1">Override</dt><dd data-summary-if="reference_override=1" data-summary="reference_override_reason"></dd>
+    </dl>
+    <x-notice variant="info" title="Check the details first.">The service request and invoice will be cancelled and the customer told. A sent refund cannot be recalled or sent again.</x-notice>
+    <label class="lp-modal__check" for="rf-sent-tick"><input type="checkbox" id="rf-sent-tick" data-lp-reset/> <span>I sent this refund and the details match</span></label>
+    <x-slot:footer>
+      <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+      <button type="button" class="lp-btn lp-btn--primary" data-lp-gate-submit="mr-form" data-lp-requires="rf-sent-tick" data-lp-confirm>Mark refund as sent</button>
+    </x-slot:footer>
+  </x-modal>
+  <x-modal id="rf-failed-modal" title="Record that the refund did not go through?">
+    <p>The customer will be asked to send the right details.</p>
+    <x-slot:footer>
+      <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+      <button type="button" class="lp-btn lp-btn--danger" data-lp-gate-submit="rf-failed-form" data-lp-confirm>Record it</button>
+    </x-slot:footer>
+  </x-modal>
+@endif
 </div>
 @endsection
 
@@ -241,10 +301,46 @@
     pick.addEventListener('change', function () { if (box.value.trim() === '' || Object.values(starters).indexOf(box.value) !== -1) { box.value = starters[pick.value] || ''; } });
     box.value = box.value || starters[pick.value] || '';
   }
+  // Transaction number: live hint, inline error, and the override box (a warning, not a block).
+  var tx = document.getElementById('mr-tx'), method = document.getElementById('mr-method');
+  if (tx && method) {
+    var err = document.getElementById('mr-tx-error'), hint = document.getElementById('mr-tx-hint');
+    var wrap = document.getElementById('mr-override-wrap'), box = document.getElementById('mr-override');
+    var check = function () {
+      var v = tx.value.trim(), ok = true, msg = '';
+      if (method.value === 'cash') {
+        hint.textContent = 'A cash receipt or voucher number: 4 to 20 letters, digits or dashes.';
+        ok = v === '' || /^[A-Za-z0-9-]{4,20}$/.test(v);
+        msg = 'A cash receipt number is 4 to 20 letters, digits or dashes.';
+        wrap.hidden = true;
+      } else {
+        hint.textContent = 'GCash reference numbers are usually 10 to 13 digits, for example 6028 871 884223. Spaces and dashes are ignored.';
+        ok = v === '' || /^\d{10,13}$/.test(v.replace(/[\s-]/g, ''));
+        msg = 'This does not look like a normal GCash reference (10 to 13 digits). Check it, or tick the box below and write a reason.';
+        wrap.hidden = ok;
+        if (ok) { box.checked = false; }
+      }
+      err.hidden = ok; err.textContent = ok ? '' : msg;
+      tx.setAttribute('aria-invalid', ok ? 'false' : 'true');
+    };
+    tx.addEventListener('input', check); method.addEventListener('change', check); check();
+    document.getElementById('mr-form').addEventListener('submit', function (e) {
+      var v = tx.value.trim(), gcash = method.value !== 'cash';
+      var good = gcash ? /^\d{10,13}$/.test(v.replace(/[\s-]/g, '')) : /^[A-Za-z0-9-]{4,20}$/.test(v);
+      var reasonOk = document.getElementById('mr-override-reason').value.trim().length >= 10;
+      if (v === '' || (!good && (!gcash || !box.checked || !reasonOk))) {
+        e.preventDefault(); e.stopImmediatePropagation();
+        check();
+        if (v === '') { err.hidden = false; err.textContent = 'Enter the transaction number.'; }
+        else if (gcash && !good && box.checked && !reasonOk) { err.hidden = false; err.textContent = 'Write a short reason (at least 10 characters).'; }
+        tx.focus();
+      }
+    }, true);
+  }
   document.querySelectorAll('[data-copy-from]').forEach(function (b) {
     b.addEventListener('click', function () {
       var el = document.getElementById(b.getAttribute('data-copy-from'));
-      if (el && navigator.clipboard) { navigator.clipboard.writeText(el.textContent.trim()); b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy number'; }, 1500); }
+      if (el && navigator.clipboard) { navigator.clipboard.writeText(el.textContent.trim()); b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 1500); }
     });
   });
 })();

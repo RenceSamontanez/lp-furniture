@@ -28,3 +28,7 @@
 .rf-attempts th, .rf-attempts td { text-align: left; padding: 8px 6px; border-bottom: 1px solid #EFE7DA; vertical-align: top; overflow-wrap: anywhere; }
 .rf-sr { position: absolute; left: -9999px; }
 @media (max-width: 640px) { .rf-filters .form-input { width: 100%; } }
+.rf-tx-hint { margin: 6px 0 0; }
+.rf-tx-error { margin: 6px 0 0; padding: 8px 10px; border-left: 4px solid #B5543A; background: #F7E7E0; color: #5A2A1D; font-size: 13.5px; font-weight: 500; border-radius: 0 8px 8px 0; }
+.rf-tx-error[hidden] { display: none; }
+.rf-copy { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
