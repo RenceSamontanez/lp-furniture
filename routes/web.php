@@ -120,6 +120,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/notifications', [NotificationController::class, 'index'])
          ->name('notifications.index');
+    Route::get('/notifications/{id}', [NotificationController::class, 'show'])
+         ->name('notifications.show')->whereNumber('id');
     Route::patch('/notifications/{id}/read', [NotificationController::class, 'markRead'])
          ->name('notifications.read');
     Route::patch('/notifications/read-all', [NotificationController::class, 'markAllRead'])

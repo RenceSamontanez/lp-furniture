@@ -10,6 +10,10 @@ return [
 
     'timezone' => 'Asia/Manila',
 
+    // Show "Ask Luma about this" on Other Services notification details pages. Keep false until Luma can look up
+    // a request by its reference number (Prompt 8f). Switch on with LUMA_NOTIFICATION_ASK_BUTTON=true in .env.
+    'notification_ask_button' => (bool) env('LUMA_NOTIFICATION_ASK_BUTTON', false),
+
     // Shop hours: 8:00 AM to 5:00 PM, Monday to Friday (ISO weekdays, 1 = Monday)
     'hours' => [
         'open'  => '08:00',

@@ -79,13 +79,14 @@
                    single "View →" button that confusingly always
                    landed on the full Order History list instead of
                    the specific order the notification was about. --}}
+                   @php $isService = \App\Support\ServiceNotificationDetails::isServiceNotification($notif); @endphp
                    @if($notif->url)
                 <div class="notif-action-bar">
                   <div class="notif-action-context">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
-                    <span>Related Order</span>
+                    <span>{{ $isService ? 'Related service request' : 'Related Order' }}</span>
                   </div>
-                  <a href="{{ $notif->url }}" class="notif-action-cta">
+                  <a href="{{ $isService ? route('notifications.show', $notif->id) : $notif->url }}" class="notif-action-cta">
                     View Details
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="notif-action-arrow"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                   </a>

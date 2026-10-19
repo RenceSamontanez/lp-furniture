@@ -1,0 +1,27 @@
+/* Other Services notification details (Stage 21h). Buttons are .lp-btn, links .lp-link, must-read lines .lp-notice. */
+.nd-wrap { background: var(--cream); padding: 32px 20px 48px; min-height: calc(100vh - 64px); }
+.nd-card { max-width: 680px; margin: 0 auto; padding: 24px 28px 28px; background: var(--warm-white, #fff); border: 1px solid var(--border); border-top: 4px solid var(--gold); border-radius: 16px; }
+.nd-back { font-size: 14px; }
+.nd-eyebrow { margin: 6px 0 0; font-size: 13px; color: #5C4A3C; }
+.nd-title { font-family: var(--font-display); font-size: 28px; line-height: 1.2; color: var(--brown-deep); margin: 6px 0 14px; }
+.nd-section { margin: 20px 0 0; }
+.nd-h2 { font-family: var(--font-display); font-size: 17px; color: var(--brown-deep); margin: 0 0 6px; }
+.nd-text { margin: 0; font-size: 15px; line-height: 1.65; color: #3B2A1F; text-align: left; overflow-wrap: anywhere; white-space: pre-line; }
+.nd-quote { padding: 12px 14px; background: #fff; border: 1px solid var(--border); border-left: 4px solid var(--gold); border-radius: 0 10px 10px 0; }
+.nd-current { margin: 10px 0 0; display: inline-block; padding: 4px 12px; border-radius: 999px; background: #EDE8E0; color: #43382F; font-size: 13px; font-weight: 600; }
+.nd-facts { margin: 0; padding: 4px 16px; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
+.nd-facts > div { display: grid; grid-template-columns: minmax(130px, 36%) 1fr; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid #EFE7DA; font-size: 14.5px; }
+.nd-facts > div:last-child { border-bottom: 0; }
+.nd-facts dt { color: #5C4A3C; }
+.nd-facts dd { margin: 0; color: var(--brown-deep); font-weight: 500; overflow-wrap: anywhere; }
+.nd-ref { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.nd-chip { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 999px; background: #FBF1DA; border: 1px solid #E5CFA0; color: #2C1810; font-weight: 700; letter-spacing: .3px; font-variant-numeric: tabular-nums; }
+.nd-ref .lp-btn.nd-copy { min-height: 44px; min-width: 72px; justify-content: center; }
+.nd-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+@media (max-width: 640px) {
+  .nd-wrap { padding: 16px 12px 32px; }
+  .nd-card { padding: 18px 16px 22px; }
+  .nd-title { font-size: 23px; }
+  .nd-facts > div { grid-template-columns: 1fr; gap: 2px; }
+  .nd-actions .lp-btn { width: 100%; }
+}
