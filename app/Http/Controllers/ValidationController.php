@@ -13,7 +13,14 @@ class ValidationController extends Controller
     public function show()
     {
         $validation = Auth::user()->validation;
-        return view('validation.show', compact('validation'));
+
+        // Set by CheckValidated when the customer came from the Other Services request page.
+        $forService = session('validation_return') === 'services.request';
+        if ($forService && Auth::user()->is_validated) {
+            session()->forget('validation_return');
+        }
+
+        return view('validation.show', compact('validation', 'forService'));
     }
 
     /* Handle document submission */

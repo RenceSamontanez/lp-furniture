@@ -16,6 +16,7 @@
   $isVerified = Auth::user()->is_validated;
   $isPending  = !$isVerified && isset($validation) && $validation->status === 'pending';
   $showForm   = !$isVerified && !$isPending;
+  $forService = $forService ?? false; // true when reached from the Other Services request page
 @endphp
 
 <div class="validation-wrap">
@@ -26,7 +27,7 @@
         <div class="val-status-icon">✓</div>
         <div class="val-status-text">
           <h3>Identity Verified</h3>
-          <p>Your account is fully verified. You can browse and place orders.</p>
+          <p>{{ $forService ? 'Your account is fully verified. You can now send your service request.' : 'Your account is fully verified. You can browse and place orders.' }}</p>
         </div>
       </div>
     @elseif($isPending)
@@ -50,7 +51,7 @@
     <div class="val-top">
       <div>
         <h1 class="val-title">Verify Your Identity</h1>
-        <p class="val-subtitle">One-time check before your first order. Documents are kept private and secure.</p>
+        <p class="val-subtitle">{{ $forService ? 'One-time check before you send a service request. Documents are kept private and secure.' : 'One-time check before your first order. Documents are kept private and secure.' }}</p>
       </div>
       @if($showForm)
         <div class="val-requirements">
@@ -60,6 +61,13 @@
         </div>
       @endif
     </div>
+
+    @if($forService && $showForm)
+      <x-notice variant="info" title="Important" style="margin-bottom:16px;">
+        We need to check your ID before you can send a service request. This is a one-time check, and it is not an order.
+        <x-slot:actions><a href="#val-form-card" class="lp-btn lp-btn--primary">Continue ID check</a></x-slot:actions>
+      </x-notice>
+    @endif
 
     @if($errors->any())
       <div class="val-alerts">
@@ -77,8 +85,13 @@
 
       <div class="val-empty-state">
         <div class="val-empty-icon">✅</div>
+        @if($forService)
+          <p>Your identity is verified. You can now send your service request.</p>
+          <a href="{{ route('services.request') }}" class="lp-btn lp-btn--primary" style="margin-top:20px;">Continue to your service request</a>
+        @else
         <p>Your identity is verified. Browse the catalog and place orders with confidence.</p>
         <a href="{{ route('catalog') }}" class="btn btn-gold" style="margin-top:20px;display:inline-flex;">Start Shopping →</a>
+        @endif
       </div>
 
     @elseif($isPending)
@@ -86,7 +99,12 @@
       <div class="val-empty-state">
         <div class="val-empty-icon">⏳</div>
         <p>Your documents were submitted{{ $validation->submitted_at ? ' on ' . $validation->submitted_at->format('M d, Y') : '' }}. Admin will review within 24 hours.</p>
+        @if($forService)
+          <p>When your ID is approved, open Other Services again to send your service request.</p>
+          <a href="{{ route('home') }}" class="lp-btn lp-btn--primary" style="margin-top:20px;">Back to home</a>
+        @else
         <a href="{{ route('home') }}" class="btn btn-gold" style="margin-top:20px;display:inline-flex;">Browse Catalog →</a>
+        @endif
       </div>
 
     @elseif($showForm)

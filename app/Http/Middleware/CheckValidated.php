@@ -18,6 +18,13 @@ class CheckValidated
                 ], 403);
             }
 
+            // Other Services is a request, not an order: say so, and remember where to send the customer back to.
+            if ($request->routeIs('services.request*')) {
+                session(['validation_return' => 'services.request']);
+
+                return redirect()->route('validation.show');
+            }
+
             return redirect()->route('validation.show')
                 ->with('warning', 'Please verify your identity before placing an order.');
         }
