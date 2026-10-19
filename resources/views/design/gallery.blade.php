@@ -159,7 +159,7 @@
              .page-link classes, styled to match below — the default
              tailwind view would render unstyled since this storefront
              never loads compiled Tailwind CSS. --}}
-        {{ $items->appends(['tab' => 'history'])->links('pagination::bootstrap-5') }}
+        {{ $items->appends(['tab' => 'history'])->links() }}
       </div>
     @endif
 

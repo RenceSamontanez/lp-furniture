@@ -2875,100 +2875,6 @@ nav .nav-btn:active {
 }
 
 /* ══════════════════════════════════════════
-   PAGINATION — Global styling
-   Applies to every paginated list site-wide
-   (notifications, reviews, admin tables, etc.)
-══════════════════════════════════════════ */
-
-.lp-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 20px;
-  padding: 14px 0;
-}
-
-.lp-pagination-info {
-  font-size: 12.5px;
-  color: var(--text-muted);
-}
-
-.lp-pagination-links {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.lp-page-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 34px;
-  height: 34px;
-  padding: 0 10px;
-  border-radius: 8px;
-  border: 1.5px solid var(--border);
-  background: var(--warm-white);
-  color: var(--text-muted);
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all .2s;
-  cursor: pointer;
-}
-
-.lp-page-btn:hover {
-  border-color: var(--gold);
-  color: var(--gold);
-}
-
-.lp-page-active {
-  background: var(--brown-deep);
-  border-color: var(--brown-deep);
-  color: #fff;
-  cursor: default;
-}
-
-.lp-page-disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-.lp-page-dots {
-  color: var(--text-muted);
-  font-size: 13px;
-  padding: 0 4px;
-}
-
-@media (max-width: 480px) {
-  .lp-pagination {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-
-  .lp-pagination-info {
-    text-align: center;
-  }
-
-  .lp-pagination-links {
-    justify-content: center;
-  }
-
-  .lp-page-btn {
-    min-width: 30px;
-    height: 30px;
-    font-size: 12px;
-    padding: 0 8px;
-  }
-}
-
-
-/* ══════════════════════════════════════════
    CHATBOT — Messenger-style dismiss zone
 ══════════════════════════════════════════ */
 
@@ -3407,4 +3313,32 @@ a.lp-link.lp-link--tap, button.lp-link.lp-link--tap { display: inline-flex; alig
 @media (min-width: 861px) and (max-width: 1100px) {
   nav { padding: 0 20px; }
   .nav-brand { font-size: 18px; }
+}
+
+
+/* ══════════════════════════════════════════
+   Stage 21j: shared pagination (resources/views/vendor/pagination/lp*.blade.php,
+   registered as the default view in AppServiceProvider). Prev/Next are .lp-btn secondary.
+══════════════════════════════════════════ */
+.lp-pager { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 20px 0 4px; padding-top: 14px; border-top: 1px solid var(--border); font-family: var(--font-body); }
+.lp-pager__info { margin: 0; font-size: 12.5px; color: #5C4A3C; text-align: center; }
+.lp-pager__row { display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
+.lp-pager__pages { display: none; align-items: center; gap: 6px; }
+.lp-pager__compact { font-size: 13.5px; font-weight: 500; color: var(--brown-deep); min-width: 96px; text-align: center; }
+.lp-pager__num { display: inline-flex; align-items: center; justify-content: center; min-width: 36px; height: 36px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--border); background: #fff; color: var(--brown-deep); font-size: 13px; font-weight: 500; text-decoration: none; }
+.lp-pager a.lp-pager__num:hover { border-color: var(--brown-mid); background: var(--cream); color: var(--brown-deep); }
+.lp-pager__num[aria-current="page"] { background: var(--brown-deep); border-color: var(--brown-deep); color: #FDFAF5; font-weight: 700; }
+.lp-pager__gap { color: #5C4A3C; padding: 0 2px; }
+.lp-pager .lp-btn { min-height: 36px; padding: 6px 14px; font-size: 13px; }
+.lp-pager a.lp-pager__num:focus-visible { outline: 2px solid var(--brown-deep); outline-offset: 2px; box-shadow: 0 0 0 5px #E8B86D; }
+@media (min-width: 641px) {
+  .lp-pager { flex-direction: row; justify-content: space-between; }
+  .lp-pager__info { text-align: left; }
+  .lp-pager__pages { display: flex; }
+  .lp-pager__compact { display: none; }
+}
+@media (max-width: 640px) {
+  .lp-pager .lp-btn { min-height: 44px; min-width: 96px; }
+  .lp-pager__row { flex-wrap: nowrap; width: 100%; justify-content: space-between; }
+  .lp-pager__info { order: 2; }
 }
