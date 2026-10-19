@@ -29,6 +29,16 @@ final class ServiceInquiryDesk
         CallUpdateMessage::ANSWERED    => 'called',
     ];
 
+    /** A clear written description is at least this many characters; a reference photo is enough on its own. */
+    public const MIN_DETAIL = 40;
+
+    public const DETAIL_MESSAGE = 'Please describe the problem in at least 40 characters (what is wrong, where, the size, the material, since when), or add a photo.';
+
+    public static function describedEnough(string $concern, bool $hasPhoto): bool
+    {
+        return $hasPhoto || mb_strlen(trim($concern)) >= self::MIN_DETAIL;
+    }
+
     public static function today(): Carbon
     {
         return Carbon::now(self::TZ)->startOfDay();
@@ -110,6 +120,8 @@ final class ServiceInquiryDesk
             'status'                => 'new',
             'created_by_admin_id'   => $admin?->id,
             'terms_accepted_at'     => !empty($data['terms']) ? now() : null,   // only the customer's own form asks for it
+            'work_location'         => $data['work_location'] ?? null,
+            'reference_photos'      => $data['reference_photos'] ?? null,
         ];
 
         return DB::transaction(function () use ($attributes, $customer, $admin) {

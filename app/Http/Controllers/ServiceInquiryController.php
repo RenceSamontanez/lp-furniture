@@ -7,6 +7,9 @@ use App\Support\ServiceInquiryDesk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 /**
  * "Other Services" request form (labor only with the customer's own wood, repairs,
@@ -57,9 +60,29 @@ class ServiceInquiryController extends Controller
             ]);
         }
 
-        $data = $request->validate(ServiceInquiryDesk::rules(true) + ['terms' => ['accepted']], ServiceInquiryDesk::messages() + [
-            'terms.accepted' => 'Please confirm that you have read and agree to the Other Services terms.',
+        $validator = Validator::make($request->all(), ServiceInquiryDesk::rules(true) + [
+            'terms'         => ['accepted'],
+            'work_location' => ['nullable', Rule::in(array_keys(ServiceInquiry::WORK_LOCATIONS))],
+            'photos'        => ['nullable', 'array', 'max:3'],
+            'photos.*'      => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+        ], ServiceInquiryDesk::messages() + [
+            'terms.accepted'   => 'Please confirm that you have read and agree to the Other Services terms.',
+            'work_location.in' => 'Choose one of the listed places.',
+            'photos.max'       => 'You can add up to 3 photos.',
+            'photos.*.image'   => 'Each photo must be an image (JPG, PNG or WebP).',
+            'photos.*.mimes'   => 'Each photo must be a JPG, PNG or WebP image.',
+            'photos.*.max'     => 'Each photo must be 4 MB or smaller.',
         ]);
+        // The problem must be described before an invoice goes out: a clear written description (40 characters or more) OR a photo.
+        $validator->after(function ($v) use ($request) {
+            if (!$v->errors()->has('concern') && !ServiceInquiryDesk::describedEnough((string) $request->input('concern'), $request->hasFile('photos'))) {
+                $v->errors()->add('concern', ServiceInquiryDesk::DETAIL_MESSAGE);
+            }
+        });
+        $data = $validator->validate();
+
+        // Photos go to the private disk (never public); only their paths are kept on the ticket.
+        $data['reference_photos'] = collect($request->file('photos', []))->map(fn ($file) => Storage::disk('local')->putFile('service-photos', $file))->values()->all() ?: null;
 
         $inquiry = $this->desk->create($data, Auth::user());
         RateLimiter::hit($key, 3600);

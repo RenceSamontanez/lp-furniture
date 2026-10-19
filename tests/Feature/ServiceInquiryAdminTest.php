@@ -341,11 +341,11 @@ class ServiceInquiryAdminTest extends TestCase
         $routes = collect(Route::getRoutes()->getRoutes())
             ->filter(fn ($r) => str_starts_with($r->getName() ?? '', 'admin.service-inquiries.'))
             ->values();
-        $this->assertCount(11, $routes);
+        $this->assertCount(12, $routes);   // 11 + the private reference photo (Stage 21i)
 
         foreach ($routes as $route) {
             $method = $route->methods()[0];
-            $uri    = '/' . ltrim(str_replace('{id}', (string) $t->id, $route->uri()), '/');
+            $uri    = '/' . ltrim(str_replace(['{id}', '{n}'], [(string) $t->id, '0'], $route->uri()), '/');
             $label  = "{$method} {$uri}";
 
             // guest

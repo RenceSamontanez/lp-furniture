@@ -214,7 +214,7 @@ class ServiceInvoiceTest extends TestCase
         $this->assertSame('2300.00', (string) $i->total);
         $this->assertSame(['service_cost', 'home_service_fee'], $i->lines->pluck('kind')->all());
 
-        $this->post(route('admin.service-invoices.issue', $i->id))->assertSessionHas('success');
+        $this->post(route('admin.service-invoices.issue', $i->id), ['details_ok' => '1'])->assertSessionHas('success');   // the test ticket has a short description
         $i->refresh();
         $this->assertSame('issued', $i->status);
         $this->assertMatchesRegularExpression('/^INV-\d{4}-0001$/', $i->invoice_number);
@@ -620,7 +620,7 @@ class ServiceInvoiceTest extends TestCase
         $t = $this->ticket(['user_id' => $customer->id]);
         $i = $this->draft($t);
 
-        $this->asAdmin()->post(route('admin.service-invoices.update', $i->id), $this->payload(['service_cost' => '2750', 'then' => 'send']))
+        $this->asAdmin()->post(route('admin.service-invoices.update', $i->id), $this->payload(['service_cost' => '2750', 'then' => 'send', 'details_ok' => '1']))
             ->assertRedirect(route('admin.service-invoices.show', $i->id))->assertSessionHas('success');
 
         $i->refresh();

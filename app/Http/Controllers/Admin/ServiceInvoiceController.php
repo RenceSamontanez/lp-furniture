@@ -119,6 +119,9 @@ class ServiceInvoiceController extends Controller
         $admin = Auth::guard('admin')->user();
 
         // "Save draft" only saves. "Send to customer" saves what is on the page, then sends exactly that.
+        if ($request->input('then') === 'send' && ($stop = $this->needsDetailsTick($request, ServiceInvoice::with('inquiry')->findOrFail($id)))) {
+            return $stop;
+        }
         if ($request->input('then') !== 'send') {
             return $this->run($id, fn () => $this->desk->updateDraft((int) $id, $admin, $clean), 'Draft saved. You can keep editing it until you send it.');
         }
@@ -146,9 +149,27 @@ class ServiceInvoiceController extends Controller
         return redirect($back)->with('success', 'Draft deleted. It had no invoice number, so nothing is missing from the numbering.');
     }
 
-    public function issue($id)
+    /**
+     * A ticket with no clear description (under 40 characters) and no photo can only be invoiced after the admin ticks
+     * "I have enough details to do this work". Returns a redirect back to the invoice when the tick is missing.
+     */
+    private function needsDetailsTick(Request $request, ServiceInvoice $invoice)
     {
-        ServiceInvoice::findOrFail($id);
+        $ticket = $invoice->inquiry;
+        if ($ticket && !$ticket->hasEnoughDetail() && !$request->boolean('details_ok')) {
+            return redirect()->route('admin.service-invoices.show', $invoice->id)
+                ->withErrors(['invoice' => 'This ticket has very little detail. Tick "I have enough details to do this work" before you send the invoice, or ask the customer for more.']);
+        }
+
+        return null;
+    }
+
+    public function issue(Request $request, $id)
+    {
+        $invoice = ServiceInvoice::with('inquiry')->findOrFail($id);
+        if ($stop = $this->needsDetailsTick($request, $invoice)) {
+            return $stop;
+        }
 
         return $this->run($id, fn () => $this->desk->issue((int) $id, Auth::guard('admin')->user()), 'Invoice sent to the customer. It can no longer be edited.');
     }

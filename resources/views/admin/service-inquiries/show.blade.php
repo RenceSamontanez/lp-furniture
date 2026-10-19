@@ -57,12 +57,24 @@
           <div><dt>Account</dt><dd>{{ $t->user ? $t->user->display_name . ' (' . $t->user->email . ')' : 'No account (walk-in or an older ticket)' }}</dd></div>
           <div><dt>Service</dt><dd>{{ $t->serviceLabel() }}</dd></div>
           <div><dt>Furniture type</dt><dd>{{ $t->furniture_type ?: '—' }}</dd></div>
+          <div><dt>Where the work is done</dt><dd>{{ $t->workLocationLabel() ?? 'Not said' }}</dd></div>
           <div><dt>Preferred call time</dt><dd>{{ $t->callTimeSummary() ?? 'Any time, Monday to Friday, 8 AM to 5 PM' }}</dd></div>
           <div><dt>Received</dt><dd>{{ $t->created_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}@if($t->createdBy) · entered by {{ $t->createdBy->first_name }}@endif</dd></div>
         </dl>
 
         <div class="co-block-label">Concern</div>
         <div class="co-quote si-concern">{{ $t->concern }}</div>
+        @if(!empty($t->reference_photos))
+          <div class="co-block-label">Reference photos</div>
+          <div class="si-photos">
+            @foreach($t->reference_photos as $n => $path)
+              <a href="{{ route('admin.service-inquiries.photo', [$t->id, $n]) }}" target="_blank" rel="noopener" class="si-photo"><img src="{{ route('admin.service-inquiries.photo', [$t->id, $n]) }}" alt="Reference photo {{ $n + 1 }} of {{ $t->reference_number }}" loading="lazy"/></a>
+            @endforeach
+          </div>
+        @endif
+        @if($isOpen && !$t->hasEnoughDetail())
+          <x-notice variant="waiting" title="Very little detail on this ticket">No clear description (at least 40 characters) and no photo. Ask the customer for more before you send an invoice.</x-notice>
+        @endif
 
         @if($t->status === 'closed' && $t->closed_reason)
           <div class="co-block-label">Closed because</div>

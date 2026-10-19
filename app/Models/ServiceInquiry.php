@@ -25,6 +25,13 @@ class ServiceInquiry extends Model
         'cancelled'   => 'Cancelled',
     ];
 
+    /** "Where should the work be done?" (Stage 21i). Null on older tickets and on tickets entered at the desk. */
+    public const WORK_LOCATIONS = [
+        'home'   => 'At my home',
+        'shop'   => 'At your shop',
+        'unsure' => 'Not sure',
+    ];
+
     /** Statuses a ticket can still be worked in. */
     public const OPEN = ['new', 'contacting', 'unreachable', 'called'];
 
@@ -32,7 +39,7 @@ class ServiceInquiry extends Model
         'user_id', 'reference_number', 'service_type', 'furniture_type', 'concern',
         'name', 'phone', 'email', 'preferred_call_window', 'preferred_call_date',
         'status', 'admin_notes', 'attempts', 'last_contacted_at', 'closed_reason', 'created_by_admin_id',
-        'service_started_at', 'terms_accepted_at',
+        'service_started_at', 'terms_accepted_at', 'work_location', 'reference_photos',
     ];
 
     protected $casts = [
@@ -41,6 +48,7 @@ class ServiceInquiry extends Model
         'service_started_at'  => 'datetime',
         'terms_accepted_at'   => 'datetime',
         'attempts'            => 'integer',
+        'reference_photos'    => 'array',
     ];
 
     public function user()
@@ -88,6 +96,17 @@ class ServiceInquiry extends Model
     public function isOpen(): bool
     {
         return in_array($this->status, self::OPEN, true);
+    }
+
+    public function workLocationLabel(): ?string
+    {
+        return self::WORK_LOCATIONS[$this->work_location] ?? null;
+    }
+
+    /** True when the problem is described: a written description of at least ServiceInquiryDesk::MIN_DETAIL characters, or a photo. */
+    public function hasEnoughDetail(): bool
+    {
+        return \App\Support\ServiceInquiryDesk::describedEnough((string) $this->concern, !empty($this->reference_photos));
     }
 
     public function callWindowLabel(): ?string

@@ -297,6 +297,7 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     Route::post('/service-inquiries',                    [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'store'])->name('service-inquiries.store');
     Route::get('/service-inquiries/customer-search',     [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'customerSearch'])->name('service-inquiries.customer-search');
     Route::get('/service-inquiries/{id}',                [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'show'])->name('service-inquiries.show')->whereNumber('id');
+    Route::get('/service-inquiries/{id}/photos/{n}',     [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'photo'])->name('service-inquiries.photo')->whereNumber(['id', 'n']);
     Route::post('/service-inquiries/{id}/call-update',   [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'callUpdate'])->name('service-inquiries.call-update')->whereNumber('id');
     Route::post('/service-inquiries/{id}/notes',         [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'addNote'])->name('service-inquiries.notes')->whereNumber('id');
     Route::post('/service-inquiries/{id}/close',         [\App\Http\Controllers\Admin\ServiceInquiryController::class, 'close'])->name('service-inquiries.close')->whereNumber('id');

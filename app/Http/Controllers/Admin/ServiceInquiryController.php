@@ -11,6 +11,7 @@ use App\Support\ServiceInquiryDesk;
 use App\Support\ServiceRefundRequestService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Admin side of "Other Services": a list of inquiry tickets, a detail page with the call
@@ -84,6 +85,20 @@ class ServiceInquiryController extends Controller
             'ctx'         => ServiceRefundRequestService::context($ticket),
             'callPreview' => ServiceInquiryDesk::previewData($ticket),
         ]);
+    }
+
+    /** One reference photo of a ticket, from the private disk. Admin only; never cached. */
+    public function photo($id, $n)
+    {
+        $ticket = ServiceInquiry::findOrFail($id);
+        $path   = ($ticket->reference_photos ?? [])[(int) $n] ?? null;
+        abort_unless($path && Storage::disk('local')->exists($path), 404);
+
+        $response = response()->file(Storage::disk('local')->path($path), ['X-Content-Type-Options' => 'nosniff']);
+        $response->setPrivate();
+        $response->headers->set('Cache-Control', 'no-store, private');
+
+        return $response;
     }
 
     public function create()

@@ -35,7 +35,7 @@
         </div>
       @endif
 
-      <form method="POST" action="{{ route('services.request.submit') }}" class="co-form" id="si-form">
+      <form method="POST" action="{{ route('services.request.submit') }}" class="co-form" id="si-form" enctype="multipart/form-data">
         @csrf
         {{-- Honeypot: left empty by people, filled by bots. --}}
         <div class="si-hp" aria-hidden="true">
@@ -64,9 +64,26 @@
           </div>
           <div class="co-field" style="margin-top:14px;">
             <label class="form-label" for="concern">Tell us about it</label>
-            <textarea id="concern" name="concern" class="form-textarea" rows="5" minlength="10" maxlength="2000" required
-                      placeholder="e.g. I have narra planks and want a dining table built, about 6 seats">{{ old('concern') }}</textarea>
-            <p class="co-hint">Sizes, the kind of wood, and what you want done help us give you a better answer.</p>
+            <textarea id="concern" name="concern" class="form-textarea" rows="5" minlength="10" maxlength="2000" required aria-describedby="concern-help"
+                      placeholder="e.g. The right front leg of my dining table is cracked near the joint. It is narra, about 75 cm high. It started 2 weeks ago.">{{ old('concern') }}</textarea>
+            <p class="co-hint" id="concern-help">Please tell us <strong>what is wrong</strong>, <strong>where</strong> on the furniture, its <strong>size</strong>, what it is <strong>made of</strong> and <strong>since when</strong>. Write at least 40 characters, or add a photo below. A clear description helps us give you the right price.</p>
+          </div>
+          <div class="co-field" style="margin-top:14px;">
+            <label class="form-label" for="photos">Photos (optional if you wrote a clear description)</label>
+            <input type="file" id="photos" name="photos[]" class="form-input" accept="image/jpeg,image/png,image/webp" multiple aria-describedby="photos-help"/>
+            <p class="co-hint" id="photos-help">Up to 3 photos, JPG, PNG or WebP, 4 MB each. A photo of the problem is enough to start.</p>
+          </div>
+          <div class="co-field" style="margin-top:14px;">
+            <span class="form-label" id="work-location-label">Where should the work be done?</span>
+            <div class="co-options co-options--3" role="radiogroup" aria-labelledby="work-location-label">
+              @foreach(\App\Models\ServiceInquiry::WORK_LOCATIONS as $value => $label)
+                <label class="co-option">
+                  <input type="radio" name="work_location" value="{{ $value }}" @checked(old('work_location', 'unsure') === $value)/>
+                  <span>{{ $label }}</span>
+                </label>
+              @endforeach
+            </div>
+            <p class="co-hint">Our team confirms the place with you. Any visit or pickup fee is confirmed by our team and shown on your invoice.</p>
           </div>
         </fieldset>
 
