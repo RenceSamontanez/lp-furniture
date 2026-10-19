@@ -141,7 +141,7 @@ class GenerateAiDesign implements ShouldQueue
 
             Notification::create([
                 'user_id' => $request->user_id,
-                'title'   => 'Your AI Design Suggestions Are Ready!',
+                'title'   => 'Your Design Suggestions Are Ready!',
                 'message' => "We've generated {$generated} design suggestion(s) for your {$request->furniture_type_noun} request. Review and select your favorite!",
                 'type'    => 'design_ready',
                 'url'     => route('design.show', $request->id),
@@ -153,7 +153,7 @@ class GenerateAiDesign implements ShouldQueue
             Notification::create([
                 'user_id' => $request->user_id,
                 'title'   => 'Design Generation Failed',
-                'message' => 'We were unable to generate AI designs for your request. Please try again or contact us directly.',
+                'message' => 'We were unable to generate designs for your request. Please try again or contact us directly.',
                 'type'    => 'general',
                 'url'     => route('design.index'),
                 'is_read' => false,
@@ -406,7 +406,7 @@ class GenerateAiDesign implements ShouldQueue
         Notification::create([
             'user_id' => $request->user_id,
             'title'   => 'Design Generation Failed',
-            'message' => 'We were unable to generate AI designs for your request. Please try again or contact us directly.',
+            'message' => 'We were unable to generate designs for your request. Please try again or contact us directly.',
             'type'    => 'general',
             'url'     => route('design.index'),
             'is_read' => false,

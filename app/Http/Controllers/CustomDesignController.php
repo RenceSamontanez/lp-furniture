@@ -120,7 +120,7 @@ class CustomDesignController extends Controller
         // don't count against this one.
         if ($this->generationsUsedToday() >= self::DAILY_GENERATION_LIMIT) {
             return back()->withInput()->withErrors([
-                'prompt' => "You've used all " . self::DAILY_GENERATION_LIMIT . " AI design generations for today. Your limit resets at midnight — come back tomorrow for more!",
+                'prompt' => "You've used all " . self::DAILY_GENERATION_LIMIT . " design generations for today. Your limit resets at midnight — come back tomorrow for more!",
             ]);
         }
 

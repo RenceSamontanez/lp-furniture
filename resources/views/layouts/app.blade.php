@@ -28,7 +28,7 @@
       <a href="{{ route('register') }}" class="nav-btn primary">Register</a>
     @else
       @if(Auth::user()->is_validated)
-        <a href="{{ route('design.index') }}" class="nav-btn ghost">AI Design</a>
+        <a href="{{ route('design.index') }}" class="nav-btn ghost">Customize</a>
       @endif
 
       {{-- Cart --}}

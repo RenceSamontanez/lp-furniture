@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'AI Design Requests — Admin')
-@section('page-title', 'AI Design Requests')
+@section('title', 'Customize Requests — Admin')
+@section('page-title', 'Customize Requests')
 
 @section('content')
 

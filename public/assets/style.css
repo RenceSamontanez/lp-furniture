@@ -3384,3 +3384,27 @@ a.lp-link.lp-link--tap, button.lp-link.lp-link--tap { display: inline-flex; alig
 /* Stage 21i: the chat's buttons and chips are the shared .lp-btn (the chat-btn / chat-chip classes stay for the chat's own spacing) */
 .chatbot-window .chat-send.lp-btn { min-width: 44px; padding: 0 14px; font-size: 16px; }
 .chatbot-window .chat-chip.lp-btn { min-height: 32px; padding: 4px 12px; font: 500 12.5px/1.2 var(--font-body); }
+
+
+/* ══════════════════════════════════════════
+   Stage 21j: nav icons carry their words on desktop
+   (the mobile drawer already shows data-label via ::after)
+══════════════════════════════════════════ */
+@media (min-width: 861px) {
+  nav .nav-links .nav-icon[data-label]:not(.nav-chatbot-reactivate) {
+    gap: 6px; padding: 8px 12px; font-size: 13px; white-space: nowrap;
+  }
+  nav .nav-links .nav-icon[data-label]:not(.nav-chatbot-reactivate)::after {
+    content: attr(data-label); font-size: 13px; font-weight: 500;
+  }
+  nav .nav-links .nav-icon svg { width: 20px; height: 20px; flex: none; }
+  /* the badge sits on the icon corner; keep it readable beside the label */
+  nav .nav-links .nav-icon .cart-badge { top: 2px; left: 28px; right: auto; }
+  nav .nav-links .nav-icon .notif-dot { top: 6px; left: 28px; right: auto; }
+  .nav-links { gap: 2px; }
+  .nav-btn { padding: 8px 12px; }
+}
+@media (min-width: 861px) and (max-width: 1100px) {
+  nav { padding: 0 20px; }
+  .nav-brand { font-size: 18px; }
+}

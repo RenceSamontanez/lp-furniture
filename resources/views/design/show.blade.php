@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Your AI Design — LP Furniture')
+@section('title', 'Your Custom Design — LP Furniture')
 
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/design.css') }}"/>

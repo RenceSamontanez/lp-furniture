@@ -9,7 +9,7 @@ class FailStaleDesignRequests extends Command
 {
     protected $signature = 'design:fail-stale';
 
-    protected $description = 'Mark AI design requests still pending past CustomDesignRequest::STALE_AFTER_MINUTES as failed (generation timed out). Same rule CustomDesignController applies lazily on page load — this exists so cleanup still happens without a scheduler wired up.';
+    protected $description = 'Mark design requests still pending past CustomDesignRequest::STALE_AFTER_MINUTES as failed (generation timed out). Same rule CustomDesignController applies lazily on page load — this exists so cleanup still happens without a scheduler wired up.';
 
     public function handle()
     {

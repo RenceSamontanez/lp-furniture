@@ -425,6 +425,8 @@ function setSuggestions(list) {
     'Start verification':          () => APP.validationUrl,
     'How to submit ID':            () => APP.validationUrl,
     'Start AI Design request':     () => APP.designUrl,
+    'Start customizing':           () => APP.designUrl,
+    'Try Customize tool':          () => APP.designUrl,
     'Try AI Design tool':          () => APP.designUrl,
     'Go to login':                 () => APP.loginUrl,
     'Sign up with Google':         () => APP.registerUrl,
