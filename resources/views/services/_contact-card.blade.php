@@ -7,10 +7,10 @@
   <h2 class="si-card-title">Prefer to talk first?</h2>
   @if($phone || $email)
     @if($phone)
-      <p class="si-card-line"><span>Phone</span> <a href="tel:{{ preg_replace('/[^\d+]/', '', $phone) }}">{{ $phone }}</a></p>
+      <p class="si-card-line"><span>Phone</span> <a class="lp-link" href="tel:{{ preg_replace('/[^\d+]/', '', $phone) }}">{{ $phone }}</a></p>
     @endif
     @if($email)
-      <p class="si-card-line"><span>Email</span> <a href="mailto:{{ $email }}">{{ $email }}</a></p>
+      <p class="si-card-line"><span>Email</span> <a class="lp-link" href="mailto:{{ $email }}">{{ $email }}</a></p>
     @endif
   @else
     <p class="si-card-line">You can reach us through our website.</p>

@@ -52,8 +52,8 @@
       <div class="admin-panel-body">
         <dl class="co-dl">
           <div><dt>Name</dt><dd>{{ $t->name }}</dd></div>
-          <div><dt>Phone</dt><dd><a href="tel:{{ $t->phone }}">{{ $t->phone }}</a></dd></div>
-          <div><dt>Email</dt><dd>@if($t->email)<a href="mailto:{{ $t->email }}">{{ $t->email }}</a>@else — @endif</dd></div>
+          <div><dt>Phone</dt><dd><a class="lp-link" href="tel:{{ $t->phone }}">{{ $t->phone }}</a></dd></div>
+          <div><dt>Email</dt><dd>@if($t->email)<a class="lp-link" href="mailto:{{ $t->email }}">{{ $t->email }}</a>@else — @endif</dd></div>
           <div><dt>Account</dt><dd>{{ $t->user ? $t->user->display_name . ' (' . $t->user->email . ')' : 'No account (walk-in or an older ticket)' }}</dd></div>
           <div><dt>Service</dt><dd>{{ $t->serviceLabel() }}</dd></div>
           <div><dt>Furniture type</dt><dd>{{ $t->furniture_type ?: '—' }}</dd></div>
@@ -103,7 +103,7 @@
           <ul class="inv-ticket-list">
             @foreach($t->invoices as $inv)
               <li>
-                <a href="{{ route('admin.service-invoices.show', $inv->id) }}">{{ $inv->invoice_number ?: 'Draft #' . $inv->id }}</a>
+                <a href="{{ route('admin.service-invoices.show', $inv->id) }}" class="lp-link">{{ $inv->invoice_number ?: 'Draft #' . $inv->id }}</a>
                 <span>₱{{ number_format((float) $inv->total, 2) }}</span>
                 <span class="co-chip inv-status--{{ $inv->status }}">{{ $inv->statusLabel() }}</span>
               </li>

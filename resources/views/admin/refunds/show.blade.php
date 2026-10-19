@@ -58,10 +58,10 @@
       <div class="admin-panel-body">
         <dl class="co-dl">
           <div><dt>Customer</dt><dd>{{ $t->name }}@if($t->user) ({{ $t->user->email }})@endif</dd></div>
-          <div><dt>Contact phone</dt><dd><a href="tel:{{ $r->contact_phone }}">{{ $r->contact_phone }}</a></dd></div>
-          <div><dt>Contact email</dt><dd><a href="mailto:{{ $r->contact_email }}">{{ $r->contact_email }}</a></dd></div>
-          <div><dt>Service request</dt><dd><a href="{{ route('admin.service-inquiries.show', $t->id) }}">{{ $t->reference_number }}</a> · {{ $t->serviceLabel() }}</dd></div>
-          <div><dt>Invoice</dt><dd>@if($r->invoice)<a href="{{ route('admin.service-invoices.show', $r->invoice->id) }}">{{ $r->invoice->invoice_number }}</a> · {{ $peso($r->invoice->total) }}@else None @endif</dd></div>
+          <div><dt>Contact phone</dt><dd><a class="lp-link" href="tel:{{ $r->contact_phone }}">{{ $r->contact_phone }}</a></dd></div>
+          <div><dt>Contact email</dt><dd><a class="lp-link" href="mailto:{{ $r->contact_email }}">{{ $r->contact_email }}</a></dd></div>
+          <div><dt>Service request</dt><dd><a href="{{ route('admin.service-inquiries.show', $t->id) }}" class="lp-link">{{ $t->reference_number }}</a> · {{ $t->serviceLabel() }}</dd></div>
+          <div><dt>Invoice</dt><dd>@if($r->invoice)<a href="{{ route('admin.service-invoices.show', $r->invoice->id) }}" class="lp-link">{{ $r->invoice->invoice_number }}</a> · {{ $peso($r->invoice->total) }}@else None @endif</dd></div>
           <div><dt>Paid</dt><dd>{{ $peso($paidCents / 100) }} now ({{ $peso($r->amount_paid_snapshot) }} when requested)</dd></div>
           <div><dt>Work state (live)</dt><dd><strong>{{ \App\Support\ServiceWorkState::label($work) }}</strong> (was {{ strtolower(\App\Support\ServiceWorkState::label($r->work_state_snapshot)) }} when requested)</dd></div>
           <div><dt>Source</dt><dd>{{ \App\Models\ServiceRefundRequest::SOURCES[$r->source] ?? $r->source }} · {{ $when($r->created_at) }}</dd></div>

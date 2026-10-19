@@ -11,7 +11,7 @@
   <article class="terms-card">
     <header class="terms-head">
       <h1 class="terms-title">Other Services terms</h1>
-      <p class="terms-meta">These terms cover Other Services only: labor when you bring your own wood, repairs, and other work we price by phone. Furniture orders and custom furniture orders have their own <a href="{{ route('terms') }}">Terms and Conditions</a>.</p>
+      <p class="terms-meta">These terms cover Other Services only: labor when you bring your own wood, repairs, and other work we price by phone. Furniture orders and custom furniture orders have their own <a href="{{ route('terms') }}" class="lp-link">Terms and Conditions</a>.</p>
     </header>
 
     <div class="terms-body">

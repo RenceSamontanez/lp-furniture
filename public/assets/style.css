@@ -3273,16 +3273,16 @@ body.lp-modal-open { overflow: hidden; }
    Not for buttons (use .lp-btn), the main navigation or card-as-link elements.
 ══════════════════════════════════════════ */
 :root { --link: #6A3E1E; --link-hover: #2C1810; --link-underline: #C8963E; }
-a.lp-link, .lp-link a, button.lp-link {
+a.lp-link:any-link, .lp-link a:any-link, button.lp-link {
   color: var(--link); font-weight: 600; text-decoration: underline; text-decoration-color: var(--link-underline);
   text-decoration-thickness: 1.5px; text-underline-offset: 3px; border-radius: 2px; overflow-wrap: anywhere;
 }
 button.lp-link { background: none; border: 0; padding: 0; font: inherit; font-weight: 600; cursor: pointer; text-align: left; }
-a.lp-link:visited, .lp-link a:visited { color: var(--link); }
-a.lp-link:hover, .lp-link a:hover, button.lp-link:hover { color: var(--link-hover); text-decoration-thickness: 3px; }
-a.lp-link:focus-visible, .lp-link a:focus-visible, button.lp-link:focus-visible { outline: 2px solid var(--brown-deep); outline-offset: 3px; box-shadow: 0 0 0 5px #E8B86D; }
-a.lp-link--tap, button.lp-link--tap { display: inline-flex; align-items: center; min-height: 44px; }
-.lp-notice__text a.lp-link { color: var(--link); text-decoration: underline; text-decoration-color: var(--link-underline); }
+a.lp-link:any-link:visited, .lp-link a:any-link:visited { color: var(--link); }
+a.lp-link:any-link:hover, .lp-link a:any-link:hover, button.lp-link:hover { color: var(--link-hover); text-decoration-thickness: 3px; }
+a.lp-link:any-link:focus-visible, .lp-link a:any-link:focus-visible, button.lp-link:focus-visible { outline: 2px solid var(--brown-deep); outline-offset: 3px; box-shadow: 0 0 0 5px #E8B86D; }
+a.lp-link.lp-link--tap, button.lp-link.lp-link--tap { display: inline-flex; align-items: center; min-height: 44px; }
+.lp-notice__text a.lp-link:any-link { color: var(--link); text-decoration: underline; text-decoration-color: var(--link-underline); }
 
 /* ══════════════════════════════════════════
    Progress stepper: .lp-stepper (Stage 21h). Markup: resources/views/components/stepper.blade.php

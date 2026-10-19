@@ -208,7 +208,7 @@
 
     @foreach($i->refundRequests as $rr)
       <div class="co-block-label" style="margin-top:22px;">Cancellation request</div>
-      <p class="si-hint"><a href="{{ route('admin.refunds.show', $rr->id) }}">{{ $rr->reference }}</a> · {{ $rr->statusLabel() }}</p>
+      <p class="si-hint"><a href="{{ route('admin.refunds.show', $rr->id) }}" class="lp-link">{{ $rr->reference }}</a> · {{ $rr->statusLabel() }}</p>
     @endforeach
   </div>
 </div>
