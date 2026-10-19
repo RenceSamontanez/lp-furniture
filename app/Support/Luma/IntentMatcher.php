@@ -42,6 +42,31 @@ final class IntentMatcher
             }
         }
 
+        // "Hello po, magandang umaga, how long does a repair take?": the greeting words are not the question. Take them out and
+        // look again: a real question in what is left wins over the greeting.
+        if ($best && $best['intent']->category === 'luma_greeting') {
+            $greeting = array_unique(explode(' ', implode(' ', $best['matched'])));
+            $rest     = array_values(array_diff($words, $greeting));
+            if (count($rest) >= 2) {
+                $other = null;
+                foreach ($intents as $intent) {
+                    if ($intent->category === 'luma_greeting' || $intent->id === $best['intent']->id) {
+                        continue;
+                    }
+                    $hit = self::score($rest, (string) $intent->keywords);
+                    if ($hit['score'] >= $min) {
+                        $candidate = ['intent' => $intent, 'score' => $hit['score'], 'matched' => $hit['matched']];
+                        if ($other === null || self::better($candidate, $other)) {
+                            $other = $candidate;
+                        }
+                    }
+                }
+                if ($other !== null) {
+                    return $other;
+                }
+            }
+        }
+
         return $best;
     }
 

@@ -93,11 +93,10 @@ class ChatbotController extends Controller
     /** Masks Philippine mobile-number-shaped text so a GCash number typed into the chat is never stored. */
     public static function redact(string $message): string
     {
-        return preg_replace_callback('/(?<!\d)(?:\+?63|0)9[\d\s\-]{9,13}(?!\d)/', function ($m) {
-            $d     = preg_replace('/\D+/', '', $m[0]);
-            $trail = substr($m[0], strlen(rtrim($m[0])));   // keep the space that followed the number
+        return preg_replace_callback('/(?<!\d)(?:\+\s?63|63|0)[\s\-]?9[\s\-]?\d{2}[\s\-]?\d{3}[\s\-]?\d{4}(?!\d)/', function ($m) {
+            $last10 = substr(preg_replace('/\D+/', '', $m[0]), -10);
 
-            return strlen($d) >= 10 ? substr($d, 0, 4) . ' *** ' . substr($d, -4) . $trail : $m[0];
+            return '0' . substr($last10, 0, 3) . ' *** ' . substr($last10, -4);
         }, $message) ?? $message;
     }
 }

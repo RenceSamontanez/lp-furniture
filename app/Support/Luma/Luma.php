@@ -145,6 +145,13 @@ final class Luma
         if ($hit) {
             $category = (string) $hit['intent']->category;
 
+            // "refund policy for my order": a furniture word and no Other Services word sends the shared topics to the furniture answers.
+            if ($furniture = self::furnitureCounterpart($category, $words)) {
+                $state->set('domain', Disambiguation::FURNITURE);
+
+                return self::nodeReply($furniture, $message, $lang, $state, $user);
+            }
+
             // Bare words that mean two different things: ask once (unless the conversation already says which).
             if ($kind = self::ambiguousKind($category, $words)) {
                 return self::askOrRoute($kind, $message, $lang, $state, $user, $hit['intent']);
@@ -180,6 +187,21 @@ final class Luma
     }
 
     /* ───────────── asking once, and remembering the answer ───────────── */
+
+    /** The furniture answer for an Other Services node, when the message is clearly about a furniture order. */
+    private static function furnitureCounterpart(string $category, array $words): ?string
+    {
+        if (!Disambiguation::mentionsFurniture($words) || Disambiguation::mentionsOtherServices($words)) {
+            return null;
+        }
+
+        return match (true) {
+            in_array($category, self::REFUND_FAMILY, true) && $category !== 'luma_os_taking_too_long' => 'luma_cancel_refund',
+            $category === 'luma_os_check_status' => 'luma_track_order',
+            $category === 'luma_os_pay_how' => 'luma_payment_methods',
+            default => null,
+        };
+    }
 
     /** refund | cancel | payment | status when the winning intent is a furniture answer to a bare, context-free word. */
     private static function ambiguousKind(string $category, array $words): ?string
@@ -249,7 +271,8 @@ final class Luma
 
         // "cancel SI-2026-0003": go straight to the guided flow for that ticket (owner only).
         $rest = Text::words(Reference::strip($message));
-        if ($user && array_intersect($rest, ['cancel', 'refund']) !== []) {
+        $asksStatus = array_intersect($rest, ['where', 'status', 'track', 'check', 'update', 'kumusta', 'when', 'how', 'long', 'much', 'received', 'sent', 'due', 'left', 'balance', 'paid']) !== [];
+        if ($user && !$asksStatus && array_intersect($rest, ['cancel', 'refund']) !== []) {
             if ($ticket = RefundFlow::ticketForReference($ref, $user)) {
                 return self::wrap(RefundFlow::afterPick($ticket, $state, $user, $lang), $lang, 'flow:refund');
             }

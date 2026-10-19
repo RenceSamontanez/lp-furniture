@@ -133,7 +133,7 @@ return [
         'tvstand' => 'tv stand',
 
         // Other Services / refunds (Stage 21i)
-        'tiket' => 'ticket', 'tikit' => 'ticket', 'ticketing' => 'ticket',
+        'tiket' => 'ticket', 'tikit' => 'ticket', 'ticketing' => 'ticket', 'tikcet' => 'ticket', 'ticekt' => 'ticket', 'tciket' => 'ticket', 'ticke' => 'ticket', 'ticet' => 'ticket',
         'kanselahin' => 'cancel', 'ikansela' => 'cancel', 'kinansela' => 'cancelled', 'nakansela' => 'cancelled',
         'magkansela' => 'cancel', 'pagkansela' => 'cancel', 'kansela' => 'cancel', 'cancelled' => 'cancelled',
         'canceled' => 'cancelled', 'cancelling' => 'cancel', 'cancellation' => 'cancel', 'cancels' => 'cancel',
