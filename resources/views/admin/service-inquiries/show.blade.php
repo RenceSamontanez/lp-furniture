@@ -16,7 +16,7 @@
   $noteLines = $t->admin_notes ? array_reverse(explode("\n", $t->admin_notes)) : [];
 @endphp
 
-<a href="{{ route('admin.service-inquiries.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">← Back to Other Services</a>
+<a href="{{ route('admin.service-inquiries.index') }}" class="lp-btn lp-btn--secondary" style="margin-bottom:20px;">← Back to Other Services</a>
 
 @php $ctx = $ctx ?? \App\Support\ServiceRefundRequestService::context($t); $work = $ctx['work']; @endphp
 
@@ -89,7 +89,7 @@
           @csrf
           <label class="co-modal-label" for="si-note" style="margin-top:0;">Add a note</label>
           <textarea name="note" id="si-note" class="form-input" rows="2" maxlength="1000" required></textarea>
-          <button type="submit" class="admin-btn admin-btn-outline" style="margin-top:8px;" data-loading="Saving...">Save note</button>
+          <button type="submit" class="lp-btn lp-btn--secondary" style="margin-top:8px;" data-loading="Saving...">Save note</button>
         </form>
       </div>
     </div>
@@ -111,7 +111,7 @@
           </ul>
         @endif
         @if($t->invoices->where('status', '!=', 'void')->isEmpty())
-          <a href="{{ route('admin.service-invoices.create', $t->id) }}" class="admin-btn admin-btn-gold co-wide">Create invoice</a>
+          <a href="{{ route('admin.service-invoices.create', $t->id) }}" class="lp-btn lp-btn--primary co-wide">Create invoice</a>
           <p class="si-hint" style="margin-top:8px;">Use the price agreed in the call. Nothing is sent to the customer until you send it.</p>
         @else
           <p class="si-hint">A ticket has one live invoice at a time. Cancel it to send a new one.</p>
@@ -253,7 +253,7 @@
         </div>
 
         @if($isOpen)
-          <button type="button" class="admin-btn admin-btn-gold co-wide" id="co-open-call">Send call update</button>
+          <button type="button" class="lp-btn lp-btn--primary co-wide" id="co-open-call">Send call update</button>
 
           <details class="co-more">
             <summary>Close or cancel this ticket</summary>
@@ -262,7 +262,7 @@
               <label class="co-modal-label" for="si-reason" style="margin-top:0;">Reason</label>
               <textarea name="reason" id="si-reason" class="form-input" rows="3" maxlength="1000" required
                         placeholder="e.g. Agreed on a price by phone, customer will visit the shop"></textarea>
-              <button type="submit" class="admin-btn admin-btn-outline co-wide" style="margin-top:8px;">Mark closed</button>
+              <button type="submit" class="lp-btn lp-btn--secondary co-wide" style="margin-top:8px;">Mark closed</button>
             </form>
           </details>
         @else
@@ -309,8 +309,8 @@
       @endif
 
       <div class="co-modal-actions">
-        <button type="button" class="admin-btn admin-btn-outline" id="co-call-cancel">Cancel</button>
-        <button type="submit" class="admin-btn admin-btn-gold" id="co-call-send" data-loading="Sending...">{{ $t->user_id ? 'Send notification' : 'Save call update' }}</button>
+        <button type="button" class="lp-btn lp-btn--secondary" id="co-call-cancel">Cancel</button>
+        <button type="submit" class="lp-btn lp-btn--primary" id="co-call-send" data-loading="Sending...">{{ $t->user_id ? 'Send notification' : 'Save call update' }}</button>
       </div>
     </form>
   </div>

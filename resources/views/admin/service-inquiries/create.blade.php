@@ -15,7 +15,7 @@
   $maxDay = $today->copy()->addDays(\App\Support\ServiceInquiryDesk::DATE_HORIZON_DAYS);
 @endphp
 
-<a href="{{ route('admin.service-inquiries.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">← Back to Other Services</a>
+<a href="{{ route('admin.service-inquiries.index') }}" class="lp-btn lp-btn--secondary" style="margin-bottom:20px;">← Back to Other Services</a>
 
 @if($errors->any())
   <div class="co-error" role="alert">
@@ -36,7 +36,7 @@
         <input type="hidden" name="customer_id" id="si-customer-id" value="{{ old('customer_id') }}"/>
         <div class="si-linked" id="si-linked" hidden>
           <span>Linked to <strong id="si-linked-name"></strong></span>
-          <button type="button" class="admin-btn admin-btn-outline" id="si-unlink">Unlink</button>
+          <button type="button" class="lp-btn lp-btn--secondary" id="si-unlink">Unlink</button>
         </div>
       </div>
 
@@ -99,8 +99,8 @@
       <p class="si-hint" id="si-hint">With no account linked, the customer is not notified in the app.</p>
 
       <div class="co-modal-actions">
-        <a href="{{ route('admin.service-inquiries.index') }}" class="admin-btn admin-btn-outline">Cancel</a>
-        <button type="submit" class="admin-btn admin-btn-gold" data-loading="Saving...">Create ticket</button>
+        <a href="{{ route('admin.service-inquiries.index') }}" class="lp-btn lp-btn--secondary">Cancel</a>
+        <button type="submit" class="lp-btn lp-btn--primary" data-loading="Saving...">Create ticket</button>
       </div>
     </form>
   </div>

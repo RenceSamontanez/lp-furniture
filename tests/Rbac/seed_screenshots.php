@@ -119,6 +119,8 @@ $t14 = $ticket('Nightstand');   $i14 = $invoice($t14, 'half_half', false);
 $r14 = $svc->create($t14->id, $payload(['refund_method' => null, 'gcash_number' => null, 'gcash_account_name' => null]), $customer, 'form'); $ids['instant_closed'] = ['ticket' => $t14->id, 'invoice' => $i14->id, 'ref' => $r14->reference, 'req' => $r14->id];
 $t15 = $ticket('Stool'); $i15 = $invoice($t15, 'full', false);                   $ids['form_unpaid_second'] = ['ticket' => $t15->id, 'invoice' => $i15->id];
 
+$t16 = $ticket('Hutch'); $i16 = $invoice($t16); $r16 = $svc->create($t16->id, $payload(), $customer, 'form'); $svc->askForInfo($r16->id, $admin, 'Why did you want to cancel, and was something wrong with the work?'); $ids['needs_info'] = ['ticket' => $t16->id, 'invoice' => $i16->id, 'ref' => $r16->reference, 'req' => $r16->id];
+
 $notif = function (string $template, string $url, array $values) use ($customer) {
     $t = App\Support\NotificationTemplates::render($template, $values + ['contact' => '']);
 

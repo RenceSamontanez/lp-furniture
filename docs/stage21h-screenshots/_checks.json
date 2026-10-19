@@ -1,0 +1,710 @@
+[
+  {
+    "file": "admin-work-no-invoice-1280.jpg",
+    "title": "Service Ticket — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 8,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 2,
+    "linkContrastMin": 9.05
+  },
+  {
+    "file": "admin-work-waiting-for-payment-1280.jpg",
+    "title": "Service Ticket — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 6,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 3,
+    "linkContrastMin": 9.05
+  },
+  {
+    "file": "admin-work-ready-to-start-1280.jpg",
+    "title": "Service Ticket — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 7,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 3,
+    "linkContrastMin": 9.05
+  },
+  {
+    "file": "admin-work-started-1280.jpg",
+    "title": "Service Ticket — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 8,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 3,
+    "linkContrastMin": 9.05
+  },
+  {
+    "file": "admin-start-work-modal-1280.jpg",
+    "title": "Service Ticket — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 10,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 3,
+    "linkContrastMin": 9.05
+  },
+  {
+    "file": "admin-list-ready-to-start-1280.jpg",
+    "title": "Other Services — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 5,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null
+  },
+  {
+    "file": "admin-half-half-disabled-1280.jpg",
+    "title": "New Invoice — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 4,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null
+  },
+  {
+    "file": "admin-half-half-enabled-1280.jpg",
+    "title": "New Invoice — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 4,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null
+  },
+  {
+    "file": "admin-refund-detail-new-1280.jpg",
+    "title": "REF-2026-0001 — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 6,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 4,
+    "linkContrastMin": 9.05
+  },
+  {
+    "file": "admin-refund-detail-approved-1280.jpg",
+    "title": "REF-2026-0002 — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 5,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 4,
+    "linkContrastMin": 9.05
+  },
+  {
+    "file": "admin-mark-sent-modal-override-1280.jpg",
+    "title": "REF-2026-0002 — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 8,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 4,
+    "linkContrastMin": 9.05
+  },
+  {
+    "file": "admin-work-no-invoice-390.jpg",
+    "title": "Service Ticket — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 9,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 2,
+    "linkContrastMin": 9.05
+  },
+  {
+    "file": "admin-work-waiting-for-payment-390.jpg",
+    "title": "Service Ticket — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 8,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 3,
+    "linkContrastMin": 9.05
+  },
+  {
+    "file": "admin-work-ready-to-start-390.jpg",
+    "title": "Service Ticket — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 9,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 3,
+    "linkContrastMin": 9.05
+  },
+  {
+    "file": "admin-work-started-390.jpg",
+    "title": "Service Ticket — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 10,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 3,
+    "linkContrastMin": 9.05
+  },
+  {
+    "file": "admin-start-work-modal-390.jpg",
+    "title": "Service Ticket — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 12,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 3,
+    "linkContrastMin": 9.05
+  },
+  {
+    "file": "admin-list-ready-to-start-390.jpg",
+    "title": "Other Services — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 7,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null
+  },
+  {
+    "file": "admin-half-half-disabled-390.jpg",
+    "title": "New Invoice — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 6,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null
+  },
+  {
+    "file": "admin-half-half-enabled-390.jpg",
+    "title": "New Invoice — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 6,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null
+  },
+  {
+    "file": "admin-refund-detail-new-390.jpg",
+    "title": "REF-2026-0001 — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 8,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 4,
+    "linkContrastMin": 9.05
+  },
+  {
+    "file": "admin-refund-detail-approved-390.jpg",
+    "title": "REF-2026-0002 — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 7,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 4,
+    "linkContrastMin": 9.05
+  },
+  {
+    "file": "admin-mark-sent-modal-override-390.jpg",
+    "title": "REF-2026-0002 — Admin",
+    "overflow": 0,
+    "short": [],
+    "buttons": 10,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 4,
+    "linkContrastMin": 9.05
+  },
+  {
+    "file": "customer-notification-cancelled-1280.jpg",
+    "title": "Your service request was cancelled — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 8,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 3,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-notification-refund-1280.jpg",
+    "title": "Your refund was sent — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 9,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 3,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-notification-declined-1280.jpg",
+    "title": "We could not approve your cancellation request — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 9,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 3,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-notification-list-1280.jpg",
+    "title": "Notifications — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 27,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 17,
+    "linkContrastMin": 8.77
+  },
+  {
+    "file": "customer-form-without-gcash-1280.jpg",
+    "title": "Request cancellation or refund — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 7,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 2,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-form-with-gcash-1280.jpg",
+    "title": "Request cancellation or refund — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 7,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 2,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-confirm-modal-gcash-1280.jpg",
+    "title": "Request cancellation or refund — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 10,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 2,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-confirm-modal-ticked-1280.jpg",
+    "title": "Request cancellation or refund — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 10,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 2,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-instant-cancel-modal-1280.jpg",
+    "title": "Request cancellation or refund — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 10,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 2,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-confirmation-page-1280.jpg",
+    "title": "Request sent — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 8,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 1,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-status-under-review-1280.jpg",
+    "title": "Request REF-2026-0001 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 7,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null,
+    "stepper": {
+      "pass": true,
+      "checked": 4,
+      "failures": []
+    }
+  },
+  {
+    "file": "customer-status-needs-info-1280.jpg",
+    "title": "Request REF-2026-0008 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 8,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null,
+    "stepper": {
+      "pass": true,
+      "checked": 4,
+      "failures": []
+    }
+  },
+  {
+    "file": "customer-status-approved-1280.jpg",
+    "title": "Request REF-2026-0002 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 7,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null,
+    "stepper": {
+      "pass": true,
+      "checked": 4,
+      "failures": []
+    }
+  },
+  {
+    "file": "customer-status-refund-problem-1280.jpg",
+    "title": "Request REF-2026-0005 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 8,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null,
+    "stepper": {
+      "pass": true,
+      "checked": 4,
+      "failures": []
+    }
+  },
+  {
+    "file": "customer-status-refunded-1280.jpg",
+    "title": "Request REF-2026-0003 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 6,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null,
+    "stepper": {
+      "pass": true,
+      "checked": 4,
+      "failures": []
+    }
+  },
+  {
+    "file": "customer-status-declined-1280.jpg",
+    "title": "Request REF-2026-0004 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 7,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null,
+    "stepper": {
+      "pass": true,
+      "checked": 3,
+      "failures": []
+    }
+  },
+  {
+    "file": "customer-status-cancelled-instantly-1280.jpg",
+    "title": "Request REF-2026-0007 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 7,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null,
+    "stepper": {
+      "pass": true,
+      "checked": 2,
+      "failures": []
+    }
+  },
+  {
+    "file": "customer-my-requests-1280.jpg",
+    "title": "Other Services Request — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 7,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 22,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-notification-cancelled-390.jpg",
+    "title": "Your service request was cancelled — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 10,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 3,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-notification-refund-390.jpg",
+    "title": "Your refund was sent — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 11,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 3,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-notification-declined-390.jpg",
+    "title": "We could not approve your cancellation request — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 11,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 3,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-notification-list-390.jpg",
+    "title": "Notifications — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 29,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 17,
+    "linkContrastMin": 8.77
+  },
+  {
+    "file": "customer-form-without-gcash-390.jpg",
+    "title": "Request cancellation or refund — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 9,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 2,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-form-with-gcash-390.jpg",
+    "title": "Request cancellation or refund — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 9,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 2,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-confirm-modal-gcash-390.jpg",
+    "title": "Request cancellation or refund — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 12,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 2,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-confirm-modal-ticked-390.jpg",
+    "title": "Request cancellation or refund — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 12,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 2,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-instant-cancel-modal-390.jpg",
+    "title": "Request cancellation or refund — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 12,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 2,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-confirmation-page-390.jpg",
+    "title": "Request sent — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 10,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 1,
+    "linkContrastMin": 8.69
+  },
+  {
+    "file": "customer-status-under-review-390.jpg",
+    "title": "Request REF-2026-0001 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 9,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null,
+    "stepper": {
+      "pass": true,
+      "checked": 4,
+      "failures": []
+    }
+  },
+  {
+    "file": "customer-status-needs-info-390.jpg",
+    "title": "Request REF-2026-0008 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 10,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null,
+    "stepper": {
+      "pass": true,
+      "checked": 4,
+      "failures": []
+    }
+  },
+  {
+    "file": "customer-status-approved-390.jpg",
+    "title": "Request REF-2026-0002 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 9,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null,
+    "stepper": {
+      "pass": true,
+      "checked": 4,
+      "failures": []
+    }
+  },
+  {
+    "file": "customer-status-refund-problem-390.jpg",
+    "title": "Request REF-2026-0005 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 10,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null,
+    "stepper": {
+      "pass": true,
+      "checked": 4,
+      "failures": []
+    }
+  },
+  {
+    "file": "customer-status-refunded-390.jpg",
+    "title": "Request REF-2026-0003 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 8,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null,
+    "stepper": {
+      "pass": true,
+      "checked": 4,
+      "failures": []
+    }
+  },
+  {
+    "file": "customer-status-declined-390.jpg",
+    "title": "Request REF-2026-0004 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 9,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null,
+    "stepper": {
+      "pass": true,
+      "checked": 3,
+      "failures": []
+    }
+  },
+  {
+    "file": "customer-status-cancelled-instantly-390.jpg",
+    "title": "Request REF-2026-0007 — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 9,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 0,
+    "linkContrastMin": null,
+    "stepper": {
+      "pass": true,
+      "checked": 2,
+      "failures": []
+    }
+  },
+  {
+    "file": "customer-my-requests-390.jpg",
+    "title": "Other Services Request — LP Furniture",
+    "overflow": 0,
+    "short": [],
+    "buttons": 9,
+    "buttonFailures": [],
+    "linkFailures": 0,
+    "links": 22,
+    "linkContrastMin": 8.69
+  }
+]

@@ -13,7 +13,7 @@
         <h1 class="notif-title">Notifications</h1>
       </div>
       <div class="notif-header-actions">
-        <a href="{{ route('orders.index') }}" class="notif-history-btn">
+        <a href="{{ route('orders.index') }}" class="lp-btn lp-btn--secondary">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
           Order History
         </a>
@@ -21,7 +21,7 @@
           <form method="POST" action="{{ route('notifications.readAll') }}">
             @csrf
             @method('PATCH')
-            <button type="submit" class="notif-markall-btn">
+            <button type="submit" class="lp-btn lp-btn--secondary">
               Mark all as read
             </button>
           </form>
@@ -70,7 +70,7 @@
                   <form method="POST" action="{{ route('notifications.read', $notif->id) }}" style="display:inline;">
                     @csrf
                     @method('PATCH')
-                    <button type="submit" class="notif-read-btn">Mark read</button>
+                    <button type="submit" class="lp-link lp-link--tap">Mark read</button>
                   </form>
                 @endif
               </div>

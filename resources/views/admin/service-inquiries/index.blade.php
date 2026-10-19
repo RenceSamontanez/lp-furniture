@@ -13,7 +13,7 @@
 @php $labels = \App\Models\ServiceInquiry::STATUSES; @endphp
 
 <div style="display:flex;justify-content:flex-end;margin-bottom:14px;">
-  <a href="{{ route('admin.service-inquiries.create') }}" class="admin-btn admin-btn-gold">New ticket</a>
+  <a href="{{ route('admin.service-inquiries.create') }}" class="lp-btn lp-btn--primary">New ticket</a>
 </div>
 
 <div class="co-counts">
@@ -37,9 +37,9 @@
   @if($status)<input type="hidden" name="status" value="{{ $status }}"/>@endif
   @if($ready)<input type="hidden" name="ready" value="1"/>@endif
   <input type="search" name="q" value="{{ $search }}" class="form-input" placeholder="Search by name, reference or phone"/>
-  <button type="submit" class="admin-btn admin-btn-outline">Search</button>
+  <button type="submit" class="lp-btn lp-btn--secondary">Search</button>
   @if($search !== '')
-    <a href="{{ route('admin.service-inquiries.index', array_filter(['status' => $status])) }}" class="admin-btn admin-btn-outline">Clear</a>
+    <a href="{{ route('admin.service-inquiries.index', array_filter(['status' => $status])) }}" class="lp-btn lp-btn--secondary">Clear</a>
   @endif
 </form>
 
@@ -69,7 +69,7 @@
               <td data-label="Received">{{ $t->created_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}</td>
               <td data-label="Status"><span class="co-chip co-chip--{{ $t->status }}">{{ $t->statusLabel() }}</span></td>
               <td data-label="">
-                <a href="{{ route('admin.service-inquiries.show', $t->id) }}" class="admin-btn admin-btn-outline">Open</a>
+                <a href="{{ route('admin.service-inquiries.show', $t->id) }}" class="lp-btn lp-btn--secondary">Open</a>
               </td>
             </tr>
           @endforeach
