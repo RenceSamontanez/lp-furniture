@@ -1,6 +1,6 @@
 # RBAC matrix (Stage 11)
 
-108 routes x 4 actors = 432 probes, plus 158 owner-route probes, 0 failures. Database: furniture_db_test
+108 routes x 4 actors = 432 probes, plus 166 owner-route probes, 0 failures. Database: furniture_db_test
 
 Expected: guest, customer and customer-credentials-on-admin-guard are redirected to /admin/login; admin gets anything except that redirect, 401, 403, 419 or 5xx. Routes with an id were sent id 999999999 only. One fresh PHP process per actor per route.
 
@@ -129,27 +129,27 @@ Not /admin routes. Each cell is one fresh PHP process. Expected: a guest, and an
 | `GET /services/invoices/{id}` | sent | 302 → /login ✓ | 200 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}` | draft | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}` | missing | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
-| `GET /services/invoices/{id}/print` | cancelled | 302 → /login ✓ | 302 → /services/invoices/40 ✓ | 404 ✓ | 302 → /login ✓ |
+| `GET /services/invoices/{id}/print` | cancelled | 302 → /login ✓ | 302 → /services/invoices/163 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/print` | sent | 302 → /login ✓ | 200 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/print` | draft | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/print` | missing | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
-| `GET /services/invoices/{id}/payment/success` | cancelled | 302 → /login ✓ | 302 → /services/invoices/40 ✓ | 404 ✓ | 302 → /login ✓ |
+| `GET /services/invoices/{id}/payment/success` | cancelled | 302 → /login ✓ | 302 → /services/invoices/163 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/payment/success` | sent | 302 → /login ✓ | 200 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/payment/success` | draft | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/payment/success` | missing | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
-| `GET /services/invoices/{id}/payment/cancelled` | cancelled | 302 → /login ✓ | 302 → /services/invoices/40 ✓ | 404 ✓ | 302 → /login ✓ |
+| `GET /services/invoices/{id}/payment/cancelled` | cancelled | 302 → /login ✓ | 302 → /services/invoices/163 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/payment/cancelled` | sent | 302 → /login ✓ | 200 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/payment/cancelled` | draft | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/payment/cancelled` | missing | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
-| `GET /services/invoices/{id}/payment/failed` | cancelled | 302 → /login ✓ | 302 → /services/invoices/40 ✓ | 404 ✓ | 302 → /login ✓ |
+| `GET /services/invoices/{id}/payment/failed` | cancelled | 302 → /login ✓ | 302 → /services/invoices/163 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/payment/failed` | sent | 302 → /login ✓ | 200 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/payment/failed` | draft | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/invoices/{id}/payment/failed` | missing | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
-| `POST /services/invoices/{id}/pay/stripe` | cancelled | 302 → /login ✓ | 302 → /services/invoices/40 ✓ | 404 ✓ | 302 → /login ✓ |
+| `POST /services/invoices/{id}/pay/stripe` | cancelled | 302 → /login ✓ | 302 → /services/invoices/163 ✓ | 404 ✓ | 302 → /login ✓ |
 | `POST /services/invoices/{id}/pay/stripe` | sent | 302 → /login ✓ | not probed (PHPUnit) | 404 ✓ | 302 → /login ✓ |
 | `POST /services/invoices/{id}/pay/stripe` | draft | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `POST /services/invoices/{id}/pay/stripe` | missing | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
-| `POST /services/invoices/{id}/pay/gcash` | cancelled | 302 → /login ✓ | 302 → /services/invoices/40 ✓ | 404 ✓ | 302 → /login ✓ |
+| `POST /services/invoices/{id}/pay/gcash` | cancelled | 302 → /login ✓ | 302 → /services/invoices/163 ✓ | 404 ✓ | 302 → /login ✓ |
 | `POST /services/invoices/{id}/pay/gcash` | sent | 302 → /login ✓ | not probed (PHPUnit) | 404 ✓ | 302 → /login ✓ |
 | `POST /services/invoices/{id}/pay/gcash` | draft | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `POST /services/invoices/{id}/pay/gcash` | missing | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
@@ -164,7 +164,7 @@ The request form, summary, confirm, confirmation page, request page and reply ro
 | `GET /services/requests/{x}/cancellation` | does not exist | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `POST /services/requests/{x}/cancellation/review` | exists | 302 → /login ✓ | 302 →  ✓ | 404 ✓ | 302 → /login ✓ |
 | `POST /services/requests/{x}/cancellation/review` | does not exist | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
-| `POST /services/requests/{x}/cancellation` | exists | 302 → /login ✓ | 302 → /services/requests/44/cancellation ✓ | 404 ✓ | 302 → /login ✓ |
+| `POST /services/requests/{x}/cancellation` | exists | 302 → /login ✓ | 302 → /services/requests/223/cancellation ✓ | 404 ✓ | 302 → /login ✓ |
 | `POST /services/requests/{x}/cancellation` | does not exist | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/refunds/{x}` | exists | 302 → /login ✓ | 200 ✓ | 404 ✓ | 302 → /login ✓ |
 | `GET /services/refunds/{x}` | does not exist | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
@@ -172,3 +172,12 @@ The request form, summary, confirm, confirmation page, request page and reply ro
 | `GET /services/refunds/{x}/sent` | does not exist | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
 | `POST /services/refunds/{x}/reply` | exists | 302 → /login ✓ | 302 → /services/refunds/REF-2026-0001 ✓ | 404 ✓ | 302 → /login ✓ |
 | `POST /services/refunds/{x}/reply` | does not exist | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
+
+## Stage 21h: owner-only notification details
+
+`GET /notifications/{id}` shows a read-only details page for an Other Services notification. Expected: a guest, and an admin signed in only on the admin guard, are redirected to /login; another customer gets 404 (and does not mark it read); the owner gets 200 and the notification is marked read. No new /admin routes were added in Stage 21h: the Start work, Mark service done, Approve, Decline, Mark refund as sent and related modals post to the existing routes in the table above, and the 'Ready to start' filter is a query string on `GET /admin/service-inquiries`.
+
+| Route | Record | guest | owner | another customer | admin (admin guard only) |
+|---|---|---|---|---|---|
+| `GET /notifications/{id}` | exists | 302 → /login ✓ | 200 ✓ | 404 ✓ | 302 → /login ✓ |
+| `GET /notifications/{id}` | does not exist | 302 → /login ✓ | 404 ✓ | 404 ✓ | 302 → /login ✓ |
