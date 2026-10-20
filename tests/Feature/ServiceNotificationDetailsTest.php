@@ -205,6 +205,9 @@ class ServiceNotificationDetailsTest extends TestCase
     public function test_the_list_sends_service_notifications_to_the_details_page(): void
     {
         $all = $this->allKinds();
+        // The list is newest-first, 20 to a page, and building every kind leaves more than 20 rows created within the same
+        // second, so which ones land on page 1 depended on the clock. Make the one we look for unambiguously the newest.
+        $all['request_received']->forceFill(['created_at' => now()->addMinute()])->save();
         $this->as($this->owner)->get(route('notifications.index'))->assertOk()
             ->assertSee(route('notifications.show', $all['request_received']->id), false)
             ->assertSee('Related service request');
