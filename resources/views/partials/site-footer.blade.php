@@ -1,75 +1,71 @@
-{{-- Shared customer footer (home and every inner page; not the focus pages or the admin). Styles: public/assets/css/site-footer.css.
-     Every contact/social value is shown only when it is really set in Admin > Contact Settings. --}}
-@php
-  $bs         = \App\Models\BusinessSetting::current();
-  $phone      = $bs->publicPhone();
-  $email      = $bs->publicEmail();
-  $fbUrl      = $bs->publicFacebookUrl();
-  $ttUrl      = $bs->publicTiktokUrl();
-  $hours      = \App\Support\ShopHours::label();
-  $hasContact = $phone || $email || $hours;
-@endphp
-<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-  <symbol id="sf-fb" viewBox="0 0 24 24"><path d="M14 8h2.2V4.8H13.5C10.9 4.8 9.6 6.4 9.6 8.9V11H7.4v3.2h2.2V21h3.5v-6.8h2.6l.5-3.2h-3.1V9.3c0-.9.4-1.3 1.2-1.3z" fill="currentColor"/></symbol>
-  <symbol id="sf-tt" viewBox="0 0 24 24"><path d="M16.6 3c.3 2.2 1.6 3.6 3.9 3.8v3.1c-1.4.1-2.7-.3-3.9-1.1v6.1c0 5.8-6.3 7.6-9.1 3.5-1.7-2.5-.7-6.9 3.5-7.4v3.3c-.4.1-.8.2-1.1.4-1 .6-1.1 2-.2 2.7.9.8 2.4.2 2.7-.9.1-.3.1-.6.1-1V3z" fill="currentColor"/></symbol>
-  <symbol id="sf-ar" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-</svg>
-<footer class="sf" id="footer-section" data-nav="dark" aria-label="Site footer">
-  <div class="sf__in">
-    <div class="sf__top">
-      <div class="sf__brand">
-        <div class="sf__logo">LP <em>Furniture</em></div>
-        <p class="sf__about">Handcrafted custom wood furniture, made to order in San Juan, Batangas.</p>
-        @if($fbUrl || $ttUrl)
-          <h3 class="sf__h">Follow us</h3>
-          <div class="sf__follow">
-            @if($fbUrl)
-              <a class="lp-btn lp-btn--glass-outline sf__soc" href="{{ $fbUrl }}" target="_blank" rel="noopener noreferrer" aria-label="LP Furniture on Facebook (opens in a new tab)"><svg class="lp-btn-icon" aria-hidden="true"><use href="#sf-fb"/></svg>Facebook</a>
+{{-- Shared customer footer, rebuilt from the approved design docs/footer/footer-prototype-v11.html.
+     Styles: public/assets/css/site-footer.css. Data: App\Support\FooterData (Contact Settings first, config/shop.php second). --}}
+@php $f = \App\Support\FooterData::build(); @endphp
+<footer class="sf" id="footer-section" data-nav="dark">
+  <div class="sf__glow" aria-hidden="true"></div>
+
+  <div class="sf__top">
+    @if($f['visit'])
+      <section class="sf__visit" aria-label="Visit our shop">
+        <h2>Visit our shop</h2>
+        <div class="sf__map"><iframe title="Map showing LP Furniture shop location" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="{{ $f['visit']['embed'] }}"></iframe></div>
+        @if($f['visit']['address'])<address>{{ $f['visit']['address'] }}</address>@endif
+        @if($f['visit']['landmarks'])<p class="sf__near"><b>Nearby:</b> {{ $f['visit']['landmarks'] }}</p>@endif
+        <a class="sf__open" href="{{ $f['visit']['open'] }}" target="_blank" rel="noopener noreferrer" aria-label="Open in Google Maps (opens in a new tab)">Open in Google Maps</a>
+      </section>
+    @endif
+
+    @if($f['phone'] || $f['email'] || $f['facebook'] || $f['tiktok'])
+      <section class="sf__contact" aria-label="Contact">
+        @if($f['phone'] || $f['email'])
+          <h2>Contact us</h2>
+          <div class="sf__rows">
+            @if($f['phone'])
+              <a class="sf__row" href="{{ $f['phone']['href'] }}"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></i><span><b>{{ $f['phone']['display'] }}</b><small>Call or text</small></span></a>
             @endif
-            @if($ttUrl)
-              <a class="lp-btn lp-btn--glass-outline sf__soc" href="{{ $ttUrl }}" target="_blank" rel="noopener noreferrer" aria-label="LP Furniture on TikTok (opens in a new tab)"><svg class="lp-btn-icon" aria-hidden="true"><use href="#sf-tt"/></svg>TikTok</a>
+            @if($f['email'])
+              <a class="sf__row" href="mailto:{{ $f['email'] }}"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7.5l8.5 6 8.5-6"/></svg></i><span><b>{{ $f['email'] }}</b><small>Email</small></span></a>
             @endif
           </div>
         @endif
-      </div>
+        @if($f['facebook'] || $f['tiktok'])
+          <h2 class="sf__sochead">Social media</h2>
+          <div class="sf__soc">
+            @if($f['facebook'])
+              <a class="sf__btn" href="{{ $f['facebook'] }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook (opens in a new tab)">Facebook <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+            @endif
+            @if($f['tiktok'])
+              <a class="sf__btn" href="{{ $f['tiktok'] }}" target="_blank" rel="noopener noreferrer" aria-label="TikTok (opens in a new tab)">TikTok <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+            @endif
+          </div>
+        @endif
+      </section>
+    @endif
 
-      <div class="sf__col" role="navigation" aria-label="Explore">
-        <h3 class="sf__h">Explore</h3>
-        <a class="lp-link lp-link--on-dark" href="{{ route('home') }}">Home</a>
-        <a class="lp-link lp-link--on-dark" href="{{ route('catalog') }}">Catalog</a>
-        <a class="lp-link lp-link--on-dark" href="{{ route('design.index') }}">Customize</a>
-        <a class="lp-link lp-link--on-dark" href="{{ route('services.request') }}">Other services</a>
-        <a class="lp-link lp-link--on-dark" href="{{ route('feedback.index') }}">Reviews</a>
-        <a class="lp-link lp-link--on-dark" href="{{ route('orders.index') }}">Track an order</a>
-      </div>
+    <section class="sf__paycol" aria-label="Payment methods">
+      <h2>Ways to pay</h2>
+      <ul class="sf__pay">
+        @foreach($f['payments'] as $p)
+          <li>@if($p['logo'])<img src="{{ $p['logo'] }}" alt="{{ $p['label'] }}" loading="lazy">@else<span>{{ $p['label'] }}</span>@endif</li>
+        @endforeach
+        <li class="sf__more">+ more ways to pay</li>
+      </ul>
+    </section>
+  </div>
 
-      @if($hasContact)
-        <div class="sf__col">
-          <h3 class="sf__h">Contact</h3>
-          @if($phone)<a class="lp-link lp-link--on-dark" href="{{ $bs->phone_href }}">{{ $phone }}</a>@endif
-          @if($email)<a class="lp-link lp-link--on-dark" href="mailto:{{ $email }}">{{ $email }}</a>@endif
-          @if($hours)<p class="sf__line">{{ $hours }}</p>@endif
-        </div>
+  <div class="sf__legal">
+    <div>
+      @if($f['policies'])
+        <ul class="sf__pol" aria-label="Policies">
+          @foreach($f['policies'] as $p)<li><a href="{{ $p['url'] }}">{{ $p['label'] }}</a></li>@endforeach
+        </ul>
       @endif
-
-      <div class="sf__col" role="navigation" aria-label="Policies">
-        <h3 class="sf__h">Policies</h3>
-        <a class="lp-link lp-link--on-dark" href="{{ route('terms') }}">Terms and Conditions</a>
-        <a class="lp-link lp-link--on-dark" href="{{ route('services.terms') }}">Other Services terms and refunds</a>
-        <a class="lp-link lp-link--on-dark" href="{{ route('guide') }}">How to request a custom design</a>
-        <h3 class="sf__h sf__h--gap">We accept</h3>
-        <div class="sf__pay"><span>GCash</span><span>Cards</span></div>
-      </div>
+      <span>&copy; {{ now()->year }} LP Furniture. All rights reserved.</span>
     </div>
+  </div>
 
-    <div class="sf__cta">
-      <div><b>Have a piece in mind?</b><span>Tell us what you need and our team will call you.</span></div>
-      <a class="lp-btn lp-btn--glass-primary" href="{{ route('services.request') }}">Send a request <svg class="lp-btn-icon" aria-hidden="true"><use href="#sf-ar"/></svg></a>
-    </div>
-
-    <div class="sf__bot">
-      <span>&copy; {{ date('Y') }} LP Furniture. All rights reserved.</span>
-      <span>Chat any time with Assistant in the menu: Luma, our 24-hour shop assistant.</span>
-    </div>
+  <div class="sf__wordwrap">
+    <div class="sf__word" aria-hidden="true"><span>LP <em>Furniture</em></span></div>
+    <div class="sf__frost" aria-hidden="true"></div>
   </div>
 </footer>

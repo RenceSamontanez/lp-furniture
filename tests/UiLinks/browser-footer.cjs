@@ -1,7 +1,7 @@
 /*
- * Shared footer browser walk (SCRATCH DATABASE ONLY). Saves screenshots into docs/stage-footer-screenshots/, checks horizontal
+ * Shared footer (v11 Ember Glass) browser walk (SCRATCH DATABASE ONLY). Saves screenshots into docs/stage-footer-screenshots/, checks horizontal
  * scroll at 390px, 44px link/button heights, the nav switching to its dark variant over the footer, and measures text contrast
- * (footer text, links, social buttons, the request strip) from real pixels. Writes docs/stage-footer-screenshots/_checks.json.
+ * (footer text over the glow, pay tiles, links, buttons), keyboard reach, console errors and the footer being attached to the bottom from real pixels. Writes docs/stage-footer-screenshots/_checks.json.
  *
  *   DB_DATABASE=furniture_db_test php artisan migrate:fresh
  *   DB_DATABASE=furniture_db_test php tests/Rbac/seed_screenshots.php
@@ -58,9 +58,15 @@ async function main() {
   let n = 0;
   const pending = new Map();
   const events = [];
+  const errors = [];
   ws.onmessage = (m) => {
     const d = JSON.parse(m.data);
-    if (d.id && pending.has(d.id)) { const { res, rej } = pending.get(d.id); pending.delete(d.id); d.error ? rej(new Error(JSON.stringify(d.error))) : res(d.result); } else if (d.method) events.push(d.method);
+    if (d.id && pending.has(d.id)) { const { res, rej } = pending.get(d.id); pending.delete(d.id); d.error ? rej(new Error(JSON.stringify(d.error))) : res(d.result); } else if (d.method) {
+      events.push(d.method);
+      if (d.method === 'Runtime.exceptionThrown') errors.push('exception ' + JSON.stringify(d.params.exceptionDetails.text));
+      if (d.method === 'Log.entryAdded' && d.params.entry.level === 'error') errors.push((d.params.entry.text || '') + ' ' + (d.params.entry.url || ''));
+      if (d.method === 'Runtime.consoleAPICalled' && d.params.type === 'error') errors.push('console.error ' + JSON.stringify(d.params.args.map((a) => a.value || a.description)));
+    }
   };
   const send = (method, params = {}) => new Promise((res, rej) => { const id = ++n; pending.set(id, { res, rej }); ws.send(JSON.stringify({ id, method, params })); });
   const evalJs = async (expr) => {
@@ -68,7 +74,7 @@ async function main() {
     if (r.exceptionDetails) throw new Error('JS error: ' + (r.exceptionDetails.exception?.description || r.exceptionDetails.text));
     return r.result.value;
   };
-  await send('Page.enable'); await send('Runtime.enable'); await send('Network.enable');
+  await send('Page.enable'); await send('Runtime.enable'); await send('Network.enable'); await send('Log.enable');
 
   const go = async (url, wait = 700) => {
     events.length = 0;
@@ -81,7 +87,7 @@ async function main() {
     const r = await send('Page.captureScreenshot', { format: 'jpeg', quality: 82 });
     fs.writeFileSync(path.join(OUT, file), Buffer.from(r.data, 'base64'));
   };
-  const toBottom = async () => { await evalJs('window.scrollTo(0, document.documentElement.scrollHeight)'); await sleep(600); };
+  const toBottom = async () => { await evalJs(`document.documentElement.style.scrollBehavior = 'auto'`); await evalJs('window.scrollTo(0, document.documentElement.scrollHeight)'); await sleep(600); };
   const cookieFor = (email) => JSON.parse(execFileSync('php', [path.join(ROOT, 'tests', 'UiLinks', 'session-cookie-for.php'), ...(email ? [email] : [])], { cwd: ROOT, encoding: 'utf8' }));
   const setCookie = async (c) => { await send('Network.clearBrowserCookies'); if (c) await send('Network.setCookie', { name: c.name, value: c.value, url: BASE }); };
   const settings = (mode) => execFileSync('php', [path.join(ROOT, 'tests', 'UiLinks', 'footer-settings.php'), mode], { cwd: ROOT, encoding: 'utf8' });
@@ -105,42 +111,115 @@ async function main() {
     return evalJs(`(${SAMPLE})('data:image/png;base64,${r.data}', ${JSON.stringify(items)})`);
   }
 
-  const report = { overflow: [], tap: [], nav: [], contrast: [], states: [] };
-  const home = [['home', '/'], ['catalog', '/catalog']];
+  const report = { overflow: [], tap: [], attached: [], keyboard: [], consoleErrors: [], contrast: [], buttons: null, nav: [], focus: null, states: [] };
+  const pages = [['home', '/'], ['catalog', '/catalog'], ['reviews', '/reviews']];
 
-  for (const state of ['socials', 'blank']) {
-    settings(state === 'socials' ? 'set' : 'blank');
+  for (const state of ['full', 'bare']) {
+    settings(state === 'full' ? 'set' : 'blank');
     for (const signedIn of [false, true]) {
       await setCookie(signedIn ? cookieFor() : null);
-      for (const w of [1440, 390]) {
+      for (const w of [1440, 1024, 390]) {
         await viewport(w, w === 390 ? 844 : 900);
-        for (const [name, url] of home) {
-          await go(url, 900); await toBottom();
+        for (const [name, url] of pages) {
+          errors.length = 0;
+          await go(url, 900);
+          const short = await evalJs(`document.documentElement.scrollHeight <= innerHeight + 1`);
+          const m0 = await evalJs(`(() => { const f = document.querySelector('footer.sf'); const r = f.getBoundingClientRect(); return { short: document.documentElement.scrollHeight <= innerHeight + 1, bottomAtTop: Math.round(r.bottom), vh: innerHeight }; })()`);
+          if (!signedIn && state === 'full' && short) await shot(`short-${name}-${w}-top.jpg`);
+          await toBottom();
           const m = await evalJs(`(() => {
             const f = document.querySelector('footer.sf'); const r = (e) => e.getBoundingClientRect();
-            const hs = [...f.querySelectorAll('a')].filter((a) => a.getClientRects().length).map((a) => ({ t: a.innerText.trim().slice(0, 30), h: Math.round(r(a).height) }));
-            const nav = document.getElementById('site-nav');
-            return { overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth, links: hs, follow: !!f.querySelector('.sf__follow'),
-              fb: !!f.querySelector('[aria-label^="LP Furniture on Facebook"]'), tt: !!f.querySelector('[aria-label^="LP Furniture on TikTok"]'), phone: !!f.querySelector('a[href^="tel:"]'), email: !!f.querySelector('a[href^="mailto:"]'),
-              navLight: nav ? nav.classList.contains('light') : null, navCollapsed: nav ? nav.classList.contains('collapsed') : null, footerTop: Math.round(r(f).top) }; })()`);
+            const links = [...f.querySelectorAll('a')].filter((a) => a.getClientRects().length).map((a) => ({ t: (a.innerText || a.getAttribute('aria-label')).trim().slice(0, 30), h: Math.round(r(a).height), href: a.getAttribute('href') }));
+            const fr = r(f);
+            return { overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth, links, attached: Math.abs(fr.bottom + scrollY - document.documentElement.scrollHeight) < 2,
+              fb: !!f.querySelector('[aria-label^="Facebook"]'), tt: !!f.querySelector('[aria-label^="TikTok"]'), tel: !!f.querySelector('a[href^="tel:"]'), mail: !!f.querySelector('a[href^="mailto:"]'),
+              iframe: !!f.querySelector('iframe[title]'), deadHash: links.some((l) => l.href === '#'), policies: [...f.querySelectorAll('.sf__pol a')].map((a) => a.innerText.trim()),
+              wordOverflow: (() => { const w = f.querySelector('.sf__word'); return w.scrollWidth - w.clientWidth; })() }; })()`);
           const who = signedIn ? 'user' : 'guest';
           const tag = `${name}-${state}-${who}-${w}`;
-          report.states.push({ tag, ...m });
+          const minLink = Math.min(...m.links.map((l) => l.h));
+          const bad = m.overflow > 0 || minLink < 44 || !m.attached || m.deadHash || (short && Math.abs(m0.bottomAtTop - m0.vh) > 2);
           report.overflow.push({ tag, overflow: m.overflow });
-          const short = m.links.filter((l) => l.h < 44);
-          report.tap.push({ tag, min: Math.min(...m.links.map((l) => l.h)), short: short.map((l) => l.t + ':' + l.h) });
-          if (!(who === 'guest')) { /* screenshots below only for the guest to keep the set small */ }
+          report.tap.push({ tag, min: minLink });
+          report.attached.push({ tag, attached: m.attached, shortPage: short, bottomAtTop: m0.bottomAtTop, viewport: m0.vh });
+          report.consoleErrors.push(...errors.map((e) => ({ tag, e })));
+          report.states.push({ tag, fb: m.fb, tt: m.tt, tel: m.tel, mail: m.mail, iframe: m.iframe, policies: m.policies });
+          console.log((bad ? 'CHECK ' : 'ok    ') + tag, `overflow=${m.overflow} minLink=${minLink} attached=${m.attached} short=${short} fb=${m.fb} tt=${m.tt} tel=${m.tel} mail=${m.mail} map=${m.iframe} errs=${errors.length}`);
           if (!signedIn) await shot(`footer-${name}-${state}-${w}.jpg`);
-          console.log((m.overflow > 0 || short.length ? 'CHECK ' : 'ok    ') + tag, `overflow=${m.overflow} minLink=${Math.min(...m.links.map((l) => l.h))} fb=${m.fb} tt=${m.tt} follow=${m.follow} tel=${m.phone} mail=${m.email}`);
-          if (!signedIn && state === 'socials' && w === 1440) report.contrast.push(...(await contrast(`${name}-${w}`)));
-          if (!signedIn && state === 'socials' && w === 390 && name === 'home') report.contrast.push(...(await contrast(`${name}-${w}`)));
         }
       }
     }
   }
 
-  // nav over the footer: scroll so the footer sits under the bar and check the light class is off (dark variant); then scroll up and check it is on again
-  settings('set');
+  // ---- a short page: in a tall window the Other Services terms page does not fill the screen, so the footer must still sit on the bottom edge ----
+  settings('set'); await setCookie(null);
+  for (const [w, h] of [[1440, 2400], [1024, 2400], [390, 3400]]) {
+    await viewport(w, h); await go('/services/terms', 900);
+    const sp = await evalJs(`(() => { const f = document.querySelector('footer.sf').getBoundingClientRect(); return { sh: document.documentElement.scrollHeight, vh: innerHeight, bottom: Math.round(f.bottom), top: Math.round(f.top), overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth }; })()`);
+    const okShort = sp.sh <= sp.vh + 1 && Math.abs(sp.bottom - sp.vh) <= 1;
+    report.attached.push({ tag: `short-terms-${w}`, ...sp, ok: okShort });
+    console.log((okShort && sp.overflow === 0 ? 'ok    ' : 'CHECK ') + `short page ${w}x${h}: scrollHeight=${sp.sh} footer bottom=${sp.bottom} (viewport ${sp.vh}) footer top=${sp.top} overflow=${sp.overflow}`);
+    await shot(`short-terms-${w}.jpg`);
+  }
+
+  // ---- contrast from real pixels (full state, guest): scroll the footer through the viewport in steps ----
+  settings('set'); await setCookie(null);
+  for (const w of [1440, 390]) {
+    await viewport(w, w === 390 ? 844 : 900);
+    await go('/catalog', 900);
+    const total = await evalJs(`(() => { const f = document.querySelector('footer.sf'); return { top: f.getBoundingClientRect().top + scrollY, h: f.offsetHeight, vh: innerHeight, sh: document.documentElement.scrollHeight }; })()`);
+    const seen = new Set();
+    for (let y = total.sh - total.vh; y > total.top - total.vh; y -= Math.floor(total.vh * 0.6)) {
+      await evalJs(`document.documentElement.style.scrollBehavior = 'auto'; window.scrollTo(0, ${Math.max(0, y)})`); await sleep(500);
+      const items = await evalJs(`(() => {
+        const out = []; const w = document.createTreeWalker(document.querySelector('footer.sf'), NodeFilter.SHOW_TEXT); let t;
+        while ((t = w.nextNode())) {
+          if (!t.textContent.trim()) continue;
+          const p = t.parentElement; if (p.closest('svg, style, .sf__word')) continue;
+          const rg = document.createRange(); rg.selectNodeContents(t); const b = rg.getBoundingClientRect();
+          if (!b.width || b.bottom > innerHeight || b.top < 90) continue; /* text under the sticky nav or the Luma launcher would measure those, not the footer */
+          const fab = document.getElementById('chatbot-fab').getBoundingClientRect(); if (b.bottom > innerHeight - 110 && b.right > fab.left - 130) continue; /* launcher plus its Ask Luma tip */
+          const c = getComputedStyle(p).color.match(/[\\d.]+/g).map(Number);
+          out.push({ name: 'footer-${w}', text: t.textContent.trim().slice(0, 34), x: b.left, y: b.top, w: b.width, h: b.height, r: c[0], g: c[1], b: c[2] });
+        }
+        return out; })()`);
+      // the hover colour of the policy links and the map link is white (#fff): measure it over the same pixels
+      for (const it of items.slice()) if (/^(Terms|Privacy|Refund|Payment|Delivery|Warranty|Other Services Terms|Custom Design|Open in)/.test(it.text)) items.push({ ...it, name: it.name + '-hover', r: 255, g: 255, b: 255 });
+      const fresh = items.filter((i) => !seen.has(i.text + i.y.toFixed(0) + y)); items.forEach((i) => seen.add(i.text + i.y.toFixed(0) + y));
+      if (!fresh.length) continue;
+      await evalJs(`(() => { const s = document.createElement('style'); s.id = '__t'; s.textContent = '.sf *, .sf a, .sf b, .sf span, .sf small, .sf address { color: transparent !important; text-shadow: none !important; } .sf svg { visibility: hidden !important; } .sf__pay li img { visibility: hidden !important; }'; document.head.appendChild(s); })()`);
+      await sleep(150);
+      const r = await send('Page.captureScreenshot', { format: 'png' });
+      await evalJs(`document.getElementById('__t').remove()`);
+      report.contrast.push(...(await evalJs(`(${SAMPLE})('data:image/png;base64,${r.data}', ${JSON.stringify(fresh)})`)));
+    }
+  }
+  // the pay tiles' name text is dark on a white tile (measured by the same pixel method): included above via .sf__pay li span
+
+  // ---- shared button audit (tests/ButtonContrast/measure.js) over the footer's pill buttons ----
+  await viewport(1440, 900); await go('/catalog', 600); await toBottom();
+  const bcr = await evalJs(fs.readFileSync(path.join(ROOT, 'tests', 'ButtonContrast', 'measure.js'), 'utf8').trim().replace(/;?$/, ''));
+  report.buttons = { footerRows: (bcr.rows || []).filter((r) => /Facebook|TikTok|Open in Google/.test(r.text)), failuresAll: (bcr.failures || []).map((r) => r.text + ' ' + r.min) };
+  console.log('measure.js footer rows:', JSON.stringify(report.buttons.footerRows.map((r) => ({ t: r.text, min: r.min, h: r.height }))));
+
+  // ---- keyboard: Tab through the whole page, every footer link must receive focus, with a visible ring ----
+  for (const w of [1440, 390]) {
+    await viewport(w, 844); await go('/catalog', 600);
+    const expect = await evalJs(`[...document.querySelectorAll('footer.sf a')].filter((a) => a.getClientRects().length).map((a) => a.getAttribute('href'))`);
+    const got = new Set(); const rings = [];
+    await evalJs(`document.body.focus(); window.scrollTo(0, 0)`);
+    for (let i = 0; i < 160; i++) {
+      await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9 });
+      await send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9 });
+      const a = await evalJs(`(() => { const e = document.activeElement; if (!e || !e.closest || !e.closest('footer.sf') || e.tagName !== 'A') return null; const s = getComputedStyle(e); return { href: e.getAttribute('href'), ring: s.outlineStyle + ' ' + s.outlineWidth + ' ' + s.outlineColor }; })()`);
+      if (a) { got.add(a.href); if (!a.ring.startsWith('solid 3px')) rings.push(a); }
+    }
+    const missing = expect.filter((h) => !got.has(h));
+    report.keyboard.push({ w, expected: expect.length, reached: got.size, missing, badRings: rings.length });
+    console.log((missing.length || rings.length ? 'CHECK ' : 'ok    ') + `keyboard ${w}: reached ${got.size}/${new Set(expect).size}, missing ${JSON.stringify(missing)}, rings not 3px solid: ${rings.length}`);
+  }
+
+  // ---- nav over the footer (dark variant) ----
   await setCookie(null); await viewport(1440, 420);
   await go('/catalog', 800);
   await evalJs(`(() => { const f = document.querySelector('footer.sf'); window.scrollTo(0, f.getBoundingClientRect().top + scrollY + 80); })()`); await sleep(900);
@@ -152,18 +231,10 @@ async function main() {
   report.nav.push({ overFooterLight: over.light, overFooterCollapsed: over.collapsed, atTopLight: top });
   console.log((over.light === false && top === true ? 'ok    ' : 'CHECK ') + 'nav over footer: light=' + over.light + ' collapsed=' + over.collapsed + ', at top light=' + top);
 
-  // keyboard focus ring on a footer link and a social button
-  await go('/catalog', 600); await toBottom();
-  await evalJs(`document.querySelector('footer.sf .sf__soc').focus()`);
-  const key = async (k, code, vk) => { await send('Input.dispatchKeyEvent', { type: 'keyDown', key: k, code, windowsVirtualKeyCode: vk }); await send('Input.dispatchKeyEvent', { type: 'keyUp', key: k, code, windowsVirtualKeyCode: vk }); };
-  await key('Tab', 'Tab', 9); await key('Tab', 'Tab', 9); await sleep(200);
-  const ring = await evalJs(`(() => { const a = document.activeElement; const s = getComputedStyle(a); return { el: (a.innerText || '').trim().slice(0, 24), outline: s.outlineStyle + ' ' + s.outlineWidth + ' ' + s.outlineColor }; })()`);
-  report.focus = ring;
-  console.log('focus rings', JSON.stringify(ring));
-
-  const worst = report.contrast.slice().sort((a, b) => a.ratio - b.ratio).slice(0, 8);
+  const worst = report.contrast.slice().sort((a, b) => a.ratio - b.ratio).slice(0, 10);
   report.lowest = worst;
   console.log('lowest contrast:', worst.map((c) => `${c.ratio} ${c.name} "${c.text}"`).join(' | '));
+  console.log('console errors:', report.consoleErrors.length, JSON.stringify(report.consoleErrors.slice(0, 5)));
   fs.writeFileSync(path.join(OUT, '_checks.json'), JSON.stringify(report, null, 2));
   settings('set');
   chrome.kill();

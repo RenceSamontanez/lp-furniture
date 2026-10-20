@@ -7,16 +7,38 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Concerns\BuildsCustomOrderFixtures;
 use Tests\TestCase;
 
-/** The shared customer footer (partials/site-footer) and the TikTok/Facebook fields in Contact Settings. */
+/** The shared customer footer (v11 "Ember Glass", partials/site-footer) and its Contact Settings fields. */
 class SiteFooterTest extends TestCase
 {
     use RefreshDatabase;
     use BuildsCustomOrderFixtures;
 
+    private array $tempDirs = [];
+
+    protected function tearDown(): void
+    {
+        foreach ($this->tempDirs as $dir) {
+            foreach (glob($dir . '/*') ?: [] as $f) {
+                @unlink($f);
+            }
+            @rmdir($dir);
+        }
+        parent::tearDown();
+    }
+
     private function settings(array $values): void
     {
         $row = BusinessSetting::query()->orderBy('id')->first() ?? new BusinessSetting();
-        $row->forceFill($values + ['phone' => '', 'email' => '', 'facebook_url' => '', 'tiktok_url' => null])->save();
+        $row->forceFill($values + [
+            'phone' => '', 'email' => '', 'facebook_url' => '', 'tiktok_url' => null,
+            'shop_address' => null, 'shop_landmarks' => null, 'map_lat' => null, 'map_lng' => null,
+        ])->save();
+    }
+
+    /** No built-in fallbacks, so a test sees exactly what Contact Settings hold. */
+    private function noFallbacks(): void
+    {
+        config(['shop.fallback' => array_fill_keys(['facebook_url', 'tiktok_url', 'phone', 'email', 'shop_address', 'shop_landmarks'], null)]);
     }
 
     private function home(): string
@@ -24,20 +46,35 @@ class SiteFooterTest extends TestCase
         return $this->get(route('home'))->assertOk()->getContent();
     }
 
-    public function test_footer_renders_once_on_the_home_page_and_an_inner_page_and_is_dark(): void
+    public function test_footer_renders_once_on_the_home_page_and_inner_pages(): void
     {
         foreach ([route('home'), route('catalog'), route('terms')] as $url) {
             $html = $this->get($url)->assertOk()->getContent();
-            $this->assertSame(1, substr_count($html, 'class="sf"'), $url);
-            $this->assertStringContainsString('data-nav="dark" aria-label="Site footer"', $html);
+            $this->assertSame(1, substr_count($html, '<footer'), $url);
+            $this->assertStringContainsString('<footer class="sf" id="footer-section" data-nav="dark">', $html);
             $this->assertStringContainsString('assets/css/site-footer.css', $html);
-            $this->assertStringNotContainsString('site-footer"', str_replace('assets/css/site-footer.css', '', $html));
             $this->assertStringNotContainsString('class="lp-footer"', $html);
-            $this->assertStringContainsString('Send a request', $html);
-            $this->assertStringContainsString(route('services.request'), $html);
-            $this->assertStringContainsString('Assistant in the menu', $html);
-            $this->assertStringContainsString('&copy; ' . date('Y') . ' LP Furniture', str_replace('©', '&copy;', $html));
+            $this->assertStringContainsString('Visit our shop', $html);
+            $this->assertStringContainsString('Ways to pay', $html);
+            $this->assertStringContainsString('+ more ways to pay', $html);
+            $this->assertStringContainsString('&copy; ' . now()->year . ' LP Furniture. All rights reserved.', str_replace('©', '&copy;', $html));
+            // the giant wordmark is decoration only
+            $this->assertStringContainsString('<div class="sf__word" aria-hidden="true">', $html);
+            // removed from the old footer
+            $this->assertStringNotContainsString('sf__about', $html);
+            $this->assertStringNotContainsString('sf__logo', $html);
         }
+    }
+
+    public function test_the_three_columns_are_in_order_and_social_sits_under_contact(): void
+    {
+        $this->settings(['phone' => '0917 123 4567', 'email' => 'hello@lpfurniture.test', 'facebook_url' => 'https://facebook.com/lp', 'tiktok_url' => 'https://www.tiktok.com/@lp']);
+        $html = $this->home();
+        $order = array_map(fn ($s) => strpos($html, $s), ['Visit our shop', 'Contact us', 'Social media', 'Ways to pay', 'sf__pol', 'sf__word"']);
+        $sorted = $order;
+        sort($sorted);
+        $this->assertSame($sorted, $order);
+        $this->assertNotContains(false, $order);
     }
 
     public function test_footer_is_absent_on_focus_pages_and_the_admin(): void
@@ -49,122 +86,205 @@ class SiteFooterTest extends TestCase
         $admin = $this->makeUser('admin');
         $html = $this->actingAs($admin, 'admin')->get(route('admin.dashboard'))->assertOk()->getContent();
         $this->assertStringNotContainsString('class="sf"', $html);
+        $this->assertStringNotContainsString('sf__word', $html);
     }
 
-    public function test_socials_are_hidden_when_blank_and_follow_row_disappears(): void
+    public function test_placeholders_never_show_and_the_config_fallbacks_fill_in(): void
     {
-        $this->settings(['phone' => '', 'email' => '']);
-        $html = $this->home();
-        $this->assertStringNotContainsString('Follow us', $html);
-        $this->assertStringNotContainsString('on Facebook', $html);
-        $this->assertStringNotContainsString('on TikTok', $html);
-    }
-
-    public function test_socials_show_with_target_and_rel_only_when_set(): void
-    {
-        $this->settings(['facebook_url' => 'https://facebook.com/lpfurniture']);
-        $html = $this->home();
-        $this->assertStringContainsString('Follow us', $html);
-        $this->assertStringContainsString('href="https://facebook.com/lpfurniture" target="_blank" rel="noopener noreferrer" aria-label="LP Furniture on Facebook (opens in a new tab)"', $html);
-        $this->assertStringNotContainsString('on TikTok', $html);
-
-        $this->settings(['tiktok_url' => 'https://www.tiktok.com/@lpfurniture']);
-        $html = $this->home();
-        $this->assertStringContainsString('Follow us', $html);
-        $this->assertStringContainsString('href="https://www.tiktok.com/@lpfurniture" target="_blank" rel="noopener noreferrer" aria-label="LP Furniture on TikTok (opens in a new tab)"', $html);
-        $this->assertStringNotContainsString('on Facebook', $html);
-    }
-
-    public function test_a_stored_value_that_is_not_a_valid_link_or_is_the_placeholder_renders_nothing(): void
-    {
-        $this->settings(['facebook_url' => 'javascript:alert(1)', 'tiktok_url' => 'http://tiktok.com/@x']);
-        $html = $this->home();
-        $this->assertStringNotContainsString('Follow us', $html);
-        $this->assertStringNotContainsString('javascript:', $html);
-
-        // the starting placeholders from the migration must never reach customers
         $this->settings(BusinessSetting::DEFAULTS);
         $html = $this->home();
         $this->assertStringNotContainsString('0917-000-0000', $html);
         $this->assertStringNotContainsString('contact@example.com', $html);
         $this->assertStringNotContainsString('your-page', $html);
-        $this->assertStringNotContainsString('Follow us', $html);
+        // fallbacks from config/shop.php
+        $this->assertStringContainsString('0991 239 4770', $html);
+        $this->assertStringContainsString('href="tel:+639912394770"', $html);
+        $this->assertStringContainsString('href="mailto:johncedricklumanglas@gmail.com"', $html);
+        $this->assertStringContainsString('href="https://www.facebook.com/lpfurnituresj"', $html);
+        $this->assertStringContainsString('Sitio Pulo Ilaya, Calit-calit, San Juan, Batangas', $html);
+        $this->assertStringContainsString('San Juan Doctors Hospital', $html);
     }
 
-    public function test_phone_and_email_lines_are_links_and_hidden_when_blank(): void
+    public function test_contact_settings_win_over_the_fallbacks(): void
     {
-        $this->settings(['phone' => '0917 123 4567', 'email' => 'hello@lpfurniture.test']);
+        $this->settings(['phone' => '0917 123 4567', 'email' => 'hello@lpfurniture.test', 'facebook_url' => 'https://facebook.com/lpfurniture', 'shop_address' => 'Test Street 1, Test Town', 'shop_landmarks' => 'Test Landmark']);
         $html = $this->home();
-        $this->assertStringContainsString('href="tel:09171234567"', $html);
+        $this->assertStringContainsString('0917 123 4567', $html);
+        $this->assertStringContainsString('href="tel:+639171234567"', $html);
         $this->assertStringContainsString('href="mailto:hello@lpfurniture.test"', $html);
+        $this->assertStringContainsString('href="https://facebook.com/lpfurniture"', $html);
+        $this->assertStringContainsString('Test Street 1, Test Town', $html);
+        $this->assertStringContainsString('Test Landmark', $html);
+        $this->assertStringNotContainsString('0991 239 4770', $html);
+        $this->assertStringNotContainsString('Sitio Pulo Ilaya', $html);
+    }
 
-        $this->settings(['phone' => '', 'email' => 'hello@lpfurniture.test']);
+    public function test_rows_are_hidden_when_empty_and_the_whole_contact_block_goes_with_them(): void
+    {
+        $this->noFallbacks();
+        $this->settings(['email' => 'hello@lpfurniture.test']);
         $html = $this->home();
         $this->assertStringNotContainsString('href="tel:', $html);
         $this->assertStringContainsString('mailto:hello@lpfurniture.test', $html);
+        $this->assertStringNotContainsString('Social media', $html);
 
-        $this->settings(['phone' => '0917 123 4567', 'email' => '']);
-        $html = $this->home();
-        $this->assertStringNotContainsString('mailto:', $html);
-        $this->assertStringContainsString('href="tel:', $html);
-    }
-
-    public function test_contact_column_is_hidden_when_nothing_to_show(): void
-    {
-        config(['luma.hours' => null]);
         $this->settings([]);
         $html = $this->home();
-        $this->assertStringNotContainsString('>Contact</h3>', $html);
-        $this->assertStringContainsString('aria-label="Policies"', $html);
+        $this->assertStringNotContainsString('Contact us', $html);
+        $this->assertStringNotContainsString('aria-label="Contact"', $html);
+        $this->assertStringContainsString('Ways to pay', $html);
     }
 
-    public function test_hours_text_comes_from_config(): void
+    public function test_tiktok_is_hidden_when_empty_and_shown_with_target_and_rel_when_set(): void
     {
-        $this->settings(['phone' => '0917 123 4567']);
-        $this->assertStringContainsString('Mon to Fri, 8:00 AM to 5:00 PM', $this->home());
-
-        config(['luma.hours' => ['open' => '09:30', 'close' => '18:00', 'days' => [1, 2, 3, 4, 5, 6]]]);
+        $this->settings(['facebook_url' => 'https://facebook.com/lpfurniture']);
         $html = $this->home();
-        $this->assertStringContainsString('Mon to Sat, 9:30 AM to 6:00 PM', $html);
-        $this->assertStringNotContainsString('Mon to Fri, 8:00 AM', $html);
+        $this->assertStringContainsString('Social media', $html);
+        $this->assertStringContainsString('target="_blank" rel="noopener noreferrer" aria-label="Facebook (opens in a new tab)"', $html);
+        $this->assertStringNotContainsString('TikTok', $html);
+        $this->assertStringNotContainsString('href="#"', $html);
+
+        $this->settings(['facebook_url' => 'https://facebook.com/lpfurniture', 'tiktok_url' => 'https://www.tiktok.com/@lpfurniture']);
+        $html = $this->home();
+        $this->assertStringContainsString('href="https://www.tiktok.com/@lpfurniture" target="_blank" rel="noopener noreferrer" aria-label="TikTok (opens in a new tab)"', $html);
+        // stacked: Facebook first, TikTok after
+        $this->assertLessThan(strpos($html, 'aria-label="TikTok'), strpos($html, 'aria-label="Facebook'));
     }
 
-    public function test_policy_and_explore_links_point_to_existing_pages(): void
+    public function test_an_invalid_stored_link_renders_nothing(): void
+    {
+        $this->noFallbacks();
+        $this->settings(['facebook_url' => 'javascript:alert(1)', 'tiktok_url' => 'http://tiktok.com/@x']);
+        $html = $this->home();
+        $this->assertStringNotContainsString('javascript:', $html);
+        $this->assertStringNotContainsString('Social media', $html);
+    }
+
+    public function test_policy_links_show_only_for_routes_that_exist(): void
     {
         $html = $this->home();
-        foreach (['terms', 'services.terms', 'guide', 'catalog', 'design.index', 'services.request', 'feedback.index', 'orders.index'] as $name) {
-            $this->assertStringContainsString('href="' . route($name) . '"', $html, $name);
+        $pol = substr($html, strpos($html, 'class="sf__pol"'));
+        $pol = substr($pol, 0, strpos($pol, '</ul>'));
+
+        $this->assertStringContainsString('href="' . route('terms') . '">Terms and Conditions</a>', $pol);
+        $this->assertStringContainsString('href="' . route('services.terms') . '">Other Services Terms</a>', $pol);
+        $this->assertStringContainsString('href="' . route('guide') . '">Custom Design Guide</a>', $pol);
+        foreach (['Privacy Policy', 'Refund and Cancellation', 'Payment Terms', 'Delivery and Installation', 'Warranty and Care'] as $pending) {
+            $this->assertStringNotContainsString($pending, $pol);
         }
-        $this->get(route('terms'))->assertOk();
-        $this->get(route('services.terms'))->assertOk();
+        $this->assertStringNotContainsString('href="#"', $pol);
+
+        // order is the config order; a pending entry pointing at a route that does not exist is still not rendered
+        config(['shop.policies' => [['label' => 'Ghost', 'route' => 'no.such.route'], ['label' => 'Terms and Conditions', 'route' => 'terms']]]);
+        $html = $this->home();
+        $this->assertStringNotContainsString('Ghost', $html);
+        $this->assertStringContainsString('>Terms and Conditions</a>', $html);
+
+        config(['shop.policies' => [['label' => 'Ghost', 'route' => 'no.such.route']]]);
+        $this->assertStringNotContainsString('sf__pol', $this->home());
     }
 
-    public function test_contact_settings_validate_tiktok_and_facebook_urls(): void
+    public function test_payment_tiles_show_text_without_a_logo_file_and_an_image_with_one(): void
+    {
+        $html = $this->home();
+        $tiles = array_map(fn ($l) => $l, ['GCash', 'Maya', 'UnionBank', 'MariBank', 'Visa', 'Mastercard']);
+        $pos = array_map(fn ($t) => strpos($html, '<li><span>' . $t . '</span></li>'), $tiles);
+        $this->assertNotContains(false, $pos);
+        $sorted = $pos;
+        sort($sorted);
+        $this->assertSame($sorted, $pos);
+        $this->assertStringContainsString('<li class="sf__more">+ more ways to pay</li>', $html);
+        $payList = substr($html, strpos($html, 'class="sf__pay"'));
+        $this->assertStringNotContainsString('<button', substr($payList, 0, strpos($payList, '</ul>')));
+
+        // a logo file for one method turns only that tile into an <img> (decided on the server)
+        $dir = public_path('images/_test_pay_' . uniqid());
+        mkdir($dir, 0777, true);
+        $this->tempDirs[] = $dir;
+        file_put_contents($dir . '/gcash.svg', '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"/>');
+        config(['shop.logo_dir' => 'images/' . basename($dir)]);
+
+        $html = $this->home();
+        $this->assertStringContainsString('<li><img src="' . asset('images/' . basename($dir) . '/gcash.svg') . '" alt="GCash" loading="lazy"></li>', $html);
+        $this->assertStringNotContainsString('<li><span>GCash</span></li>', $html);
+        $this->assertStringContainsString('<li><span>Maya</span></li>', $html);
+        $payList = substr($html, strpos($html, 'class="sf__pay"'));
+        $this->assertStringNotContainsString('onerror', substr($payList, 0, strpos($payList, '</ul>')));
+    }
+
+    public function test_the_map_has_a_title_lazy_loading_and_uses_coordinates_when_set(): void
+    {
+        $this->settings([]);
+        $html = $this->home();
+        $this->assertStringContainsString('<iframe title="Map showing LP Furniture shop location" loading="lazy" referrerpolicy="no-referrer-when-downgrade"', $html);
+        $this->assertStringContainsString('https://maps.google.com/maps?q=' . rawurlencode('Sitio Pulo Ilaya, Calit-calit, San Juan, Batangas') . '&amp;z=16&amp;output=embed', $html);
+        $this->assertStringContainsString('https://www.google.com/maps/search/?api=1&amp;query=' . rawurlencode('Sitio Pulo Ilaya, Calit-calit, San Juan, Batangas'), $html);
+        $this->assertStringContainsString('>Open in Google Maps</a>', $html);
+
+        $this->settings(['map_lat' => '13.8216', 'map_lng' => '121.3965']);
+        $html = $this->home();
+        $this->assertStringContainsString('https://maps.google.com/maps?q=13.8216%2C121.3965&amp;z=17&amp;output=embed', $html);
+        $this->assertStringContainsString('query=13.8216%2C121.3965', $html);
+    }
+
+    public function test_the_whole_visit_block_is_hidden_without_any_address(): void
+    {
+        $this->noFallbacks();
+        $this->settings([]);
+        $html = $this->home();
+        $this->assertStringNotContainsString('Visit our shop', $html);
+        $this->assertStringNotContainsString('<iframe', $html);
+    }
+
+    public function test_the_map_is_not_blocked_by_any_security_header(): void
+    {
+        $res = $this->get(route('home'))->assertOk();
+        $this->assertFalse($res->headers->has('Content-Security-Policy'));
+        $this->assertFalse($res->headers->has('Content-Security-Policy-Report-Only'));
+    }
+
+    public function test_contact_settings_validate_tiktok_facebook_and_map_fields(): void
     {
         $admin = $this->makeUser('admin');
         $base = ['phone' => '09171234567', 'email' => 'hello@lpfurniture.test', 'facebook_url' => 'https://facebook.com/lpfurniture'];
         $put  = fn (array $over) => $this->actingAs($admin, 'admin')->from(route('admin.settings.contact.edit'))
             ->put(route('admin.settings.contact.update'), $over + $base);
 
-        $put(['tiktok_url' => 'https://www.tiktok.com/@lpfurniture'])->assertSessionHasNoErrors();
-        $this->assertSame('https://www.tiktok.com/@lpfurniture', BusinessSetting::query()->first()->tiktok_url);
+        $put(['tiktok_url' => 'https://www.tiktok.com/@lpfurniture', 'shop_address' => 'A Street', 'shop_landmarks' => 'Near B', 'map_lat' => '13.8216', 'map_lng' => '121.3965'])->assertSessionHasNoErrors();
+        $row = BusinessSetting::query()->first();
+        $this->assertSame('https://www.tiktok.com/@lpfurniture', $row->tiktok_url);
+        $this->assertSame('A Street', $row->shop_address);
+        $this->assertEquals(13.8216, (float) $row->map_lat);
+        $this->assertEquals(121.3965, (float) $row->map_lng);
 
-        // blank clears it
-        $put(['tiktok_url' => ''])->assertSessionHasNoErrors();
-        $this->assertNull(BusinessSetting::query()->first()->tiktok_url);
+        // blank clears the optional ones
+        $put(['tiktok_url' => '', 'shop_address' => '', 'shop_landmarks' => '', 'map_lat' => '', 'map_lng' => ''])->assertSessionHasNoErrors();
+        $row = BusinessSetting::query()->first();
+        $this->assertNull($row->tiktok_url);
+        $this->assertNull($row->shop_address);
+        $this->assertNull($row->map_lat);
 
         foreach (['http://tiktok.com/@x', 'https://tiktok.com.evil.io/@x', 'https://example.com/@x', 'https://tiktok.com', 'not a url'] as $bad) {
             $put(['tiktok_url' => $bad])->assertSessionHasErrors('tiktok_url');
         }
-
         foreach (['http://facebook.com/x', 'https://evil.io/lp', 'https://facebook.com.evil.io/lp'] as $bad) {
-            $put(['tiktok_url' => '', 'facebook_url' => $bad])->assertSessionHasErrors('facebook_url');
+            $put(['facebook_url' => $bad])->assertSessionHasErrors('facebook_url');
         }
 
-        // old input is kept on error
-        $page = $this->actingAs($admin, 'admin')->withSession(['_old_input' => ['tiktok_url' => 'https://bad.example/x']])
+        $put(['map_lat' => '90.5', 'map_lng' => '10'])->assertSessionHasErrors('map_lat');
+        $put(['map_lat' => '-91', 'map_lng' => '10'])->assertSessionHasErrors('map_lat');
+        $put(['map_lat' => '10', 'map_lng' => '180.1'])->assertSessionHasErrors('map_lng');
+        $put(['map_lat' => '10', 'map_lng' => '-181'])->assertSessionHasErrors('map_lng');
+        $put(['map_lat' => 'abc', 'map_lng' => '10'])->assertSessionHasErrors('map_lat');
+        $put(['map_lat' => '13.8', 'map_lng' => ''])->assertSessionHasErrors('map_lng');
+        $put(['map_lat' => '-90', 'map_lng' => '180'])->assertSessionHasNoErrors();
+
+        // old input is kept on error and the form explains how to find the numbers
+        $page = $this->actingAs($admin, 'admin')->withSession(['_old_input' => ['map_lat' => '999', 'tiktok_url' => 'https://bad.example/x']])
             ->get(route('admin.settings.contact.edit'))->assertOk()->getContent();
+        $this->assertStringContainsString('value="999"', $page);
         $this->assertStringContainsString('value="https://bad.example/x"', $page);
-        $this->assertStringContainsString('TikTok Page URL (optional)', $page);
+        $this->assertStringContainsString('right-click the exact spot of the shop', $page);
+        $this->assertStringContainsString('Map latitude (optional)', $page);
     }
 }

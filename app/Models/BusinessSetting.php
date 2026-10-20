@@ -30,6 +30,10 @@ class BusinessSetting extends Model
         'email',
         'facebook_url',
         'tiktok_url',
+        'shop_address',
+        'shop_landmarks',
+        'map_lat',
+        'map_lng',
         'updated_by',
     ];
 

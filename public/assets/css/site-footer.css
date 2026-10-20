@@ -1,55 +1,81 @@
-/* Shared customer footer (resources/views/partials/site-footer.blade.php). Values from the approved prototype docs/footer/footer-prototype.html.
-   Dark area: carries data-nav="dark" so the glass nav and toasts switch while it is under them. Buttons are the shared .lp-btn glass variants. */
+/* Shared customer footer (resources/views/partials/site-footer.blade.php), "Ember Glass" v11. Look copied from the approved prototype
+   docs/footer/footer-prototype-v11.html. Full width, attached to the bottom edge (the body is a flex column and main grows, see style.css).
+   Dark area: carries data-nav="dark" so the glass nav and toasts switch while it is under them. */
 .sf {
-  --sf-cream: #FBF3E6; --sf-cream-2: #EADCC3; --sf-gold: #D9A441; --sf-gold-2: #F1D391;
-  position: relative; margin: 0 clamp(10px, 2vw, 28px) clamp(10px, 2vw, 28px); border-radius: 28px; overflow: hidden; color: var(--sf-cream);
+  --sf-night: #0F0B0A; --sf-ember-deep: #4A1E0E; --sf-ember: #A9552B; --sf-ember-hot: #D9793F; --sf-peach: #EDA27F;
+  --sf-text: #F4EAE3; --sf-text2: #BFAEA3; --sf-line: rgba(255,230,210,.14);
+  --sf-page: clamp(20px, 5vw, 72px);
+  position: relative; isolation: isolate; overflow: hidden; flex: none; width: 100%; margin: 0;
+  background: var(--sf-night); color: var(--sf-text); font-family: var(--font-body, 'DM Sans', 'Segoe UI', system-ui, sans-serif);
+}
+.sf *, .sf *::before, .sf *::after { box-sizing: border-box; }
+.sf a, .sf a:visited { text-decoration: none; }
+.sf :focus-visible { outline: 3px solid var(--sf-peach); outline-offset: 3px; border-radius: 10px; }
+.sf__glow { position: absolute; inset: 0; z-index: -2; pointer-events: none;
   background:
-    radial-gradient(700px 320px at 12% 0%, rgba(217,164,65,.22), transparent 70%),
-    radial-gradient(600px 300px at 95% 100%, rgba(140,100,60,.35), transparent 70%),
-    linear-gradient(160deg, #35241a, #1b110b);
-  border: 1px solid rgba(255,236,200,.18); box-shadow: 0 30px 60px -30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.12);
+    radial-gradient(ellipse 62% 100% at 104% 118%, #F1A98A 0%, var(--sf-ember-hot) 26%, var(--sf-ember) 44%, var(--sf-ember-deep) 66%, transparent 84%),
+    radial-gradient(ellipse 46% 80% at -4% 128%, rgba(120,50,22,.85) 0%, transparent 72%); }
+
+.sf__top { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; padding: clamp(40px,5vw,68px) var(--sf-page) 0;
+  display: grid; grid-template-columns: minmax(0,1fr) minmax(360px,1.15fr) minmax(0,1fr); gap: clamp(28px,4vw,64px); align-items: start; }
+.sf h2 { margin: 0 0 14px; font-family: var(--font-display, 'Playfair Display', Georgia, serif); font-weight: 600; font-size: 1.2rem; color: var(--sf-peach); line-height: 1.25; }
+.sf__visit, .sf__contact, .sf__paycol { min-width: 0; }
+
+.sf__map { border-radius: 16px; overflow: hidden; border: 1px solid var(--sf-line); height: 150px; background: #1a1311; }
+.sf__map iframe { width: 100%; height: 100%; border: 0; display: block; max-width: 100%; filter: grayscale(.55) contrast(.92) brightness(.92); }
+.sf__visit address { font-style: normal; margin-top: 12px; color: var(--sf-text); font-weight: 600; line-height: 1.45; }
+.sf__near { margin: 6px 0 10px; color: var(--sf-text2); font-size: .88rem; line-height: 1.5; max-width: 36ch; text-align: left; }
+.sf__near b { color: var(--sf-text); font-weight: 600; }
+a.sf__open, a.sf__open:visited { color: var(--sf-peach); font-weight: 600; font-size: .92rem; text-decoration: underline; text-underline-offset: 4px; display: inline-flex; min-height: 44px; align-items: center; }
+a.sf__open:hover { color: #fff; }
+
+.sf__rows { display: grid; gap: 10px; }
+a.sf__row, a.sf__row:visited { display: flex; align-items: center; gap: 14px; min-height: 60px; padding: 8px 16px 8px 10px; border-radius: 16px; color: var(--sf-text);
+  background: rgba(255,235,220,.05); border: 1px solid var(--sf-line); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); transition: background .2s, border-color .2s; }
+a.sf__row:hover { background: rgba(255,235,220,.11); border-color: rgba(237,162,127,.55); }
+.sf__row i { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; border: 1px solid rgba(237,162,127,.55); color: var(--sf-peach); background: rgba(237,162,127,.08); }
+.sf__row svg { width: 19px; height: 19px; }
+.sf__row > span { min-width: 0; }
+.sf__row b { display: block; font-size: clamp(.92rem, 1.1vw + .5rem, 1.06rem); font-weight: 600; color: #fff; line-height: 1.25; overflow-wrap: anywhere; }
+.sf__row small { display: block; color: var(--sf-text2); font-size: .82rem; margin-top: 1px; }
+.sf__sochead { margin-top: 26px !important; }
+.sf__rows + .sf__sochead { margin-top: 26px; }
+.sf__soc { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+a.sf__btn, a.sf__btn:visited { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 20px; border-radius: 999px; font-weight: 600; font-size: .95rem; color: var(--sf-text);
+  background: rgba(255,235,220,.06); border: 1px solid rgba(255,230,210,.28); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: background .2s, color .2s, border-color .2s; }
+a.sf__btn:hover { background: var(--sf-peach); color: #1b0f0a; border-color: var(--sf-peach); }
+.sf__btn svg { width: 16px; height: 16px; }
+
+.sf__pay { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
+.sf__pay li { height: 62px; border-radius: 14px; background: rgba(255,255,255,.94); display: grid; place-items: center; padding: 6px; box-shadow: 0 14px 24px -16px rgba(0,0,0,.8); }
+.sf__pay li img { display: block; max-width: 82%; max-height: 34px; width: auto; height: auto; object-fit: contain; }
+.sf__pay li span { font-weight: 700; font-size: .92rem; color: #3A2E26; text-align: center; line-height: 1.1; }
+.sf__pay li.sf__more { grid-column: 1 / -1; height: auto; background: none; border: 0; box-shadow: none; justify-content: flex-start; justify-items: start; padding: 2px 4px 0;
+  font-size: .95rem; font-weight: 600; color: var(--sf-text2); letter-spacing: .02em; }
+
+.sf__legal { position: relative; z-index: 2; max-width: 1280px; margin: clamp(28px,3.5vw,48px) auto 0; padding: 0 var(--sf-page); }
+.sf__legal > div { padding: 14px 0 20px; border-top: 1px solid var(--sf-line); display: flex; flex-direction: column; gap: 2px; align-items: flex-start; color: var(--sf-text2); font-size: .9rem; }
+.sf__legal > div > span { display: inline-flex; align-items: center; min-height: 44px; }
+.sf__pol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 0 26px; }
+.sf__legal a, .sf__legal a:visited { display: inline-flex; align-items: center; min-height: 44px; color: var(--sf-text); font-weight: 600; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(237,162,127,.6); }
+.sf__legal a:hover { color: #fff; text-decoration-color: var(--sf-peach); text-decoration-thickness: 2px; } /* white, not peach: peach over the bright part of the glow measured 2.7:1 */
+
+/* the big wordmark: decorative; the bottom fog (1.5px blur plus a faint dark gradient) softens its lower half. No side blur. */
+.sf__wordwrap { position: relative; }
+.sf__word { position: relative; z-index: 1; margin-top: -.04em; text-align: center; white-space: nowrap; line-height: .84; overflow: hidden; max-width: 100%;
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif); font-weight: 700; font-size: clamp(3.2rem, 13.2vw, 15rem); letter-spacing: -.02em; padding: 0 2vw; }
+.sf__word span { display: inline-block; padding-bottom: .12em; color: rgba(241,211,145,.82); }
+.sf__word em { font-style: italic; color: rgba(255,255,255,.8); }
+.sf__frost { position: absolute; z-index: 2; pointer-events: none; top: auto; bottom: 0; left: 0; right: 0; height: 70%;
+  -webkit-backdrop-filter: blur(1.5px); backdrop-filter: blur(1.5px); background: linear-gradient(to bottom, rgba(15,11,10,0), rgba(15,11,10,.12));
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 85%); mask-image: linear-gradient(to bottom, transparent 0%, #000 85%); }
+
+@media (max-width: 1100px) { .sf__top { grid-template-columns: 1fr 1fr; } .sf__visit { grid-column: 1 / -1; } }
+@media (max-width: 620px) {
+  .sf__top { grid-template-columns: 1fr; }
+  .sf__pay { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .sf__word { font-size: 13.4vw; }
+  .sf__legal { padding-bottom: 76px; } /* keeps the copyright line clear of the Luma launcher on phones */
 }
-.sf::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--sf-gold), transparent); opacity: .7; }
-.sf::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(98deg, rgba(255,255,255,.025) 0 2px, transparent 2px 11px); pointer-events: none; }
-.sf__in { position: relative; z-index: 1; padding: clamp(26px,4vw,52px) clamp(20px,4vw,56px) 22px; }
-.sf__top { display: grid; grid-template-columns: 1.5fr 1fr 1.25fr 1fr; gap: clamp(22px,3vw,48px); }
-.sf__top:not(:has(.sf__col:nth-child(4))) { grid-template-columns: 1.5fr 1fr 1fr; }
-.sf__logo { font-family: var(--font-display, 'Playfair Display', Georgia, serif); font-size: 1.6rem; color: var(--sf-gold-2); font-weight: 600; white-space: nowrap; }
-.sf__logo em { color: #fff; font-style: italic; }
-.sf__about { margin: 12px 0 18px; color: var(--sf-cream-2); font-size: .94rem; line-height: 1.6; max-width: 36ch; }
-h3.sf__h { margin: 0 0 14px; font-family: inherit; font-size: .74rem; letter-spacing: .18em; text-transform: uppercase; color: var(--sf-gold-2); font-weight: 700; }
-h3.sf__h--gap { margin-top: 16px; }
-.sf__col { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
-.sf__line { display: flex; align-items: center; min-height: 44px; margin: 0; color: var(--sf-cream-2); font-size: .94rem; line-height: 1.45; }
-.sf__follow { display: flex; flex-wrap: wrap; gap: 10px; }
-.sf__soc { text-decoration: none; }
-.sf__pay { display: flex; gap: 8px; flex-wrap: wrap; }
-.sf__pay span { font-size: .78rem; font-weight: 700; padding: 6px 12px; border-radius: 999px; background: rgba(20,11,7,.5); border: 1px solid rgba(255,236,200,.22); color: var(--sf-cream); }
-
-/* .lp-link on the dark footer: pale text, gold underline on hover, 44px tap height. Same family as the shared .lp-link. */
-a.lp-link.lp-link--on-dark:any-link {
-  display: flex; align-items: center; min-height: 44px; max-width: 100%; overflow-wrap: anywhere;
-  color: var(--sf-cream-2); font-size: .94rem; font-weight: 500; line-height: 1.45;
-  text-decoration: none;
-}
-a.lp-link.lp-link--on-dark:any-link:visited { color: var(--sf-cream-2); }
-a.lp-link.lp-link--on-dark:any-link:hover { color: #fff; text-decoration: underline; text-decoration-color: var(--sf-gold-2); text-decoration-thickness: 2px; text-underline-offset: 4px; }
-a.lp-link.lp-link--on-dark:any-link:focus-visible { outline: 3px solid var(--sf-gold-2); outline-offset: 3px; border-radius: 10px; box-shadow: none; }
-
-.sf__cta { margin-top: 30px; padding: 18px 22px; border-radius: 18px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-  background: rgba(255,244,226,.07); border: 1px solid rgba(255,236,200,.22); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
-.sf__cta b { display: block; font-family: var(--font-display, 'Playfair Display', Georgia, serif); font-size: 1.25rem; color: #fff; font-weight: 600; }
-.sf__cta span { display: block; color: var(--sf-cream-2); font-size: .9rem; margin-top: 2px; }
-.sf__bot { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255,236,200,.18); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: .82rem; color: var(--sf-cream-2); padding-right: 96px; } /* clear of the Luma launcher */
-
-
-@media (max-width: 1000px) { .sf__top, .sf__top:not(:has(.sf__col:nth-child(4))) { grid-template-columns: 1fr 1fr; } .sf__brand { grid-column: 1 / -1; } }
-@media (max-width: 560px) {
-  .sf__top, .sf__top:not(:has(.sf__col:nth-child(4))) { grid-template-columns: 1fr; }
-  .sf__soc { flex: 1 1 100%; justify-content: flex-start; }
-  .sf__cta { flex-direction: column; align-items: stretch; }
-  .sf__cta .lp-btn { justify-content: center; }
-  .sf__bot { padding-right: 0; }
-  .sf__in { padding-bottom: 96px; } /* keeps the last line clear of the Luma launcher */
-}
-@media (prefers-reduced-motion: reduce) { .sf, .sf * { transition: none !important; } }
+@media (min-width: 621px) { .sf__legal > div { padding-right: 96px; } } /* ...and on desktop, where the launcher sits bottom right */
+@media (prefers-reduced-motion: reduce) { .sf *, .sf { transition: none !important; } }

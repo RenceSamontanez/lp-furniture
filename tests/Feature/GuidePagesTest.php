@@ -98,7 +98,7 @@ class GuidePagesTest extends TestCase
 
     public function test_the_footer_links_to_the_guide_on_both_layouts(): void
     {
-        $this->get(route('catalog'))->assertOk()->assertSee('href="' . route('guide') . '"', false)->assertSee('How to request a custom design');
+        $this->get(route('catalog'))->assertOk()->assertSee('href="' . route('guide') . '"', false)->assertSee('>Custom Design Guide</a>', false);
 
         $admin = $this->makeUser('admin');
         $this->actingAs($admin, 'admin')->get(route('admin.dashboard'))->assertOk()

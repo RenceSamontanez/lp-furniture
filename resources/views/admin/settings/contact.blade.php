@@ -57,6 +57,42 @@
         </div>
       </div>
 
+      <div style="margin:26px 0 8px;font-weight:700;font-size:14px;">Shop location (website footer)</div>
+      <div style="margin-bottom:16px;">
+        <label class="form-label" for="shop_address">Shop address</label>
+        <input type="text" id="shop_address" name="shop_address" class="form-input" maxlength="255"
+               placeholder="e.g. Sitio Pulo Ilaya, Calit-calit, San Juan, Batangas"
+               value="{{ old('shop_address', $settings->shop_address) }}"/>
+        @error('shop_address')<div style="font-size:12px;color:#B3261E;margin-top:4px;">{{ $message }}</div>@enderror
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Leave empty to use the address built into the website.</div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label class="form-label" for="shop_landmarks">Nearby places</label>
+        <input type="text" id="shop_landmarks" name="shop_landmarks" class="form-input" maxlength="500"
+               placeholder="e.g. San Juan Doctors Hospital, Calit-calit Barangay Hall"
+               value="{{ old('shop_landmarks', $settings->shop_landmarks) }}"/>
+        @error('shop_landmarks')<div style="font-size:12px;color:#B3261E;margin-top:4px;">{{ $message }}</div>@enderror
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px;">
+        <div style="flex:1 1 200px;">
+          <label class="form-label" for="map_lat">Map latitude (optional)</label>
+          <input type="text" inputmode="decimal" id="map_lat" name="map_lat" class="form-input" maxlength="20" placeholder="e.g. 13.8123456"
+                 value="{{ old('map_lat', $settings->map_lat) }}"/>
+          @error('map_lat')<div style="font-size:12px;color:#B3261E;margin-top:4px;">{{ $message }}</div>@enderror
+        </div>
+        <div style="flex:1 1 200px;">
+          <label class="form-label" for="map_lng">Map longitude (optional)</label>
+          <input type="text" inputmode="decimal" id="map_lng" name="map_lng" class="form-input" maxlength="20" placeholder="e.g. 121.3912345"
+                 value="{{ old('map_lng', $settings->map_lng) }}"/>
+          @error('map_lng')<div style="font-size:12px;color:#B3261E;margin-top:4px;">{{ $message }}</div>@enderror
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin:0 0 20px;">
+        To get these numbers: open Google Maps, right-click the exact spot of the shop, and click the two numbers at the top of the menu
+        (the first is the latitude, the second the longitude). With both filled in, the footer map and the "Open in Google Maps" link point to that exact spot.
+        Leave both empty to search by the address instead.
+      </div>
+
       <button type="submit" class="admin-btn admin-btn-gold" style="width:100%;justify-content:center;padding:13px;font-size:14px;">
         Save Contact Settings
       </button>
