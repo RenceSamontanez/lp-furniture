@@ -64,6 +64,7 @@ function lumaSetPose(name) {
   if (!LUMA_POSES[name] || !win || !a || !b || name === lumaPose) return;
   const next = lumaFront === 'a' ? b : a;
   const prev = lumaFront === 'a' ? a : b;
+  next.style.visibility = '';
   next.src = APP.lumaPoseBase + '/luma-' + name + '.png';
   next.style.transform = lumaPoseShift(name);
   next.classList.add('on');
@@ -72,6 +73,27 @@ function lumaSetPose(name) {
   lumaPose = name;
   win.setAttribute('data-pose', name);
   lumaSetStatus(name);
+}
+
+/* A pose (or avatar) that fails to load never shows a broken-image icon: a pose falls back to the smiling pose, and if that fails too
+   the image is hidden. The stage keeps its size (.luma-pic has a fixed aspect ratio), so the layout does not jump. */
+function lumaImgFailed(img) {
+  if (!img || !img.src || img.src.indexOf('data:') === 0) return;
+  const smiling = APP.lumaPoseBase + '/luma-smiling.png';
+  const isPose = !!img.closest('.luma-pic');
+  if (isPose && img.getAttribute('src') !== smiling) {
+    img.setAttribute('src', smiling);
+    img.style.transform = lumaPoseShift('smiling');
+  } else {
+    img.style.visibility = 'hidden';
+  }
+}
+
+function lumaWatchImages() {
+  document.querySelectorAll('#chatbot-window img, #chatbot-fab img').forEach(img => {
+    img.addEventListener('error', () => lumaImgFailed(img));
+    if (img.complete && img.naturalWidth === 0 && img.getAttribute('src') && img.getAttribute('src').indexOf('data:') !== 0) lumaImgFailed(img);   // already failed before this script ran
+  });
 }
 
 function lumaSetStatus(name) {
@@ -608,11 +630,13 @@ async function sendChat() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',   // an expired session answers 419 as JSON instead of redirecting to the login page
         'X-CSRF-TOKEN': APP.csrfToken,
       },
       body: JSON.stringify({ message: msg }),
     });
     const data = await res.json();
+    if (!res.ok || typeof data.response !== 'string') throw new Error('chat request failed: ' + res.status);
     think.remove();
     addBotMessage(data.response, data.suggestions, data.products, data);
     // A clarifying question or the "I couldn't quite find an answer" fallback: she wonders. Anything else: she smiles.
@@ -621,6 +645,7 @@ async function sendChat() {
   } catch (e) {
     think.remove();
     addBotMessage("Sorry, I'm having trouble right now. Please try again!", []);
+    input.value = msg;   // keep what the customer typed so they can send it again
     answered = 'wondering';
   }
   lumaBusy = false;
@@ -631,6 +656,7 @@ async function sendChat() {
 /* Typing: she listens ("asked"); a little after the last key she settles back to "waiting" */
 document.addEventListener('DOMContentLoaded', () => {
   const input = document.getElementById('chat-input');
+  lumaWatchImages();
   if (!input) return;
   input.addEventListener('input', () => {
     if (lumaBusy) return;

@@ -1,3 +1,11 @@
+@php
+  // Root-absolute paths ("/images/luma/..."), never relative and never tied to APP_URL's host or scheme, so the widget works
+  // from any page nesting, host name (local, LAN IP, tunnel) and under a sub-folder install.
+  $lpPath  = fn (string $p) => parse_url(asset($p), PHP_URL_PATH);
+  $lpRoute = fn (string $name) => route($name, [], false);
+  // Version query string follows the file's modified time, so an edited main.js / luma.css is never served from a stale cache.
+  $lpVer   = fn (string $p) => $lpPath($p) . '?v=' . (@filemtime(public_path($p)) ?: 1);
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +15,7 @@
 <title>@yield('title', 'LP Furniture')</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="{{ asset('assets/style.css') }}"/>
-<link rel="stylesheet" href="{{ asset('assets/css/luma.css') }}"/>
+<link rel="stylesheet" href="{{ $lpVer('assets/css/luma.css') }}"/>
 @stack('styles')
 </head>
 <body>
@@ -96,7 +104,7 @@
 </svg>
 <div class="chatbot-fab" id="chatbot-fab">
   <button type="button" class="luma-fab-btn" id="chatbot-fab-btn" aria-label="Open chat with Luma" aria-controls="chatbot-window" aria-expanded="false">
-    <span class="luma-ring"><span class="luma-face"><img src="{{ asset('images/luma/luma-smiling.png') }}" width="500" height="500" alt="" decoding="async"></span></span>
+    <span class="luma-ring"><span class="luma-face"><img src="{{ $lpPath('images/luma/luma-smiling.png') }}" width="500" height="500" alt="" decoding="async"></span></span>
   </button>
   <span class="luma-fab-tip" id="luma-fab-tip" aria-hidden="true">Ask Luma</span>
   <button type="button" class="luma-fab-x" id="luma-fab-x" aria-label="Hide Luma (bring her back from the Assistant link in the menu)"><span aria-hidden="true">&times;</span></button>
@@ -111,7 +119,7 @@
 </div>
 <div class="chatbot-window" id="chatbot-window" role="region" aria-label="Chat with Luma" data-pose="greeting">
   <div class="chat-header">
-    <div class="luma-ring luma-ring--head"><span class="luma-face"><img src="{{ asset('images/luma/luma-smiling.png') }}" width="500" height="500" alt="" decoding="async"></span></div>
+    <div class="luma-ring luma-ring--head"><span class="luma-face"><img src="{{ $lpPath('images/luma/luma-smiling.png') }}" width="500" height="500" alt="" decoding="async"></span></div>
     <div class="chat-header-text">
       <h4>Luma <svg class="luma-spark" aria-hidden="true"><use href="#luma-sp"/></svg></h4>
       <p>Shop Assistant</p>
@@ -121,7 +129,7 @@
   </div>
   <div class="luma-stage" id="luma-stage">
     <div class="luma-pic" aria-hidden="true">
-      <img class="on" id="luma-pose-a" src="{{ asset('images/luma/luma-greeting.png') }}" width="500" height="500" alt="">
+      <img class="on" id="luma-pose-a" src="{{ $lpPath('images/luma/luma-greeting.png') }}" width="500" height="500" alt="">
       <img id="luma-pose-b" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" width="500" height="500" alt="">
     </div>
     <div class="luma-status" id="luma-status" aria-hidden="true">Hi there!</div>
@@ -141,24 +149,24 @@
 <script>
   const APP = {
     csrfToken: "{{ csrf_token() }}",
-    chatbotUrl: "{{ route('chatbot.respond') }}",
+    chatbotUrl: "{{ $lpRoute('chatbot.respond') }}",
     isLoggedIn: {{ Auth::check() ? 'true' : 'false' }},
-    loginUrl: "{{ route('login') }}",
-    registerUrl: "{{ route('register') }}",
-    catalogUrl: "{{ route('catalog') }}",
-    cartUrl: "{{ route('cart.index') }}",
-    checkoutUrl: "{{ route('checkout') }}",
-    ordersUrl: "{{ route('orders.index') }}",
-    validationUrl: "{{ route('validation.show') }}",
-    designUrl: "{{ route('design.index') }}",
-    forgotPasswordUrl: "{{ route('password.request') }}",
-    homeUrl: "{{ route('home') }}",
-    lumaPoseBase: "{{ asset('images/luma') }}",
+    loginUrl: "{{ $lpRoute('login') }}",
+    registerUrl: "{{ $lpRoute('register') }}",
+    catalogUrl: "{{ $lpRoute('catalog') }}",
+    cartUrl: "{{ $lpRoute('cart.index') }}",
+    checkoutUrl: "{{ $lpRoute('checkout') }}",
+    ordersUrl: "{{ $lpRoute('orders.index') }}",
+    validationUrl: "{{ $lpRoute('validation.show') }}",
+    designUrl: "{{ $lpRoute('design.index') }}",
+    forgotPasswordUrl: "{{ $lpRoute('password.request') }}",
+    homeUrl: "{{ $lpRoute('home') }}",
+    lumaPoseBase: "{{ $lpPath('images/luma') }}",
     lumaHours: @json(config('luma.hours') ? config('luma.hours') + ['tz' => config('luma.timezone', 'Asia/Manila')] : null),
   };
 </script>
 
-<script src="{{ asset('assets/main.js') }}"></script>
+<script src="{{ $lpVer('assets/main.js') }}"></script>
 <script src="{{ asset('assets/js/lp-modal.js') }}"></script>
 @stack('scripts')
 
