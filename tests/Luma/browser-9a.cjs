@@ -197,6 +197,38 @@ async function main() {
       results.push({ file: `nav-${vp}-${sch}`, nav });
     }
   }
+  // ── interaction states: hover, keyboard focus, disabled, each checked by the same audits and saved as a crop of the panel ──
+  for (const sch of (process.env.SCHEMES || 'light,dark').split(',')) {
+    const vp = 1280;
+    await scheme(sch); await setVp(vp, 900, 1);
+    await send('Network.clearBrowserCookies'); await fakeClock('2026-10-20T11:00:00+08:00');
+    await go('/'); await say('do you have chairs', 1300);
+    const centre = (sel) => evalJs(`(() => { const e = document.querySelector(${JSON.stringify(sel)}); e.scrollIntoView({ block: 'nearest' }); const b = e.getBoundingClientRect(); return { x: b.x + b.width / 2, y: b.y + b.height / 2 }; })()`);
+    const hover = async (sel) => { const c = await centre(sel); await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: c.x, y: c.y }); await sleep(350); };
+    const unhover = async () => { await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 5, y: 5 }); await sleep(250); };
+    const focusKey = async (sel) => { await evalJs(`document.querySelector(${JSON.stringify(sel)}).blur(); 0`); await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Shift', code: 'ShiftLeft' }); await send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Shift', code: 'ShiftLeft' }); await evalJs(`document.querySelector(${JSON.stringify(sel)}).focus(); 0`); await sleep(250); };
+    const state = async (name, sel) => {
+      const text = await evalJs(TEXT_SWEEP);
+      const buttons = await evalJs(BUTTONS);
+      const fails = buttons.failures.filter((f) => !/Customize Furniture|Contact Us|Shop Now/.test(f.text) && !/btn-view-details/.test(f.cls));
+      await clip('#chatbot-window', `state-${name}-${vp}${sch === 'dark' ? '-dark' : ''}.png`, 14);
+      const ring = sel ? await evalJs(`(() => { const e = document.querySelector(${JSON.stringify(sel)}); const cs = getComputedStyle(e); return { outline: cs.outlineStyle + ' ' + cs.outlineWidth + ' ' + cs.outlineColor, fvMatches: e.matches(':focus-visible'), hover: e.matches(':hover') }; })()`) : null;
+      const bad = text.fails.length || fails.length;
+      console.log((bad ? 'CHECK ' : 'ok    ') + `state-${name}-${vp}-${sch}`, JSON.stringify({ textMin: text.min, textFails: text.fails, buttonFails: fails.map((f) => f.text), ring }));
+      results.push({ file: `state-${name}-${vp}-${sch}`, textMin: text.min, textFails: text.fails, buttonFails: fails.map((f) => f.text), ring });
+    };
+    await hover('.chat-buttons .lp-btn--primary');          await state('hover-primary-button', '.chat-buttons .lp-btn--primary'); await unhover();
+    await hover('.chat-suggestions .chat-chip');            await state('hover-quick-reply-chip', '.chat-suggestions .chat-chip'); await unhover();
+    await hover('.chat-send');                              await state('hover-send-button', '.chat-send'); await unhover();
+    await focusKey('.chat-suggestions .chat-chip');         await state('focus-quick-reply-chip', '.chat-suggestions .chat-chip');
+    await focusKey('.chat-buttons .lp-btn--primary');       await state('focus-primary-button', '.chat-buttons .lp-btn--primary');
+    await focusKey('.chat-input');                          await state('focus-text-input', '.chat-input');
+    await focusKey('.chat-close');                          await state('focus-close-button', '.chat-close');
+    await evalJs(`(() => { const b = document.querySelector('.chat-buttons .lp-btn--primary'); b.setAttribute('aria-disabled', 'true'); b.blur(); })()`); await sleep(250);
+    await state('disabled-primary-button', null);
+    await evalJs(`document.querySelector('.chat-buttons .lp-btn--primary').removeAttribute('aria-disabled')`);
+    await fakeClock(null);
+  }
   fs.writeFileSync(path.join(OUT, '_checks.json'), JSON.stringify(results, null, 2));
   ws.close();
   chrome.kill();

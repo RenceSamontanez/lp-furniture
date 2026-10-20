@@ -1,0 +1,718 @@
+[
+  {
+    "file": "panel-greeting-390.jpg",
+    "buttons": 31,
+    "buttonFailures": [],
+    "textNodes": 9,
+    "minTextContrast": 6.17,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "answer-normal-390.jpg",
+    "buttons": 30,
+    "buttonFailures": [],
+    "textNodes": 10,
+    "minTextContrast": 6.17,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "answer-with-cards-390.jpg",
+    "buttons": 32,
+    "buttonFailures": [],
+    "textNodes": 21,
+    "minTextContrast": 6.17,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "clarifying-question-390.jpg",
+    "buttons": 29,
+    "buttonFailures": [],
+    "textNodes": 9,
+    "minTextContrast": 6.17,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "answer-fallback-390.jpg",
+    "buttons": 32,
+    "buttonFailures": [],
+    "textNodes": 12,
+    "minTextContrast": 6.17,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "conversation-collapsed-stage-390.jpg",
+    "buttons": 30,
+    "buttonFailures": [],
+    "textNodes": 12,
+    "minTextContrast": 6.17,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "refund-pick-request-390.jpg",
+    "buttons": 34,
+    "buttonFailures": [],
+    "textNodes": 25,
+    "minTextContrast": 6.17,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "refund-form-card-390.jpg",
+    "buttons": 29,
+    "buttonFailures": [],
+    "textNodes": 33,
+    "minTextContrast": 6.17,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "refund-form-errors-390.jpg",
+    "buttons": 29,
+    "buttonFailures": [],
+    "textNodes": 36,
+    "minTextContrast": 6.17,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "after-hours-notice-390.jpg",
+    "buttons": 31,
+    "buttonFailures": [],
+    "textNodes": 12,
+    "minTextContrast": 6.17,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "after-hours-weekend-390.jpg",
+    "buttons": 31,
+    "buttonFailures": [],
+    "textNodes": 12,
+    "minTextContrast": 6.17,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "nav-390-light",
+    "nav": {
+      "label": "\"Assistant\"",
+      "visible": true,
+      "h": 51,
+      "w": 300,
+      "color": "rgb(232, 221, 208)",
+      "aria": "Assistant: bring Luma back"
+    }
+  },
+  {
+    "file": "panel-greeting-1280.jpg",
+    "buttons": 29,
+    "buttonFailures": [],
+    "textNodes": 10,
+    "minTextContrast": 5.78,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "answer-normal-1280.jpg",
+    "buttons": 28,
+    "buttonFailures": [],
+    "textNodes": 11,
+    "minTextContrast": 5.78,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "answer-with-cards-1280.jpg",
+    "buttons": 30,
+    "buttonFailures": [],
+    "textNodes": 22,
+    "minTextContrast": 5.78,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "clarifying-question-1280.jpg",
+    "buttons": 27,
+    "buttonFailures": [],
+    "textNodes": 10,
+    "minTextContrast": 5.78,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "answer-fallback-1280.jpg",
+    "buttons": 30,
+    "buttonFailures": [],
+    "textNodes": 13,
+    "minTextContrast": 5.78,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "conversation-collapsed-stage-1280.jpg",
+    "buttons": 28,
+    "buttonFailures": [],
+    "textNodes": 13,
+    "minTextContrast": 5.78,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "refund-pick-request-1280.jpg",
+    "buttons": 32,
+    "buttonFailures": [],
+    "textNodes": 26,
+    "minTextContrast": 5.78,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "refund-form-card-1280.jpg",
+    "buttons": 27,
+    "buttonFailures": [],
+    "textNodes": 34,
+    "minTextContrast": 5.78,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "refund-form-errors-1280.jpg",
+    "buttons": 27,
+    "buttonFailures": [],
+    "textNodes": 37,
+    "minTextContrast": 5.78,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "after-hours-notice-1280.jpg",
+    "buttons": 29,
+    "buttonFailures": [],
+    "textNodes": 13,
+    "minTextContrast": 5.78,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "after-hours-weekend-1280.jpg",
+    "buttons": 29,
+    "buttonFailures": [],
+    "textNodes": 13,
+    "minTextContrast": 5.78,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "nav-1280-light",
+    "nav": {
+      "label": "\"Assistant\"",
+      "visible": true,
+      "h": 36,
+      "w": 107,
+      "color": "rgb(232, 221, 208)",
+      "aria": "Assistant: bring Luma back"
+    }
+  },
+  {
+    "file": "panel-greeting-390-dark.jpg",
+    "buttons": 31,
+    "buttonFailures": [],
+    "textNodes": 9,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "answer-normal-390-dark.jpg",
+    "buttons": 30,
+    "buttonFailures": [],
+    "textNodes": 10,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "answer-with-cards-390-dark.jpg",
+    "buttons": 32,
+    "buttonFailures": [],
+    "textNodes": 21,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "clarifying-question-390-dark.jpg",
+    "buttons": 29,
+    "buttonFailures": [],
+    "textNodes": 9,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "answer-fallback-390-dark.jpg",
+    "buttons": 32,
+    "buttonFailures": [],
+    "textNodes": 12,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "conversation-collapsed-stage-390-dark.jpg",
+    "buttons": 30,
+    "buttonFailures": [],
+    "textNodes": 12,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "refund-pick-request-390-dark.jpg",
+    "buttons": 34,
+    "buttonFailures": [],
+    "textNodes": 25,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "refund-form-card-390-dark.jpg",
+    "buttons": 29,
+    "buttonFailures": [],
+    "textNodes": 33,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "refund-form-errors-390-dark.jpg",
+    "buttons": 29,
+    "buttonFailures": [],
+    "textNodes": 36,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "after-hours-notice-390-dark.jpg",
+    "buttons": 31,
+    "buttonFailures": [],
+    "textNodes": 12,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "nav-390-dark",
+    "nav": {
+      "label": "\"Assistant\"",
+      "visible": true,
+      "h": 51,
+      "w": 300,
+      "color": "rgb(232, 221, 208)",
+      "aria": "Assistant: bring Luma back"
+    }
+  },
+  {
+    "file": "panel-greeting-1280-dark.jpg",
+    "buttons": 29,
+    "buttonFailures": [],
+    "textNodes": 10,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "answer-normal-1280-dark.jpg",
+    "buttons": 28,
+    "buttonFailures": [],
+    "textNodes": 11,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "answer-with-cards-1280-dark.jpg",
+    "buttons": 30,
+    "buttonFailures": [],
+    "textNodes": 22,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "clarifying-question-1280-dark.jpg",
+    "buttons": 27,
+    "buttonFailures": [],
+    "textNodes": 10,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "answer-fallback-1280-dark.jpg",
+    "buttons": 30,
+    "buttonFailures": [],
+    "textNodes": 13,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "conversation-collapsed-stage-1280-dark.jpg",
+    "buttons": 28,
+    "buttonFailures": [],
+    "textNodes": 13,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "refund-pick-request-1280-dark.jpg",
+    "buttons": 32,
+    "buttonFailures": [],
+    "textNodes": 26,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "refund-form-card-1280-dark.jpg",
+    "buttons": 27,
+    "buttonFailures": [],
+    "textNodes": 34,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "refund-form-errors-1280-dark.jpg",
+    "buttons": 27,
+    "buttonFailures": [],
+    "textNodes": 37,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "after-hours-notice-1280-dark.jpg",
+    "buttons": 29,
+    "buttonFailures": [],
+    "textNodes": 13,
+    "minTextContrast": 4.93,
+    "textFails": [],
+    "pageOverflow": 0,
+    "chatOverflow": 0,
+    "inside": true,
+    "short": []
+  },
+  {
+    "file": "nav-1280-dark",
+    "nav": {
+      "label": "\"Assistant\"",
+      "visible": true,
+      "h": 36,
+      "w": 107,
+      "color": "rgb(232, 221, 208)",
+      "aria": "Assistant: bring Luma back"
+    }
+  },
+  {
+    "file": "state-hover-primary-button-1280-light",
+    "textMin": 5.78,
+    "textFails": [],
+    "buttonFails": [],
+    "ring": {
+      "outline": "none 3px rgb(255, 255, 255)",
+      "fvMatches": false,
+      "hover": true
+    }
+  },
+  {
+    "file": "state-hover-quick-reply-chip-1280-light",
+    "textMin": 5.78,
+    "textFails": [],
+    "buttonFails": [],
+    "ring": {
+      "outline": "none 3px rgb(74, 44, 29)",
+      "fvMatches": false,
+      "hover": true
+    }
+  },
+  {
+    "file": "state-hover-send-button-1280-light",
+    "textMin": 5.78,
+    "textFails": [],
+    "buttonFails": [],
+    "ring": {
+      "outline": "none 3px rgb(255, 255, 255)",
+      "fvMatches": false,
+      "hover": true
+    }
+  },
+  {
+    "file": "state-focus-quick-reply-chip-1280-light",
+    "textMin": 5.78,
+    "textFails": [],
+    "buttonFails": [],
+    "ring": {
+      "outline": "solid 3px rgb(183, 121, 31)",
+      "fvMatches": true,
+      "hover": false
+    }
+  },
+  {
+    "file": "state-focus-primary-button-1280-light",
+    "textMin": 5.78,
+    "textFails": [],
+    "buttonFails": [],
+    "ring": {
+      "outline": "solid 3px rgb(183, 121, 31)",
+      "fvMatches": true,
+      "hover": false
+    }
+  },
+  {
+    "file": "state-focus-text-input-1280-light",
+    "textMin": 5.78,
+    "textFails": [],
+    "buttonFails": [],
+    "ring": {
+      "outline": "solid 3px rgb(183, 121, 31)",
+      "fvMatches": true,
+      "hover": false
+    }
+  },
+  {
+    "file": "state-focus-close-button-1280-light",
+    "textMin": 5.78,
+    "textFails": [],
+    "buttonFails": [],
+    "ring": {
+      "outline": "solid 3px rgb(240, 196, 106)",
+      "fvMatches": true,
+      "hover": false
+    }
+  },
+  {
+    "file": "state-disabled-primary-button-1280-light",
+    "textMin": 5.11,
+    "textFails": [],
+    "buttonFails": [],
+    "ring": null
+  },
+  {
+    "file": "state-hover-primary-button-1280-dark",
+    "textMin": 4.93,
+    "textFails": [],
+    "buttonFails": [],
+    "ring": {
+      "outline": "none 3px rgb(38, 22, 14)",
+      "fvMatches": false,
+      "hover": true
+    }
+  },
+  {
+    "file": "state-hover-quick-reply-chip-1280-dark",
+    "textMin": 4.93,
+    "textFails": [],
+    "buttonFails": [],
+    "ring": {
+      "outline": "none 3px rgb(246, 235, 221)",
+      "fvMatches": false,
+      "hover": true
+    }
+  },
+  {
+    "file": "state-hover-send-button-1280-dark",
+    "textMin": 4.93,
+    "textFails": [],
+    "buttonFails": [],
+    "ring": {
+      "outline": "none 3px rgb(38, 22, 14)",
+      "fvMatches": false,
+      "hover": true
+    }
+  },
+  {
+    "file": "state-focus-quick-reply-chip-1280-dark",
+    "textMin": 4.93,
+    "textFails": [],
+    "buttonFails": [],
+    "ring": {
+      "outline": "solid 3px rgb(240, 196, 106)",
+      "fvMatches": true,
+      "hover": false
+    }
+  },
+  {
+    "file": "state-focus-primary-button-1280-dark",
+    "textMin": 4.93,
+    "textFails": [],
+    "buttonFails": [],
+    "ring": {
+      "outline": "solid 3px rgb(240, 196, 106)",
+      "fvMatches": true,
+      "hover": false
+    }
+  },
+  {
+    "file": "state-focus-text-input-1280-dark",
+    "textMin": 4.93,
+    "textFails": [],
+    "buttonFails": [],
+    "ring": {
+      "outline": "solid 3px rgb(240, 196, 106)",
+      "fvMatches": true,
+      "hover": false
+    }
+  },
+  {
+    "file": "state-focus-close-button-1280-dark",
+    "textMin": 4.93,
+    "textFails": [],
+    "buttonFails": [],
+    "ring": {
+      "outline": "solid 3px rgb(240, 196, 106)",
+      "fvMatches": true,
+      "hover": false
+    }
+  },
+  {
+    "file": "state-disabled-primary-button-1280-dark",
+    "textMin": 4.93,
+    "textFails": [],
+    "buttonFails": [],
+    "ring": null
+  }
+]

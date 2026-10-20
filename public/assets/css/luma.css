@@ -161,7 +161,7 @@ nav .nav-chatbot-reactivate:focus-visible {
   border-radius: 50%; color: var(--lc-head-text); font: 400 1.5rem/1 var(--lc-font-body);
 }
 .chatbot-window .chat-close:hover { background: rgba(255, 255, 255, .14); color: #fff; }
-.chatbot-window .chat-close:focus-visible { outline-color: #F0C46A; }
+.chatbot-window .chat-close:focus-visible { outline: 3px solid #F0C46A; outline-offset: 2px; }   /* the light gold, because #B7791F is only 2.9:1 on the dark header */
 .chatbot-window .chat-header .luma-pill + .chat-close { margin-left: 0; }
 .chatbot-window .chat-header-text + .chat-close { margin-left: auto; }
 

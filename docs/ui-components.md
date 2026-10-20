@@ -86,3 +86,15 @@ Steps are `[long label, short label]` (the short label shows at 480px and below)
 ## Half and half control, manual live check
 
 The admin invoice form has no JavaScript test runner behind it, so the live behaviour is covered by markup assertions in `tests/Feature/HalfAndHalfRuleTest.php` plus this manual check: open an invoice form, type a service cost of 1,200: the box is disabled, unticked, and a notice says "Half and half needs a total of ₱3,000.00 or more. This invoice is ₱1,200.00."; change the cost to 3,000 or add a fee that takes the total there: the box enables with no reload and the notice reads "₱1,500.00 now and ₱1,500.00 when you tap "Service done"."; go back under 3,000: it unticks and disables again. Works the same when editing a draft.
+
+## Luma, the chat assistant (Prompt 9a)
+
+The chat widget has its own stylesheet, `public/assets/css/luma.css`, and its own tokens (`--lc-*`, scoped to `.chatbot-window` and `.chatbot-fab`, light and dark). It still uses the shared components:
+
+* Buttons are `.lp-btn` (reply buttons, the send button, quick-reply chips with `.lp-btn--chip`). Inside the widget only, the `--btn-*` colours are re-pointed to Luma's palette, so the shared rules still decide every state, including `:visited`. Do not write a one-off button colour in the widget.
+* Must-read messages are `.lp-notice` (the after-hours box uses the `waiting` variant), made smaller inside the chat. The refund form card keeps `.lp-link` and `.lp-notice`.
+* Her face is a circle that shows the whole head (see `docs/luma-poses.md`, "Face fit"); the launcher and header avatar share one crop.
+* Contrast, measured in a real browser (`tests/Luma/browser-9a.cjs`, light and dark, 390 and 1280): primary button 9.7:1 (hover 8.3, active 13.4), secondary 12.3:1, quick-reply chip 9.5:1 (hover 8.4, active 7.4), disabled 5.1:1, Luma bubble 16.3:1, customer bubble 9.7:1, muted text 6.2:1. Dark: primary 9.0:1, secondary 11.8:1, chip 9.9:1, disabled 6.1:1, bubbles 11.8:1 and 5.5:1.
+* The focus ring is 3px `#B7791F` (`#F0C46A` in dark and on the dark header).
+
+Poses, the hours pill, the after-hours notice and how to add a pose: `docs/luma-poses.md`.
