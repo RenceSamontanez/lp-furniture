@@ -121,6 +121,8 @@ Status: **Stage 0** (payment safety fixes in `PaymentController`) and **Stage 1*
 Blade + Vite + Tailwind CSS v4, no JS framework. `resources/js/` is just `app.js` + `bootstrap.js` (vanilla/inline JS per view, Axios via bootstrap.js). `resources/css/app.css` is the single Tailwind entry point. Views are organized by feature under `resources/views/` (`admin/`, `auth/`, `cart/`, `design/`, `feedback/`, `orders/`, `payment/`, `product/`, `profile/`, `validation/`), with separate layout shells `layouts/app.blade.php` (storefront) and `layouts/admin.blade.php` (admin).
 
 
+**Landing hero and glass nav**: the storefront nav is a floating glass bar (`nav.site-nav`, `public/assets/css/site-nav.css`, hamburger script `public/assets/js/site-nav.js`; the old `nav-links`/`nav-btn`/`nav-burger` classes are dead). The home hero (`resources/views/partials/home-hero.blade.php`, `public/assets/css/home-hero.css`) has an AI Showcase card (`config/hero.php`, images in `public/images/hero-ai/`) and two product rails fed by `App\Support\HeroRails`, desktop only (>= 1100px). Glass buttons are `.lp-btn--glass-primary|outline|quiet`. Details: `docs/hero-notes.md`, `docs/ui-components.md`; browser walk `tests/UiLinks/browser-hero.cjs` (scratch DB; seed products with `php tests/UiLinks/seed_hero.php`).
+
 ## Outstanding Priority Checklist
 
 Working through a prioritized fix list (Tier 1 = critical). Status:

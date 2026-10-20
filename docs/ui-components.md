@@ -98,3 +98,18 @@ The chat widget has its own stylesheet, `public/assets/css/luma.css`, and its ow
 * The focus ring is 3px `#B7791F` (`#F0C46A` in dark and on the dark header).
 
 Poses, the hours pill, the after-hours notice and how to add a pose: `docs/luma-poses.md`.
+
+## Glass buttons and the glass nav (landing hero)
+
+For dark photo or glass backgrounds only (the home hero and the floating top nav). They are `.lp-btn` variants, written with the same two-class pattern in `public/assets/style.css`, so the link colour rules cannot override them in any state (default, visited, hover, focus, active). Their focus ring is gold `#F1D391` (3px, 3px offset).
+
+| Variant | Look | Used for |
+|---|---|---|
+| `lp-btn--glass-primary` | solid gold `#E3AE4A`, dark text `#2B1A12` | Shop Now, nav Register |
+| `lp-btn--glass-outline` | dark glass, gold outline, white text | Customize Furniture, nav Login, the hamburger |
+| `lp-btn--glass-quiet` | quieter dark glass, pale outline, white text | Contact Us |
+| `lp-btn--icon` (modifier) | 48 x 48 square, no padding | the hamburger |
+
+Add `<svg class="lp-btn-icon">` (16px) for a leading icon. Glass variants blur what is behind them (`backdrop-filter`); where that is unsupported the translucent fill is still dark enough to pass.
+
+**Glass nav** (`nav.site-nav`, `public/assets/css/site-nav.css`, script `public/assets/js/site-nav.js`): a floating bar, 64px high, dark tint `rgba(24,13,8,.88)` with blur (solid `#1D110B` when blur is unsupported). The tint is deliberately dark so it stays readable over light page content. Links are `.sn-link` (hover pill, gold underline for the current page via `aria-current="page"`); icon links (`.sn-icon`: Cart, Notifications) keep a visually hidden label that shows inside the menu. At 860px and below the links collapse into the hamburger (`#sn-burger`, 48px, `aria-expanded`, `aria-controls="sn-links"`, label "Open menu"/"Close menu"); the open panel is a glass dropdown with 48px rows, Escape closes it and returns focus to the button. Above 860px the hamburger is `display:none` and takes no space. The old nav classes (`nav-links`, `nav-btn`, `nav-burger`, `nav-overlay`) are no longer used in markup; their rules in `style.css` are dead.

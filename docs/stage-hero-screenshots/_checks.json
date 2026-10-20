@@ -1,0 +1,1671 @@
+{
+  "widths": [
+    {
+      "signedIn": false,
+      "w": 1836,
+      "vw": 1821,
+      "overflow": 0,
+      "burger": {
+        "display": "none",
+        "w": 0
+      },
+      "ctas": [
+        {
+          "t": "Shop Now",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Customize Furniture",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Contact Us",
+          "h": 48,
+          "lines": 1
+        }
+      ],
+      "copy": {
+        "l": 56,
+        "t": 294,
+        "r": 641,
+        "b": 672,
+        "w": 585,
+        "h": 378
+      },
+      "heroH": 900,
+      "navH": 64,
+      "ai": true,
+      "rails": true,
+      "overlapLuma": [],
+      "overlapTip": [],
+      "fab": {
+        "l": 1733,
+        "t": 812,
+        "r": 1797,
+        "b": 876,
+        "w": 64,
+        "h": 64
+      }
+    },
+    {
+      "signedIn": false,
+      "w": 1440,
+      "vw": 1425,
+      "overflow": 0,
+      "burger": {
+        "display": "none",
+        "w": 0
+      },
+      "ctas": [
+        {
+          "t": "Shop Now",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Customize Furniture",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Contact Us",
+          "h": 48,
+          "lines": 1
+        }
+      ],
+      "copy": {
+        "l": 50,
+        "t": 296,
+        "r": 490,
+        "b": 670,
+        "w": 440,
+        "h": 374
+      },
+      "heroH": 900,
+      "navH": 64,
+      "ai": true,
+      "rails": true,
+      "overlapLuma": [],
+      "overlapTip": [],
+      "fab": {
+        "l": 1337,
+        "t": 812,
+        "r": 1401,
+        "b": 876,
+        "w": 64,
+        "h": 64
+      }
+    },
+    {
+      "signedIn": false,
+      "w": 1366,
+      "vw": 1351,
+      "overflow": 0,
+      "burger": {
+        "display": "none",
+        "w": 0
+      },
+      "ctas": [
+        {
+          "t": "Shop Now",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Customize Furniture",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Contact Us",
+          "h": 48,
+          "lines": 1
+        }
+      ],
+      "copy": {
+        "l": 48,
+        "t": 297,
+        "r": 488,
+        "b": 669,
+        "w": 440,
+        "h": 373
+      },
+      "heroH": 900,
+      "navH": 64,
+      "ai": true,
+      "rails": true,
+      "overlapLuma": [],
+      "overlapTip": [],
+      "fab": {
+        "l": 1263,
+        "t": 812,
+        "r": 1327,
+        "b": 876,
+        "w": 64,
+        "h": 64
+      }
+    },
+    {
+      "signedIn": false,
+      "w": 1100,
+      "vw": 1085,
+      "overflow": 0,
+      "burger": {
+        "display": "none",
+        "w": 0
+      },
+      "ctas": [
+        {
+          "t": "Shop Now",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Customize Furniture",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Contact Us",
+          "h": 48,
+          "lines": 1
+        }
+      ],
+      "copy": {
+        "l": 39,
+        "t": 313,
+        "r": 479,
+        "b": 654,
+        "w": 440,
+        "h": 341
+      },
+      "heroH": 900,
+      "navH": 64,
+      "ai": true,
+      "rails": true,
+      "overlapLuma": [],
+      "overlapTip": [],
+      "fab": {
+        "l": 997,
+        "t": 812,
+        "r": 1061,
+        "b": 876,
+        "w": 64,
+        "h": 64
+      }
+    },
+    {
+      "signedIn": false,
+      "w": 900,
+      "vw": 885,
+      "overflow": 0,
+      "burger": {
+        "display": "none",
+        "w": 0
+      },
+      "ctas": [
+        {
+          "t": "Shop Now",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Customize Furniture",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Contact Us",
+          "h": 48,
+          "lines": 1
+        }
+      ],
+      "copy": {
+        "l": 36,
+        "t": 590,
+        "r": 676,
+        "b": 856,
+        "w": 640,
+        "h": 266
+      },
+      "heroH": 900,
+      "navH": 64,
+      "ai": false,
+      "rails": false,
+      "overlapLuma": [],
+      "overlapTip": [],
+      "fab": {
+        "l": 797,
+        "t": 812,
+        "r": 861,
+        "b": 876,
+        "w": 64,
+        "h": 64
+      }
+    },
+    {
+      "signedIn": false,
+      "w": 390,
+      "vw": 390,
+      "overflow": 0,
+      "burger": {
+        "display": "flex",
+        "w": 48
+      },
+      "ctas": [
+        {
+          "t": "Shop Now",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Customize Furniture",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Contact Us",
+          "h": 48,
+          "lines": 1
+        }
+      ],
+      "copy": {
+        "l": 16,
+        "t": 268,
+        "r": 374,
+        "b": 716,
+        "w": 358,
+        "h": 448
+      },
+      "heroH": 760,
+      "navH": 64,
+      "ai": false,
+      "rails": false,
+      "overlapLuma": [],
+      "overlapTip": [],
+      "fab": {
+        "l": 310,
+        "t": 764,
+        "r": 374,
+        "b": 828,
+        "w": 64,
+        "h": 64
+      }
+    },
+    {
+      "signedIn": true,
+      "w": 1836,
+      "vw": 1821,
+      "overflow": 0,
+      "burger": {
+        "display": "none",
+        "w": 0
+      },
+      "ctas": [
+        {
+          "t": "Shop Now",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Customize Furniture",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Contact Us",
+          "h": 48,
+          "lines": 1
+        }
+      ],
+      "copy": {
+        "l": 56,
+        "t": 294,
+        "r": 641,
+        "b": 672,
+        "w": 585,
+        "h": 378
+      },
+      "heroH": 900,
+      "navH": 64,
+      "ai": true,
+      "rails": true,
+      "overlapLuma": [],
+      "overlapTip": [],
+      "fab": {
+        "l": 1733,
+        "t": 812,
+        "r": 1797,
+        "b": 876,
+        "w": 64,
+        "h": 64
+      }
+    },
+    {
+      "signedIn": true,
+      "w": 1440,
+      "vw": 1425,
+      "overflow": 0,
+      "burger": {
+        "display": "none",
+        "w": 0
+      },
+      "ctas": [
+        {
+          "t": "Shop Now",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Customize Furniture",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Contact Us",
+          "h": 48,
+          "lines": 1
+        }
+      ],
+      "copy": {
+        "l": 50,
+        "t": 296,
+        "r": 490,
+        "b": 670,
+        "w": 440,
+        "h": 374
+      },
+      "heroH": 900,
+      "navH": 64,
+      "ai": true,
+      "rails": true,
+      "overlapLuma": [],
+      "overlapTip": [],
+      "fab": {
+        "l": 1337,
+        "t": 812,
+        "r": 1401,
+        "b": 876,
+        "w": 64,
+        "h": 64
+      }
+    },
+    {
+      "signedIn": true,
+      "w": 1366,
+      "vw": 1351,
+      "overflow": 0,
+      "burger": {
+        "display": "none",
+        "w": 0
+      },
+      "ctas": [
+        {
+          "t": "Shop Now",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Customize Furniture",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Contact Us",
+          "h": 48,
+          "lines": 1
+        }
+      ],
+      "copy": {
+        "l": 48,
+        "t": 297,
+        "r": 488,
+        "b": 669,
+        "w": 440,
+        "h": 373
+      },
+      "heroH": 900,
+      "navH": 64,
+      "ai": true,
+      "rails": true,
+      "overlapLuma": [],
+      "overlapTip": [],
+      "fab": {
+        "l": 1263,
+        "t": 812,
+        "r": 1327,
+        "b": 876,
+        "w": 64,
+        "h": 64
+      }
+    },
+    {
+      "signedIn": true,
+      "w": 1100,
+      "vw": 1085,
+      "overflow": 0,
+      "burger": {
+        "display": "none",
+        "w": 0
+      },
+      "ctas": [
+        {
+          "t": "Shop Now",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Customize Furniture",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Contact Us",
+          "h": 48,
+          "lines": 1
+        }
+      ],
+      "copy": {
+        "l": 39,
+        "t": 313,
+        "r": 479,
+        "b": 654,
+        "w": 440,
+        "h": 341
+      },
+      "heroH": 900,
+      "navH": 64,
+      "ai": true,
+      "rails": true,
+      "overlapLuma": [],
+      "overlapTip": [],
+      "fab": {
+        "l": 997,
+        "t": 812,
+        "r": 1061,
+        "b": 876,
+        "w": 64,
+        "h": 64
+      }
+    },
+    {
+      "signedIn": true,
+      "w": 900,
+      "vw": 885,
+      "overflow": 0,
+      "burger": {
+        "display": "none",
+        "w": 0
+      },
+      "ctas": [
+        {
+          "t": "Shop Now",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Customize Furniture",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Contact Us",
+          "h": 48,
+          "lines": 1
+        }
+      ],
+      "copy": {
+        "l": 36,
+        "t": 590,
+        "r": 676,
+        "b": 856,
+        "w": 640,
+        "h": 266
+      },
+      "heroH": 900,
+      "navH": 64,
+      "ai": false,
+      "rails": false,
+      "overlapLuma": [],
+      "overlapTip": [],
+      "fab": {
+        "l": 797,
+        "t": 812,
+        "r": 861,
+        "b": 876,
+        "w": 64,
+        "h": 64
+      }
+    },
+    {
+      "signedIn": true,
+      "w": 390,
+      "vw": 390,
+      "overflow": 0,
+      "burger": {
+        "display": "flex",
+        "w": 48
+      },
+      "ctas": [
+        {
+          "t": "Shop Now",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Customize Furniture",
+          "h": 48,
+          "lines": 1
+        },
+        {
+          "t": "Contact Us",
+          "h": 48,
+          "lines": 1
+        }
+      ],
+      "copy": {
+        "l": 16,
+        "t": 268,
+        "r": 374,
+        "b": 716,
+        "w": 358,
+        "h": 448
+      },
+      "heroH": 760,
+      "navH": 64,
+      "ai": false,
+      "rails": false,
+      "overlapLuma": [],
+      "overlapTip": [],
+      "fab": {
+        "l": 310,
+        "t": 764,
+        "r": 374,
+        "b": 828,
+        "w": 64,
+        "h": 64
+      }
+    }
+  ],
+  "hamburger": [
+    {
+      "mode": "guest",
+      "before": {
+        "exp": "false",
+        "label": "Open menu",
+        "panelVisible": false
+      },
+      "open": {
+        "exp": "true",
+        "label": "Close menu",
+        "rows": [
+          {
+            "t": "Home",
+            "h": 48
+          },
+          {
+            "t": "Catalog",
+            "h": 48
+          },
+          {
+            "t": "Login",
+            "h": 48
+          },
+          {
+            "t": "Register",
+            "h": 48
+          }
+        ],
+        "overflow": 0,
+        "burgerSize": "48x48"
+      },
+      "after": {
+        "exp": "false",
+        "focusOnBurger": true,
+        "label": "Open menu"
+      }
+    },
+    {
+      "mode": "signed-in",
+      "before": {
+        "exp": "false",
+        "label": "Open menu",
+        "panelVisible": false
+      },
+      "open": {
+        "exp": "true",
+        "label": "Close menu",
+        "rows": [
+          {
+            "t": "Home",
+            "h": 48
+          },
+          {
+            "t": "Catalog",
+            "h": 48
+          },
+          {
+            "t": "Customize",
+            "h": 48
+          },
+          {
+            "t": "Cart",
+            "h": 48
+          },
+          {
+            "t": "Notifications (unread)",
+            "h": 48
+          },
+          {
+            "t": "Reviews",
+            "h": 48
+          },
+          {
+            "t": "My Account",
+            "h": 48
+          }
+        ],
+        "overflow": 0,
+        "burgerSize": "48x48"
+      },
+      "after": {
+        "exp": "false",
+        "focusOnBurger": true,
+        "label": "Open menu"
+      }
+    },
+    {
+      "mode": "signed-in-assistant",
+      "before": {
+        "exp": "false",
+        "label": "Open menu",
+        "panelVisible": false
+      },
+      "open": {
+        "exp": "true",
+        "label": "Close menu",
+        "rows": [
+          {
+            "t": "Home",
+            "h": 48
+          },
+          {
+            "t": "Catalog",
+            "h": 48
+          },
+          {
+            "t": "Customize",
+            "h": 48
+          },
+          {
+            "t": "Assistant",
+            "h": 48
+          },
+          {
+            "t": "Cart",
+            "h": 48
+          },
+          {
+            "t": "Notifications (unread)",
+            "h": 48
+          },
+          {
+            "t": "Reviews",
+            "h": 48
+          },
+          {
+            "t": "My Account",
+            "h": 48
+          }
+        ],
+        "overflow": 0,
+        "burgerSize": "48x48"
+      },
+      "after": {
+        "exp": "false",
+        "focusOnBurger": true,
+        "label": "Open menu"
+      }
+    },
+    {
+      "w": 860,
+      "burgerDisplay": "flex"
+    },
+    {
+      "w": 861,
+      "burgerDisplay": "none"
+    }
+  ],
+  "contrast": [
+    {
+      "name": "nav-catalog",
+      "text": "Home",
+      "ratio": 14.3
+    },
+    {
+      "name": "nav-catalog",
+      "text": "Catalog",
+      "ratio": 14.74
+    },
+    {
+      "name": "nav-catalog",
+      "text": "Customize",
+      "ratio": 14.65
+    },
+    {
+      "name": "nav-catalog",
+      "text": "Reviews",
+      "ratio": 14.7
+    },
+    {
+      "name": "nav-catalog",
+      "text": "My Account",
+      "ratio": 14.5
+    },
+    {
+      "name": "nav-catalog",
+      "text": "LP",
+      "ratio": 9.61
+    },
+    {
+      "name": "nav-catalog",
+      "text": "Furniture",
+      "ratio": 13.95
+    },
+    {
+      "name": "nav-product",
+      "text": "Home",
+      "ratio": 14.17
+    },
+    {
+      "name": "nav-product",
+      "text": "Catalog",
+      "ratio": 14.17
+    },
+    {
+      "name": "nav-product",
+      "text": "Customize",
+      "ratio": 14.17
+    },
+    {
+      "name": "nav-product",
+      "text": "Reviews",
+      "ratio": 14.17
+    },
+    {
+      "name": "nav-product",
+      "text": "My Account",
+      "ratio": 14.17
+    },
+    {
+      "name": "nav-product",
+      "text": "LP",
+      "ratio": 9.61
+    },
+    {
+      "name": "nav-product",
+      "text": "Furniture",
+      "ratio": 13.95
+    },
+    {
+      "name": "nav-cart",
+      "text": "Home",
+      "ratio": 14.17
+    },
+    {
+      "name": "nav-cart",
+      "text": "Catalog",
+      "ratio": 14.17
+    },
+    {
+      "name": "nav-cart",
+      "text": "Customize",
+      "ratio": 14.17
+    },
+    {
+      "name": "nav-cart",
+      "text": "Reviews",
+      "ratio": 14.17
+    },
+    {
+      "name": "nav-cart",
+      "text": "My Account",
+      "ratio": 14.17
+    },
+    {
+      "name": "nav-cart",
+      "text": "LP",
+      "ratio": 9.76
+    },
+    {
+      "name": "nav-cart",
+      "text": "Furniture",
+      "ratio": 14.17
+    },
+    {
+      "name": "nav-services",
+      "text": "Home",
+      "ratio": 13.95
+    },
+    {
+      "name": "nav-services",
+      "text": "Catalog",
+      "ratio": 14.11
+    },
+    {
+      "name": "nav-services",
+      "text": "Customize",
+      "ratio": 14.11
+    },
+    {
+      "name": "nav-services",
+      "text": "Reviews",
+      "ratio": 14.11
+    },
+    {
+      "name": "nav-services",
+      "text": "My Account",
+      "ratio": 14.17
+    },
+    {
+      "name": "nav-services",
+      "text": "LP",
+      "ratio": 9.76
+    },
+    {
+      "name": "nav-services",
+      "text": "Furniture",
+      "ratio": 14.17
+    },
+    {
+      "name": "photo1",
+      "text": "Home",
+      "ratio": 18.31
+    },
+    {
+      "name": "photo1",
+      "text": "Catalog",
+      "ratio": 18.31
+    },
+    {
+      "name": "photo1",
+      "text": "Login",
+      "ratio": 19.22
+    },
+    {
+      "name": "photo1",
+      "text": "Register",
+      "ratio": 8.27
+    },
+    {
+      "name": "photo1",
+      "text": "LP",
+      "ratio": 13.02
+    },
+    {
+      "name": "photo1",
+      "text": "Furniture",
+      "ratio": 18.81
+    },
+    {
+      "name": "photo1",
+      "text": "Handcrafted Since 2020 · San",
+      "ratio": 8.05
+    },
+    {
+      "name": "photo1",
+      "text": "Crafting Comfort",
+      "ratio": 11.52
+    },
+    {
+      "name": "photo1",
+      "text": "and",
+      "ratio": 12.4
+    },
+    {
+      "name": "photo1",
+      "text": "Elegance",
+      "ratio": 6.29
+    },
+    {
+      "name": "photo1",
+      "text": "for Every Home",
+      "ratio": 9.72
+    },
+    {
+      "name": "photo1",
+      "text": "Premium custom wood furnitur",
+      "ratio": 7.81
+    },
+    {
+      "name": "photo1",
+      "text": "Shop Now",
+      "ratio": 8.27
+    },
+    {
+      "name": "photo1",
+      "text": "Customize Furniture",
+      "ratio": 19
+    },
+    {
+      "name": "photo1",
+      "text": "Contact Us",
+      "ratio": 15.91
+    },
+    {
+      "name": "photo1",
+      "text": "AI Showcase",
+      "ratio": 8.17
+    },
+    {
+      "name": "photo1",
+      "text": "Imagine it. We build it.",
+      "ratio": 13.74
+    },
+    {
+      "name": "photo1",
+      "text": "Describe a piece and our AI ",
+      "ratio": 8.4
+    },
+    {
+      "name": "photo1",
+      "text": "AI sample",
+      "ratio": 12.28
+    },
+    {
+      "name": "photo1",
+      "text": "AI sample",
+      "ratio": 12.02
+    },
+    {
+      "name": "photo1",
+      "text": "AI sample",
+      "ratio": 12.43
+    },
+    {
+      "name": "photo1",
+      "text": "AI sample",
+      "ratio": 11.78
+    },
+    {
+      "name": "photo1",
+      "text": "Samples made with AI",
+      "ratio": 9.53
+    },
+    {
+      "name": "photo1",
+      "text": "Design yours",
+      "ratio": 8.39
+    },
+    {
+      "name": "photo1",
+      "text": "Design yours",
+      "ratio": 8.39
+    },
+    {
+      "name": "photo1",
+      "text": "Best sellers",
+      "ratio": 8.11
+    },
+    {
+      "name": "photo1",
+      "text": "Hot · New",
+      "ratio": 8.48
+    },
+    {
+      "name": "photo1",
+      "text": "New",
+      "ratio": 8.27
+    },
+    {
+      "name": "photo1",
+      "text": "New",
+      "ratio": 8.27
+    },
+    {
+      "name": "photo1",
+      "text": "Narra Table (back view)",
+      "ratio": 17.63
+    },
+    {
+      "name": "photo1",
+      "text": "Study Table",
+      "ratio": 16.7
+    },
+    {
+      "name": "photo1",
+      "text": "Sofa Frame",
+      "ratio": 18.35
+    },
+    {
+      "name": "photo1",
+      "text": "₱16,750.00",
+      "ratio": 11.9
+    },
+    {
+      "name": "photo1",
+      "text": "₱15,000.00",
+      "ratio": 11.51
+    },
+    {
+      "name": "photo2",
+      "text": "Home",
+      "ratio": 18.96
+    },
+    {
+      "name": "photo2",
+      "text": "Catalog",
+      "ratio": 19.05
+    },
+    {
+      "name": "photo2",
+      "text": "Login",
+      "ratio": 19.22
+    },
+    {
+      "name": "photo2",
+      "text": "Register",
+      "ratio": 8.27
+    },
+    {
+      "name": "photo2",
+      "text": "LP",
+      "ratio": 13.16
+    },
+    {
+      "name": "photo2",
+      "text": "Furniture",
+      "ratio": 19.09
+    },
+    {
+      "name": "photo2",
+      "text": "Handcrafted Since 2020 · San",
+      "ratio": 6.49
+    },
+    {
+      "name": "photo2",
+      "text": "Crafting Comfort",
+      "ratio": 9.3
+    },
+    {
+      "name": "photo2",
+      "text": "and",
+      "ratio": 12.79
+    },
+    {
+      "name": "photo2",
+      "text": "Elegance",
+      "ratio": 5.86
+    },
+    {
+      "name": "photo2",
+      "text": "for Every Home",
+      "ratio": 10.37
+    },
+    {
+      "name": "photo2",
+      "text": "Premium custom wood furnitur",
+      "ratio": 6.45
+    },
+    {
+      "name": "photo2",
+      "text": "Shop Now",
+      "ratio": 8.27
+    },
+    {
+      "name": "photo2",
+      "text": "Customize Furniture",
+      "ratio": 17.52
+    },
+    {
+      "name": "photo2",
+      "text": "Contact Us",
+      "ratio": 16.06
+    },
+    {
+      "name": "photo2",
+      "text": "AI Showcase",
+      "ratio": 8.17
+    },
+    {
+      "name": "photo2",
+      "text": "Imagine it. We build it.",
+      "ratio": 15.77
+    },
+    {
+      "name": "photo2",
+      "text": "Describe a piece and our AI ",
+      "ratio": 9.66
+    },
+    {
+      "name": "photo2",
+      "text": "AI sample",
+      "ratio": 12.28
+    },
+    {
+      "name": "photo2",
+      "text": "AI sample",
+      "ratio": 12.02
+    },
+    {
+      "name": "photo2",
+      "text": "AI sample",
+      "ratio": 12.43
+    },
+    {
+      "name": "photo2",
+      "text": "AI sample",
+      "ratio": 11.78
+    },
+    {
+      "name": "photo2",
+      "text": "Samples made with AI",
+      "ratio": 10.87
+    },
+    {
+      "name": "photo2",
+      "text": "Design yours",
+      "ratio": 11.7
+    },
+    {
+      "name": "photo2",
+      "text": "Design yours",
+      "ratio": 11.7
+    },
+    {
+      "name": "photo2",
+      "text": "Best sellers",
+      "ratio": 13.06
+    },
+    {
+      "name": "photo2",
+      "text": "Hot · New",
+      "ratio": 11.97
+    },
+    {
+      "name": "photo2",
+      "text": "New",
+      "ratio": 8.27
+    },
+    {
+      "name": "photo2",
+      "text": "New",
+      "ratio": 8.27
+    },
+    {
+      "name": "photo2",
+      "text": "Narra Table (back view)",
+      "ratio": 19.15
+    },
+    {
+      "name": "photo2",
+      "text": "Study Table",
+      "ratio": 16.58
+    },
+    {
+      "name": "photo2",
+      "text": "Sofa Frame",
+      "ratio": 16.38
+    },
+    {
+      "name": "photo2",
+      "text": "₱16,750.00",
+      "ratio": 13.19
+    },
+    {
+      "name": "photo2",
+      "text": "₱15,000.00",
+      "ratio": 11.42
+    },
+    {
+      "name": "photo2",
+      "text": "₱13,250.00",
+      "ratio": 11.15
+    },
+    {
+      "name": "photo3",
+      "text": "Home",
+      "ratio": 18.91
+    },
+    {
+      "name": "photo3",
+      "text": "Catalog",
+      "ratio": 18.91
+    },
+    {
+      "name": "photo3",
+      "text": "Login",
+      "ratio": 19.22
+    },
+    {
+      "name": "photo3",
+      "text": "Register",
+      "ratio": 8.27
+    },
+    {
+      "name": "photo3",
+      "text": "LP",
+      "ratio": 13.06
+    },
+    {
+      "name": "photo3",
+      "text": "Furniture",
+      "ratio": 18.95
+    },
+    {
+      "name": "photo3",
+      "text": "Handcrafted Since 2020 · San",
+      "ratio": 9.39
+    },
+    {
+      "name": "photo3",
+      "text": "Crafting Comfort",
+      "ratio": 13.25
+    },
+    {
+      "name": "photo3",
+      "text": "and",
+      "ratio": 14.63
+    },
+    {
+      "name": "photo3",
+      "text": "Elegance",
+      "ratio": 7.03
+    },
+    {
+      "name": "photo3",
+      "text": "for Every Home",
+      "ratio": 12.39
+    },
+    {
+      "name": "photo3",
+      "text": "Premium custom wood furnitur",
+      "ratio": 6.62
+    },
+    {
+      "name": "photo3",
+      "text": "Shop Now",
+      "ratio": 8.27
+    },
+    {
+      "name": "photo3",
+      "text": "Customize Furniture",
+      "ratio": 17.02
+    },
+    {
+      "name": "photo3",
+      "text": "Contact Us",
+      "ratio": 16.05
+    },
+    {
+      "name": "photo3",
+      "text": "AI Showcase",
+      "ratio": 8.17
+    },
+    {
+      "name": "photo3",
+      "text": "Imagine it. We build it.",
+      "ratio": 16.72
+    },
+    {
+      "name": "photo3",
+      "text": "Describe a piece and our AI ",
+      "ratio": 10.8
+    },
+    {
+      "name": "photo3",
+      "text": "AI sample",
+      "ratio": 12.28
+    },
+    {
+      "name": "photo3",
+      "text": "AI sample",
+      "ratio": 12.02
+    },
+    {
+      "name": "photo3",
+      "text": "AI sample",
+      "ratio": 12.43
+    },
+    {
+      "name": "photo3",
+      "text": "AI sample",
+      "ratio": 11.78
+    },
+    {
+      "name": "photo3",
+      "text": "Samples made with AI",
+      "ratio": 9.62
+    },
+    {
+      "name": "photo3",
+      "text": "Design yours",
+      "ratio": 9.76
+    },
+    {
+      "name": "photo3",
+      "text": "Design yours",
+      "ratio": 9.76
+    },
+    {
+      "name": "photo3",
+      "text": "Best sellers",
+      "ratio": 11.59
+    },
+    {
+      "name": "photo3",
+      "text": "Hot · New",
+      "ratio": 11.17
+    },
+    {
+      "name": "photo3",
+      "text": "New",
+      "ratio": 8.27
+    },
+    {
+      "name": "photo3",
+      "text": "New",
+      "ratio": 8.27
+    },
+    {
+      "name": "photo3",
+      "text": "New",
+      "ratio": 8.27
+    },
+    {
+      "name": "photo3",
+      "text": "Study Table",
+      "ratio": 17.79
+    },
+    {
+      "name": "photo3",
+      "text": "Sofa Frame",
+      "ratio": 18.44
+    },
+    {
+      "name": "photo3",
+      "text": "₱6,250.00",
+      "ratio": 12.81
+    },
+    {
+      "name": "photo3",
+      "text": "₱15,000.00",
+      "ratio": 12.17
+    },
+    {
+      "name": "photo3",
+      "text": "₱13,250.00",
+      "ratio": 12.92
+    }
+  ],
+  "rails": {
+    "geometry": [
+      {
+        "name": "BEST SELLERS",
+        "cards": 5,
+        "cloneAriaHidden": true,
+        "loopDistance": 1143,
+        "halfOfTrack": 1143,
+        "anim": "lpRailDown",
+        "dur": "46s",
+        "dir": "down",
+        "static": false
+      },
+      {
+        "name": "HOT · NEW",
+        "cards": 8,
+        "cloneAriaHidden": true,
+        "loopDistance": 1835,
+        "halfOfTrack": 1835.5,
+        "anim": "lpRailUp",
+        "dur": "46s",
+        "dir": "up",
+        "static": false
+      }
+    ],
+    "moving": {
+      "t1": [
+        -1112.34,
+        -58.7107
+      ],
+      "t2": [
+        -1082.36,
+        -106.748
+      ],
+      "directions": [
+        "down",
+        "up"
+      ]
+    },
+    "hoverPaused": {
+      "state": "paused",
+      "still": true,
+      "otherStillMoves": true
+    },
+    "focusPaused": {
+      "state": "paused",
+      "still": true
+    },
+    "reducedMotion": [
+      {
+        "anim": "none",
+        "transform": "none",
+        "clonesHidden": true,
+        "scrollable": true
+      },
+      {
+        "anim": "none",
+        "transform": "none",
+        "clonesHidden": true,
+        "scrollable": true
+      }
+    ]
+  },
+  "luma": [],
+  "buttons": [
+    {
+      "w": 1440,
+      "signed": false,
+      "count": 32,
+      "failures": [
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        }
+      ],
+      "rows": [
+        {
+          "text": "Login",
+          "cls": "lp-btn lp-btn--glass-outline sn-cta",
+          "min": 16.5
+        },
+        {
+          "text": "Register",
+          "cls": "lp-btn lp-btn--glass-primary sn-cta",
+          "min": 6.49
+        },
+        {
+          "text": "Shop Now",
+          "cls": "lp-btn lp-btn--glass-primary lp-hero__cta",
+          "min": 6.49
+        },
+        {
+          "text": "Customize Furniture",
+          "cls": "lp-btn lp-btn--glass-outline lp-hero__cta",
+          "min": 8.29
+        },
+        {
+          "text": "Contact Us",
+          "cls": "lp-btn lp-btn--glass-quiet lp-hero__cta",
+          "min": 5.85
+        }
+      ]
+    },
+    {
+      "w": 1440,
+      "signed": true,
+      "count": 30,
+      "failures": [
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        }
+      ],
+      "rows": [
+        {
+          "text": "Shop Now",
+          "cls": "lp-btn lp-btn--glass-primary lp-hero__cta",
+          "min": 6.49
+        },
+        {
+          "text": "Customize Furniture",
+          "cls": "lp-btn lp-btn--glass-outline lp-hero__cta",
+          "min": 8.29
+        },
+        {
+          "text": "Contact Us",
+          "cls": "lp-btn lp-btn--glass-quiet lp-hero__cta",
+          "min": 5.85
+        }
+      ]
+    },
+    {
+      "w": 390,
+      "signed": false,
+      "count": 35,
+      "failures": [
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        },
+        {
+          "text": "Order Now",
+          "cls": "btn-view-details",
+          "min": 2.56
+        }
+      ],
+      "rows": [
+        {
+          "text": "Shop Now",
+          "cls": "lp-btn lp-btn--glass-primary lp-hero__cta",
+          "min": 6.49
+        },
+        {
+          "text": "Customize Furniture",
+          "cls": "lp-btn lp-btn--glass-outline lp-hero__cta",
+          "min": 8.29
+        },
+        {
+          "text": "Contact Us",
+          "cls": "lp-btn lp-btn--glass-quiet lp-hero__cta",
+          "min": 5.85
+        }
+      ]
+    }
+  ]
+}
