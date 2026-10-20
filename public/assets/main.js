@@ -31,6 +31,120 @@ function toggleMobileNav() {
 ════════════════════════════════════════════════════════ */
 let chatStarted = false;
 
+/* Luma's look: poses, hours pill and the after-hours notice (front end only; no chatbot logic lives here).
+   The pose images are 500x500 transparent PNGs. bbox = the real alpha bounding box [x0, x1, y0, y1]; it is used to stand every
+   pose on the same baseline of the gold platform and to centre it (see docs/luma-poses.md). */
+const LUMA_POSES = {
+  greeting:  { bbox: [118, 393, 44, 464],  say: { en: 'Hi there!',              tl: 'Kumusta po!' } },
+  waiting:   { bbox: [108, 406, 68, 471],  say: { en: 'Here to help',           tl: 'Nandito po ako' } },
+  asked:     { bbox: [116, 397, 46, 472],  say: { en: 'Listening...',           tl: 'Nakikinig po...' } },
+  working:   { bbox: [81, 472, 78, 424],   say: { en: 'Looking that up...',     tl: 'Hinahanap ko po...' } },
+  smiling:   { bbox: [109, 378, 39, 484],  say: { en: 'Happy to help',          tl: 'Masaya pong tumulong' } },
+  wondering: { bbox: [123, 359, 54, 449],  say: { en: 'Hmm, let me understand', tl: 'Hmm, inuunawa ko po' } },
+};
+let lumaPose = 'greeting';
+let lumaFront = 'a';
+let lumaIdleTimer = null;
+let lumaTypingTimer = null;
+let lumaBusy = false;
+
+function lumaTl() { return window.lumaLang === 'tl'; }
+
+function lumaPoseShift(name) {
+  const bb = LUMA_POSES[name].bbox;
+  const dx = (250 - (bb[0] + bb[1]) / 2) / 5;   // percent of the 500px image: centre the figure
+  const dy = (484 - bb[3]) / 5;                 // and stand her feet on the platform baseline
+  return 'translate(' + dx.toFixed(2) + '%,' + dy.toFixed(2) + '%)';
+}
+
+function lumaSetPose(name) {
+  const win = document.getElementById('chatbot-window');
+  const a = document.getElementById('luma-pose-a');
+  const b = document.getElementById('luma-pose-b');
+  if (!LUMA_POSES[name] || !win || !a || !b || name === lumaPose) return;
+  const next = lumaFront === 'a' ? b : a;
+  const prev = lumaFront === 'a' ? a : b;
+  next.src = APP.lumaPoseBase + '/luma-' + name + '.png';
+  next.style.transform = lumaPoseShift(name);
+  next.classList.add('on');
+  prev.classList.remove('on');
+  lumaFront = lumaFront === 'a' ? 'b' : 'a';
+  lumaPose = name;
+  win.setAttribute('data-pose', name);
+  lumaSetStatus(name);
+}
+
+function lumaSetStatus(name) {
+  const st = document.getElementById('luma-status');
+  const def = LUMA_POSES[name];
+  if (!st || !def) return;
+  const busy = name === 'asked' || name === 'working';
+  const dots = '<svg aria-hidden="true"><use href="#luma-sp"/></svg>';
+  st.innerHTML = (busy ? '<span class="luma-dots">' + dots + dots + dots + '</span>' : '') + chatEsc(def.say[lumaTl() ? 'tl' : 'en']);
+}
+
+/* Idle: a few seconds after her last action she settles into "waiting" */
+function lumaIdleSoon(ms) {
+  clearTimeout(lumaIdleTimer);
+  lumaIdleTimer = setTimeout(() => { if (!lumaBusy) lumaSetPose('waiting'); }, ms);
+}
+
+/* Shop open/closed in Asia/Manila, from the hours in config/luma.php (passed in APP.lumaHours). null = unknown. */
+function lumaShopClosed() {
+  const h = APP.lumaHours;
+  if (!h || !h.open || !h.close || !h.days) return null;
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', { timeZone: h.tz || 'Asia/Manila', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
+    const get = t => (parts.find(p => p.type === t) || {}).value;
+    const iso = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 }[get('weekday')];
+    const mins = parseInt(get('hour'), 10) * 60 + parseInt(get('minute'), 10);
+    const toMin = hhmm => { const x = String(hhmm).split(':'); return parseInt(x[0], 10) * 60 + parseInt(x[1], 10); };
+    return !(h.days.indexOf(iso) !== -1 && mins >= toMin(h.open) && mins < toMin(h.close));
+  } catch (e) { return null; }
+}
+
+function lumaUpdatePill() {
+  const pill = document.getElementById('luma-pill');
+  const txt = document.getElementById('luma-pill-text');
+  if (!pill || !txt) return;
+  const closed = lumaShopClosed() === true;
+  pill.classList.toggle('is-closed', closed);
+  txt.textContent = closed ? (lumaTl() ? 'Sarado ang shop, gising si Luma' : 'Shop closed, Luma is on') : 'Available 24/7';
+}
+
+/* The one after-hours message of a session (written into the log directly so the quick-reply chips are left alone) */
+function lumaAfterHoursMessage() {
+  if (lumaShopClosed() !== true) return;
+  const tl = lumaTl();
+  const body = document.getElementById('chat-body');
+  const el = lumaEl('div', { class: 'chat-msg bot chat-after-hours' });
+  const bubble = lumaEl('div', { class: 'chat-bubble' }, [lumaEl('div', { text: tl
+    ? 'Sarado po ang shop ngayon, pero nandito pa rin po ako para sa inyo.'
+    : 'The shop is closed right now, but I am still here for you.' })]);
+  bubble.appendChild(lumaNotice('waiting', tl ? 'Pagkatapos ng oras' : 'After hours', tl
+    ? 'Magpapatuloy po ang team sa karaniwang oras ng pagbubukas bukas. Natanggap at ligtas po ang inyong mga tanong at request. Hihintayin po nila ang kumpirmasyon ng team hanggang magbukas muli ang shop.'
+    : "The team continues at the usual opening time tomorrow. Your inquiries and requests are received and safe. They wait for the team's confirmation until the shop opens again."));
+  el.appendChild(bubble);
+  body.appendChild(el);
+  body.scrollTop = body.scrollHeight;
+}
+
+function lumaOnOpen(open) {
+  const btn = document.getElementById('chatbot-fab-btn');
+  if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  const fab = document.getElementById('chatbot-fab');
+  if (fab) fab.classList.toggle('is-open', open);
+  if (!open) return;
+  lumaUpdatePill();
+  const started = !!document.querySelector('#chat-body .chat-msg.user');
+  if (!started) {
+    lumaSetPose('greeting');
+    lumaIdleSoon(2600);
+  }
+  const tip = document.getElementById('luma-fab-tip');
+  if (tip) tip.classList.remove('show');
+}
+
 /* Toggle chatbot open/close */
 function toggleChatbot() {
   const win = document.getElementById('chatbot-window');
@@ -40,6 +154,7 @@ function toggleChatbot() {
     initChat();
     chatStarted = true;
   }
+  lumaOnOpen(win.classList.contains('open'));
 }
 
 /* Open chatbot programmatically (e.g. from hero button) */
@@ -49,6 +164,7 @@ function openChatbot() {
     initChat();
     chatStarted = true;
   }
+  lumaOnOpen(true);
 }
 
 /* Send the initial greeting when chatbot first opens */
@@ -57,6 +173,7 @@ function initChat() {
     "Hi, I'm Luma, LP Furniture Shop's AI Assistant. Ask me about our furniture, prices, custom designs, delivery or your order. Kumusta po! Pwede rin po kayong magtanong sa Tagalog.",
     ['How to order', 'Custom design', 'Prices', 'Delivery']
   );
+  lumaAfterHoursMessage();
 }
 
 /* Escape text before it goes into HTML. Nothing from the server or the user is trusted as HTML. */
@@ -315,10 +432,7 @@ function addBotMessage(msg, suggestions, products, extra) {
   // Create the chat bubble (the text is escaped; only line breaks become <br>)
   const el = document.createElement('div');
   el.className = 'chat-msg bot';
-  el.innerHTML = `
-    <div class="chat-avatar">🪑</div>
-    <div class="chat-bubble">${chatEsc(msg).replace(/\n/g, '<br/>')}</div>
-  `;
+  el.innerHTML = `<div class="chat-bubble">${chatEsc(msg).replace(/\n/g, '<br/>')}</div>`;
   body.appendChild(el);
 
   // Product cards from the live catalog
@@ -327,9 +441,11 @@ function addBotMessage(msg, suggestions, products, extra) {
     cardsEl.style.width = '100%';
     cardsEl.innerHTML = '<div class="chat-cards">' + extra.cards.map(c => `
       <a class="chat-card" href="${chatEsc(chatSafeUrl(c.url))}">
-        ${c.image ? `<img src="${chatEsc(chatSafeUrl(c.image))}" alt="${chatEsc(c.name)}" loading="lazy">` : ''}
-        <div class="chat-card-name">${chatEsc(c.name)}</div>
-        <div class="chat-card-price">${chatEsc(c.price_label)}${c.old_price_label ? ` <s>${chatEsc(c.old_price_label)}</s>` : ''}</div>
+        <span class="chat-card-ph">
+          ${c.image ? `<img src="${chatEsc(chatSafeUrl(c.image))}" alt="${chatEsc(c.name)}" loading="lazy">` : ''}
+          <span class="chat-card-price">${chatEsc(c.price_label)}${c.old_price_label ? ` <s>${chatEsc(c.old_price_label)}</s>` : ''}</span>
+        </span>
+        <span class="chat-card-name">${chatEsc(c.name)}</span>
       </a>`).join('') + '</div>';
     body.appendChild(cardsEl);
   }
@@ -398,6 +514,7 @@ function addUserMessage(msg) {
   el.innerHTML = `<div class="chat-bubble">${chatEsc(msg)}</div>`;
   body.appendChild(el);
   body.scrollTop = body.scrollHeight;
+  document.getElementById('chatbot-window').classList.add('is-compact');   // the stage shrinks once the conversation has started
 }
 
 /* Render the quick-reply suggestion chips */
@@ -466,12 +583,26 @@ function setSuggestions(list) {
 async function sendChat() {
   const input = document.getElementById('chat-input');
   const msg   = input.value.trim();
-  if (!msg) return;
+  if (!msg || lumaBusy) return;
 
+  lumaBusy = true;
+  clearTimeout(lumaTypingTimer);
+  clearTimeout(lumaIdleTimer);
   addUserMessage(msg);
   input.value = '';
   setSuggestions([]);
+  lumaSetPose('asked');
 
+  // "Luma is thinking": a temporary line in the log, removed when the answer arrives
+  const body = document.getElementById('chat-body');
+  const dots = '<svg aria-hidden="true"><use href="#luma-sp"/></svg>';
+  const think = lumaEl('div', { class: 'chat-msg bot chat-thinking' });
+  think.innerHTML = '<div class="chat-bubble"><span class="luma-dots">' + dots + dots + dots + '</span> ' + (lumaTl() ? 'Nag-iisip po si Luma...' : 'Luma is thinking...') + '</div>';
+  body.appendChild(think);
+  body.scrollTop = body.scrollHeight;
+  lumaSetPose('working');
+
+  let answered = 'smiling';
   try {
     const res = await fetch(APP.chatbotUrl, {
       method: 'POST',
@@ -482,11 +613,33 @@ async function sendChat() {
       body: JSON.stringify({ message: msg }),
     });
     const data = await res.json();
+    think.remove();
     addBotMessage(data.response, data.suggestions, data.products, data);
+    // A clarifying question or the "I couldn't quite find an answer" fallback: she wonders. Anything else: she smiles.
+    const text = String(data.response || '');
+    if (/\?/.test(text) || /^(I couldn't quite find an answer|Pasensya na po, hindi ko po masagot)/.test(text)) answered = 'wondering';
   } catch (e) {
+    think.remove();
     addBotMessage("Sorry, I'm having trouble right now. Please try again!", []);
+    answered = 'wondering';
   }
+  lumaBusy = false;
+  lumaSetPose(answered);
+  lumaIdleSoon(9000);
 }
+
+/* Typing: she listens ("asked"); a little after the last key she settles back to "waiting" */
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('chat-input');
+  if (!input) return;
+  input.addEventListener('input', () => {
+    if (lumaBusy) return;
+    lumaSetPose('asked');
+    clearTimeout(lumaTypingTimer);
+    lumaTypingTimer = setTimeout(() => { if (!lumaBusy) lumaSetPose('waiting'); }, 2500);
+  });
+  lumaUpdatePill();
+});
 
 
 /* ════════════════════════════════════════════════════════
@@ -1178,6 +1331,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const midpoint = window.innerWidth / 2;
       const snapLeft = currentLeft + fabSize / 2 < midpoint ? 16 : window.innerWidth - fabSize - 16;
       fab.style.left = snapLeft + 'px';
+      fab.classList.toggle('luma-fab--left', snapLeft < midpoint);
   
       if (hasMoved) {
         setTimeout(() => { hasMoved = false; }, 50);
@@ -1205,6 +1359,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('touchend', endDrag);
   
     fab.onclick = function (e) {
+      if (e.target.closest && e.target.closest('.luma-fab-x')) return;
       if (hasMoved) {
         e.stopImmediatePropagation();
         e.preventDefault();
@@ -1212,6 +1367,30 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       toggleChatbot();
     };
+
+    /* The small X on the launcher hides Luma (same as dragging her to the drop zone). It must not start a drag or open the chat. */
+    const xBtn = document.getElementById('luma-fab-x');
+    if (xBtn) {
+      ['mousedown', 'touchstart'].forEach(ev => xBtn.addEventListener(ev, e => e.stopPropagation(), { passive: true }));
+      xBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        const win = document.getElementById('chatbot-window');
+        if (win) win.classList.remove('open');
+        lumaOnOpen(false);
+        dismissChatbot();
+        if (navReactivate) navReactivate.focus();
+      });
+    }
+
+    /* First visit: the frosted "Ask Luma" label shows for a few seconds, then hides for good */
+    const tip = document.getElementById('luma-fab-tip');
+    if (tip && localGet('lp_chat_dismissed') !== 'true' && localGet('lp_luma_tip_seen') !== '1') {
+      setTimeout(() => {
+        if (document.getElementById('chatbot-window').classList.contains('open')) return;
+        tip.classList.add('show');
+        setTimeout(() => { tip.classList.remove('show'); localSet('lp_luma_tip_seen', '1'); }, 6000);
+      }, 1200);
+    }
   })();
   
   /* Reactivate from navbar — resets to default position and clears the dismissed flag */
@@ -1229,6 +1408,7 @@ document.addEventListener('DOMContentLoaded', () => {
       fab.style.bottom = '24px';
     }
     if (navReactivate) navReactivate.style.display = 'none';
+    if (fab) { const b = document.getElementById('chatbot-fab-btn'); if (b) b.focus(); }
   }
 
 // Save/favorite (.js-save-heart) click handling used to be duplicated

@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <title>@yield('title', 'LP Furniture')</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="{{ asset('assets/style.css') }}"/>
+<link rel="stylesheet" href="{{ asset('assets/css/luma.css') }}"/>
 @stack('styles')
 </head>
 <body>
@@ -24,12 +25,15 @@
     <a href="{{ route('catalog') }}" class="nav-btn ghost">Catalog</a>
 
     @guest
+      @include('partials.luma-nav-item')
       <a href="{{ route('login') }}"    class="nav-btn ghost">Login</a>
       <a href="{{ route('register') }}" class="nav-btn primary">Register</a>
     @else
       @if(Auth::user()->is_validated)
         <a href="{{ route('design.index') }}" class="nav-btn ghost">Customize</a>
       @endif
+
+      @include('partials.luma-nav-item')
 
       {{-- Cart --}}
       <a href="{{ route('cart.index') }}" class="nav-icon" data-label="Cart" aria-label="Cart">
@@ -54,15 +58,6 @@
           <span class="notif-dot"></span>
         @endif
       </a>
-
-      {{-- Reactivate Chatbot — only visible after user has dismissed it --}}
-<button type="button" class="nav-icon nav-chatbot-reactivate" id="nav-chatbot-reactivate"
-        onclick="reactivateChatbot()" data-label="Chat" aria-label="Reactivate Chat Assistant"
-        style="display:none;">
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-    <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>
-  </svg>
-</button>
 
       <a href="{{ route('feedback.index') }}" class="nav-btn ghost">Reviews</a>
 
@@ -94,9 +89,19 @@
 </footer>
 @endunless
 
-<!-- ═══ CHATBOT ═══ -->
-<div class="chatbot-fab" onclick="toggleChatbot()" id="chatbot-fab" title="Drag me anywhere">💬</div>
-{{-- Drop zone that appears while dragging the chatbot — dragging
+<!-- ═══ CHATBOT (Luma) ═══ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="luma-sp" viewBox="0 0 24 24"><path d="M12 1.5c.6 5.4 3.6 9 9.5 10.5-5.9 1.5-8.9 5.1-9.5 10.5C11.4 17.1 8.4 13.5 2.5 12 8.4 10.5 11.4 6.9 12 1.5z" fill="currentColor"/></symbol>
+  <symbol id="luma-send" viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-3-7z" fill="currentColor"/></symbol>
+</svg>
+<div class="chatbot-fab" id="chatbot-fab">
+  <button type="button" class="luma-fab-btn" id="chatbot-fab-btn" aria-label="Open chat with Luma" aria-controls="chatbot-window" aria-expanded="false">
+    <span class="luma-ring"><span class="luma-face"><img src="{{ asset('images/luma/luma-smiling.png') }}" width="500" height="500" alt="" decoding="async"></span></span>
+  </button>
+  <span class="luma-fab-tip" id="luma-fab-tip" aria-hidden="true">Ask Luma</span>
+  <button type="button" class="luma-fab-x" id="luma-fab-x" aria-label="Hide Luma (bring her back from the Assistant link in the menu)"><span aria-hidden="true">&times;</span></button>
+</div>
+{{-- Drop zone that appears while dragging the chatbot: dragging
      the bubble here dismisses it, same as Messenger's chat heads --}}
 <div class="chatbot-dismiss-zone" id="chatbot-dismiss-zone">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -104,20 +109,28 @@
     <line x1="6" y1="6" x2="18" y2="18"/>
   </svg>
 </div>
-<div class="chatbot-window" id="chatbot-window">
+<div class="chatbot-window" id="chatbot-window" role="region" aria-label="Chat with Luma" data-pose="greeting">
   <div class="chat-header">
-    <div class="chat-header-icon">🪑</div>
+    <div class="luma-ring luma-ring--head"><span class="luma-face"><img src="{{ asset('images/luma/luma-smiling.png') }}" width="500" height="500" alt="" decoding="async"></span></div>
     <div class="chat-header-text">
-      <h4>LP Furniture Assistant</h4>
-      <p>Always here to help</p>
+      <h4>Luma <svg class="luma-spark" aria-hidden="true"><use href="#luma-sp"/></svg></h4>
+      <p>Shop Assistant</p>
     </div>
-    <button type="button" onclick="toggleChatbot()" class="chat-close" aria-label="Close chat">✕</button>
+    <div class="luma-pill" id="luma-pill"><i aria-hidden="true"></i><span id="luma-pill-text">Available 24/7</span></div>
+    <button type="button" onclick="toggleChatbot()" class="chat-close" aria-label="Close chat"><span aria-hidden="true">&times;</span></button>
+  </div>
+  <div class="luma-stage" id="luma-stage">
+    <div class="luma-pic" aria-hidden="true">
+      <img class="on" id="luma-pose-a" src="{{ asset('images/luma/luma-greeting.png') }}" width="500" height="500" alt="">
+      <img id="luma-pose-b" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" width="500" height="500" alt="">
+    </div>
+    <div class="luma-status" id="luma-status" aria-hidden="true">Hi there!</div>
   </div>
   <div class="chat-body" id="chat-body"></div>
-  <div class="chat-suggestions" id="chat-suggestions"></div>
+  <div class="chat-suggestions" id="chat-suggestions" aria-label="Quick questions"></div>
   <div class="chat-input-row">
-    <input class="chat-input" id="chat-input" placeholder="Ask about furniture..." aria-label="Type your question" onkeydown="if(event.key==='Enter')sendChat()"/>
-    <button type="button" class="chat-send lp-btn lp-btn--primary" onclick="sendChat()" aria-label="Send">➤</button>
+    <input class="chat-input" id="chat-input" placeholder="Ask Luma anything..." aria-label="Type your question" maxlength="500" autocomplete="off" onkeydown="if(event.key==='Enter')sendChat()"/>
+    <button type="button" class="chat-send lp-btn lp-btn--primary" onclick="sendChat()" aria-label="Send message"><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><use href="#luma-send"/></svg></button>
   </div>
 </div>
 
@@ -140,6 +153,8 @@
     designUrl: "{{ route('design.index') }}",
     forgotPasswordUrl: "{{ route('password.request') }}",
     homeUrl: "{{ route('home') }}",
+    lumaPoseBase: "{{ asset('images/luma') }}",
+    lumaHours: @json(config('luma.hours') ? config('luma.hours') + ['tz' => config('luma.timezone', 'Asia/Manila')] : null),
   };
 </script>
 
