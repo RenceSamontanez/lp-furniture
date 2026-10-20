@@ -10,6 +10,15 @@
   <link rel="stylesheet" href="{{ asset('assets/css/design.css') }}"/>
 @endpush
 
+
+@push('styles')
+<style>
+  .pf-extra-list{list-style:none;margin:0 0 14px;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .pf-extra-item{display:flex;flex-direction:column;gap:6px;}
+  .pf-extra-item img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;background:#eee;}
+</style>
+@endpush
+
 @section('content')
 
 <a href="{{ route('admin.products.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">
@@ -211,6 +220,43 @@
         </div>
       </div>
 
+
+      @if($product->exists)
+        @php($extras = $product->extraImages()->get())
+        @php($extraRoom = max(0, \App\Models\Product::MAX_EXTRA_IMAGES - $extras->count()))
+        <div class="admin-panel" id="extra-photos">
+          <div class="admin-panel-header"><div class="admin-panel-title">Extra Photos</div></div>
+          <div class="admin-panel-body">
+            <p class="form-help" id="extra-photos-help" style="font-size:12px;color:var(--text-muted);margin:0 0 12px;">
+              Other angles of the same piece. The Product Image above stays the first photo. Up to {{ \App\Models\Product::MAX_EXTRA_IMAGES }} extra photos, JPG, PNG or WebP, 5 MB each.
+            </p>
+
+            @if($extras->isNotEmpty())
+              <ul class="pf-extra-list">
+                @foreach($extras as $i => $extra)
+                  <li class="pf-extra-item">
+                    <img src="{{ $extra->url }}" alt="Extra photo {{ $i + 1 }}" loading="lazy" onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
+                    <button type="button" class="lp-btn lp-btn--danger lp-btn--chip" data-lp-modal-open="remove-photo-{{ $extra->id }}">Remove</button>
+                  </li>
+                @endforeach
+              </ul>
+            @endif
+
+            @if($extraRoom > 0)
+              <label for="extra-images-input" class="form-label">Add photos ({{ $extraRoom }} more allowed)</label>
+              <input type="file" id="extra-images-input" name="extra_images[]" multiple
+                     accept="image/jpeg,image/png,image/webp" class="form-input"
+                     aria-describedby="extra-photos-help"/>
+              @error('extra_images')<p class="cd-size-error" role="alert" style="display:block;">{{ $message }}</p>@enderror
+              @error('extra_images.*')<p class="cd-size-error" role="alert" style="display:block;">{{ $message }}</p>@enderror
+              <p style="font-size:11px;color:var(--text-muted);margin-top:6px;">Photos are added when you press Update Product.</p>
+            @else
+              <p style="font-size:12.5px;color:var(--text-muted);">This product has the most extra photos allowed. Remove one to add another.</p>
+            @endif
+          </div>
+        </div>
+      @endif
+
       <button type="submit" class="admin-btn admin-btn-gold" style="width:100%;justify-content:center;padding:13px;font-size:14px;">
         {{ $product->exists ? 'Update Product' : 'Create Product' }}
       </button>
@@ -218,6 +264,23 @@
 
   </div>
 </form>
+
+
+@if($product->exists)
+  @foreach($product->extraImages()->get() as $extra)
+    <form id="remove-photo-form-{{ $extra->id }}" method="POST" action="{{ route('admin.products.images.destroy', [$product->id, $extra->id]) }}">
+      @csrf @method('DELETE')
+    </form>
+    <x-modal id="remove-photo-{{ $extra->id }}" title="Remove this photo?">
+      <img src="{{ $extra->url }}" alt="" style="max-width:100%;max-height:220px;border-radius:8px;display:block;margin-bottom:10px;"/>
+      <p>The photo is removed from this product and its file is deleted. This cannot be undone.</p>
+      <x-slot:footer>
+        <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+        <button type="submit" form="remove-photo-form-{{ $extra->id }}" class="lp-btn lp-btn--danger" data-lp-confirm>Remove photo</button>
+      </x-slot:footer>
+    </x-modal>
+  @endforeach
+@endif
 
 {{-- ══════════════════════════════════════════
      VALIDATION ERROR MODAL — generic: works for any

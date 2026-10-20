@@ -64,6 +64,57 @@ class Product extends Model
         return $d ? \App\Support\Dimensions::cmWithInches($d['length'], $d['width'], $d['height']) : (string) $this->dimensions;
     }
 
+    /** Most extra photos (beyond the main one) the admin may attach to one product. */
+    public const MAX_EXTRA_IMAGES = 5;
+
+    /** Length, width, height in cm, or null when no usable size is stored. Alias of dimensions_cm for the shop pages. */
+    public function getSizeCmAttribute(): ?array
+    {
+        return $this->dimensions_cm;
+    }
+
+    /** The same size in inches, one decimal (cm / 2.54), worked out here and never stored. Null when there is no size. */
+    public function getSizeInchesAttribute(): ?array
+    {
+        $d = $this->dimensions_cm;
+        if (!$d) {
+            return null;
+        }
+
+        return array_map(fn ($cm) => round($cm / 2.54, 1), $d);
+    }
+
+    /** Photos other than the main one, in order. */
+    public function extraImages()
+    {
+        return $this->hasMany(ProductImage::class)->where('is_primary', false)->orderBy('sort_order')->orderBy('id');
+    }
+
+    /**
+     * Ordered photo URLs: the main photo first (the primary gallery row, else the legacy
+     * product_image column), then the extras. Empty when the product has no photo at all.
+     *
+     * @return list<string>
+     */
+    public function getGalleryImagesAttribute(): array
+    {
+        $rows = $this->relationLoaded('images') ? $this->images : $this->images()->get();
+
+        $urls = [];
+        $primary = $rows->firstWhere('is_primary', true);
+        if ($primary) {
+            $urls[] = $primary->url;
+        } elseif ($this->product_image) {
+            $urls[] = asset('images/products/' . $this->product_image);
+        }
+
+        foreach ($rows->where('is_primary', false)->sortBy([['sort_order', 'asc'], ['id', 'asc']]) as $row) {
+            $urls[] = $row->url;
+        }
+
+        return $urls;
+    }
+
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);

@@ -31,13 +31,8 @@
       {{-- Main Image --}}
       <div class="detail-main-img">
         @php
-          $images = $product->images;
-          $primaryImg = $images->firstWhere('is_primary', true) ?? $images->first();
-          $mainImgUrl = $primaryImg
-            ? asset('images/products/' . $primaryImg->image_path)
-            : ($product->product_image
-                ? asset('images/products/' . $product->product_image)
-                : asset('images/products/placeholder.jpg'));
+          $gallery = $product->gallery_images;
+          $mainImgUrl = $gallery[0] ?? asset('images/products/placeholder.jpg');
         @endphp
 
         <img
@@ -57,16 +52,16 @@
       </div>
 
       {{-- Thumbnail Strip --}}
-      @if($images->count() > 1)
+      @if(count($gallery) > 1)
         <div class="detail-thumbs">
-          @foreach($images as $i => $img)
+          @foreach($gallery as $i => $url)
             <div
               class="detail-thumb {{ $i === 0 ? 'active' : '' }}"
-              onclick="switchDetailImage('{{ asset('images/products/' . $img->image_path) }}', this)"
+              onclick="switchDetailImage('{{ $url }}', this)"
             >
               <img
-                src="{{ asset('images/products/' . $img->image_path) }}"
-                alt="{{ $img->label ?? $product->product_name }}"
+                src="{{ $url }}"
+                alt="{{ $product->product_name }} — photo {{ $i + 1 }}"
                 onerror="this.closest('.detail-thumb').style.display='none';"
               />
             </div>

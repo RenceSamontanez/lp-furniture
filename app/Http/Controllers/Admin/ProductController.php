@@ -96,6 +96,7 @@ class ProductController extends Controller
 {
     $product = Product::findOrFail($id);
     $validated = $this->validateProduct($request);
+    $this->assertRoomForExtras($request, $product);
     $validated['is_customizable'] = $request->boolean('is_customizable');
     $validated['is_featured']     = $request->boolean('is_featured');
 
@@ -134,9 +135,38 @@ class ProductController extends Controller
 
     $product->update($validated);
 
+    $added = $this->storeExtraImages($request, $product);
+
     return redirect()->route('admin.products.index')
-        ->with('success', 'Product updated successfully.');
+        ->with('success', 'Product updated successfully.' . ($added ? " {$added} extra photo" . ($added > 1 ? 's' : '') . ' added.' : ''));
 }
+
+    /* ════════════════════════════════
+       REMOVE ONE EXTRA PHOTO
+       Only extras (is_primary = false) can be removed here; the main photo is
+       replaced through the normal upload. Same disk pattern as destroy(): the file
+       in public/images/products goes too, unless another row still uses that name.
+    ════════════════════════════════ */
+    public function destroyImage($id, $imageId)
+    {
+        $product = Product::findOrFail($id);
+        $image   = $product->images()->where('is_primary', false)->findOrFail($imageId);
+
+        $filename = $image->image_path;
+        $image->delete();
+
+        $stillUsed = ProductImage::where('image_path', $filename)->exists()
+            || Product::where('product_image', $filename)->exists();
+        if (!$stillUsed) {
+            $path = public_path('images/products/' . $filename);
+            if (is_file($path)) {
+                @unlink($path);
+            }
+        }
+
+        return redirect()->route('admin.products.edit', $product->id)
+            ->with('success', 'Photo removed.');
+    }
 
     /* ════════════════════════════════
        DELETE PRODUCT
@@ -203,6 +233,58 @@ class ProductController extends Controller
         return $filename;
     }
 
+    /**
+     * Extra photos from the edit form, saved next to the main image with the same method
+     * (public/images/products, random name; the extension comes from the real file type).
+     * At most Product::MAX_EXTRA_IMAGES per product including the ones already there.
+     * Returns how many were added.
+     */
+    private function assertRoomForExtras(Request $request, Product $product): void
+    {
+        $count = count(array_filter((array) $request->file('extra_images')));
+        $existing = $product->extraImages()->count();
+        if ($count > 0 && $existing + $count > Product::MAX_EXTRA_IMAGES) {
+            $room = max(0, Product::MAX_EXTRA_IMAGES - $existing);
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'extra_images' => 'A product can have at most ' . Product::MAX_EXTRA_IMAGES . " extra photos. This one has {$existing}, so you can add {$room} more.",
+            ]);
+        }
+    }
+
+    private function storeExtraImages(Request $request, Product $product): int
+    {
+        $files = array_values(array_filter((array) $request->file('extra_images')));
+        if ($files === []) {
+            return 0;
+        }
+
+        // A product whose only photo is in the old product_image column gets a main row for it
+        // (same file, nothing copied), so the extras always come after the main photo.
+        if ($product->product_image && !$product->images()->where('is_primary', true)->exists()) {
+            ProductImage::create([
+                'product_id' => $product->id, 'image_path' => $product->product_image,
+                'label' => 'Main', 'sort_order' => 1, 'is_primary' => true,
+            ]);
+        }
+
+        $destination = public_path('images/products');
+        if (!file_exists($destination)) {
+            mkdir($destination, 0755, true);
+        }
+
+        $order = max(1, (int) $product->images()->max('sort_order'));
+        foreach ($files as $file) {
+            $filename = Str::random(20) . '.' . ($file->guessExtension() ?: 'jpg');
+            $file->move($destination, $filename);
+            ProductImage::create([
+                'product_id' => $product->id, 'image_path' => $filename,
+                'label' => null, 'sort_order' => ++$order, 'is_primary' => false,
+            ]);
+        }
+
+        return count($files);
+    }
+
     /* ════════════════════════════════
        DROPDOWN OPTIONS — distinct existing values for the
        Category / Material / Finish "select + add new" fields
@@ -257,7 +339,16 @@ class ProductController extends Controller
 
             'product_status' => ['required', 'in:available,unavailable'],
             'product_image'  => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120'],
+
+            'extra_images'   => ['nullable', 'array', 'max:' . Product::MAX_EXTRA_IMAGES],
+            'extra_images.*' => ['file', 'image', 'mimes:jpg,jpeg,png,webp', 'mimetypes:image/jpeg,image/png,image/webp', 'max:5120'],
         ], [
+            'extra_images.max'         => 'You can add at most ' . Product::MAX_EXTRA_IMAGES . ' extra photos.',
+            'extra_images.*.image'     => 'Each extra photo must be a JPG, PNG or WebP picture.',
+            'extra_images.*.mimes'     => 'Each extra photo must be a JPG, PNG or WebP picture.',
+            'extra_images.*.mimetypes' => 'Each extra photo must be a JPG, PNG or WebP picture.',
+            'extra_images.*.max'       => 'Each extra photo must be 5 MB or smaller.',
+            'extra_images.*.uploaded'  => 'An extra photo could not be uploaded. It may be larger than 5 MB.',
             'new_category.required_if' => 'Please enter a name for the new category.',
             'new_material.required_if' => 'Please enter a name for the new material.',
             'new_finish.required_if'   => 'Please enter a name for the new finish.',
@@ -275,7 +366,7 @@ class ProductController extends Controller
         $validated['category'] = $validated['category'] === '__new__' ? $validated['new_category'] : $validated['category'];
         $validated['material'] = $validated['material'] === '__new__' ? $validated['new_material'] : $validated['material'];
         $validated['finish']   = $validated['finish'] === '__new__' ? $validated['new_finish'] : $validated['finish'];
-        unset($validated['new_category'], $validated['new_material'], $validated['new_finish']);
+        unset($validated['new_category'], $validated['new_material'], $validated['new_finish'], $validated['extra_images']);
 
         // Length x Width x Height in the chosen unit, converted to cm here and stored in the
         // single column as "L x W x H cm", the same form as before. All three or none.

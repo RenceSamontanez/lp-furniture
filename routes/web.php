@@ -363,6 +363,7 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     Route::get('/products/{id}/edit',      [AdminProductController::class, 'edit'])->name('products.edit'); // Show product edit form
     Route::put('/products/{id}',           [AdminProductController::class, 'update'])->name('products.update'); // Update a product
     Route::delete('/products/{id}',        [AdminProductController::class, 'destroy'])->name('products.destroy'); // Delete a product
+    Route::delete('/products/{id}/images/{image}', [AdminProductController::class, 'destroyImage'])->name('products.images.destroy'); // Remove one extra photo
     Route::post('/products/{id}/stock',    [AdminProductController::class, 'updateStock'])->name('products.stock'); // Update product stock
 
     // ────────────────
