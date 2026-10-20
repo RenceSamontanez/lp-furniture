@@ -5,38 +5,7 @@
 
 @section('content')
 
-<!-- ═══ HERO ═══ -->
-<div class="hero-v2">
-  <div class="hero-v2-bg-fallback"></div>
-
-  <div class="hero-v2-bg-slides">
-    <div class="hero-v2-slide active" style="background-image:url('{{ asset('images/hero/hero-bg.jpg') }}');"></div>
-    @if(file_exists(public_path('images/hero/hero-bg-2.jpg')))
-      <div class="hero-v2-slide" style="background-image:url('{{ asset('images/hero/hero-bg-2.jpg') }}');"></div>
-    @endif
-    @if(file_exists(public_path('images/hero/hero-bg-3.jpg')))
-      <div class="hero-v2-slide" style="background-image:url('{{ asset('images/hero/hero-bg-3.jpg') }}');"></div>
-    @endif
-  </div>
-
-  <div class="hero-v2-overlay"></div>
-
-  <div class="hero-v2-content">
-    <p class="hero-v2-tag">Handcrafted Since 2020 · San Juan, Batangas</p>
-    <h1 class="hero-v2-title">Crafting Comfort<br/>and <em>Elegance</em> for Every Home</h1>
-    <p class="hero-v2-sub">Premium custom wood furniture, handcrafted by skilled artisans. From your living room to your office — built to last, made for you.</p>
-
-    <div class="hero-v2-actions">
-      <a href="{{ route('catalog') }}" class="btn-hero gold">Shop Now</a>
-      @auth
-        <a href="{{ route('design.index') }}" class="btn-hero outline-light">Customize Furniture</a>
-      @else
-        <a href="{{ route('login') }}" class="btn-hero outline-light">Customize Furniture</a>
-      @endauth
-      <a href="#footer-section" class="btn-hero text-light">Contact Us</a>
-    </div>
-  </div>
-</div>
+@include('partials.home-hero')
 
 <!-- ═══ FEATURED FURNITURE COLLECTION ═══ -->
 <div class="section">

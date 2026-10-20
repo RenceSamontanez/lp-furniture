@@ -70,7 +70,7 @@ class ProductController extends Controller
             'categories',
             'galleryImages',
             'approvedFeedbacks'
-        ));
+        ))->with('heroRails', \App\Support\HeroRails::get());
     }
     
     private function galleryLabel(int $index): string

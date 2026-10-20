@@ -68,10 +68,10 @@ async function main() {
   const check = async (name, vp, opts = {}) => {
     const c = await evalJs(`(() => {
       const vw = document.documentElement.clientWidth;
-      const sel = '.lp-btn, .lp-pager__num, button, nav a, .nav-links a, input:not([type=hidden]):not([type=checkbox]):not([type=radio]), select';
+      const sel = '.lp-btn, .lp-pager__num, button, nav a, .sn-links a, input:not([type=hidden]):not([type=checkbox]):not([type=radio]), select';
       const visible = [...document.querySelectorAll(sel)].filter((e) => e.getClientRects().length && !e.closest('[hidden], .chatbot-window'));
       const short = visible.filter((e) => !e.matches('.lp-btn--chip') && e.getBoundingClientRect().height < 44 && !e.closest('.admin-sidebar')).map((e) => ({ t: (e.innerText || e.className).trim().slice(0, 24), h: Math.round(e.getBoundingClientRect().height) }));
-      const navLinks = [...document.querySelectorAll('nav .nav-links > a')].filter((e) => e.getClientRects().length).map((e) => { const r = e.getBoundingClientRect(); return { t: e.innerText.trim(), l: Math.round(r.left), r: Math.round(r.right), b: Math.round(r.bottom), h: Math.round(r.height) }; });
+      const navLinks = [...document.querySelectorAll('nav.site-nav .sn-links > a')].filter((e) => e.getClientRects().length).map((e) => { const r = e.getBoundingClientRect(); return { t: e.innerText.trim(), l: Math.round(r.left), r: Math.round(r.right), b: Math.round(r.bottom), h: Math.round(r.height) }; });
       const nav = document.querySelector('nav');
       return { overflow: document.documentElement.scrollWidth - vw, short, navLinks, navH: nav ? Math.round(nav.getBoundingClientRect().height) : 0 };
     })()`);
@@ -108,12 +108,12 @@ async function main() {
     await setCookie(null);
     await go('/');
     await check('nav-guest', vp, { top: 120 });
-    if (vp < 861) { await evalJs('toggleMobileNav()'); await sleep(500); await check('nav-guest-open', vp, { top: 700 }); await evalJs('toggleMobileNav()'); }
+    if (vp < 861) { await evalJs('document.getElementById('sn-burger').click()'); await sleep(500); await check('nav-guest-open', vp, { top: 700 }); await evalJs('document.getElementById('sn-burger').click()'); }
     // customer nav
     await setCookie(cookieFor());
     await go('/');
     await check('nav-customer', vp, { top: 120, navDump: true });
-    if (vp < 861) { await evalJs('toggleMobileNav()'); await sleep(500); await check('nav-customer-open', vp, { top: 800 }); await evalJs('toggleMobileNav()'); }
+    if (vp < 861) { await evalJs('document.getElementById('sn-burger').click()'); await sleep(500); await check('nav-customer-open', vp, { top: 800 }); await evalJs('document.getElementById('sn-burger').click()'); }
     await go('/design');
     await check('customize-page', vp, { top: 900 });
     await go('/'); 

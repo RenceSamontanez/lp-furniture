@@ -3347,3 +3347,39 @@ a.lp-link.lp-link--tap, button.lp-link.lp-link--tap { display: inline-flex; alig
 nav.lp-pager { position: static; z-index: auto; background: transparent; box-shadow: none; height: auto; padding: 14px 0 0; justify-content: center; }
 @media (min-width: 641px) { nav.lp-pager { justify-content: space-between; } }
 @media (max-width: 860px) { .nav-brand { display: inline-flex; align-items: center; min-height: 44px; } }
+
+
+/* ══════════════════════════════════════════
+   Glass button variants (landing hero and the glass nav). Same two-class pattern as the other .lp-btn colours, so they beat the
+   site-wide link colour rules in every state (default, visited, hover, focus, active). Meant for dark photo/glass backgrounds only.
+   glass-primary = solid gold; glass-outline = dark glass with a gold outline; glass-quiet = quieter dark glass.
+══════════════════════════════════════════ */
+:root {
+  --btn-gp: #E3AE4A;  --btn-gp-text: #2B1A12;  --btn-gp-hover: #F1C56A;  --btn-gp-active: #C99A3F;
+  --btn-go: rgba(24, 13, 8, .72);   --btn-go-hover: rgba(48, 28, 18, .86);   --btn-go-border: rgba(241, 211, 145, .8);
+  --btn-gq: rgba(24, 13, 8, .62);   --btn-gq-hover: rgba(48, 28, 18, .8);    --btn-gq-border: rgba(255, 236, 200, .5);
+  --btn-glass-focus: #F1D391;
+}
+.lp-btn.lp-btn--glass-primary,
+.lp-btn.lp-btn--glass-primary:visited { background: var(--btn-gp); color: var(--btn-gp-text); border-color: var(--btn-gp); }
+.lp-btn.lp-btn--glass-primary:hover,
+.lp-btn.lp-btn--glass-primary:focus { background: var(--btn-gp-hover); color: var(--btn-gp-text); border-color: var(--btn-gp-hover); }
+.lp-btn.lp-btn--glass-primary:active { background: var(--btn-gp-active); color: var(--btn-gp-text); border-color: var(--btn-gp-active); }
+.lp-btn.lp-btn--glass-outline,
+.lp-btn.lp-btn--glass-outline:visited { background: var(--btn-go); color: #FFFFFF; border-color: var(--btn-go-border); }
+.lp-btn.lp-btn--glass-outline:hover,
+.lp-btn.lp-btn--glass-outline:focus { background: var(--btn-go-hover); color: #FFFFFF; border-color: var(--btn-glass-focus); }
+.lp-btn.lp-btn--glass-outline:active { background: var(--btn-go-hover); color: #FFFFFF; border-color: var(--btn-glass-focus); }
+.lp-btn.lp-btn--glass-quiet,
+.lp-btn.lp-btn--glass-quiet:visited { background: var(--btn-gq); color: #FFFFFF; border-color: var(--btn-gq-border); }
+.lp-btn.lp-btn--glass-quiet:hover,
+.lp-btn.lp-btn--glass-quiet:focus { background: var(--btn-gq-hover); color: #FFFFFF; border-color: rgba(255, 236, 200, .85); }
+.lp-btn.lp-btn--glass-quiet:active { background: var(--btn-gq-hover); color: #FFFFFF; border-color: rgba(255, 236, 200, .85); }
+.lp-btn.lp-btn--glass-outline,
+.lp-btn.lp-btn--glass-quiet { border-width: 1.5px; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.lp-btn.lp-btn--glass-primary:focus-visible,
+.lp-btn.lp-btn--glass-outline:focus-visible,
+.lp-btn.lp-btn--glass-quiet:focus-visible { outline: 3px solid var(--btn-glass-focus); outline-offset: 3px; box-shadow: none; }
+.lp-btn .lp-btn-icon { width: 16px; height: 16px; flex: none; }
+/* icon-only square button (the nav hamburger) */
+.lp-btn.lp-btn--icon { width: 48px; height: 48px; min-height: 48px; padding: 0; border-radius: 14px; position: relative; flex: none; }

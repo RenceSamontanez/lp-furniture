@@ -34,7 +34,7 @@
   }
 
   const content = document.querySelector('main, #notif-detail, .co-page, .si-wrap, .nd-wrap, .admin-main') || document.body;
-  const skip = 'nav, header, footer, .site-nav, .nav-links, .admin-sidebar, .admin-sidebar *, .chatbot-window';
+  const skip = 'nav, header, footer, .site-nav, .sn-links, .admin-sidebar, .admin-sidebar *, .chatbot-window';
   const allowed = '.lp-btn, .admin-btn, .lp-link, .co-count, .si-invoice, .notif-action-cta, .notif-history-btn, .btn, .pagination a, .page-link, [role="button"], .logo, .nav-logo';
   const withoutStyle = [...content.querySelectorAll('a[href]')].filter((a) => !a.closest(skip) && !a.matches(allowed) && !a.closest('.lp-link'))
     .map((a) => ({ text: a.textContent.trim().slice(0, 60), href: a.getAttribute('href'), cls: a.className }));

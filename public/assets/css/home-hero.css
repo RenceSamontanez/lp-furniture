@@ -1,0 +1,178 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   Home page hero: copy + buttons (all sizes), AI Showcase card and two product rails (desktop >= 1100px only).
+   Markup: resources/views/partials/home-hero.blade.php. Rails behaviour: assets/js/home-hero.js.
+   The rotating background photos and their script (.hero-v2-slide, main.js) are untouched.
+   The glass nav floats over the top of the hero, so the hero is pulled up by --sn-flow (see site-nav.css).
+══════════════════════════════════════════════════════════════════════════ */
+.hero-v2.lp-hero {
+  --lp-glass: rgba(24, 13, 8, .56);
+  --lp-glass-2: rgba(24, 13, 8, .42);
+  --lp-line: rgba(255, 236, 200, .24);
+  --lp-gold: #D9A441;
+  --lp-gold-2: #F1D391;
+  margin-top: calc(-1 * var(--sn-flow, 76px));
+  min-height: max(640px, 100vh);
+  padding: 0;
+  display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start;
+  isolation: isolate;
+}
+/* a touch more shade under the copy so the text and the glass buttons read on every photo */
+.lp-hero .hero-v2-overlay {
+  background:
+    linear-gradient(100deg, rgba(20, 12, 6, .9) 0%, rgba(20, 12, 6, .7) 40%, rgba(20, 12, 6, .38) 72%, rgba(20, 12, 6, .26) 100%),
+    linear-gradient(180deg, rgba(20, 12, 6, .5) 0%, rgba(20, 12, 6, 0) 22%);
+}
+
+.lp-hero__stage {
+  position: relative; z-index: 2; flex: 1; min-height: 0;
+  display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr);
+  align-items: end;
+  padding: calc(var(--sn-flow, 76px) + clamp(32px, 8vh, 96px)) clamp(16px, 4vw, 56px) 44px;
+}
+
+.lp-hero .hero-v2-content.lp-hero__copy { align-self: end; max-width: 640px; padding: 0; animation: heroFadeUp .9s ease both; }
+.lp-hero .hero-v2-tag { font-size: .74rem; letter-spacing: .2em; font-weight: 600; color: var(--lp-gold-2); margin: 0 0 18px; }
+.lp-hero .hero-v2-title { font-size: clamp(2.3rem, 4.2vw, 3.7rem); line-height: 1.1; margin: 0 0 18px; }
+.lp-hero .hero-v2-sub { font-size: 1.04rem; line-height: 1.65; color: #EADCC3; max-width: 46ch; margin: 0 0 28px; }
+.lp-hero .hero-v2-actions.lp-hero__ctas { display: flex; flex-wrap: wrap; gap: 10px; width: auto; }
+
+.lp-hero .lp-hero__cta { min-height: 48px; padding: 0 20px; border-radius: 14px; font-size: .93rem; font-weight: 700; white-space: nowrap; flex: 0 0 auto; }
+.lp-hero .lp-hero__cta:hover { transform: translateY(-2px); }
+.lp-hero .lp-hero__cta:active { transform: none; }
+.lp-hero .lp-hero__cta.lp-btn--glass-primary { box-shadow: 0 12px 24px -10px rgba(217, 164, 65, .9), inset 0 1px 0 rgba(255, 255, 255, .5); }
+.lp-hero .lp-hero__cta.lp-btn--glass-outline .lp-btn-icon { color: var(--lp-gold); }
+
+/* desktop-only block: not rendered (and its lazy images not fetched) below 1100px */
+.lp-hero__desk { display: none; }
+
+@media (min-width: 1100px) {
+  .lp-hero__stage {
+    grid-template-columns: minmax(440px, .9fr) minmax(250px, 1.1fr) auto;
+    gap: clamp(12px, 1.6vw, 24px); align-items: stretch;
+    padding: calc(var(--sn-flow, 76px) + 14px) clamp(12px, 1.6vw, 24px) 24px clamp(16px, 3.5vw, 56px);
+  }
+  .lp-hero .hero-v2-content.lp-hero__copy { align-self: center; }
+  .lp-hero__desk { display: contents; }
+  /* a fixed height (not min-height) so the card and the rails are sized by the screen, never by their content */
+  .hero-v2.lp-hero { height: max(640px, 100vh); min-height: 0; }
+}
+@media (min-width: 1100px) and (max-width: 1500px) {
+  .lp-hero .lp-hero__cta { padding: 0 13px; font-size: .86rem; gap: 6px; }
+  .lp-hero .hero-v2-actions.lp-hero__ctas { gap: 8px; }
+  .lp-hero .hero-v2-title { font-size: clamp(2.3rem, 3.6vw, 3.1rem); }
+}
+@media (min-width: 1100px) and (max-width: 1279px) {
+  .lp-hero__stage { grid-template-columns: minmax(440px, 1fr) minmax(240px, .9fr) auto; }
+}
+
+@media (max-width: 720px) {
+  .lp-hero.hero-v2 { min-height: 760px; }
+  .lp-hero .hero-v2-title { font-size: 2.3rem; }
+  .lp-hero .hero-v2-actions.lp-hero__ctas { flex-direction: column; width: 100%; }
+  .lp-hero .lp-hero__cta { width: 100%; }
+}
+@media (max-width: 480px) {
+  .lp-hero .hero-v2-title { font-size: 2rem; }
+}
+
+/* ===== AI Showcase card ===== */
+.lp-ai {
+  position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden;
+  justify-self: end; width: 100%; max-width: 760px; padding: 18px; border-radius: 26px;
+  background: var(--lp-glass); border: 1px solid var(--lp-line);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2); backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: 0 24px 50px -24px rgba(0, 0, 0, .8), 0 0 0 1px rgba(217, 164, 65, .12), 0 0 60px -20px rgba(217, 164, 65, .35);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .lp-ai { background: rgba(30, 18, 11, .92); } }
+.lp-ai__chip {
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px;
+  font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; color: #2B1A12;
+  background: linear-gradient(180deg, #F1D391, #D9A441);
+}
+.lp-ai__chip svg { width: 12px; height: 12px; }
+.lp-ai__title { font-family: var(--font-display); font-size: clamp(1.4rem, 1.7vw, 1.9rem); line-height: 1.2; margin: 10px 0 4px; color: #fff; }
+.lp-ai__text { flex: none; margin: 0 0 14px; max-width: 52ch; font-size: clamp(.88rem, .95vw, 1.02rem); line-height: 1.5; color: #E4D4B8; }
+.lp-ai__grid { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; }
+.lp-ai__tile {
+  position: relative; display: block; min-height: 0; overflow: hidden; border-radius: 16px;
+  border: 1px solid rgba(255, 236, 200, .25); transition: transform .2s, border-color .2s, box-shadow .2s;
+}
+.lp-ai__tile:hover { transform: translateY(-3px) scale(1.015); border-color: var(--lp-gold-2); box-shadow: 0 14px 26px -12px rgba(0, 0, 0, .8); }
+.lp-ai__tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.lp-ai__tile--empty { background: radial-gradient(circle at 80% 18%, rgba(241, 211, 145, .16), transparent 46%), linear-gradient(135deg, #6b4a33, #3a261a); }
+.lp-ai__tile--empty:nth-child(2) { background: radial-gradient(circle at 80% 18%, rgba(241, 211, 145, .16), transparent 46%), linear-gradient(135deg, #7a5a3c, #46301f); }
+.lp-ai__tile--empty:nth-child(3) { background: radial-gradient(circle at 80% 18%, rgba(241, 211, 145, .16), transparent 46%), linear-gradient(135deg, #5d4a3a, #2f2118); }
+.lp-ai__tile--empty:nth-child(4) { background: radial-gradient(circle at 80% 18%, rgba(241, 211, 145, .16), transparent 46%), linear-gradient(135deg, #80603f, #4d341f); }
+.lp-ai__glyph { position: absolute; left: 50%; top: 46%; width: min(42%, 96px); aspect-ratio: 1; transform: translate(-50%, -50%); color: var(--lp-gold-2); }
+.lp-ai__tile b {
+  position: absolute; left: 8px; bottom: 8px; padding: 3px 8px; border-radius: 999px;
+  font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; color: #F1D391;
+  background: rgba(20, 11, 7, .78); border: 1px solid rgba(241, 211, 145, .4);
+}
+.lp-ai__foot { flex: none; margin-top: 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: .84rem; color: #E4D4B8; }
+.lp-ai .lp-ai__link, .lp-ai .lp-ai__link:visited {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 2px; font-weight: 700; color: var(--lp-gold-2); white-space: nowrap;
+  text-decoration: none; border-bottom: 1.5px solid transparent;
+}
+.lp-ai .lp-ai__link:hover, .lp-ai .lp-ai__link:focus { color: #fff; border-bottom-color: var(--lp-gold-2); }
+.lp-ai__link svg { width: 14px; height: 14px; }
+
+/* ===== product rails ===== */
+.lp-rails {
+  display: flex; gap: clamp(10px, 1vw, 14px); min-height: 0; overflow: hidden;
+  /* keeps Luma's launcher (bottom right, 24px + 64px + her "Ask Luma" label) clear of the last cards */
+  margin-bottom: 96px;
+}
+.lp-rail {
+  min-height: 0; width: clamp(140px, 12.6vw, 190px); display: flex; flex-direction: column; overflow: hidden;
+  border-radius: 22px; background: var(--lp-glass-2); border: 1px solid var(--lp-line);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .lp-rail { background: rgba(30, 18, 11, .88); } }
+.lp-rail__h {
+  flex: none; margin: 0; padding: 12px 14px 10px; display: flex; align-items: center; gap: 7px;
+  font: 700 .7rem/1.2 var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: var(--lp-gold-2);
+  border-bottom: 1px solid var(--lp-line);
+}
+.lp-rail__h svg { width: 13px; height: 13px; color: var(--lp-gold); }
+.lp-rail__view {
+  position: relative; flex: 1; min-height: 0; overflow: hidden;
+  -webkit-mask-image: linear-gradient(#0000, #000 9%, #000 91%, #0000); mask-image: linear-gradient(#0000, #000 9%, #000 91%, #0000);
+}
+/* each card carries its own 12px of bottom space (not a flex gap) so half the track is exactly one list: a seamless loop */
+.lp-rail__track { list-style: none; margin: 0; padding: 12px 10px 0; display: block; will-change: transform; }
+.lp-rail__track > li { padding-bottom: 12px; }
+.lp-rail--down .lp-rail__track { animation: lpRailDown 46s linear infinite; }
+.lp-rail--up .lp-rail__track { animation: lpRailUp 46s linear infinite; }
+@keyframes lpRailDown { from { transform: translateY(-50%); } to { transform: translateY(0); } }
+@keyframes lpRailUp { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+.lp-rail:hover .lp-rail__track,
+.lp-rail:focus-within .lp-rail__track { animation-play-state: paused; }
+/* set by home-hero.js when one copy of the list is shorter than the rail: no loop, no clones */
+.lp-rail.is-static .lp-rail__track { animation: none; transform: none; }
+.lp-rail.is-static .is-clone { display: none; }
+
+.lp-hero a.lp-pc, .lp-hero a.lp-pc:visited {
+  display: block; overflow: hidden; border-radius: 14px; background: rgba(20, 11, 7, .72); border: 1px solid rgba(255, 236, 200, .24);
+  color: #fff; text-decoration: none; transition: border-color .2s, transform .2s;
+}
+.lp-hero a.lp-pc:hover, .lp-hero a.lp-pc:focus { border-color: var(--lp-gold-2); transform: scale(1.02); color: #fff; }
+.lp-hero a.lp-pc:focus-visible { outline: 3px solid var(--lp-gold-2); outline-offset: 2px; }
+.lp-pc__im { display: block; position: relative; aspect-ratio: 1 / 1; background: linear-gradient(135deg, #6b4a33, #3a261a); }
+.lp-pc__im img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.lp-pc__glyph { position: absolute; left: 50%; top: 50%; width: 44%; aspect-ratio: 1; transform: translate(-50%, -50%); color: var(--lp-gold-2); }
+.lp-pc__tag {
+  position: absolute; top: 7px; left: 7px; padding: 3px 7px; border-radius: 999px;
+  font-size: .64rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; background: #E3AE4A; color: #2B1A12;
+}
+.lp-pc__tx { display: block; padding: 8px 10px 10px; }
+.lp-pc__nm { display: block; font-size: .84rem; font-weight: 600; line-height: 1.25; color: #fff; overflow-wrap: anywhere; }
+.lp-pc__pr { display: block; margin-top: 2px; font-size: .8rem; font-weight: 700; color: var(--lp-gold-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-rail .lp-rail__track { animation: none !important; transform: none; }
+  .lp-rail .is-clone { display: none; }
+  .lp-rail__view { overflow-y: auto; }
+  .lp-hero .hero-v2-content.lp-hero__copy { animation: none; }
+  .lp-hero .lp-hero__cta:hover, .lp-ai__tile:hover, .lp-hero a.lp-pc:hover { transform: none; }
+}

@@ -15,69 +15,70 @@
 <title>@yield('title', 'LP Furniture')</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="{{ asset('assets/style.css') }}"/>
+<link rel="stylesheet" href="{{ $lpVer('assets/css/site-nav.css') }}"/>
 <link rel="stylesheet" href="{{ $lpVer('assets/css/luma.css') }}"/>
 @stack('styles')
 </head>
 <body>
 
-<!-- ═══ NAV ═══ -->
-<nav>
-  <a href="{{ route('home') }}" class="nav-brand">LP <span>Furniture</span></a>
+<!-- ═══ NAV (floating glass bar; see public/assets/css/site-nav.css) ═══ -->
+@php $navIs = fn (string ...$p) => request()->routeIs(...$p); @endphp
+<nav class="site-nav" id="site-nav" aria-label="Main">
+  <a href="{{ route('home') }}" class="sn-brand">LP <em>Furniture</em></a>
 
-  <button class="nav-burger" id="nav-burger" onclick="toggleMobileNav()" aria-label="Menu">
-    <span></span><span></span><span></span>
+  <button type="button" class="lp-btn lp-btn--glass-outline lp-btn--icon sn-burger" id="sn-burger"
+          aria-label="Open menu" aria-expanded="false" aria-controls="sn-links">
+    <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
   </button>
 
-  <div class="nav-links" id="nav-links">
-    <a href="{{ route('home') }}"    class="nav-btn ghost">Home</a>
-    <a href="{{ route('catalog') }}" class="nav-btn ghost">Catalog</a>
+  <div class="sn-links" id="sn-links">
+    <a href="{{ route('home') }}"    class="sn-link" @if($navIs('home')) aria-current="page" @endif>Home</a>
+    <a href="{{ route('catalog') }}" class="sn-link" @if($navIs('catalog', 'product.*')) aria-current="page" @endif>Catalog</a>
 
     @guest
       @include('partials.luma-nav-item')
-      <a href="{{ route('login') }}"    class="nav-btn ghost">Login</a>
-      <a href="{{ route('register') }}" class="nav-btn primary">Register</a>
+      <a href="{{ route('login') }}"    class="lp-btn lp-btn--glass-outline sn-cta">Login</a>
+      <a href="{{ route('register') }}" class="lp-btn lp-btn--glass-primary sn-cta">Register</a>
     @else
       @if(Auth::user()->is_validated)
-        <a href="{{ route('design.index') }}" class="nav-btn ghost">Customize</a>
+        <a href="{{ route('design.index') }}" class="sn-link" @if($navIs('design.*')) aria-current="page" @endif>Customize</a>
       @endif
 
       @include('partials.luma-nav-item')
 
       {{-- Cart --}}
-      <a href="{{ route('cart.index') }}" class="nav-icon" data-label="Cart" aria-label="Cart">
+      <a href="{{ route('cart.index') }}" class="sn-link sn-icon" @if($navIs('cart.*')) aria-current="page" @endif>
         @php $cartCount = Auth::user()->cartItems()->sum('quantity'); @endphp
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
           <circle cx="9"  cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
           <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.99-1.73L23 6H6"/>
         </svg>
+        <span class="sn-label">Cart @if($cartCount > 0) <span class="sn-sr">({{ $cartCount }} {{ $cartCount == 1 ? 'item' : 'items' }})</span>@endif</span>
         @if($cartCount > 0)
-          <span class="cart-badge">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+          <span class="cart-badge" aria-hidden="true">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
         @endif
       </a>
 
       {{-- Notifications --}}
-      <a href="{{ route('notifications.index') }}" class="nav-icon" data-label="Notifications" aria-label="Notifications">
+      <a href="{{ route('notifications.index') }}" class="sn-link sn-icon" @if($navIs('notifications.*')) aria-current="page" @endif>
         @php $unreadCount = Auth::user()->notifications()->where('is_read', false)->count(); @endphp
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
           <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
           <path d="M13.73 21a2 2 0 01-3.46 0"/>
         </svg>
+        <span class="sn-label">Notifications @if($unreadCount > 0) <span class="sn-sr">(unread)</span>@endif</span>
         @if($unreadCount > 0)
-          <span class="notif-dot"></span>
+          <span class="notif-dot" aria-hidden="true"></span>
         @endif
       </a>
 
-      <a href="{{ route('feedback.index') }}" class="nav-btn ghost">Reviews</a>
+      <a href="{{ route('feedback.index') }}" class="sn-link" @if($navIs('feedback.*')) aria-current="page" @endif>Reviews</a>
 
       {{-- My Account --}}
-      <a href="{{ route('profile') }}" class="nav-btn ghost" aria-label="My Account">My Account</a>
+      <a href="{{ route('profile') }}" class="sn-link" @if($navIs('profile*')) aria-current="page" @endif>My Account</a>
     @endguest
-</div>
+  </div>
 </nav>
-<div class="nav-overlay" id="nav-overlay" onclick="toggleMobileNav()"></div>
-
-<!-- Dark overlay behind mobile menu -->
-<div class="nav-overlay" id="nav-overlay" onclick="toggleMobileNav()"></div>
 
 <!-- ═══ SESSION ALERTS (toasts) ═══ -->
 @include('partials.alerts')
@@ -167,6 +168,7 @@
 </script>
 
 <script src="{{ $lpVer('assets/main.js') }}"></script>
+<script src="{{ $lpVer('assets/js/site-nav.js') }}" defer></script>
 <script src="{{ asset('assets/js/lp-modal.js') }}"></script>
 @stack('scripts')
 
