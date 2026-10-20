@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Rules\FacebookPageUrl;
+use App\Rules\TikTokUrl;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -26,6 +29,7 @@ class BusinessSetting extends Model
         'phone',
         'email',
         'facebook_url',
+        'tiktok_url',
         'updated_by',
     ];
 
@@ -52,6 +56,46 @@ class BusinessSetting extends Model
     public function updatedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    /*
+     * Public (footer) values: null when blank, still the starting placeholder from the migration, or not a valid
+     * link/address, so a half-filled or old row renders nothing instead of fake text or a broken link.
+     */
+    public function publicPhone(): ?string
+    {
+        $v = trim((string) $this->phone);
+
+        return $v !== '' && $v !== self::DEFAULTS['phone'] ? $v : null;
+    }
+
+    public function publicEmail(): ?string
+    {
+        $v = trim((string) $this->email);
+
+        return $v !== '' && $v !== self::DEFAULTS['email'] && filter_var($v, FILTER_VALIDATE_EMAIL) ? $v : null;
+    }
+
+    public function publicFacebookUrl(): ?string
+    {
+        $v = trim((string) $this->facebook_url);
+
+        return $v !== '' && $v !== self::DEFAULTS['facebook_url'] && self::passes(new FacebookPageUrl(), $v) ? $v : null;
+    }
+
+    public function publicTiktokUrl(): ?string
+    {
+        $v = trim((string) $this->tiktok_url);
+
+        return $v !== '' && self::passes(new TikTokUrl(), $v) ? $v : null;
+    }
+
+    private static function passes(ValidationRule $rule, string $value): bool
+    {
+        $ok = true;
+        $rule->validate('url', $value, function () use (&$ok) { $ok = false; });
+
+        return $ok;
     }
 
     // Phone stripped to digits (and a leading +) for tel: links

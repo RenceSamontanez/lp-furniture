@@ -16,6 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="{{ asset('assets/style.css') }}"/>
 <link rel="stylesheet" href="{{ $lpVer('assets/css/site-nav.css') }}"/>
+<link rel="stylesheet" href="{{ $lpVer('assets/css/site-footer.css') }}"/>
 <link rel="stylesheet" href="{{ $lpVer('assets/css/luma.css') }}"/>
 @stack('styles')
 </head>
@@ -88,15 +89,7 @@
 @yield('content')
 </main>
 
-@unless(View::hasSection('hide_site_footer'))
-<footer class="lp-footer" data-nav="light">
-  <span>&copy; {{ date('Y') }} LP Furniture</span>
-  <span class="lp-footer-links">
-    <a href="{{ route('guide') }}">How to request a custom design</a>
-    <a href="{{ route('terms') }}">Terms and Conditions</a>
-  </span>
-</footer>
-@endunless
+@include('partials.site-footer')
 
 <!-- ═══ CHATBOT (Luma) ═══ -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">

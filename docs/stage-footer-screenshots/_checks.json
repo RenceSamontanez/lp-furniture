@@ -1,0 +1,1569 @@
+{
+  "overflow": [
+    {
+      "tag": "home-socials-guest-1440",
+      "overflow": 0
+    },
+    {
+      "tag": "catalog-socials-guest-1440",
+      "overflow": 0
+    },
+    {
+      "tag": "home-socials-guest-390",
+      "overflow": 0
+    },
+    {
+      "tag": "catalog-socials-guest-390",
+      "overflow": 0
+    },
+    {
+      "tag": "home-socials-user-1440",
+      "overflow": 0
+    },
+    {
+      "tag": "catalog-socials-user-1440",
+      "overflow": 0
+    },
+    {
+      "tag": "home-socials-user-390",
+      "overflow": 0
+    },
+    {
+      "tag": "catalog-socials-user-390",
+      "overflow": 0
+    },
+    {
+      "tag": "home-blank-guest-1440",
+      "overflow": 0
+    },
+    {
+      "tag": "catalog-blank-guest-1440",
+      "overflow": 0
+    },
+    {
+      "tag": "home-blank-guest-390",
+      "overflow": 0
+    },
+    {
+      "tag": "catalog-blank-guest-390",
+      "overflow": 0
+    },
+    {
+      "tag": "home-blank-user-1440",
+      "overflow": 0
+    },
+    {
+      "tag": "catalog-blank-user-1440",
+      "overflow": 0
+    },
+    {
+      "tag": "home-blank-user-390",
+      "overflow": 0
+    },
+    {
+      "tag": "catalog-blank-user-390",
+      "overflow": 0
+    }
+  ],
+  "tap": [
+    {
+      "tag": "home-socials-guest-1440",
+      "min": 44,
+      "short": []
+    },
+    {
+      "tag": "catalog-socials-guest-1440",
+      "min": 44,
+      "short": []
+    },
+    {
+      "tag": "home-socials-guest-390",
+      "min": 44,
+      "short": []
+    },
+    {
+      "tag": "catalog-socials-guest-390",
+      "min": 44,
+      "short": []
+    },
+    {
+      "tag": "home-socials-user-1440",
+      "min": 44,
+      "short": []
+    },
+    {
+      "tag": "catalog-socials-user-1440",
+      "min": 44,
+      "short": []
+    },
+    {
+      "tag": "home-socials-user-390",
+      "min": 44,
+      "short": []
+    },
+    {
+      "tag": "catalog-socials-user-390",
+      "min": 44,
+      "short": []
+    },
+    {
+      "tag": "home-blank-guest-1440",
+      "min": 44,
+      "short": []
+    },
+    {
+      "tag": "catalog-blank-guest-1440",
+      "min": 44,
+      "short": []
+    },
+    {
+      "tag": "home-blank-guest-390",
+      "min": 44,
+      "short": []
+    },
+    {
+      "tag": "catalog-blank-guest-390",
+      "min": 44,
+      "short": []
+    },
+    {
+      "tag": "home-blank-user-1440",
+      "min": 44,
+      "short": []
+    },
+    {
+      "tag": "catalog-blank-user-1440",
+      "min": 44,
+      "short": []
+    },
+    {
+      "tag": "home-blank-user-390",
+      "min": 44,
+      "short": []
+    },
+    {
+      "tag": "catalog-blank-user-390",
+      "min": 44,
+      "short": []
+    }
+  ],
+  "nav": [
+    {
+      "overFooterLight": false,
+      "overFooterCollapsed": false,
+      "atTopLight": true
+    }
+  ],
+  "contrast": [
+    {
+      "name": "home-1440",
+      "text": "LP",
+      "ratio": 7.23
+    },
+    {
+      "name": "home-1440",
+      "text": "Furniture",
+      "ratio": 10.34
+    },
+    {
+      "name": "home-1440",
+      "text": "Handcrafted custom wood furniture,",
+      "ratio": 8.59
+    },
+    {
+      "name": "home-1440",
+      "text": "Follow us",
+      "ratio": 9.08
+    },
+    {
+      "name": "home-1440",
+      "text": "Facebook",
+      "ratio": 18.26
+    },
+    {
+      "name": "home-1440",
+      "text": "TikTok",
+      "ratio": 18.31
+    },
+    {
+      "name": "home-1440",
+      "text": "Explore",
+      "ratio": 8.76
+    },
+    {
+      "name": "home-1440",
+      "text": "Home",
+      "ratio": 9.93
+    },
+    {
+      "name": "home-1440",
+      "text": "Catalog",
+      "ratio": 10.56
+    },
+    {
+      "name": "home-1440",
+      "text": "Customize",
+      "ratio": 11.2
+    },
+    {
+      "name": "home-1440",
+      "text": "Other services",
+      "ratio": 11.34
+    },
+    {
+      "name": "home-1440",
+      "text": "Reviews",
+      "ratio": 11.48
+    },
+    {
+      "name": "home-1440",
+      "text": "Track an order",
+      "ratio": 11.61
+    },
+    {
+      "name": "home-1440",
+      "text": "Contact",
+      "ratio": 10.39
+    },
+    {
+      "name": "home-1440",
+      "text": "0917 123 4567",
+      "ratio": 11.29
+    },
+    {
+      "name": "home-1440",
+      "text": "hello@lpfurniture.test",
+      "ratio": 11.34
+    },
+    {
+      "name": "home-1440",
+      "text": "Mon to Fri, 8:00 AM to 5:00 PM",
+      "ratio": 11.48
+    },
+    {
+      "name": "home-1440",
+      "text": "Policies",
+      "ratio": 10.7
+    },
+    {
+      "name": "home-1440",
+      "text": "Terms and Conditions",
+      "ratio": 11.62
+    },
+    {
+      "name": "home-1440",
+      "text": "Other Services terms and refunds",
+      "ratio": 11.75
+    },
+    {
+      "name": "home-1440",
+      "text": "How to request a custom design",
+      "ratio": 11.89
+    },
+    {
+      "name": "home-1440",
+      "text": "We accept",
+      "ratio": 11.13
+    },
+    {
+      "name": "home-1440",
+      "text": "GCash",
+      "ratio": 16.36
+    },
+    {
+      "name": "home-1440",
+      "text": "Cards",
+      "ratio": 16.4
+    },
+    {
+      "name": "home-1440",
+      "text": "Have a piece in mind?",
+      "ratio": 13.6
+    },
+    {
+      "name": "home-1440",
+      "text": "Tell us what you need and our team",
+      "ratio": 10.06
+    },
+    {
+      "name": "home-1440",
+      "text": "Send a request",
+      "ratio": 8.27
+    },
+    {
+      "name": "home-1440",
+      "text": "© 2026 LP Furniture. All rights re",
+      "ratio": 11.75
+    },
+    {
+      "name": "home-1440",
+      "text": "Chat any time with Assistant in th",
+      "ratio": 6.7
+    },
+    {
+      "name": "catalog-1440",
+      "text": "LP",
+      "ratio": 7.23
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Furniture",
+      "ratio": 10.34
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Handcrafted custom wood furniture,",
+      "ratio": 8.59
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Follow us",
+      "ratio": 9.08
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Facebook",
+      "ratio": 18.26
+    },
+    {
+      "name": "catalog-1440",
+      "text": "TikTok",
+      "ratio": 18.31
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Explore",
+      "ratio": 8.76
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Home",
+      "ratio": 9.93
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Catalog",
+      "ratio": 10.56
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Customize",
+      "ratio": 11.2
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Other services",
+      "ratio": 11.34
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Reviews",
+      "ratio": 11.48
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Track an order",
+      "ratio": 11.61
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Contact",
+      "ratio": 10.39
+    },
+    {
+      "name": "catalog-1440",
+      "text": "0917 123 4567",
+      "ratio": 11.29
+    },
+    {
+      "name": "catalog-1440",
+      "text": "hello@lpfurniture.test",
+      "ratio": 11.34
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Mon to Fri, 8:00 AM to 5:00 PM",
+      "ratio": 11.48
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Policies",
+      "ratio": 10.7
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Terms and Conditions",
+      "ratio": 11.62
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Other Services terms and refunds",
+      "ratio": 11.75
+    },
+    {
+      "name": "catalog-1440",
+      "text": "How to request a custom design",
+      "ratio": 11.89
+    },
+    {
+      "name": "catalog-1440",
+      "text": "We accept",
+      "ratio": 11.13
+    },
+    {
+      "name": "catalog-1440",
+      "text": "GCash",
+      "ratio": 16.36
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Cards",
+      "ratio": 16.4
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Have a piece in mind?",
+      "ratio": 13.6
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Tell us what you need and our team",
+      "ratio": 10.06
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Send a request",
+      "ratio": 8.27
+    },
+    {
+      "name": "catalog-1440",
+      "text": "© 2026 LP Furniture. All rights re",
+      "ratio": 11.75
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Chat any time with Assistant in th",
+      "ratio": 6.7
+    },
+    {
+      "name": "home-390",
+      "text": "Contact",
+      "ratio": 7.39
+    },
+    {
+      "name": "home-390",
+      "text": "0917 123 4567",
+      "ratio": 11.48
+    },
+    {
+      "name": "home-390",
+      "text": "hello@lpfurniture.test",
+      "ratio": 11.53
+    },
+    {
+      "name": "home-390",
+      "text": "Mon to Fri, 8:00 AM to 5:00 PM",
+      "ratio": 11.62
+    },
+    {
+      "name": "home-390",
+      "text": "Policies",
+      "ratio": 10.87
+    },
+    {
+      "name": "home-390",
+      "text": "Terms and Conditions",
+      "ratio": 11.8
+    },
+    {
+      "name": "home-390",
+      "text": "Other Services terms and refunds",
+      "ratio": 11.93
+    },
+    {
+      "name": "home-390",
+      "text": "How to request a custom design",
+      "ratio": 11.97
+    },
+    {
+      "name": "home-390",
+      "text": "We accept",
+      "ratio": 11.25
+    },
+    {
+      "name": "home-390",
+      "text": "GCash",
+      "ratio": 16.4
+    },
+    {
+      "name": "home-390",
+      "text": "Cards",
+      "ratio": 16.4
+    },
+    {
+      "name": "home-390",
+      "text": "Have a piece in mind?",
+      "ratio": 14.62
+    },
+    {
+      "name": "home-390",
+      "text": "Tell us what you need and our team",
+      "ratio": 10.84
+    },
+    {
+      "name": "home-390",
+      "text": "Send a request",
+      "ratio": 8.27
+    },
+    {
+      "name": "home-390",
+      "text": "© 2026 LP Furniture. All rights re",
+      "ratio": 11.67
+    },
+    {
+      "name": "home-390",
+      "text": "Chat any time with Assistant in th",
+      "ratio": 10.79
+    }
+  ],
+  "states": [
+    {
+      "tag": "home-socials-guest-1440",
+      "overflow": 0,
+      "links": [
+        {
+          "t": "Facebook",
+          "h": 44
+        },
+        {
+          "t": "TikTok",
+          "h": 44
+        },
+        {
+          "t": "Home",
+          "h": 44
+        },
+        {
+          "t": "Catalog",
+          "h": 44
+        },
+        {
+          "t": "Customize",
+          "h": 44
+        },
+        {
+          "t": "Other services",
+          "h": 44
+        },
+        {
+          "t": "Reviews",
+          "h": 44
+        },
+        {
+          "t": "Track an order",
+          "h": 44
+        },
+        {
+          "t": "0917 123 4567",
+          "h": 44
+        },
+        {
+          "t": "hello@lpfurniture.test",
+          "h": 44
+        },
+        {
+          "t": "Terms and Conditions",
+          "h": 44
+        },
+        {
+          "t": "Other Services terms and refun",
+          "h": 44
+        },
+        {
+          "t": "How to request a custom design",
+          "h": 44
+        },
+        {
+          "t": "Send a request",
+          "h": 44
+        }
+      ],
+      "follow": true,
+      "fb": true,
+      "tt": true,
+      "phone": true,
+      "email": true,
+      "navLight": true,
+      "navCollapsed": true,
+      "footerTop": 329
+    },
+    {
+      "tag": "catalog-socials-guest-1440",
+      "overflow": 0,
+      "links": [
+        {
+          "t": "Facebook",
+          "h": 44
+        },
+        {
+          "t": "TikTok",
+          "h": 44
+        },
+        {
+          "t": "Home",
+          "h": 44
+        },
+        {
+          "t": "Catalog",
+          "h": 44
+        },
+        {
+          "t": "Customize",
+          "h": 44
+        },
+        {
+          "t": "Other services",
+          "h": 44
+        },
+        {
+          "t": "Reviews",
+          "h": 44
+        },
+        {
+          "t": "Track an order",
+          "h": 44
+        },
+        {
+          "t": "0917 123 4567",
+          "h": 44
+        },
+        {
+          "t": "hello@lpfurniture.test",
+          "h": 44
+        },
+        {
+          "t": "Terms and Conditions",
+          "h": 44
+        },
+        {
+          "t": "Other Services terms and refun",
+          "h": 44
+        },
+        {
+          "t": "How to request a custom design",
+          "h": 44
+        },
+        {
+          "t": "Send a request",
+          "h": 44
+        }
+      ],
+      "follow": true,
+      "fb": true,
+      "tt": true,
+      "phone": true,
+      "email": true,
+      "navLight": true,
+      "navCollapsed": true,
+      "footerTop": 329
+    },
+    {
+      "tag": "home-socials-guest-390",
+      "overflow": 0,
+      "links": [
+        {
+          "t": "Facebook",
+          "h": 44
+        },
+        {
+          "t": "TikTok",
+          "h": 44
+        },
+        {
+          "t": "Home",
+          "h": 44
+        },
+        {
+          "t": "Catalog",
+          "h": 44
+        },
+        {
+          "t": "Customize",
+          "h": 44
+        },
+        {
+          "t": "Other services",
+          "h": 44
+        },
+        {
+          "t": "Reviews",
+          "h": 44
+        },
+        {
+          "t": "Track an order",
+          "h": 44
+        },
+        {
+          "t": "0917 123 4567",
+          "h": 44
+        },
+        {
+          "t": "hello@lpfurniture.test",
+          "h": 44
+        },
+        {
+          "t": "Terms and Conditions",
+          "h": 44
+        },
+        {
+          "t": "Other Services terms and refun",
+          "h": 44
+        },
+        {
+          "t": "How to request a custom design",
+          "h": 44
+        },
+        {
+          "t": "Send a request",
+          "h": 44
+        }
+      ],
+      "follow": true,
+      "fb": true,
+      "tt": true,
+      "phone": true,
+      "email": true,
+      "navLight": false,
+      "navCollapsed": true,
+      "footerTop": -587
+    },
+    {
+      "tag": "catalog-socials-guest-390",
+      "overflow": 0,
+      "links": [
+        {
+          "t": "Facebook",
+          "h": 44
+        },
+        {
+          "t": "TikTok",
+          "h": 44
+        },
+        {
+          "t": "Home",
+          "h": 44
+        },
+        {
+          "t": "Catalog",
+          "h": 44
+        },
+        {
+          "t": "Customize",
+          "h": 44
+        },
+        {
+          "t": "Other services",
+          "h": 44
+        },
+        {
+          "t": "Reviews",
+          "h": 44
+        },
+        {
+          "t": "Track an order",
+          "h": 44
+        },
+        {
+          "t": "0917 123 4567",
+          "h": 44
+        },
+        {
+          "t": "hello@lpfurniture.test",
+          "h": 44
+        },
+        {
+          "t": "Terms and Conditions",
+          "h": 44
+        },
+        {
+          "t": "Other Services terms and refun",
+          "h": 44
+        },
+        {
+          "t": "How to request a custom design",
+          "h": 44
+        },
+        {
+          "t": "Send a request",
+          "h": 44
+        }
+      ],
+      "follow": true,
+      "fb": true,
+      "tt": true,
+      "phone": true,
+      "email": true,
+      "navLight": false,
+      "navCollapsed": true,
+      "footerTop": -587
+    },
+    {
+      "tag": "home-socials-user-1440",
+      "overflow": 0,
+      "links": [
+        {
+          "t": "Facebook",
+          "h": 44
+        },
+        {
+          "t": "TikTok",
+          "h": 44
+        },
+        {
+          "t": "Home",
+          "h": 44
+        },
+        {
+          "t": "Catalog",
+          "h": 44
+        },
+        {
+          "t": "Customize",
+          "h": 44
+        },
+        {
+          "t": "Other services",
+          "h": 44
+        },
+        {
+          "t": "Reviews",
+          "h": 44
+        },
+        {
+          "t": "Track an order",
+          "h": 44
+        },
+        {
+          "t": "0917 123 4567",
+          "h": 44
+        },
+        {
+          "t": "hello@lpfurniture.test",
+          "h": 44
+        },
+        {
+          "t": "Terms and Conditions",
+          "h": 44
+        },
+        {
+          "t": "Other Services terms and refun",
+          "h": 44
+        },
+        {
+          "t": "How to request a custom design",
+          "h": 44
+        },
+        {
+          "t": "Send a request",
+          "h": 44
+        }
+      ],
+      "follow": true,
+      "fb": true,
+      "tt": true,
+      "phone": true,
+      "email": true,
+      "navLight": true,
+      "navCollapsed": true,
+      "footerTop": 329
+    },
+    {
+      "tag": "catalog-socials-user-1440",
+      "overflow": 0,
+      "links": [
+        {
+          "t": "Facebook",
+          "h": 44
+        },
+        {
+          "t": "TikTok",
+          "h": 44
+        },
+        {
+          "t": "Home",
+          "h": 44
+        },
+        {
+          "t": "Catalog",
+          "h": 44
+        },
+        {
+          "t": "Customize",
+          "h": 44
+        },
+        {
+          "t": "Other services",
+          "h": 44
+        },
+        {
+          "t": "Reviews",
+          "h": 44
+        },
+        {
+          "t": "Track an order",
+          "h": 44
+        },
+        {
+          "t": "0917 123 4567",
+          "h": 44
+        },
+        {
+          "t": "hello@lpfurniture.test",
+          "h": 44
+        },
+        {
+          "t": "Terms and Conditions",
+          "h": 44
+        },
+        {
+          "t": "Other Services terms and refun",
+          "h": 44
+        },
+        {
+          "t": "How to request a custom design",
+          "h": 44
+        },
+        {
+          "t": "Send a request",
+          "h": 44
+        }
+      ],
+      "follow": true,
+      "fb": true,
+      "tt": true,
+      "phone": true,
+      "email": true,
+      "navLight": true,
+      "navCollapsed": true,
+      "footerTop": 329
+    },
+    {
+      "tag": "home-socials-user-390",
+      "overflow": 0,
+      "links": [
+        {
+          "t": "Facebook",
+          "h": 44
+        },
+        {
+          "t": "TikTok",
+          "h": 44
+        },
+        {
+          "t": "Home",
+          "h": 44
+        },
+        {
+          "t": "Catalog",
+          "h": 44
+        },
+        {
+          "t": "Customize",
+          "h": 44
+        },
+        {
+          "t": "Other services",
+          "h": 44
+        },
+        {
+          "t": "Reviews",
+          "h": 44
+        },
+        {
+          "t": "Track an order",
+          "h": 44
+        },
+        {
+          "t": "0917 123 4567",
+          "h": 44
+        },
+        {
+          "t": "hello@lpfurniture.test",
+          "h": 44
+        },
+        {
+          "t": "Terms and Conditions",
+          "h": 44
+        },
+        {
+          "t": "Other Services terms and refun",
+          "h": 44
+        },
+        {
+          "t": "How to request a custom design",
+          "h": 44
+        },
+        {
+          "t": "Send a request",
+          "h": 44
+        }
+      ],
+      "follow": true,
+      "fb": true,
+      "tt": true,
+      "phone": true,
+      "email": true,
+      "navLight": false,
+      "navCollapsed": true,
+      "footerTop": -587
+    },
+    {
+      "tag": "catalog-socials-user-390",
+      "overflow": 0,
+      "links": [
+        {
+          "t": "Facebook",
+          "h": 44
+        },
+        {
+          "t": "TikTok",
+          "h": 44
+        },
+        {
+          "t": "Home",
+          "h": 44
+        },
+        {
+          "t": "Catalog",
+          "h": 44
+        },
+        {
+          "t": "Customize",
+          "h": 44
+        },
+        {
+          "t": "Other services",
+          "h": 44
+        },
+        {
+          "t": "Reviews",
+          "h": 44
+        },
+        {
+          "t": "Track an order",
+          "h": 44
+        },
+        {
+          "t": "0917 123 4567",
+          "h": 44
+        },
+        {
+          "t": "hello@lpfurniture.test",
+          "h": 44
+        },
+        {
+          "t": "Terms and Conditions",
+          "h": 44
+        },
+        {
+          "t": "Other Services terms and refun",
+          "h": 44
+        },
+        {
+          "t": "How to request a custom design",
+          "h": 44
+        },
+        {
+          "t": "Send a request",
+          "h": 44
+        }
+      ],
+      "follow": true,
+      "fb": true,
+      "tt": true,
+      "phone": true,
+      "email": true,
+      "navLight": false,
+      "navCollapsed": true,
+      "footerTop": -587
+    },
+    {
+      "tag": "home-blank-guest-1440",
+      "overflow": 0,
+      "links": [
+        {
+          "t": "Home",
+          "h": 44
+        },
+        {
+          "t": "Catalog",
+          "h": 44
+        },
+        {
+          "t": "Customize",
+          "h": 44
+        },
+        {
+          "t": "Other services",
+          "h": 44
+        },
+        {
+          "t": "Reviews",
+          "h": 44
+        },
+        {
+          "t": "Track an order",
+          "h": 44
+        },
+        {
+          "t": "Terms and Conditions",
+          "h": 44
+        },
+        {
+          "t": "Other Services terms and refun",
+          "h": 44
+        },
+        {
+          "t": "How to request a custom design",
+          "h": 44
+        },
+        {
+          "t": "Send a request",
+          "h": 44
+        }
+      ],
+      "follow": false,
+      "fb": false,
+      "tt": false,
+      "phone": false,
+      "email": false,
+      "navLight": true,
+      "navCollapsed": true,
+      "footerTop": 329
+    },
+    {
+      "tag": "catalog-blank-guest-1440",
+      "overflow": 0,
+      "links": [
+        {
+          "t": "Home",
+          "h": 44
+        },
+        {
+          "t": "Catalog",
+          "h": 44
+        },
+        {
+          "t": "Customize",
+          "h": 44
+        },
+        {
+          "t": "Other services",
+          "h": 44
+        },
+        {
+          "t": "Reviews",
+          "h": 44
+        },
+        {
+          "t": "Track an order",
+          "h": 44
+        },
+        {
+          "t": "Terms and Conditions",
+          "h": 44
+        },
+        {
+          "t": "Other Services terms and refun",
+          "h": 44
+        },
+        {
+          "t": "How to request a custom design",
+          "h": 44
+        },
+        {
+          "t": "Send a request",
+          "h": 44
+        }
+      ],
+      "follow": false,
+      "fb": false,
+      "tt": false,
+      "phone": false,
+      "email": false,
+      "navLight": true,
+      "navCollapsed": true,
+      "footerTop": 329
+    },
+    {
+      "tag": "home-blank-guest-390",
+      "overflow": 0,
+      "links": [
+        {
+          "t": "Home",
+          "h": 44
+        },
+        {
+          "t": "Catalog",
+          "h": 44
+        },
+        {
+          "t": "Customize",
+          "h": 44
+        },
+        {
+          "t": "Other services",
+          "h": 44
+        },
+        {
+          "t": "Reviews",
+          "h": 44
+        },
+        {
+          "t": "Track an order",
+          "h": 44
+        },
+        {
+          "t": "Terms and Conditions",
+          "h": 44
+        },
+        {
+          "t": "Other Services terms and refun",
+          "h": 44
+        },
+        {
+          "t": "How to request a custom design",
+          "h": 44
+        },
+        {
+          "t": "Send a request",
+          "h": 44
+        }
+      ],
+      "follow": false,
+      "fb": false,
+      "tt": false,
+      "phone": false,
+      "email": false,
+      "navLight": false,
+      "navCollapsed": true,
+      "footerTop": -371
+    },
+    {
+      "tag": "catalog-blank-guest-390",
+      "overflow": 0,
+      "links": [
+        {
+          "t": "Home",
+          "h": 44
+        },
+        {
+          "t": "Catalog",
+          "h": 44
+        },
+        {
+          "t": "Customize",
+          "h": 44
+        },
+        {
+          "t": "Other services",
+          "h": 44
+        },
+        {
+          "t": "Reviews",
+          "h": 44
+        },
+        {
+          "t": "Track an order",
+          "h": 44
+        },
+        {
+          "t": "Terms and Conditions",
+          "h": 44
+        },
+        {
+          "t": "Other Services terms and refun",
+          "h": 44
+        },
+        {
+          "t": "How to request a custom design",
+          "h": 44
+        },
+        {
+          "t": "Send a request",
+          "h": 44
+        }
+      ],
+      "follow": false,
+      "fb": false,
+      "tt": false,
+      "phone": false,
+      "email": false,
+      "navLight": false,
+      "navCollapsed": true,
+      "footerTop": -371
+    },
+    {
+      "tag": "home-blank-user-1440",
+      "overflow": 0,
+      "links": [
+        {
+          "t": "Home",
+          "h": 44
+        },
+        {
+          "t": "Catalog",
+          "h": 44
+        },
+        {
+          "t": "Customize",
+          "h": 44
+        },
+        {
+          "t": "Other services",
+          "h": 44
+        },
+        {
+          "t": "Reviews",
+          "h": 44
+        },
+        {
+          "t": "Track an order",
+          "h": 44
+        },
+        {
+          "t": "Terms and Conditions",
+          "h": 44
+        },
+        {
+          "t": "Other Services terms and refun",
+          "h": 44
+        },
+        {
+          "t": "How to request a custom design",
+          "h": 44
+        },
+        {
+          "t": "Send a request",
+          "h": 44
+        }
+      ],
+      "follow": false,
+      "fb": false,
+      "tt": false,
+      "phone": false,
+      "email": false,
+      "navLight": true,
+      "navCollapsed": true,
+      "footerTop": 329
+    },
+    {
+      "tag": "catalog-blank-user-1440",
+      "overflow": 0,
+      "links": [
+        {
+          "t": "Home",
+          "h": 44
+        },
+        {
+          "t": "Catalog",
+          "h": 44
+        },
+        {
+          "t": "Customize",
+          "h": 44
+        },
+        {
+          "t": "Other services",
+          "h": 44
+        },
+        {
+          "t": "Reviews",
+          "h": 44
+        },
+        {
+          "t": "Track an order",
+          "h": 44
+        },
+        {
+          "t": "Terms and Conditions",
+          "h": 44
+        },
+        {
+          "t": "Other Services terms and refun",
+          "h": 44
+        },
+        {
+          "t": "How to request a custom design",
+          "h": 44
+        },
+        {
+          "t": "Send a request",
+          "h": 44
+        }
+      ],
+      "follow": false,
+      "fb": false,
+      "tt": false,
+      "phone": false,
+      "email": false,
+      "navLight": true,
+      "navCollapsed": true,
+      "footerTop": 329
+    },
+    {
+      "tag": "home-blank-user-390",
+      "overflow": 0,
+      "links": [
+        {
+          "t": "Home",
+          "h": 44
+        },
+        {
+          "t": "Catalog",
+          "h": 44
+        },
+        {
+          "t": "Customize",
+          "h": 44
+        },
+        {
+          "t": "Other services",
+          "h": 44
+        },
+        {
+          "t": "Reviews",
+          "h": 44
+        },
+        {
+          "t": "Track an order",
+          "h": 44
+        },
+        {
+          "t": "Terms and Conditions",
+          "h": 44
+        },
+        {
+          "t": "Other Services terms and refun",
+          "h": 44
+        },
+        {
+          "t": "How to request a custom design",
+          "h": 44
+        },
+        {
+          "t": "Send a request",
+          "h": 44
+        }
+      ],
+      "follow": false,
+      "fb": false,
+      "tt": false,
+      "phone": false,
+      "email": false,
+      "navLight": false,
+      "navCollapsed": true,
+      "footerTop": -371
+    },
+    {
+      "tag": "catalog-blank-user-390",
+      "overflow": 0,
+      "links": [
+        {
+          "t": "Home",
+          "h": 44
+        },
+        {
+          "t": "Catalog",
+          "h": 44
+        },
+        {
+          "t": "Customize",
+          "h": 44
+        },
+        {
+          "t": "Other services",
+          "h": 44
+        },
+        {
+          "t": "Reviews",
+          "h": 44
+        },
+        {
+          "t": "Track an order",
+          "h": 44
+        },
+        {
+          "t": "Terms and Conditions",
+          "h": 44
+        },
+        {
+          "t": "Other Services terms and refun",
+          "h": 44
+        },
+        {
+          "t": "How to request a custom design",
+          "h": 44
+        },
+        {
+          "t": "Send a request",
+          "h": 44
+        }
+      ],
+      "follow": false,
+      "fb": false,
+      "tt": false,
+      "phone": false,
+      "email": false,
+      "navLight": false,
+      "navCollapsed": true,
+      "footerTop": -371
+    }
+  ],
+  "focus": {
+    "el": "Home",
+    "outline": "solid 3px rgb(241, 211, 145)"
+  },
+  "lowest": [
+    {
+      "name": "home-1440",
+      "text": "Chat any time with Assistant in th",
+      "ratio": 6.7
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Chat any time with Assistant in th",
+      "ratio": 6.7
+    },
+    {
+      "name": "home-1440",
+      "text": "LP",
+      "ratio": 7.23
+    },
+    {
+      "name": "catalog-1440",
+      "text": "LP",
+      "ratio": 7.23
+    },
+    {
+      "name": "home-390",
+      "text": "Contact",
+      "ratio": 7.39
+    },
+    {
+      "name": "home-1440",
+      "text": "Send a request",
+      "ratio": 8.27
+    },
+    {
+      "name": "catalog-1440",
+      "text": "Send a request",
+      "ratio": 8.27
+    },
+    {
+      "name": "home-390",
+      "text": "Send a request",
+      "ratio": 8.27
+    }
+  ]
+}

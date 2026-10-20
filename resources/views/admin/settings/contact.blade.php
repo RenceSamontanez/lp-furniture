@@ -9,7 +9,7 @@
   <div class="admin-panel-header"><div class="admin-panel-title">Business Contact Info</div></div>
   <div class="admin-panel-body">
     <p style="font-size:13px;color:var(--text-muted);margin:0 0 18px;">
-      Shown on the checkout "Need Help" panel and the customer design request page, and used in chatbot
+      Shown on the checkout "Need Help" panel, the customer design request page and the website footer, and used in chatbot
       replies wherever an intent's response contains <code>@{{phone}}</code>, <code>@{{email}}</code> or <code>@{{facebook}}</code>.
     </p>
 
@@ -34,7 +34,7 @@
         @error('email')<div style="font-size:12px;color:#B3261E;margin-top:4px;">{{ $message }}</div>@enderror
       </div>
 
-      <div style="margin-bottom:20px;">
+      <div style="margin-bottom:16px;">
         <label class="form-label" for="facebook_url">Facebook Page URL</label>
         <input type="url" id="facebook_url" name="facebook_url" class="form-input" maxlength="255" required
                placeholder="https://facebook.com/YourPage"
@@ -43,6 +43,17 @@
         <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">
           Must start with https:// and be on facebook.com or m.me. Customers' "Message us on Facebook" button opens
           <strong>{{ $settings->messenger_url }}</strong>.
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label class="form-label" for="tiktok_url">TikTok Page URL (optional)</label>
+        <input type="url" id="tiktok_url" name="tiktok_url" class="form-input" maxlength="255"
+               placeholder="https://www.tiktok.com/@yourshop"
+               value="{{ old('tiktok_url', $settings->tiktok_url) }}"/>
+        @error('tiktok_url')<div style="font-size:12px;color:#B3261E;margin-top:4px;">{{ $message }}</div>@enderror
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">
+          Must start with https:// and be on tiktok.com. Leave it empty to hide the TikTok button in the website footer.
         </div>
       </div>
 

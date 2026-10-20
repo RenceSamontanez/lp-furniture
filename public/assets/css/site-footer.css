@@ -1,0 +1,55 @@
+/* Shared customer footer (resources/views/partials/site-footer.blade.php). Values from the approved prototype docs/footer/footer-prototype.html.
+   Dark area: carries data-nav="dark" so the glass nav and toasts switch while it is under them. Buttons are the shared .lp-btn glass variants. */
+.sf {
+  --sf-cream: #FBF3E6; --sf-cream-2: #EADCC3; --sf-gold: #D9A441; --sf-gold-2: #F1D391;
+  position: relative; margin: 0 clamp(10px, 2vw, 28px) clamp(10px, 2vw, 28px); border-radius: 28px; overflow: hidden; color: var(--sf-cream);
+  background:
+    radial-gradient(700px 320px at 12% 0%, rgba(217,164,65,.22), transparent 70%),
+    radial-gradient(600px 300px at 95% 100%, rgba(140,100,60,.35), transparent 70%),
+    linear-gradient(160deg, #35241a, #1b110b);
+  border: 1px solid rgba(255,236,200,.18); box-shadow: 0 30px 60px -30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.12);
+}
+.sf::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--sf-gold), transparent); opacity: .7; }
+.sf::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(98deg, rgba(255,255,255,.025) 0 2px, transparent 2px 11px); pointer-events: none; }
+.sf__in { position: relative; z-index: 1; padding: clamp(26px,4vw,52px) clamp(20px,4vw,56px) 22px; }
+.sf__top { display: grid; grid-template-columns: 1.5fr 1fr 1.25fr 1fr; gap: clamp(22px,3vw,48px); }
+.sf__top:not(:has(.sf__col:nth-child(4))) { grid-template-columns: 1.5fr 1fr 1fr; }
+.sf__logo { font-family: var(--font-display, 'Playfair Display', Georgia, serif); font-size: 1.6rem; color: var(--sf-gold-2); font-weight: 600; white-space: nowrap; }
+.sf__logo em { color: #fff; font-style: italic; }
+.sf__about { margin: 12px 0 18px; color: var(--sf-cream-2); font-size: .94rem; line-height: 1.6; max-width: 36ch; }
+h3.sf__h { margin: 0 0 14px; font-family: inherit; font-size: .74rem; letter-spacing: .18em; text-transform: uppercase; color: var(--sf-gold-2); font-weight: 700; }
+h3.sf__h--gap { margin-top: 16px; }
+.sf__col { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.sf__line { display: flex; align-items: center; min-height: 44px; margin: 0; color: var(--sf-cream-2); font-size: .94rem; line-height: 1.45; }
+.sf__follow { display: flex; flex-wrap: wrap; gap: 10px; }
+.sf__soc { text-decoration: none; }
+.sf__pay { display: flex; gap: 8px; flex-wrap: wrap; }
+.sf__pay span { font-size: .78rem; font-weight: 700; padding: 6px 12px; border-radius: 999px; background: rgba(20,11,7,.5); border: 1px solid rgba(255,236,200,.22); color: var(--sf-cream); }
+
+/* .lp-link on the dark footer: pale text, gold underline on hover, 44px tap height. Same family as the shared .lp-link. */
+a.lp-link.lp-link--on-dark:any-link {
+  display: flex; align-items: center; min-height: 44px; max-width: 100%; overflow-wrap: anywhere;
+  color: var(--sf-cream-2); font-size: .94rem; font-weight: 500; line-height: 1.45;
+  text-decoration: none;
+}
+a.lp-link.lp-link--on-dark:any-link:visited { color: var(--sf-cream-2); }
+a.lp-link.lp-link--on-dark:any-link:hover { color: #fff; text-decoration: underline; text-decoration-color: var(--sf-gold-2); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+a.lp-link.lp-link--on-dark:any-link:focus-visible { outline: 3px solid var(--sf-gold-2); outline-offset: 3px; border-radius: 10px; box-shadow: none; }
+
+.sf__cta { margin-top: 30px; padding: 18px 22px; border-radius: 18px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  background: rgba(255,244,226,.07); border: 1px solid rgba(255,236,200,.22); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.sf__cta b { display: block; font-family: var(--font-display, 'Playfair Display', Georgia, serif); font-size: 1.25rem; color: #fff; font-weight: 600; }
+.sf__cta span { display: block; color: var(--sf-cream-2); font-size: .9rem; margin-top: 2px; }
+.sf__bot { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255,236,200,.18); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: .82rem; color: var(--sf-cream-2); padding-right: 96px; } /* clear of the Luma launcher */
+
+
+@media (max-width: 1000px) { .sf__top, .sf__top:not(:has(.sf__col:nth-child(4))) { grid-template-columns: 1fr 1fr; } .sf__brand { grid-column: 1 / -1; } }
+@media (max-width: 560px) {
+  .sf__top, .sf__top:not(:has(.sf__col:nth-child(4))) { grid-template-columns: 1fr; }
+  .sf__soc { flex: 1 1 100%; justify-content: flex-start; }
+  .sf__cta { flex-direction: column; align-items: stretch; }
+  .sf__cta .lp-btn { justify-content: center; }
+  .sf__bot { padding-right: 0; }
+  .sf__in { padding-bottom: 96px; } /* keeps the last line clear of the Luma launcher */
+}
+@media (prefers-reduced-motion: reduce) { .sf, .sf * { transition: none !important; } }

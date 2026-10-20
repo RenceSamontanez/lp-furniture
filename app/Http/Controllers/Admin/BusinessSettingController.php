@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BusinessSetting;
 use App\Rules\FacebookPageUrl;
 use App\Rules\PhilippinePhone;
+use App\Rules\TikTokUrl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,6 +26,7 @@ class BusinessSettingController extends Controller
             'phone'        => trim((string) $request->input('phone')),
             'email'        => trim((string) $request->input('email')),
             'facebook_url' => $this->normalizeFacebookUrl((string) $request->input('facebook_url')),
+            'tiktok_url'   => trim((string) $request->input('tiktok_url')),
         ]);
 
         $validated = $request->validate([
@@ -33,11 +35,13 @@ class BusinessSettingController extends Controller
             // so also require a plain everyday address
             'email'        => ['required', 'string', 'max:191', 'email:rfc,filter', 'regex:/^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/'],
             'facebook_url' => ['required', 'string', 'max:255', new FacebookPageUrl()],
+            'tiktok_url'   => ['nullable', 'string', 'max:255', new TikTokUrl()],
         ], [
             'email.regex' => 'Enter a plain email address, e.g. hello@yourshop.com.',
         ]);
 
         $settings = BusinessSetting::orderBy('id')->first() ?? new BusinessSetting();
+        $validated['tiktok_url'] = $validated['tiktok_url'] ?: null;
         $settings->fill($validated);
         $settings->updated_by = Auth::guard('admin')->id();
 

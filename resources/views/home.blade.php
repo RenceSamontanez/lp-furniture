@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('title', 'LP Furniture — Handcrafted Wood Furniture')
-@section('hide_site_footer', '1')
 
 @section('content')
 
@@ -472,90 +471,7 @@
 </div>
 
 
-<!-- ═══ SECTION 7: FOOTER ═══ -->
-<footer id="footer-section" class="site-footer" data-nav="dark">
-  <div class="footer-main">
 
-    <!-- Left: Brand -->
-    <div class="footer-col footer-brand-col">
-      <div class="footer-brand">LP <span>Furniture</span></div>
-      <p class="footer-desc">Handcrafted Philippine hardwood furniture, built to last. Based in San Juan, Batangas since 2020.</p>
-      <div class="footer-social">
-        <a href="{{ \App\Models\BusinessSetting::current()->facebook_url }}" class="footer-social-icon" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
-        </a>
-        <a href="#" class="footer-social-icon" aria-label="Instagram">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
-        </a>
-        <a href="#" class="footer-social-icon" aria-label="TikTok">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82s.51.5 0 0A4.278 4.278 0 0115.54 3h-3.09v12.4a2.59 2.59 0 01-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.15 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 004.26 1.35V7.27s-1.86.09-3.2-1.45z"/></svg>
-        </a>
-      </div>
-    </div>
-
-    <!-- Middle: Quick links -->
-    <div class="footer-col">
-      <div class="footer-col-title">Quick Links</div>
-      <a href="{{ route('home') }}" class="footer-link">Home</a>
-      <a href="{{ route('catalog') }}" class="footer-link">Catalog</a>
-      <a href="#about-section" class="footer-link">About Us</a>
-      @auth
-        <a href="{{ route('design.index') }}" class="footer-link">Custom Orders</a>
-      @else
-        <a href="{{ route('register') }}" class="footer-link">Custom Orders</a>
-      @endauth
-      <a href="{{ route('feedback.index') }}" class="footer-link">Reviews</a>
-    </div>
-
-    <!-- Middle 2: Customer -->
-    <div class="footer-col">
-      <div class="footer-col-title">My Account</div>
-      @auth
-        <a href="{{ route('orders.index') }}" class="footer-link">Track My Order</a>
-        <a href="{{ route('cart.index') }}" class="footer-link">My Cart</a>
-        <a href="{{ route('profile') }}" class="footer-link">My Profile</a>
-        <a href="{{ route('validation.show') }}" class="footer-link">Verify Identity</a>
-      @else
-        <a href="{{ route('login') }}" class="footer-link">Sign In</a>
-        <a href="{{ route('register') }}" class="footer-link">Create Account</a>
-      @endauth
-    </div>
-
-    <!-- Right: Contact -->
-    <div class="footer-col">
-      <div class="footer-col-title">Visit / Contact</div>
-      <div class="footer-contact-item">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        <span>San Juan, Batangas, Philippines</span>
-      </div>
-      <div class="footer-contact-item">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-        <span>0917-456-7890</span>
-      </div>
-      <div class="footer-contact-item">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        <span>lpfurnitureph@gmail.com</span>
-      </div>
-      <div class="footer-contact-item">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
-        <span>Mon–Sat, 8AM–5PM</span>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Bottom bar -->
-  <div class="footer-bottom">
-    <p>&copy; {{ date('Y') }} LP Furniture. All rights reserved.</p>
-    <div class="footer-bottom-links">
-      <a href="#">Privacy Policy</a>
-      <span class="footer-dot">·</span>
-      <a href="{{ route('guide') }}">How to request a custom design</a>
-      <span class="footer-dot">·</span>
-      <a href="{{ route('terms') }}">Terms and Conditions</a>
-    </div>
-  </div>
-</footer>
 
 
 
