@@ -1,14 +1,19 @@
 /* ══════════════════════════════════════════════════════════════════════════
-   Floating glass top nav (shared by every storefront page). Loaded after style.css.
-   Markup: resources/views/layouts/app.blade.php. Hamburger script: assets/js/site-nav.js.
-   The tint is dark on purpose (.88): light page content scrolls under the bar and the white text must stay >= 4.5:1.
+   Smart glass top nav (shared by every storefront page). Loaded after style.css.
+   Markup: resources/views/layouts/app.blade.php. Behaviour: assets/js/site-nav.js.
+   Values come from the approved prototype, docs/nav/nav-prototype.html.
+   - Frosted glass that blurs what scrolls under it. Dark by default, class "light" over light areas.
+     site-nav.js picks the variant from the closest [data-nav="light|dark"] under the bar (body default: light).
+   - Scrolling down past 140px collapses it to just the logo in the top-left corner; scrolling up, hovering the
+     logo, or focus inside brings it back (class "collapsed").
+   - Hidden while a modal or the Luma chat is open (body.modal-open).
    Login / Register / hamburger are the shared .lp-btn glass variants (style.css).
 ══════════════════════════════════════════════════════════════════════════ */
 :root {
-  --sn-glass: rgba(24, 13, 8, .88);
-  --sn-line: rgba(255, 236, 200, .24);
   --sn-gold: #D9A441;
   --sn-gold-2: #F1D391;
+  --sn-gut: clamp(12px, 3vw, 40px);
+  --sn-pl: 22px;
   /* room the floating bar takes in the page flow (64px bar + 12px top margin); the home hero is pulled up by this much to sit under it */
   --sn-flow: 76px;
 }
@@ -16,31 +21,47 @@
 nav.site-nav {
   position: sticky; top: 12px; z-index: 100;
   height: 64px; box-sizing: border-box;
-  margin: 12px clamp(12px, 3vw, 40px) 0;
-  padding: 0 10px 0 22px;
+  margin: 12px var(--sn-gut) 0;
+  padding: 0 10px 0 var(--sn-pl);
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
   border-radius: 18px;
-  background: var(--sn-glass);
-  border: 1px solid var(--sn-line);
-  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .12);
-  -webkit-backdrop-filter: blur(16px) saturate(1.25);
-  backdrop-filter: blur(16px) saturate(1.25);
+  background: rgba(36, 21, 13, .6);
+  border: 1px solid rgba(255, 236, 200, .3);
+  box-shadow: 0 14px 30px -16px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .14);
+  -webkit-backdrop-filter: blur(22px) saturate(1.6);
+  backdrop-filter: blur(22px) saturate(1.6);
+  transition: background-color .35s ease, border-color .35s ease, box-shadow .35s ease, opacity .25s ease, visibility 0s;
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  nav.site-nav { background: #1D110B; }
+  nav.site-nav { background: rgba(29, 17, 11, .94); }
+  nav.site-nav.light { background: rgba(255, 252, 246, .96); }
+}
+nav.site-nav.light {
+  background: rgba(255, 252, 246, .62);
+  border-color: rgba(90, 53, 36, .18);
+  box-shadow: 0 14px 30px -18px rgba(43, 26, 18, .5), inset 0 1px 0 rgba(255, 255, 255, .8);
 }
 
+/* brand */
 nav.site-nav .sn-brand,
 nav.site-nav .sn-brand:visited,
 nav.site-nav .sn-brand:hover,
 nav.site-nav .sn-brand:focus,
 nav.site-nav .sn-brand:active {
-  font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; line-height: 1.1; white-space: nowrap;
-  color: var(--sn-gold-2); text-decoration: none; display: inline-flex; align-items: center; min-height: 44px;
+  position: relative; z-index: 2;
+  font-family: var(--font-display); font-size: 1.4rem; font-weight: 600; line-height: 1.1; white-space: nowrap;
+  color: var(--sn-gold-2); text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px;
+  transition: transform .35s ease, text-shadow .35s ease, color .35s ease;
 }
-nav.site-nav .sn-brand em { color: #fff; font-style: italic; font-weight: 600; }
+nav.site-nav .sn-brand em { color: #fff; font-style: italic; font-weight: 600; transition: color .35s ease; }
+nav.site-nav.light .sn-brand,
+nav.site-nav.light .sn-brand:visited,
+nav.site-nav.light .sn-brand:hover,
+nav.site-nav.light .sn-brand:focus,
+nav.site-nav.light .sn-brand:active { color: #6E4408; }  /* prototype #8A5A12; darker so the logo stays 4.5:1 over dark photos that pass under the light bar */
+nav.site-nav.light .sn-brand em { color: #2B1A12; }
 
-nav.site-nav .sn-links { display: flex; align-items: center; gap: 4px; }
+nav.site-nav .sn-links { display: flex; align-items: center; gap: 4px; transition: opacity .28s ease, transform .32s ease; }
 
 /* text links, icon links and the "Assistant" button all share .sn-link */
 nav.site-nav .sn-link,
@@ -52,18 +73,25 @@ nav.site-nav .sn-link:visited {
 }
 nav.site-nav .sn-link:hover,
 nav.site-nav .sn-link:focus,
-nav.site-nav .sn-link:active { background: rgba(255, 236, 200, .16); color: #fff; transform: none; }
+nav.site-nav .sn-link:active { background: rgba(255, 236, 200, .14); color: #fff; transform: none; }
 nav.site-nav .sn-link[aria-current="page"]::after {
   content: ""; position: absolute; left: 14px; right: 14px; bottom: 6px; height: 2px; border-radius: 2px; background: var(--sn-gold);
 }
-nav.site-nav .sn-link svg { flex: none; }
-nav.site-nav .sn-reactivate svg { color: var(--sn-gold); width: 15px; height: 15px; }
+nav.site-nav .sn-link svg { flex: none; color: var(--sn-gold-2); }
+nav.site-nav .sn-reactivate svg { width: 16px; height: 16px; }
 nav.site-nav .sn-icon { padding: 0 12px; }
-nav.site-nav .sn-icon .cart-badge { top: 4px; right: 2px; }
-nav.site-nav .sn-icon .notif-dot { top: 8px; right: 8px; }
 
-/* labels of the icon links: read aloud always, shown only inside the hamburger panel */
-nav.site-nav .sn-label,
+/* cart count and unread pip sit inline after the label (not pinned to a corner) */
+nav.site-nav .sn-icon .cart-badge {
+  position: static; min-width: 19px; width: auto; height: 19px; padding: 0 5px; border-radius: 999px; margin-left: -1px;
+  background: var(--sn-gold); color: #2B1A12; font-size: .7rem; font-weight: 700; display: inline-grid; place-items: center;
+}
+nav.site-nav .sn-icon .notif-dot {
+  position: static; width: 9px; height: 9px; margin: 10px 0 0 -3px; align-self: flex-start;
+  background: #E3AE4A; box-shadow: 0 0 0 2px rgba(26, 14, 9, .9);
+}
+
+/* visible labels everywhere; .sn-sr stays screen-reader only */
 nav.site-nav .sn-sr {
   position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
@@ -75,11 +103,11 @@ nav.site-nav .sn-cta.lp-btn--glass-primary { box-shadow: 0 6px 14px -6px rgba(21
 nav.site-nav a:focus-visible,
 nav.site-nav button:focus-visible { outline: 3px solid var(--sn-gold-2); outline-offset: 3px; box-shadow: none; }
 
-/* hamburger: hidden on desktop and takes no space (display:none comes AFTER nothing that could reset it) */
+/* hamburger: hidden on desktop and takes no space */
 nav.site-nav .sn-burger.lp-btn { display: none; }
 .sn-burger span {
   position: absolute; left: 13px; right: 13px; height: 2.5px; border-radius: 2px; background: #fff;
-  transition: transform .22s, opacity .18s, top .22s;
+  transition: transform .22s, opacity .18s, top .22s, background-color .35s;
 }
 .sn-burger span:nth-child(1) { top: 15px; }
 .sn-burger span:nth-child(2) { top: 21px; }
@@ -88,42 +116,82 @@ nav.site-nav .sn-burger.lp-btn { display: none; }
 .site-nav.is-open .sn-burger span:nth-child(2) { opacity: 0; }
 .site-nav.is-open .sn-burger span:nth-child(3) { top: 21px; transform: rotate(-45deg); }
 
-@media (max-width: 1099px) and (min-width: 861px) {
-  nav.site-nav .sn-link { padding: 0 10px; }
-  nav.site-nav .sn-icon { padding: 0 10px; }
+/* ── light variant (over light areas) ── */
+nav.site-nav.light .sn-link,
+nav.site-nav.light .sn-link:visited { color: #2B1A12; }
+nav.site-nav.light .sn-link:hover,
+nav.site-nav.light .sn-link:focus,
+nav.site-nav.light .sn-link:active { background: rgba(90, 53, 36, .09); color: #2B1A12; }
+nav.site-nav.light .sn-link svg { color: #8A5A12; }
+nav.site-nav.light .sn-link[aria-current="page"]::after { background: #B7791F; }
+nav.site-nav.light .sn-icon .notif-dot { box-shadow: 0 0 0 2px rgba(255, 252, 246, .95); }
+nav.site-nav.light a:focus-visible,
+nav.site-nav.light button:focus-visible { outline-color: #8A5A12; }
+nav.site-nav.light .lp-btn--glass-outline,
+nav.site-nav.light .lp-btn--glass-outline:visited,
+nav.site-nav.light .lp-btn--glass-outline:hover,
+nav.site-nav.light .lp-btn--glass-outline:focus { background: rgba(255, 252, 246, .5); color: #2B1A12; border-color: rgba(90, 53, 36, .45); }
+nav.site-nav.light .sn-burger.lp-btn { border-color: rgba(90, 53, 36, .4); }
+nav.site-nav.light .sn-burger span { background: #2B1A12; }
+
+/* ── collapsed: bar, border, blur and links melt away; only the logo stays, moved to the top-left corner ── */
+nav.site-nav.collapsed {
+  background: transparent; border-color: transparent; box-shadow: none;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  pointer-events: none;
+}
+nav.site-nav.collapsed .sn-links,
+nav.site-nav.collapsed .sn-burger.lp-btn {
+  opacity: 0; transform: translateY(-10px); visibility: hidden; pointer-events: none;
+  transition: opacity .25s ease, transform .3s ease, visibility 0s .3s;
+}
+nav.site-nav.collapsed .sn-brand {
+  pointer-events: auto;
+  transform: translate(calc(-1 * (var(--sn-pl) + var(--sn-gut) - 14px)), -22px) scale(.84); transform-origin: left center;
+  -webkit-text-stroke: 1.6px rgba(24, 12, 7, .62); paint-order: stroke fill; text-shadow: 0 1px 1px rgba(15, 7, 3, .35);
+}
+nav.site-nav.collapsed.light .sn-brand { -webkit-text-stroke: 0; text-shadow: 0 0 10px rgba(255, 255, 255, .95), 0 0 2px rgba(255, 255, 255, .9); }
+
+/* ── hidden while a modal or the Luma chat is open ── */
+body.modal-open nav.site-nav,
+body.overlay-open nav.site-nav { opacity: 0; pointer-events: none; visibility: hidden; }
+
+@media (max-width: 1180px) {
+  nav.site-nav .sn-link { padding: 0 9px; font-size: .86rem; }
+  nav.site-nav .sn-icon { padding: 0 9px; }
   nav.site-nav .sn-cta { padding: 0 14px; }
+  nav.site-nav .sn-links { gap: 2px; }
 }
 
-@media (max-width: 860px) {
-  nav.site-nav { padding: 0 8px 0 18px; }
+/* mobile: hamburger below 1000px; the menu panel is nearly opaque (blur does not work inside the nav's own backdrop root) */
+@media (max-width: 1000px) {
+  :root { --sn-pl: 18px; }
+  nav.site-nav { padding: 0 8px 0 var(--sn-pl); }
   nav.site-nav .sn-burger.lp-btn { display: inline-flex; }
   nav.site-nav .sn-links {
     display: none; position: absolute; top: calc(100% + 8px); left: 0; right: 0;
     flex-direction: column; align-items: stretch; gap: 4px; padding: 10px;
     max-height: calc(100vh - 110px); max-height: calc(100dvh - 110px); overflow-y: auto;
-    /* nearly opaque: a backdrop blur cannot work inside the nav (it is already a backdrop root), and page text must not show through the rows */
-    border-radius: 18px; background: #180E09; border: 1px solid var(--sn-line);
+    border-radius: 18px; background: rgba(36, 21, 13, .92); border: 1px solid rgba(255, 236, 200, .3);
     box-shadow: 0 18px 40px -14px rgba(0, 0, 0, .7);
   }
+  nav.site-nav.light .sn-links { background: rgba(255, 252, 246, .94); border-color: rgba(90, 53, 36, .18); box-shadow: 0 18px 40px -18px rgba(43, 26, 18, .5); }
   nav.site-nav.is-open .sn-links { display: flex; }
   nav.site-nav .sn-link,
   nav.site-nav .sn-link:visited { width: 100%; min-height: 48px; padding: 0 14px; font-size: 1rem; justify-content: flex-start; }
   nav.site-nav .sn-link[aria-current="page"] { background: rgba(255, 236, 200, .12); }
+  nav.site-nav.light .sn-link[aria-current="page"] { background: rgba(90, 53, 36, .08); }
   nav.site-nav .sn-link[aria-current="page"]::after { display: none; }
-  nav.site-nav .sn-label { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; }
   nav.site-nav .sn-icon { gap: 12px; padding: 0 14px; }
-  nav.site-nav .sn-icon .cart-badge { position: static; margin-left: auto; width: 20px; height: 20px; font-size: 11px; }
-  nav.site-nav .sn-icon .notif-dot { position: static; margin-left: auto; }
+  nav.site-nav .sn-icon .cart-badge { margin-left: auto; }
+  nav.site-nav .sn-icon .notif-dot { margin: 0 0 0 auto; align-self: center; }
   nav.site-nav .sn-cta { width: 100%; min-height: 48px; margin: 6px 0 0; font-size: 1rem; }
   nav.site-nav .sn-cta + .sn-cta { margin-top: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  nav.site-nav .sn-link, .sn-burger span { transition: none; }
+  nav.site-nav, nav.site-nav *, .sn-burger span { transition: none !important; }
 }
-
-/* the toast stack (alerts.css) starts under the floating bar: 12px margin + 64px bar + air */
-.lp-toasts { top: 92px; }
 
 /* The body used to clip sideways overflow with `overflow-x: hidden`, which also made it a scroll container, so the sticky bar never
    stuck to the screen. `clip` hides the same overflow without creating a scroll container. */

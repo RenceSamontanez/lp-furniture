@@ -156,6 +156,7 @@ function lumaOnOpen(open) {
   if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
   const fab = document.getElementById('chatbot-fab');
   if (fab) fab.classList.toggle('is-open', open);
+  document.body.classList.toggle('modal-open', open || document.body.classList.contains('lp-modal-open')); // hides the smart nav while the chat is open
   if (!open) return;
   lumaUpdatePill();
   const started = !!document.querySelector('#chat-body .chat-msg.user');
@@ -1041,11 +1042,8 @@ function lightboxKeyHandler(e) {
    Shows a brief message at the bottom of the screen.
    Used for cart confirmations, errors, etc.
 ════════════════════════════════════════════════════════ */
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+function showToast(msg, type) {
+  if (window.LpToast) { window.LpToast.show(type || 'info', msg); }
 }
 
 
@@ -1422,10 +1420,10 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Reactivate from navbar — resets to default position and clears the dismissed flag */
   function reactivateChatbot() {
     const fab = document.getElementById('chatbot-fab');
-    const navReactivate = document.getElementById('nav-chatbot-reactivate');
-  
+    const wasHidden = !!fab && fab.style.display === 'none';
+
     try { localStorage.removeItem('lp_chat_dismissed'); } catch (e) {}
-  
+
     if (fab) {
       fab.style.display = 'flex';
       fab.style.left = '';
@@ -1433,7 +1431,8 @@ document.addEventListener('DOMContentLoaded', () => {
       fab.style.right = '24px';
       fab.style.bottom = '24px';
     }
-    if (navReactivate) navReactivate.style.display = 'none';
+    // The Assistant link in the nav is always there now: with Luma already on screen it opens the chat, after bringing her back it only focuses her launcher.
+    if (!wasHidden) { openChatbot(); return; }
     if (fab) { const b = document.getElementById('chatbot-fab-btn'); if (b) b.focus(); }
   }
 

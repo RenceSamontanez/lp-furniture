@@ -26,15 +26,17 @@ class AlertToastTest extends TestCase
     public function test_each_type_renders_with_its_class_role_and_close_button(): void
     {
         $html = view('partials.alerts', [])->render();
-        $this->assertSame('', trim($html), 'no messages, no markup');
+        $this->assertStringContainsString('id="lp-toasts"', $html, 'the container is always there');
+        $this->assertSame(0, $this->toastCount($html), 'but empty without messages');
 
         $this->withSession(['success' => 'Saved it', 'error' => 'It broke', 'warning' => 'Careful now', 'status' => 'Link sent', 'info' => 'FYI only'])
             ->get(route('catalog'))->assertOk()
             ->assertSee('lp-toast--success', false)->assertSee('lp-toast--error', false)
             ->assertSee('lp-toast--warning', false)->assertSee('lp-toast--info', false)
             ->assertSee('Saved it')->assertSee('It broke')->assertSee('Careful now')->assertSee('Link sent')->assertSee('FYI only')
-            ->assertSee('role="alert"', false)->assertSee('data-lp-toast-close', false)
-            ->assertSee('data-lp-toast-timeout="6000"', false)
+            ->assertSee('role="alert"', false)->assertSee('role="status"', false)->assertSee('data-lp-toast-close', false)
+            ->assertSee('data-lp-toast-timeout="5000"', false)->assertSee('data-lp-toast-timeout="8000"', false)
+            ->assertSee('aria-label="Dismiss notification"', false)
             ->assertSee('assets/js/alerts.js', false)->assertSee('assets/css/alerts.css', false);
     }
 
@@ -122,14 +124,15 @@ class AlertToastTest extends TestCase
     public function test_autodismiss_markup_and_script_behaviour(): void
     {
         $js = file_get_contents(public_path('assets/js/alerts.js'));
-        foreach (['mouseenter', 'mouseleave', 'focusin', 'focusout', 'data-lp-toast-close', '|| 6000'] as $needle) {
+        foreach (['mouseenter', 'mouseleave', 'focusin', 'focusout', 'data-lp-toast-close', '|| 5000'] as $needle) {
             $this->assertStringContainsString($needle, $js);
         }
 
         $css = file_get_contents(public_path('assets/css/alerts.css'));
-        $this->assertStringContainsString('@media (max-width: 640px)', $css);
-        $this->assertStringContainsString('top: 76px;', $css);
-        $this->assertStringContainsString('right: 16px;', $css);
+        $this->assertStringContainsString('@media (max-width: 520px)', $css);
+        $this->assertStringContainsString('.lp-toasts--nav { top: 96px; }', $css);
+        $this->assertStringContainsString('top: 16px;', $css);
+        $this->assertStringContainsString('width: min(390px, calc(100vw - 24px));', $css);
         $this->assertStringContainsString('prefers-reduced-motion', $css);
     }
 

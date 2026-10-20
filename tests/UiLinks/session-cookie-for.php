@@ -23,12 +23,13 @@ if (!str_ends_with($db, '_test')) {
 }
 
 $login = json_decode(file_get_contents($root . '/storage/app/screenshot-login.json'), true);
-$user  = App\Models\User::where('email', $argv[1] ?? $login['customer_email'])->firstOrFail();
+$guard = $argv[2] ?? 'web';   // 'admin' mints an admin-guard session (email then defaults to the demo admin)
+$user  = App\Models\User::where('email', $argv[1] ?? ($guard === 'admin' ? $login['admin_email'] : $login['customer_email']))->firstOrFail();
 
 $session = app('session')->driver();
 $session->setId(Illuminate\Support\Str::random(40));
 $session->start();
-$session->put(Illuminate\Support\Facades\Auth::guard('web')->getName(), $user->id);
+$session->put(Illuminate\Support\Facades\Auth::guard($guard)->getName(), $user->id);
 $session->put('_token', Illuminate\Support\Str::random(40));
 $session->save();
 

@@ -1,77 +1,115 @@
-/* Session alerts as toasts (partials/alerts.blade.php, js/alerts.js).
-   Top right on desktop, full width at the top on phones. */
+/* Glass toasts (partials/alerts.blade.php, js/alerts.js). Values from docs/nav/nav-prototype.html.
+   Top right; 96px from the top where the smart nav exists (.lp-toasts--nav), 16px on focus pages and in the admin.
+   Same adaptive rule as the nav: dark glass by default, class "light" (set by alerts.js from the closest [data-nav]
+   behind the toast) turns the glass light and the text dark. */
 
 .lp-toasts {
   position: fixed;
-  top: 76px;                      /* just below the 64px navigation bar */
-  right: 16px;
+  top: 16px;
+  right: clamp(12px, 3vw, 40px);
   z-index: 10050;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  width: min(420px, calc(100vw - 32px));
+  gap: 12px;
+  width: min(390px, calc(100vw - 24px));
   pointer-events: none;
 }
+.lp-toasts--nav { top: 96px; }
 
 .lp-toast {
-  --lp-toast-bg: #F6F1E8;
-  --lp-toast-edge: #B9A88F;
-  --lp-toast-ink: #3D3129;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 12px 10px 12px 14px;
-  background: var(--lp-toast-bg);
-  color: var(--lp-toast-ink);
-  border: 1px solid var(--lp-toast-edge);
-  border-left-width: 4px;
-  border-radius: 10px;
-  box-shadow: 0 6px 20px rgba(42, 24, 16, 0.14);
+  --c: #9FD08A;
+  --tx: #FBF3E6;
+  --tx2: #E6D6BA;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: start;
+  padding: 14px 12px 16px 16px;
+  border-radius: 18px;
+  color: var(--tx);
+  overflow: hidden;
+  background: rgba(36, 21, 13, .64);   /* prototype .58; .64 keeps the text at 4.5:1 over the brightest hero photo pixels */
+  border: 1px solid rgba(255, 236, 200, .3);
+  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .16);
+  -webkit-backdrop-filter: blur(22px) saturate(1.6);
+  backdrop-filter: blur(22px) saturate(1.6);
   font-family: var(--font-body, 'DM Sans', sans-serif);
-  font-size: 13.5px;
-  line-height: 1.45;
+  font-size: .94rem;
+  line-height: 1.4;
   pointer-events: auto;
-  animation: lp-toast-in .22s ease-out;
-  transition: opacity .2s ease, transform .2s ease;
+  transition: background-color .35s ease, border-color .35s ease, color .35s ease;
+  transform: translateX(30px);
+  opacity: 0;
+  animation: lp-toast-in .38s cubic-bezier(.2, .8, .2, 1) forwards;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .lp-toast { background: rgba(36, 21, 13, .95); }
+  .lp-toast.light { background: rgba(255, 252, 246, .97); }
+}
+.lp-toast.light {
+  --tx: #2B1A12;
+  --tx2: #4a3a2d;
+  background: rgba(255, 252, 246, .76);
+  border-color: rgba(90, 53, 36, .18);
+  box-shadow: 0 18px 40px -20px rgba(43, 26, 18, .5), inset 0 1px 0 rgba(255, 255, 255, .85);
 }
 
-.lp-toast--success { --lp-toast-bg: #EAF6EE; --lp-toast-edge: #2F8F5B; --lp-toast-ink: #17412C; }
-.lp-toast--error   { --lp-toast-bg: #FDECEC; --lp-toast-edge: #C0392B; --lp-toast-ink: #7A1F16; }
-.lp-toast--warning { --lp-toast-bg: #FFF4DC; --lp-toast-edge: #D99A1E; --lp-toast-ink: #6B4700; }
+.lp-toast--success { --c: #9FD08A; }
+.lp-toast--error   { --c: #F2A097; }
+.lp-toast--warning { --c: #F1D391; }
+.lp-toast--info    { --c: #8EC5E8; }
 
-.lp-toast.is-leaving { opacity: 0; transform: translateY(-6px); }
-
-.lp-toast-icon { flex-shrink: 0; margin-top: 2px; }
-.lp-toast-msg { flex: 1; min-width: 0; overflow-wrap: anywhere; font-weight: 500; }
+.lp-toast-icon {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: color-mix(in srgb, var(--c) 22%, transparent);
+  color: var(--c);
+  border: 1px solid color-mix(in srgb, var(--c) 55%, transparent);
+}
+.lp-toast.light .lp-toast-icon { color: color-mix(in srgb, var(--c) 62%, #2B1A12); }
+.lp-toast-msg { min-width: 0; padding-top: 5px; overflow-wrap: anywhere; font-weight: 600; color: var(--tx); }
 
 .lp-toast-close {
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;                 /* 44px tap target (Stage 21i); the negative margin keeps the toast the same height */
-  height: 44px;
+  box-sizing: border-box;
+  display: grid; place-items: center;
+  width: 44px; height: 44px;
+  margin: -10px -6px -10px 0;
   padding: 0;
-  margin: -12px -8px -12px 0;
   background: transparent;
-  color: inherit;
+  color: var(--tx2);
   border: 0;
-  border-radius: 6px;
+  border-radius: 12px;
   cursor: pointer;
-  opacity: .7;
 }
-.lp-toast-close:hover { opacity: 1; background: rgba(0, 0, 0, 0.06); }
-.lp-toast-close:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; opacity: 1; }
+.lp-toast-close:hover { background: rgba(255, 236, 200, .12); }
+.lp-toast.light .lp-toast-close:hover { background: rgba(90, 53, 36, .09); }
+.lp-toast-close:focus-visible { outline: 3px solid #F1D391; outline-offset: 1px; }
+.lp-toast.light .lp-toast-close:focus-visible { outline-color: #8A5A12; }
 
-@keyframes lp-toast-in {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: none; }
+.lp-toast-bar {
+  position: absolute; left: 0; bottom: 0; height: 3px; width: 100%;
+  background: var(--c);
+  transform-origin: left;
+  animation: lp-toast-drain var(--d, 5s) linear forwards;
 }
+.lp-toast.light .lp-toast-bar { background: color-mix(in srgb, var(--c) 62%, #2B1A12); }
+.lp-toast:hover .lp-toast-bar,
+.lp-toast:focus-within .lp-toast-bar { animation-play-state: paused; }
 
-@media (max-width: 640px) {
-  .lp-toasts { top: 0; right: 0; left: 0; width: 100%; padding: 10px 12px 0; gap: 8px; }
+.lp-toast.is-leaving { animation: lp-toast-out .28s ease forwards; }
+
+@keyframes lp-toast-in   { to { transform: none; opacity: 1; } }
+@keyframes lp-toast-out  { from { transform: none; opacity: 1; } to { transform: translateX(30px); opacity: 0; } }
+@keyframes lp-toast-drain { to { transform: scaleX(0); } }
+
+@media (max-width: 520px) {
+  .lp-toasts { left: 12px; right: 12px; width: auto; }
+  .lp-toasts--nav { top: 88px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lp-toast { animation: none; transition: none; }
+  .lp-toast { transform: none; opacity: 1; animation: none; transition: none; }
+  .lp-toast.is-leaving { opacity: 0; animation: none; }
+  .lp-toast-bar { animation: none; transform: scaleX(.5); }
 }

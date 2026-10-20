@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.focus')
 @section('title', 'Sign In — LP Furniture')
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/auth.css') }}"/>

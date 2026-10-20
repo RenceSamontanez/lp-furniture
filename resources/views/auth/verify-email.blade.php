@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.focus')
 
 @section('title', 'Verify Your Email — LP Furniture')
 

@@ -19,7 +19,7 @@
 <link rel="stylesheet" href="{{ $lpVer('assets/css/luma.css') }}"/>
 @stack('styles')
 </head>
-<body>
+<body data-nav="light">
 
 <!-- ═══ NAV (floating glass bar; see public/assets/css/site-nav.css) ═══ -->
 @php $navIs = fn (string ...$p) => request()->routeIs(...$p); @endphp
@@ -53,7 +53,7 @@
           <circle cx="9"  cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
           <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.99-1.73L23 6H6"/>
         </svg>
-        <span class="sn-label">Cart @if($cartCount > 0) <span class="sn-sr">({{ $cartCount }} {{ $cartCount == 1 ? 'item' : 'items' }})</span>@endif</span>
+        <span class="sn-label">Cart</span>@if($cartCount > 0) <span class="sn-sr">({{ $cartCount }} {{ $cartCount == 1 ? 'item' : 'items' }})</span>@endif
         @if($cartCount > 0)
           <span class="cart-badge" aria-hidden="true">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
         @endif
@@ -66,7 +66,7 @@
           <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
           <path d="M13.73 21a2 2 0 01-3.46 0"/>
         </svg>
-        <span class="sn-label">Notifications @if($unreadCount > 0) <span class="sn-sr">(unread)</span>@endif</span>
+        <span class="sn-label">Notifications</span>@if($unreadCount > 0) <span class="sn-sr">(unread)</span>@endif
         @if($unreadCount > 0)
           <span class="notif-dot" aria-hidden="true"></span>
         @endif
@@ -81,7 +81,7 @@
 </nav>
 
 <!-- ═══ SESSION ALERTS (toasts) ═══ -->
-@include('partials.alerts')
+@include('partials.alerts', ['toastNav' => true])
 
 <!-- ═══ PAGE CONTENT ═══ -->
 <main>
@@ -89,7 +89,7 @@
 </main>
 
 @unless(View::hasSection('hide_site_footer'))
-<footer class="lp-footer">
+<footer class="lp-footer" data-nav="light">
   <span>&copy; {{ date('Y') }} LP Furniture</span>
   <span class="lp-footer-links">
     <a href="{{ route('guide') }}">How to request a custom design</a>
@@ -142,9 +142,6 @@
     <button type="button" class="chat-send lp-btn lp-btn--primary" onclick="sendChat()" aria-label="Send message"><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><use href="#luma-send"/></svg></button>
   </div>
 </div>
-
-<!-- ═══ TOAST ═══ -->
-<div class="toast" id="toast"></div>
 
 <!-- ═══ GLOBAL CONFIG FOR JS ═══ -->
 <script>

@@ -37,7 +37,7 @@
 </svg>
 
 <!-- ═══ HERO ═══ -->
-<div class="hero-v2 lp-hero">
+<div class="hero-v2 lp-hero" data-nav="dark">
   <div class="hero-v2-bg-fallback"></div>
 
   <div class="hero-v2-bg-slides">

@@ -473,7 +473,7 @@
 
 
 <!-- ═══ SECTION 7: FOOTER ═══ -->
-<footer id="footer-section" class="site-footer">
+<footer id="footer-section" class="site-footer" data-nav="dark">
   <div class="footer-main">
 
     <!-- Left: Brand -->

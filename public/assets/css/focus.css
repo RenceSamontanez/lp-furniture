@@ -1,0 +1,12 @@
+/* Focus pages (layouts/focus.blade.php): sign in, register, password reset, email notice, ID validation.
+   No nav and no footer; a small logo link home sits at the top and the page's own card follows. */
+.focus-body { min-height: 100vh; min-height: 100dvh; }
+.focus-top { display: flex; justify-content: center; padding: 20px 16px 0; }
+.focus-logo,
+.focus-logo:visited {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; border-radius: 10px;
+  font-family: var(--font-display); font-size: 1.4rem; font-weight: 600; line-height: 1.1; color: #8A5A12; text-decoration: none;
+}
+.focus-logo:hover { color: #6B430B; }
+.focus-logo em { color: #2B1A12; font-style: italic; font-weight: 600; }
+.focus-logo:focus-visible { outline: 3px solid #8A5A12; outline-offset: 2px; }

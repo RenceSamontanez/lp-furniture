@@ -1,0 +1,1851 @@
+{
+  "themeScan": [
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 0,
+      "light": false,
+      "lum": 0.03,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 140,
+      "light": false,
+      "lum": 0.07,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 280,
+      "light": false,
+      "lum": 0.17,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 420,
+      "light": false,
+      "lum": 0.11,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 560,
+      "light": false,
+      "lum": 0.09,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 700,
+      "light": false,
+      "lum": 0.05,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 840,
+      "light": false,
+      "lum": 0.35,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 980,
+      "light": true,
+      "lum": 0.87,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 1120,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 1260,
+      "light": true,
+      "lum": 0.85,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 1400,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 1540,
+      "light": true,
+      "lum": 0.87,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 1680,
+      "light": true,
+      "lum": 0.43,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 1820,
+      "light": true,
+      "lum": 0.33,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 1960,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 2100,
+      "light": true,
+      "lum": 0.93,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 2240,
+      "light": true,
+      "lum": 0.96,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 2380,
+      "light": true,
+      "lum": 0.52,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 2520,
+      "light": true,
+      "lum": 0.19,
+      "bad": true
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 2660,
+      "light": true,
+      "lum": 0.59,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 2800,
+      "light": true,
+      "lum": 0.79,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 2940,
+      "light": true,
+      "lum": 0.84,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 3080,
+      "light": true,
+      "lum": 0.87,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 3220,
+      "light": true,
+      "lum": 0.87,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 3360,
+      "light": true,
+      "lum": 0.83,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 3500,
+      "light": true,
+      "lum": 0.82,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 3640,
+      "light": true,
+      "lum": 0.93,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 3780,
+      "light": true,
+      "lum": 0.56,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/catalog",
+      "y": 0,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/catalog",
+      "y": 140,
+      "light": true,
+      "lum": 0.86,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/catalog",
+      "y": 280,
+      "light": true,
+      "lum": 0.85,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/product/1",
+      "y": 0,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/product/1",
+      "y": 140,
+      "light": true,
+      "lum": 0.84,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/product/1",
+      "y": 280,
+      "light": true,
+      "lum": 0.86,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/product/1",
+      "y": 420,
+      "light": true,
+      "lum": 0.72,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/product/1",
+      "y": 560,
+      "light": true,
+      "lum": 0.73,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "y": 0,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "y": 140,
+      "light": true,
+      "lum": 0.9,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "y": 280,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "y": 420,
+      "light": true,
+      "lum": 0.86,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "y": 560,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "y": 700,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "y": 840,
+      "light": true,
+      "lum": 0.86,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "y": 980,
+      "light": true,
+      "lum": 0.87,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "y": 1120,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "y": 1260,
+      "light": true,
+      "lum": 0.87,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "y": 1400,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "y": 1540,
+      "light": true,
+      "lum": 0.9,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "y": 1680,
+      "light": true,
+      "lum": 0.91,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "y": 1820,
+      "light": true,
+      "lum": 0.91,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/guide/custom-design",
+      "y": 0,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/guide/measure",
+      "y": 0,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 0,
+      "light": false,
+      "lum": 0.03,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 140,
+      "light": false,
+      "lum": 0.08,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 280,
+      "light": false,
+      "lum": 0.16,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 420,
+      "light": false,
+      "lum": 0.07,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 560,
+      "light": false,
+      "lum": 0.09,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 700,
+      "light": false,
+      "lum": 0.04,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 840,
+      "light": false,
+      "lum": 0.35,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 980,
+      "light": true,
+      "lum": 0.87,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 1120,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 1260,
+      "light": true,
+      "lum": 0.85,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 1400,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 1540,
+      "light": true,
+      "lum": 0.87,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 1680,
+      "light": true,
+      "lum": 0.43,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 1820,
+      "light": true,
+      "lum": 0.33,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 1960,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 2100,
+      "light": true,
+      "lum": 0.93,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 2240,
+      "light": true,
+      "lum": 0.96,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 2380,
+      "light": true,
+      "lum": 0.52,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 2520,
+      "light": true,
+      "lum": 0.19,
+      "bad": true
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 2660,
+      "light": true,
+      "lum": 0.59,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 2800,
+      "light": true,
+      "lum": 0.79,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 2940,
+      "light": true,
+      "lum": 0.84,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 3080,
+      "light": true,
+      "lum": 0.87,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 3220,
+      "light": true,
+      "lum": 0.87,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 3360,
+      "light": true,
+      "lum": 0.84,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 3500,
+      "light": true,
+      "lum": 0.82,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 3640,
+      "light": true,
+      "lum": 0.93,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 3780,
+      "light": true,
+      "lum": 0.56,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/catalog",
+      "y": 0,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/catalog",
+      "y": 140,
+      "light": true,
+      "lum": 0.86,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/catalog",
+      "y": 280,
+      "light": true,
+      "lum": 0.85,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/product/1",
+      "y": 0,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/product/1",
+      "y": 140,
+      "light": true,
+      "lum": 0.84,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/product/1",
+      "y": 280,
+      "light": true,
+      "lum": 0.86,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/product/1",
+      "y": 420,
+      "light": true,
+      "lum": 0.71,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/product/1",
+      "y": 560,
+      "light": true,
+      "lum": 0.72,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/cart",
+      "y": 0,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/orders",
+      "y": 0,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/orders",
+      "y": 140,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/orders",
+      "y": 280,
+      "light": true,
+      "lum": 0.95,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/orders",
+      "y": 420,
+      "light": true,
+      "lum": 0.93,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/profile",
+      "y": 0,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 0,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 140,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 280,
+      "light": true,
+      "lum": 0.94,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 420,
+      "light": true,
+      "lum": 0.92,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 560,
+      "light": true,
+      "lum": 0.91,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 700,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 840,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 980,
+      "light": true,
+      "lum": 0.9,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 1120,
+      "light": true,
+      "lum": 0.9,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 1260,
+      "light": true,
+      "lum": 0.93,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 1400,
+      "light": true,
+      "lum": 0.92,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 1540,
+      "light": true,
+      "lum": 0.94,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 1680,
+      "light": true,
+      "lum": 0.91,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 1820,
+      "light": true,
+      "lum": 0.9,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 1960,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 2100,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 2240,
+      "light": true,
+      "lum": 0.9,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 2380,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 2520,
+      "light": true,
+      "lum": 0.92,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 2660,
+      "light": true,
+      "lum": 0.92,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 2800,
+      "light": true,
+      "lum": 0.91,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 2940,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 3080,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 3220,
+      "light": true,
+      "lum": 0.92,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 3360,
+      "light": true,
+      "lum": 0.92,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 3500,
+      "light": true,
+      "lum": 0.94,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 3640,
+      "light": true,
+      "lum": 0.92,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 3780,
+      "light": true,
+      "lum": 0.93,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 3920,
+      "light": true,
+      "lum": 0.91,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 4060,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 4200,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 4340,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/design",
+      "y": 0,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/design",
+      "y": 140,
+      "light": true,
+      "lum": 0.91,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/design",
+      "y": 280,
+      "light": true,
+      "lum": 0.96,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/design",
+      "y": 420,
+      "light": true,
+      "lum": 0.96,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/feedback",
+      "y": 0,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/services/request",
+      "y": 0,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/services/request",
+      "y": 140,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/services/request",
+      "y": 280,
+      "light": true,
+      "lum": 0.95,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/services/request",
+      "y": 420,
+      "light": true,
+      "lum": 0.93,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/services/request",
+      "y": 560,
+      "light": true,
+      "lum": 0.95,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/services/request",
+      "y": 700,
+      "light": true,
+      "lum": 0.93,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/services/request",
+      "y": 840,
+      "light": true,
+      "lum": 0.91,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/services/request",
+      "y": 980,
+      "light": true,
+      "lum": 0.92,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/services/request",
+      "y": 1120,
+      "light": true,
+      "lum": 0.91,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/services/request",
+      "y": 1260,
+      "light": true,
+      "lum": 0.92,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/checkout",
+      "y": 0,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/guide/custom-design",
+      "y": 0,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 0,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 140,
+      "light": true,
+      "lum": 0.9,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 280,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 420,
+      "light": true,
+      "lum": 0.86,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 560,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 700,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 840,
+      "light": true,
+      "lum": 0.86,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 980,
+      "light": true,
+      "lum": 0.87,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 1120,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 1260,
+      "light": true,
+      "lum": 0.87,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 1400,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 1540,
+      "light": true,
+      "lum": 0.9,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 1680,
+      "light": true,
+      "lum": 0.91,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 1820,
+      "light": true,
+      "lum": 0.91,
+      "bad": false
+    }
+  ],
+  "behaviour": {},
+  "overflow": [
+    {
+      "who": "guest",
+      "url": "/",
+      "path": "/",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "guest",
+      "url": "/catalog",
+      "path": "/catalog",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "guest",
+      "url": "/product/1",
+      "path": "/product/1",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "path": "/terms",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "guest",
+      "url": "/guide/custom-design",
+      "path": "/guide/custom-design",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "guest",
+      "url": "/guide/measure",
+      "path": "/guide/measure",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "guest",
+      "url": "/login",
+      "path": "/login",
+      "over": 0,
+      "nav": false
+    },
+    {
+      "who": "guest",
+      "url": "/register",
+      "path": "/register",
+      "over": 0,
+      "nav": false
+    },
+    {
+      "who": "guest",
+      "url": "/forgot-password",
+      "path": "/forgot-password",
+      "over": 0,
+      "nav": false
+    },
+    {
+      "who": "guest",
+      "url": "/reset-password/abc",
+      "path": "/reset-password/abc",
+      "over": 0,
+      "nav": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "path": "/",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "user",
+      "url": "/catalog",
+      "path": "/catalog",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "user",
+      "url": "/product/1",
+      "path": "/product/1",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "user",
+      "url": "/cart",
+      "path": "/cart",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "user",
+      "url": "/orders",
+      "path": "/orders",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "user",
+      "url": "/profile",
+      "path": "/profile",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "path": "/notifications",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "user",
+      "url": "/design",
+      "path": "/design",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "user",
+      "url": "/feedback",
+      "path": "/feedback",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "user",
+      "url": "/services/request",
+      "path": "/services/request",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "user",
+      "url": "/checkout",
+      "path": "/cart",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "user",
+      "url": "/validate-account",
+      "path": "/validate-account",
+      "over": 0,
+      "nav": false
+    },
+    {
+      "who": "user",
+      "url": "/guide/custom-design",
+      "path": "/guide/custom-design",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "path": "/terms",
+      "over": 0,
+      "nav": true
+    },
+    {
+      "who": "user",
+      "url": "/verify-email",
+      "path": "/verify-email",
+      "over": 0,
+      "nav": true
+    }
+  ],
+  "toast": {},
+  "contrast": [
+    {
+      "name": "nav-dark-home",
+      "text": "Home",
+      "ratio": 16.25
+    },
+    {
+      "name": "nav-dark-home",
+      "text": "Catalog",
+      "ratio": 16.19
+    },
+    {
+      "name": "nav-dark-home",
+      "text": "Customize",
+      "ratio": 15
+    },
+    {
+      "name": "nav-dark-home",
+      "text": "Assistant",
+      "ratio": 14.62
+    },
+    {
+      "name": "nav-dark-home",
+      "text": "Cart",
+      "ratio": 14.68
+    },
+    {
+      "name": "nav-dark-home",
+      "text": "Notifications",
+      "ratio": 14.63
+    },
+    {
+      "name": "nav-dark-home",
+      "text": "Reviews",
+      "ratio": 14.76
+    },
+    {
+      "name": "nav-dark-home",
+      "text": "My Account",
+      "ratio": 14.57
+    },
+    {
+      "name": "nav-dark-home",
+      "text": "LP",
+      "ratio": 11.77
+    },
+    {
+      "name": "nav-dark-home",
+      "text": "Furniture",
+      "ratio": 16.97
+    },
+    {
+      "name": "nav-dark-home",
+      "text": "Cart",
+      "ratio": 14.68
+    },
+    {
+      "name": "nav-dark-home",
+      "text": "Notifications",
+      "ratio": 14.63
+    },
+    {
+      "name": "nav-light-catalog",
+      "text": "Home",
+      "ratio": 13.44
+    },
+    {
+      "name": "nav-light-catalog",
+      "text": "Catalog",
+      "ratio": 13.35
+    },
+    {
+      "name": "nav-light-catalog",
+      "text": "Customize",
+      "ratio": 13.24
+    },
+    {
+      "name": "nav-light-catalog",
+      "text": "Assistant",
+      "ratio": 14.55
+    },
+    {
+      "name": "nav-light-catalog",
+      "text": "Cart",
+      "ratio": 14.12
+    },
+    {
+      "name": "nav-light-catalog",
+      "text": "Notifications",
+      "ratio": 14.83
+    },
+    {
+      "name": "nav-light-catalog",
+      "text": "Reviews",
+      "ratio": 14.37
+    },
+    {
+      "name": "nav-light-catalog",
+      "text": "My Account",
+      "ratio": 14.86
+    },
+    {
+      "name": "nav-light-catalog",
+      "text": "LP",
+      "ratio": 8.02
+    },
+    {
+      "name": "nav-light-catalog",
+      "text": "Furniture",
+      "ratio": 15.53
+    },
+    {
+      "name": "nav-light-catalog",
+      "text": "Cart",
+      "ratio": 14.12
+    },
+    {
+      "name": "nav-light-catalog",
+      "text": "Notifications",
+      "ratio": 14.83
+    },
+    {
+      "name": "nav-light-cart",
+      "text": "Home",
+      "ratio": 15.63
+    },
+    {
+      "name": "nav-light-cart",
+      "text": "Catalog",
+      "ratio": 15.63
+    },
+    {
+      "name": "nav-light-cart",
+      "text": "Customize",
+      "ratio": 15.63
+    },
+    {
+      "name": "nav-light-cart",
+      "text": "Assistant",
+      "ratio": 15.63
+    },
+    {
+      "name": "nav-light-cart",
+      "text": "Cart",
+      "ratio": 15.63
+    },
+    {
+      "name": "nav-light-cart",
+      "text": "Notifications",
+      "ratio": 15.63
+    },
+    {
+      "name": "nav-light-cart",
+      "text": "Reviews",
+      "ratio": 15.63
+    },
+    {
+      "name": "nav-light-cart",
+      "text": "My Account",
+      "ratio": 15.63
+    },
+    {
+      "name": "nav-light-cart",
+      "text": "LP",
+      "ratio": 7.89
+    },
+    {
+      "name": "nav-light-cart",
+      "text": "Furniture",
+      "ratio": 15.63
+    },
+    {
+      "name": "nav-light-cart",
+      "text": "Cart",
+      "ratio": 15.63
+    },
+    {
+      "name": "nav-light-cart",
+      "text": "Notifications",
+      "ratio": 15.63
+    },
+    {
+      "name": "nav-light-over-dark-photo",
+      "text": "Home",
+      "ratio": 9.57
+    },
+    {
+      "name": "nav-light-over-dark-photo",
+      "text": "Catalog",
+      "ratio": 8.44
+    },
+    {
+      "name": "nav-light-over-dark-photo",
+      "text": "Customize",
+      "ratio": 9.37
+    },
+    {
+      "name": "nav-light-over-dark-photo",
+      "text": "Assistant",
+      "ratio": 9.32
+    },
+    {
+      "name": "nav-light-over-dark-photo",
+      "text": "Cart",
+      "ratio": 7.42
+    },
+    {
+      "name": "nav-light-over-dark-photo",
+      "text": "Notifications",
+      "ratio": 6.9
+    },
+    {
+      "name": "nav-light-over-dark-photo",
+      "text": "Reviews",
+      "ratio": 9.09
+    },
+    {
+      "name": "nav-light-over-dark-photo",
+      "text": "My Account",
+      "ratio": 9.09
+    },
+    {
+      "name": "nav-light-over-dark-photo",
+      "text": "LP",
+      "ratio": 5.06
+    },
+    {
+      "name": "nav-light-over-dark-photo",
+      "text": "Furniture",
+      "ratio": 9.72
+    },
+    {
+      "name": "nav-light-over-dark-photo",
+      "text": "Cart",
+      "ratio": 7.42
+    },
+    {
+      "name": "nav-light-over-dark-photo",
+      "text": "Notifications",
+      "ratio": 6.9
+    },
+    {
+      "name": "nav-light-mobile-menu",
+      "text": "Home",
+      "ratio": 16.04
+    },
+    {
+      "name": "nav-light-mobile-menu",
+      "text": "Catalog",
+      "ratio": 13.99
+    },
+    {
+      "name": "nav-light-mobile-menu",
+      "text": "Customize",
+      "ratio": 16.3
+    },
+    {
+      "name": "nav-light-mobile-menu",
+      "text": "Assistant",
+      "ratio": 15.01
+    },
+    {
+      "name": "nav-light-mobile-menu",
+      "text": "Cart",
+      "ratio": 15.57
+    },
+    {
+      "name": "nav-light-mobile-menu",
+      "text": "Notifications",
+      "ratio": 16.3
+    },
+    {
+      "name": "nav-light-mobile-menu",
+      "text": "Reviews",
+      "ratio": 16.3
+    },
+    {
+      "name": "nav-light-mobile-menu",
+      "text": "My Account",
+      "ratio": 16.3
+    },
+    {
+      "name": "nav-light-mobile-menu",
+      "text": "Cart",
+      "ratio": 15.57
+    },
+    {
+      "name": "nav-light-mobile-menu",
+      "text": "Notifications",
+      "ratio": 16.3
+    },
+    {
+      "name": "toast-dark",
+      "text": "Your order OC-2026-0042 is n",
+      "ratio": 14.1
+    },
+    {
+      "name": "toast-dark",
+      "text": "Saved to your cart. Open the",
+      "ratio": 5.4
+    },
+    {
+      "name": "toast-light",
+      "text": "Your order is now in product",
+      "ratio": 15.88
+    },
+    {
+      "name": "toast-light",
+      "text": "Only 2 left in stock.",
+      "ratio": 15.74
+    },
+    {
+      "name": "toast-light",
+      "text": "That did not go through. Che",
+      "ratio": 15.74
+    },
+    {
+      "name": "toast-light",
+      "text": "Saved to your cart. Open the",
+      "ratio": 13.67
+    },
+    {
+      "name": "toast-admin-light",
+      "text": "Could not save the product. ",
+      "ratio": 15.89
+    },
+    {
+      "name": "toast-admin-light",
+      "text": "Order status updated.",
+      "ratio": 15.9
+    }
+  ],
+  "modal": {
+    "hasModalOnOrders": false
+  },
+  "mobile": {
+    "collapsed": {
+      "collapsed": true,
+      "light": true,
+      "open": false,
+      "bg": "rgba(0, 0, 0, 0)",
+      "border": "rgba(0, 0, 0, 0)",
+      "blur": "none",
+      "opacity": "1",
+      "visibility": "visible",
+      "logo": {
+        "l": 15,
+        "t": 4,
+        "w": 108,
+        "h": 37
+      },
+      "logoStroke": "0px",
+      "linksInert": true,
+      "burgerInert": true,
+      "linksVis": "hidden"
+    }
+  },
+  "buttons": [
+    {
+      "name": "home-guest-dark",
+      "count": 33,
+      "navFailures": [],
+      "otherPreExisting": [
+        "btn-view-details 2.56"
+      ]
+    },
+    {
+      "name": "catalog-guest-light",
+      "count": 22,
+      "navFailures": [],
+      "otherPreExisting": [
+        "btn-view-details 2.56"
+      ]
+    },
+    {
+      "name": "home-guest-dark-390",
+      "count": 35,
+      "navFailures": [],
+      "otherPreExisting": [
+        "btn-view-details 2.56"
+      ]
+    },
+    {
+      "name": "catalog-guest-light-390",
+      "count": 20,
+      "navFailures": [],
+      "otherPreExisting": [
+        "btn-view-details 2.56"
+      ]
+    },
+    {
+      "name": "login-focus-390",
+      "count": 4,
+      "navFailures": [],
+      "otherPreExisting": [
+        "password-toggle 2.56"
+      ]
+    }
+  ],
+  "contrastMinByGroup": {
+    "nav-dark-home": 11.77,
+    "nav-light-catalog": 8.02,
+    "nav-light-cart": 7.89,
+    "nav-light-over-dark-photo": 5.06,
+    "nav-light-mobile-menu": 13.99,
+    "toast-dark": 5.4,
+    "toast-light": 13.67,
+    "toast-admin-light": 15.89
+  },
+  "problems": [
+    "light/dark rule matches the real pixels in 157 samples (2 mismatches)"
+  ]
+}
