@@ -19,8 +19,14 @@ class FooterData
 
         $address   = self::clean($bs->shop_address) ?? self::clean($fb['shop_address'] ?? null);
         $landmarks = self::clean($bs->shop_landmarks) ?? self::clean($fb['shop_landmarks'] ?? null);
-        $lat = is_numeric($bs->map_lat) ? (float) $bs->map_lat : null;
-        $lng = is_numeric($bs->map_lng) ? (float) $bs->map_lng : null;
+        // Contact Settings win when both are set; otherwise the config pin (config/shop.php) is used.
+        if (is_numeric($bs->map_lat) && is_numeric($bs->map_lng)) {
+            $lat = (float) $bs->map_lat;
+            $lng = (float) $bs->map_lng;
+        } else {
+            $lat = is_numeric($fb['map_lat'] ?? null) ? (float) $fb['map_lat'] : null;
+            $lng = is_numeric($fb['map_lng'] ?? null) ? (float) $fb['map_lng'] : null;
+        }
         $hasCoords = $lat !== null && $lng !== null;
 
         $visit = null;
@@ -37,14 +43,7 @@ class FooterData
         $logoDir  = trim((string) config('shop.logo_dir'), '/');
         $payments = [];
         foreach (config('shop.payments', []) as $key => $label) {
-            $logo = null;
-            foreach (['svg', 'png'] as $ext) {
-                if (is_file(public_path("{$logoDir}/{$key}.{$ext}"))) {
-                    $logo = asset("{$logoDir}/{$key}.{$ext}");
-                    break;
-                }
-            }
-            $payments[] = ['label' => $label, 'logo' => $logo];
+            $payments[] = ['key' => (string) $key, 'label' => $label, 'logo' => self::logoUrl($logoDir, (string) $key)];
         }
 
         $policies = [];
@@ -63,6 +62,25 @@ class FooterData
             'payments' => $payments,
             'policies' => $policies,
         ];
+    }
+
+    /** First existing logo for a method (svg, png, jpg, jpeg, webp in that order; extension case ignored), versioned by file time. */
+    private static function logoUrl(string $dir, string $key): ?string
+    {
+        $found = [];
+        foreach (glob(public_path($dir) . DIRECTORY_SEPARATOR . '*') ?: [] as $file) {
+            $info = pathinfo($file);
+            if (is_file($file) && strcasecmp($info['filename'], $key) === 0) {
+                $found[strtolower($info['extension'] ?? '')] = $info['basename'];
+            }
+        }
+        foreach (config('shop.logo_extensions', ['svg', 'png', 'jpg', 'jpeg', 'webp']) as $ext) {
+            if (isset($found[$ext])) {
+                return asset($dir . '/' . $found[$ext]) . '?v=' . (@filemtime(public_path($dir . '/' . $found[$ext])) ?: 1);
+            }
+        }
+
+        return null;
     }
 
     /** "0991 239 4770" and tel:+639912394770 for a PH mobile; anything else is shown as typed with a digits-only tel: link. */

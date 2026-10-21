@@ -89,6 +89,44 @@ class SmartNavTest extends TestCase
         $this->assertStringNotContainsString('display:none', substr($html, strpos($html, 'nav-chatbot-reactivate'), 300));
     }
 
+    /** Every guest-reachable page that uses the nav carries the same nav markup, theme markers and scripts as it does for a customer. */
+    public function test_guests_get_the_same_nav_assets_and_theme_markers_as_customers(): void
+    {
+        $pages = [route('home'), route('catalog'), route('terms'), route('services.terms'), route('guide'), route('feedback.index')];
+        $customer = $this->makeUser();
+
+        $markers = function (string $html): array {
+            return [
+                'nav'      => substr_count($html, 'id="site-nav"'),
+                'burger'   => substr_count($html, 'id="sn-burger"'),
+                'navjs'    => preg_match('#assets/js/site-nav\.js\?v=\d+"\s+defer#', $html),
+                'navcss'   => preg_match('#assets/css/site-nav\.css\?v=\d+#', $html),
+                'body'     => substr_count($html, '<body data-nav="light">'),
+                'dark'     => substr_count($html, 'data-nav="dark"'),
+                'overlays' => substr_count($html, 'lp-modal.js'),
+            ];
+        };
+
+        foreach ($pages as $url) {
+            $guest = $markers($this->get($url)->assertOk()->getContent());
+            $this->assertSame(1, $guest['nav'], "guest nav missing on $url");
+            $this->assertSame(1, $guest['navjs'], "site-nav.js missing for a guest on $url");
+            $this->assertSame(1, $guest['navcss'], "site-nav.css missing for a guest on $url");
+            $this->assertSame(1, $guest['body'], "body data-nav missing for a guest on $url");
+            $this->assertGreaterThanOrEqual(1, $guest['dark'], "dark footer marker missing for a guest on $url");
+
+            $signedIn = $markers($this->actingAs($customer)->get($url)->assertOk()->getContent());
+            $this->assertSame($signedIn, $guest, "guest and customer differ on $url");
+            auth()->logout();
+        }
+
+        // the product page too
+        $product = \App\Models\Product::query()->first();
+        if ($product) {
+            $this->assertSame(1, $markers($this->get(route('product.show', $product->id))->assertOk()->getContent())['navjs']);
+        }
+    }
+
     public function test_the_home_hero_declares_itself_dark(): void
     {
         $html = $this->get('/')->assertOk()->getContent();

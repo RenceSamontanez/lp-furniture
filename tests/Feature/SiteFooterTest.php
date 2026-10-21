@@ -38,7 +38,7 @@ class SiteFooterTest extends TestCase
     /** No built-in fallbacks, so a test sees exactly what Contact Settings hold. */
     private function noFallbacks(): void
     {
-        config(['shop.fallback' => array_fill_keys(['facebook_url', 'tiktok_url', 'phone', 'email', 'shop_address', 'shop_landmarks'], null)]);
+        config(['shop.fallback' => array_fill_keys(['facebook_url', 'tiktok_url', 'phone', 'email', 'shop_address', 'shop_landmarks', 'map_lat', 'map_lng'], null)]);
     }
 
     private function home(): string
@@ -184,8 +184,20 @@ class SiteFooterTest extends TestCase
         $this->assertStringNotContainsString('sf__pol', $this->home());
     }
 
+    /** An empty logo folder under public/, removed in tearDown. */
+    private function logoDir(): string
+    {
+        $dir = public_path('images/_test_pay_' . uniqid());
+        mkdir($dir, 0777, true);
+        $this->tempDirs[] = $dir;
+        config(['shop.logo_dir' => 'images/' . basename($dir)]);
+
+        return $dir;
+    }
+
     public function test_payment_tiles_show_text_without_a_logo_file_and_an_image_with_one(): void
     {
+        $this->logoDir();
         $html = $this->home();
         $tiles = array_map(fn ($l) => $l, ['GCash', 'Maya', 'UnionBank', 'MariBank', 'Visa', 'Mastercard']);
         $pos = array_map(fn ($t) => strpos($html, '<li><span>' . $t . '</span></li>'), $tiles);
@@ -198,14 +210,11 @@ class SiteFooterTest extends TestCase
         $this->assertStringNotContainsString('<button', substr($payList, 0, strpos($payList, '</ul>')));
 
         // a logo file for one method turns only that tile into an <img> (decided on the server)
-        $dir = public_path('images/_test_pay_' . uniqid());
-        mkdir($dir, 0777, true);
-        $this->tempDirs[] = $dir;
+        $dir = $this->logoDir();
         file_put_contents($dir . '/gcash.svg', '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"/>');
-        config(['shop.logo_dir' => 'images/' . basename($dir)]);
 
         $html = $this->home();
-        $this->assertStringContainsString('<li><img src="' . asset('images/' . basename($dir) . '/gcash.svg') . '" alt="GCash" loading="lazy"></li>', $html);
+        $this->assertMatchesRegularExpression('#<li class="sf__pay--logo sf__pay--gcash"><img src="' . preg_quote(asset('images/' . basename($dir) . '/gcash.svg'), '#') . '\?v=\d+" alt="GCash" loading="lazy"></li>#', $html);
         $this->assertStringNotContainsString('<li><span>GCash</span></li>', $html);
         $this->assertStringContainsString('<li><span>Maya</span></li>', $html);
         $payList = substr($html, strpos($html, 'class="sf__pay"'));
@@ -214,17 +223,59 @@ class SiteFooterTest extends TestCase
 
     public function test_the_map_has_a_title_lazy_loading_and_uses_coordinates_when_set(): void
     {
+        // Contact Settings empty: the exact pin from config/shop.php (Plus Code RCH5+QX6) is used, the address text stays
         $this->settings([]);
         $html = $this->home();
         $this->assertStringContainsString('<iframe title="Map showing LP Furniture shop location" loading="lazy" referrerpolicy="no-referrer-when-downgrade"', $html);
-        $this->assertStringContainsString('https://maps.google.com/maps?q=' . rawurlencode('Sitio Pulo Ilaya, Calit-calit, San Juan, Batangas') . '&amp;z=16&amp;output=embed', $html);
-        $this->assertStringContainsString('https://www.google.com/maps/search/?api=1&amp;query=' . rawurlencode('Sitio Pulo Ilaya, Calit-calit, San Juan, Batangas'), $html);
+        $this->assertStringContainsString('https://maps.google.com/maps?q=13.829413%2C121.409891&amp;z=17&amp;output=embed', $html);
+        $this->assertStringContainsString('https://www.google.com/maps/search/?api=1&amp;query=13.829413%2C121.409891', $html);
         $this->assertStringContainsString('>Open in Google Maps</a>', $html);
+        $this->assertStringContainsString('Sitio Pulo Ilaya, Calit-calit, San Juan, Batangas', $html);
+        $this->assertStringContainsString('San Juan Doctors Hospital, Calit-calit Elementary School, Calit-calit Barangay Hall', $html);
 
         $this->settings(['map_lat' => '13.8216', 'map_lng' => '121.3965']);
         $html = $this->home();
         $this->assertStringContainsString('https://maps.google.com/maps?q=13.8216%2C121.3965&amp;z=17&amp;output=embed', $html);
         $this->assertStringContainsString('query=13.8216%2C121.3965', $html);
+    }
+
+    public function test_payment_logos_accept_svg_png_jpg_jpeg_webp_in_that_order_and_any_extension_case(): void
+    {
+        $dir = $this->logoDir();
+        $base = 'images/' . basename($dir);
+        $src = '<svg xmlns="http://www.w3.org/2000/svg"/>';
+
+        file_put_contents($dir . '/gcash.JPG', 'x');
+        file_put_contents($dir . '/maya.Jpeg', 'x');
+        file_put_contents($dir . '/visa.webp', 'x');
+        file_put_contents($dir . '/mastercard.png', 'x');
+        file_put_contents($dir . '/unionbank.svg', $src);
+        file_put_contents($dir . '/unionbank.png', 'x');   // svg wins over png
+        file_put_contents($dir . '/maribank.jpg', 'x');
+        file_put_contents($dir . '/maribank.webp', 'x');   // jpg wins over webp
+
+        $html = $this->home();
+        $this->assertStringContainsString('src="' . asset($base . '/gcash.JPG') . '?v=', $html);
+        $this->assertStringContainsString('src="' . asset($base . '/maya.Jpeg') . '?v=', $html);
+        $this->assertStringContainsString('src="' . asset($base . '/visa.webp') . '?v=', $html);
+        $this->assertStringContainsString('src="' . asset($base . '/mastercard.png') . '?v=', $html);
+        $this->assertStringContainsString('src="' . asset($base . '/unionbank.svg') . '?v=', $html);
+        $this->assertStringNotContainsString('unionbank.png', $html);
+        $this->assertStringContainsString('src="' . asset($base . '/maribank.jpg') . '?v=', $html);
+        $this->assertStringNotContainsString('maribank.webp', $html);
+        $this->assertStringNotContainsString('<span>GCash</span>', $html);
+
+        // the cache-busting query follows the file's modified time
+        touch($dir . '/gcash.JPG', 1700000000);
+        clearstatcache();
+        $this->assertStringContainsString('gcash.JPG?v=1700000000', $this->home());
+
+        // a file with an unsupported extension is ignored and the name is shown
+        unlink($dir . '/visa.webp');
+        file_put_contents($dir . '/visa.gif', 'x');
+        $html = $this->home();
+        $this->assertStringContainsString('<li><span>Visa</span></li>', $html);
+        $this->assertStringNotContainsString('visa.gif', $html);
     }
 
     public function test_the_whole_visit_block_is_hidden_without_any_address(): void

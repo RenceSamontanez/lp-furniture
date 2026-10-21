@@ -46,7 +46,7 @@
       <h2>Ways to pay</h2>
       <ul class="sf__pay">
         @foreach($f['payments'] as $p)
-          <li>@if($p['logo'])<img src="{{ $p['logo'] }}" alt="{{ $p['label'] }}" loading="lazy">@else<span>{{ $p['label'] }}</span>@endif</li>
+          <li{!! $p['logo'] ? ' class="sf__pay--logo sf__pay--' . e($p['key']) . '"' : '' !!}>@if($p['logo'])<img src="{{ $p['logo'] }}" alt="{{ $p['label'] }}" loading="lazy">@else<span>{{ $p['label'] }}</span>@endif</li>
         @endforeach
         <li class="sf__more">+ more ways to pay</li>
       </ul>

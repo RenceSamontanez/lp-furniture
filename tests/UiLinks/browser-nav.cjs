@@ -233,6 +233,29 @@ async function main() {
   await scrollTo(100000); await scrollTo(99000);
   await shot('home-bottom-1440.jpg');
 
+  // ---------- 3b. guest scroll parity: a visitor who is NOT signed in gets the same nav states as a customer ----------
+  const stepState = async (url, who) => {
+    await setCookie(who === 'user' ? cookieFor() : null);
+    await go(url, 700);
+    const rows = [];
+    for (const y of [0, 300, 700, 1200, 2000, 2520]) {
+      await expandedAt(y);
+      const st = await navInfo();
+      rows.push({ y, light: st.light, collapsed: st.collapsed, bg: st.bg });
+      if (who === 'guest' && url === '/' && [0, 700, 1200].includes(y)) await shot(`guest-home-scroll-${y}-1440.jpg`);
+      if (who === 'guest' && url === '/catalog' && y === 700) await shot('guest-catalog-scroll-700-1440.jpg');
+    }
+    return rows;
+  };
+  await viewport(1440, 900);
+  for (const url of ['/', '/catalog', '/terms', '/reviews']) {
+    const g = await stepState(url, 'guest');
+    const u = await stepState(url, 'user');
+    report.guestParity = report.guestParity || {};
+    report.guestParity[url] = { guest: g, user: u };
+    note(JSON.stringify(g) === JSON.stringify(u), `guest scroll states equal the signed-in ones on ${url}: ` + g.map((r) => r.y + (r.light ? 'L' : 'D') + (r.collapsed ? 'c' : '')).join(' '));
+  }
+
   // ---------- 4. light variant text contrast on catalog / cart ----------
   for (const [name, url] of [['catalog', '/catalog'], ['cart', '/cart']]) {
     await go(url, 700);

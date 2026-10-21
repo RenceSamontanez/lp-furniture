@@ -13,7 +13,7 @@
       "url": "/",
       "y": 140,
       "light": false,
-      "lum": 0.07,
+      "lum": 0.08,
       "bad": false
     },
     {
@@ -21,7 +21,7 @@
       "url": "/",
       "y": 280,
       "light": false,
-      "lum": 0.17,
+      "lum": 0.22,
       "bad": false
     },
     {
@@ -29,7 +29,7 @@
       "url": "/",
       "y": 420,
       "light": false,
-      "lum": 0.11,
+      "lum": 0.21,
       "bad": false
     },
     {
@@ -37,7 +37,7 @@
       "url": "/",
       "y": 560,
       "light": false,
-      "lum": 0.09,
+      "lum": 0.1,
       "bad": false
     },
     {
@@ -45,7 +45,7 @@
       "url": "/",
       "y": 700,
       "light": false,
-      "lum": 0.05,
+      "lum": 0.07,
       "bad": false
     },
     {
@@ -197,7 +197,7 @@
       "url": "/",
       "y": 3360,
       "light": true,
-      "lum": 0.83,
+      "lum": 0.84,
       "bad": false
     },
     {
@@ -226,6 +226,30 @@
     },
     {
       "who": "guest",
+      "url": "/",
+      "y": 3920,
+      "light": true,
+      "lum": 0.55,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 4060,
+      "light": true,
+      "lum": 0.61,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/",
+      "y": 4200,
+      "light": true,
+      "lum": 0.7,
+      "bad": false
+    },
+    {
+      "who": "guest",
       "url": "/catalog",
       "y": 0,
       "light": true,
@@ -246,6 +270,46 @@
       "y": 280,
       "light": true,
       "lum": 0.85,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/catalog",
+      "y": 420,
+      "light": true,
+      "lum": 0.3,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/catalog",
+      "y": 560,
+      "light": true,
+      "lum": 0.91,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/catalog",
+      "y": 700,
+      "light": true,
+      "lum": 0.62,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/catalog",
+      "y": 840,
+      "light": true,
+      "lum": 0.46,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/catalog",
+      "y": 980,
+      "light": true,
+      "lum": 0.87,
       "bad": false
     },
     {
@@ -290,6 +354,46 @@
     },
     {
       "who": "guest",
+      "url": "/product/1",
+      "y": 700,
+      "light": true,
+      "lum": 0.73,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/product/1",
+      "y": 840,
+      "light": true,
+      "lum": 0.77,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/product/1",
+      "y": 980,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/product/1",
+      "y": 1120,
+      "light": true,
+      "lum": 0.31,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/product/1",
+      "y": 1260,
+      "light": true,
+      "lum": 0.82,
+      "bad": false
+    },
+    {
+      "who": "guest",
       "url": "/terms",
       "y": 0,
       "light": true,
@@ -402,6 +506,46 @@
     },
     {
       "who": "guest",
+      "url": "/terms",
+      "y": 1960,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "y": 2100,
+      "light": true,
+      "lum": 0.91,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "y": 2240,
+      "light": true,
+      "lum": 0.92,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "y": 2380,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/terms",
+      "y": 2520,
+      "light": true,
+      "lum": 0.93,
+      "bad": false
+    },
+    {
+      "who": "guest",
       "url": "/guide/custom-design",
       "y": 0,
       "light": true,
@@ -410,10 +554,42 @@
     },
     {
       "who": "guest",
+      "url": "/guide/custom-design",
+      "y": 140,
+      "light": true,
+      "lum": 0.92,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/guide/custom-design",
+      "y": 280,
+      "light": true,
+      "lum": 0.86,
+      "bad": false
+    },
+    {
+      "who": "guest",
       "url": "/guide/measure",
       "y": 0,
       "light": true,
       "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/guide/measure",
+      "y": 140,
+      "light": true,
+      "lum": 0.92,
+      "bad": false
+    },
+    {
+      "who": "guest",
+      "url": "/guide/measure",
+      "y": 280,
+      "light": true,
+      "lum": 0.86,
       "bad": false
     },
     {
@@ -437,7 +613,7 @@
       "url": "/",
       "y": 280,
       "light": false,
-      "lum": 0.16,
+      "lum": 0.21,
       "bad": false
     },
     {
@@ -445,7 +621,7 @@
       "url": "/",
       "y": 420,
       "light": false,
-      "lum": 0.07,
+      "lum": 0.16,
       "bad": false
     },
     {
@@ -453,7 +629,7 @@
       "url": "/",
       "y": 560,
       "light": false,
-      "lum": 0.09,
+      "lum": 0.11,
       "bad": false
     },
     {
@@ -461,7 +637,7 @@
       "url": "/",
       "y": 700,
       "light": false,
-      "lum": 0.04,
+      "lum": 0.07,
       "bad": false
     },
     {
@@ -642,6 +818,30 @@
     },
     {
       "who": "user",
+      "url": "/",
+      "y": 3920,
+      "light": true,
+      "lum": 0.55,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 4060,
+      "light": true,
+      "lum": 0.61,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/",
+      "y": 4200,
+      "light": true,
+      "lum": 0.7,
+      "bad": false
+    },
+    {
+      "who": "user",
       "url": "/catalog",
       "y": 0,
       "light": true,
@@ -662,6 +862,46 @@
       "y": 280,
       "light": true,
       "lum": 0.85,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/catalog",
+      "y": 420,
+      "light": true,
+      "lum": 0.3,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/catalog",
+      "y": 560,
+      "light": true,
+      "lum": 0.91,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/catalog",
+      "y": 700,
+      "light": true,
+      "lum": 0.62,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/catalog",
+      "y": 840,
+      "light": true,
+      "lum": 0.46,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/catalog",
+      "y": 980,
+      "light": true,
+      "lum": 0.87,
       "bad": false
     },
     {
@@ -706,10 +946,90 @@
     },
     {
       "who": "user",
+      "url": "/product/1",
+      "y": 700,
+      "light": true,
+      "lum": 0.67,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/product/1",
+      "y": 840,
+      "light": true,
+      "lum": 0.77,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/product/1",
+      "y": 980,
+      "light": true,
+      "lum": 0.83,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/product/1",
+      "y": 1120,
+      "light": true,
+      "lum": 0.3,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/product/1",
+      "y": 1260,
+      "light": true,
+      "lum": 0.91,
+      "bad": false
+    },
+    {
+      "who": "user",
       "url": "/cart",
       "y": 0,
       "light": true,
       "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/cart",
+      "y": 140,
+      "light": true,
+      "lum": 0.87,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/cart",
+      "y": 280,
+      "light": true,
+      "lum": 0.96,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/cart",
+      "y": 420,
+      "light": true,
+      "lum": 0.95,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/cart",
+      "y": 560,
+      "light": true,
+      "lum": 0.94,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/cart",
+      "y": 700,
+      "light": true,
+      "lum": 0.94,
       "bad": false
     },
     {
@@ -746,8 +1066,88 @@
     },
     {
       "who": "user",
+      "url": "/orders",
+      "y": 560,
+      "light": true,
+      "lum": 0.95,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/orders",
+      "y": 700,
+      "light": true,
+      "lum": 0.96,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/orders",
+      "y": 840,
+      "light": true,
+      "lum": 0.93,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/orders",
+      "y": 980,
+      "light": true,
+      "lum": 0.95,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/orders",
+      "y": 1120,
+      "light": true,
+      "lum": 0.96,
+      "bad": false
+    },
+    {
+      "who": "user",
       "url": "/profile",
       "y": 0,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/profile",
+      "y": 140,
+      "light": true,
+      "lum": 0.93,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/profile",
+      "y": 280,
+      "light": true,
+      "lum": 0.93,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/profile",
+      "y": 420,
+      "light": true,
+      "lum": 0.95,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/profile",
+      "y": 560,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/profile",
+      "y": 700,
       "light": true,
       "lum": 0.88,
       "bad": false
@@ -797,7 +1197,7 @@
       "url": "/notifications",
       "y": 700,
       "light": true,
-      "lum": 0.89,
+      "lum": 0.88,
       "bad": false
     },
     {
@@ -813,7 +1213,7 @@
       "url": "/notifications",
       "y": 980,
       "light": true,
-      "lum": 0.9,
+      "lum": 0.89,
       "bad": false
     },
     {
@@ -821,7 +1221,7 @@
       "url": "/notifications",
       "y": 1120,
       "light": true,
-      "lum": 0.9,
+      "lum": 0.88,
       "bad": false
     },
     {
@@ -829,7 +1229,7 @@
       "url": "/notifications",
       "y": 1260,
       "light": true,
-      "lum": 0.93,
+      "lum": 0.92,
       "bad": false
     },
     {
@@ -837,7 +1237,7 @@
       "url": "/notifications",
       "y": 1400,
       "light": true,
-      "lum": 0.92,
+      "lum": 0.9,
       "bad": false
     },
     {
@@ -845,7 +1245,7 @@
       "url": "/notifications",
       "y": 1540,
       "light": true,
-      "lum": 0.94,
+      "lum": 0.93,
       "bad": false
     },
     {
@@ -853,7 +1253,7 @@
       "url": "/notifications",
       "y": 1680,
       "light": true,
-      "lum": 0.91,
+      "lum": 0.92,
       "bad": false
     },
     {
@@ -861,7 +1261,7 @@
       "url": "/notifications",
       "y": 1820,
       "light": true,
-      "lum": 0.9,
+      "lum": 0.92,
       "bad": false
     },
     {
@@ -869,7 +1269,7 @@
       "url": "/notifications",
       "y": 1960,
       "light": true,
-      "lum": 0.88,
+      "lum": 0.9,
       "bad": false
     },
     {
@@ -877,7 +1277,7 @@
       "url": "/notifications",
       "y": 2100,
       "light": true,
-      "lum": 0.88,
+      "lum": 0.9,
       "bad": false
     },
     {
@@ -901,7 +1301,7 @@
       "url": "/notifications",
       "y": 2520,
       "light": true,
-      "lum": 0.92,
+      "lum": 0.91,
       "bad": false
     },
     {
@@ -917,7 +1317,7 @@
       "url": "/notifications",
       "y": 2800,
       "light": true,
-      "lum": 0.91,
+      "lum": 0.93,
       "bad": false
     },
     {
@@ -925,7 +1325,7 @@
       "url": "/notifications",
       "y": 2940,
       "light": true,
-      "lum": 0.89,
+      "lum": 0.92,
       "bad": false
     },
     {
@@ -933,7 +1333,7 @@
       "url": "/notifications",
       "y": 3080,
       "light": true,
-      "lum": 0.88,
+      "lum": 0.93,
       "bad": false
     },
     {
@@ -941,7 +1341,7 @@
       "url": "/notifications",
       "y": 3220,
       "light": true,
-      "lum": 0.92,
+      "lum": 0.89,
       "bad": false
     },
     {
@@ -949,7 +1349,7 @@
       "url": "/notifications",
       "y": 3360,
       "light": true,
-      "lum": 0.92,
+      "lum": 0.89,
       "bad": false
     },
     {
@@ -957,7 +1357,7 @@
       "url": "/notifications",
       "y": 3500,
       "light": true,
-      "lum": 0.94,
+      "lum": 0.89,
       "bad": false
     },
     {
@@ -965,7 +1365,7 @@
       "url": "/notifications",
       "y": 3640,
       "light": true,
-      "lum": 0.92,
+      "lum": 0.88,
       "bad": false
     },
     {
@@ -973,7 +1373,7 @@
       "url": "/notifications",
       "y": 3780,
       "light": true,
-      "lum": 0.93,
+      "lum": 0.91,
       "bad": false
     },
     {
@@ -981,7 +1381,7 @@
       "url": "/notifications",
       "y": 3920,
       "light": true,
-      "lum": 0.91,
+      "lum": 0.9,
       "bad": false
     },
     {
@@ -989,7 +1389,7 @@
       "url": "/notifications",
       "y": 4060,
       "light": true,
-      "lum": 0.88,
+      "lum": 0.94,
       "bad": false
     },
     {
@@ -997,7 +1397,7 @@
       "url": "/notifications",
       "y": 4200,
       "light": true,
-      "lum": 0.89,
+      "lum": 0.92,
       "bad": false
     },
     {
@@ -1005,7 +1405,55 @@
       "url": "/notifications",
       "y": 4340,
       "light": true,
+      "lum": 0.93,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 4480,
+      "light": true,
+      "lum": 0.9,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 4620,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 4760,
+      "light": true,
       "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 4900,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 5040,
+      "light": true,
+      "lum": 0.92,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/notifications",
+      "y": 5180,
+      "light": true,
+      "lum": 0.9,
       "bad": false
     },
     {
@@ -1042,10 +1490,66 @@
     },
     {
       "who": "user",
+      "url": "/design",
+      "y": 560,
+      "light": true,
+      "lum": 0.64,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/design",
+      "y": 700,
+      "light": true,
+      "lum": 0.92,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/design",
+      "y": 840,
+      "light": true,
+      "lum": 0.93,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/design",
+      "y": 980,
+      "light": true,
+      "lum": 0.92,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/design",
+      "y": 1120,
+      "light": true,
+      "lum": 0.67,
+      "bad": false
+    },
+    {
+      "who": "user",
       "url": "/feedback",
       "y": 0,
       "light": true,
       "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/feedback",
+      "y": 140,
+      "light": true,
+      "lum": 0.92,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/feedback",
+      "y": 280,
+      "light": true,
+      "lum": 0.86,
       "bad": false
     },
     {
@@ -1130,6 +1634,46 @@
     },
     {
       "who": "user",
+      "url": "/services/request",
+      "y": 1400,
+      "light": true,
+      "lum": 0.89,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/services/request",
+      "y": 1540,
+      "light": true,
+      "lum": 0.87,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/services/request",
+      "y": 1680,
+      "light": true,
+      "lum": 0.87,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/services/request",
+      "y": 1820,
+      "light": true,
+      "lum": 0.85,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/services/request",
+      "y": 1960,
+      "light": true,
+      "lum": 0.87,
+      "bad": false
+    },
+    {
+      "who": "user",
       "url": "/checkout",
       "y": 0,
       "light": true,
@@ -1138,10 +1682,66 @@
     },
     {
       "who": "user",
+      "url": "/checkout",
+      "y": 140,
+      "light": true,
+      "lum": 0.87,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/checkout",
+      "y": 280,
+      "light": true,
+      "lum": 0.96,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/checkout",
+      "y": 420,
+      "light": true,
+      "lum": 0.95,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/checkout",
+      "y": 560,
+      "light": true,
+      "lum": 0.94,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/checkout",
+      "y": 700,
+      "light": true,
+      "lum": 0.94,
+      "bad": false
+    },
+    {
+      "who": "user",
       "url": "/guide/custom-design",
       "y": 0,
       "light": true,
       "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/guide/custom-design",
+      "y": 140,
+      "light": true,
+      "lum": 0.92,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/guide/custom-design",
+      "y": 280,
+      "light": true,
+      "lum": 0.86,
       "bad": false
     },
     {
@@ -1254,6 +1854,46 @@
       "y": 1820,
       "light": true,
       "lum": 0.91,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 1960,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 2100,
+      "light": true,
+      "lum": 0.91,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 2240,
+      "light": true,
+      "lum": 0.92,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 2380,
+      "light": true,
+      "lum": 0.88,
+      "bad": false
+    },
+    {
+      "who": "user",
+      "url": "/terms",
+      "y": 2520,
+      "light": true,
+      "lum": 0.93,
       "bad": false
     }
   ],
@@ -1560,62 +2200,62 @@
     {
       "name": "nav-light-cart",
       "text": "Home",
-      "ratio": 15.63
+      "ratio": 16.17
     },
     {
       "name": "nav-light-cart",
       "text": "Catalog",
-      "ratio": 15.63
+      "ratio": 16.17
     },
     {
       "name": "nav-light-cart",
       "text": "Customize",
-      "ratio": 15.63
+      "ratio": 16.17
     },
     {
       "name": "nav-light-cart",
       "text": "Assistant",
-      "ratio": 15.63
+      "ratio": 16.17
     },
     {
       "name": "nav-light-cart",
       "text": "Cart",
-      "ratio": 15.63
+      "ratio": 16.17
     },
     {
       "name": "nav-light-cart",
       "text": "Notifications",
-      "ratio": 15.63
+      "ratio": 16.17
     },
     {
       "name": "nav-light-cart",
       "text": "Reviews",
-      "ratio": 15.63
+      "ratio": 16.17
     },
     {
       "name": "nav-light-cart",
       "text": "My Account",
-      "ratio": 15.63
+      "ratio": 15.91
     },
     {
       "name": "nav-light-cart",
       "text": "LP",
-      "ratio": 7.89
+      "ratio": 8.08
     },
     {
       "name": "nav-light-cart",
       "text": "Furniture",
-      "ratio": 15.63
+      "ratio": 16.16
     },
     {
       "name": "nav-light-cart",
       "text": "Cart",
-      "ratio": 15.63
+      "ratio": 16.17
     },
     {
       "name": "nav-light-cart",
       "text": "Notifications",
-      "ratio": 15.63
+      "ratio": 16.17
     },
     {
       "name": "nav-light-over-dark-photo",
@@ -1730,7 +2370,7 @@
     {
       "name": "toast-dark",
       "text": "Your order OC-2026-0042 is n",
-      "ratio": 14.1
+      "ratio": 14.15
     },
     {
       "name": "toast-dark",
@@ -1793,10 +2433,324 @@
       "linksVis": "hidden"
     }
   },
+  "guestParity": {
+    "/": {
+      "guest": [
+        {
+          "y": 0,
+          "light": false,
+          "collapsed": false,
+          "bg": "rgba(36, 21, 13, 0.6)"
+        },
+        {
+          "y": 300,
+          "light": false,
+          "collapsed": false,
+          "bg": "rgba(36, 21, 13, 0.6)"
+        },
+        {
+          "y": 700,
+          "light": false,
+          "collapsed": false,
+          "bg": "rgba(36, 21, 13, 0.6)"
+        },
+        {
+          "y": 1200,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 2000,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 2520,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        }
+      ],
+      "user": [
+        {
+          "y": 0,
+          "light": false,
+          "collapsed": false,
+          "bg": "rgba(36, 21, 13, 0.6)"
+        },
+        {
+          "y": 300,
+          "light": false,
+          "collapsed": false,
+          "bg": "rgba(36, 21, 13, 0.6)"
+        },
+        {
+          "y": 700,
+          "light": false,
+          "collapsed": false,
+          "bg": "rgba(36, 21, 13, 0.6)"
+        },
+        {
+          "y": 1200,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 2000,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 2520,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        }
+      ]
+    },
+    "/catalog": {
+      "guest": [
+        {
+          "y": 0,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 300,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 700,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 1200,
+          "light": true,
+          "collapsed": true,
+          "bg": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "y": 2000,
+          "light": true,
+          "collapsed": true,
+          "bg": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "y": 2520,
+          "light": true,
+          "collapsed": true,
+          "bg": "rgba(0, 0, 0, 0)"
+        }
+      ],
+      "user": [
+        {
+          "y": 0,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 300,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 700,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 1200,
+          "light": true,
+          "collapsed": true,
+          "bg": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "y": 2000,
+          "light": true,
+          "collapsed": true,
+          "bg": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "y": 2520,
+          "light": true,
+          "collapsed": true,
+          "bg": "rgba(0, 0, 0, 0)"
+        }
+      ]
+    },
+    "/terms": {
+      "guest": [
+        {
+          "y": 0,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 300,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 700,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 1200,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 2000,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 2520,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        }
+      ],
+      "user": [
+        {
+          "y": 0,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 300,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 700,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 1200,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 2000,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 2520,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        }
+      ]
+    },
+    "/reviews": {
+      "guest": [
+        {
+          "y": 0,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 300,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 700,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 1200,
+          "light": true,
+          "collapsed": true,
+          "bg": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "y": 2000,
+          "light": true,
+          "collapsed": true,
+          "bg": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "y": 2520,
+          "light": true,
+          "collapsed": true,
+          "bg": "rgba(0, 0, 0, 0)"
+        }
+      ],
+      "user": [
+        {
+          "y": 0,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 300,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 700,
+          "light": true,
+          "collapsed": false,
+          "bg": "rgba(255, 252, 246, 0.62)"
+        },
+        {
+          "y": 1200,
+          "light": true,
+          "collapsed": true,
+          "bg": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "y": 2000,
+          "light": true,
+          "collapsed": true,
+          "bg": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "y": 2520,
+          "light": true,
+          "collapsed": true,
+          "bg": "rgba(0, 0, 0, 0)"
+        }
+      ]
+    }
+  },
   "buttons": [
     {
       "name": "home-guest-dark",
-      "count": 33,
+      "count": 34,
       "navFailures": [],
       "otherPreExisting": [
         "btn-view-details 2.56"
@@ -1804,7 +2758,7 @@
     },
     {
       "name": "catalog-guest-light",
-      "count": 22,
+      "count": 23,
       "navFailures": [],
       "otherPreExisting": [
         "btn-view-details 2.56"
@@ -1812,7 +2766,7 @@
     },
     {
       "name": "home-guest-dark-390",
-      "count": 35,
+      "count": 36,
       "navFailures": [],
       "otherPreExisting": [
         "btn-view-details 2.56"
@@ -1820,7 +2774,7 @@
     },
     {
       "name": "catalog-guest-light-390",
-      "count": 20,
+      "count": 21,
       "navFailures": [],
       "otherPreExisting": [
         "btn-view-details 2.56"
@@ -1838,7 +2792,7 @@
   "contrastMinByGroup": {
     "nav-dark-home": 11.77,
     "nav-light-catalog": 8.02,
-    "nav-light-cart": 7.89,
+    "nav-light-cart": 8.08,
     "nav-light-over-dark-photo": 5.06,
     "nav-light-mobile-menu": 13.99,
     "toast-dark": 5.4,
@@ -1846,6 +2800,6 @@
     "toast-admin-light": 15.89
   },
   "problems": [
-    "light/dark rule matches the real pixels in 157 samples (2 mismatches)"
+    "light/dark rule matches the real pixels in 237 samples (2 mismatches)"
   ]
 }

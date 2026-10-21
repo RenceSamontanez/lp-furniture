@@ -49,6 +49,12 @@ a.sf__btn:hover { background: var(--sf-peach); color: #1b0f0a; border-color: var
 .sf__pay { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
 .sf__pay li { height: 62px; border-radius: 14px; background: rgba(255,255,255,.94); display: grid; place-items: center; padding: 6px; box-shadow: 0 14px 24px -16px rgba(0,0,0,.8); }
 .sf__pay li img { display: block; max-width: 82%; max-height: 34px; width: auto; height: auto; object-fit: contain; }
+/* Logo tiles: all the same size; the image fills the tile (contain, never stretched or cropped) and the tile takes the logo's own background so no bars show. */
+.sf__pay li.sf__pay--logo { padding: 0; overflow: hidden; position: relative; background: #fff; }
+.sf__pay li.sf__pay--logo img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; padding: 7px 10px; box-sizing: border-box; object-fit: contain; }
+.sf__pay li.sf__pay--gcash { background: #007dfe; }
+.sf__pay li.sf__pay--maya { background: #000; }
+.sf__pay li.sf__pay--gcash img, .sf__pay li.sf__pay--maya img { padding: 0; }
 .sf__pay li span { font-weight: 700; font-size: .92rem; color: #3A2E26; text-align: center; line-height: 1.1; }
 .sf__pay li.sf__more { grid-column: 1 / -1; height: auto; background: none; border: 0; box-shadow: none; justify-content: flex-start; justify-items: start; padding: 2px 4px 0;
   font-size: .95rem; font-weight: 600; color: var(--sf-text2); letter-spacing: .02em; }

@@ -11,10 +11,14 @@ return [
         'email'          => 'johncedricklumanglas@gmail.com',
         'shop_address'   => 'Sitio Pulo Ilaya, Calit-calit, San Juan, Batangas',
         'shop_landmarks' => 'San Juan Doctors Hospital, Calit-calit Elementary School, Calit-calit Barangay Hall',
+        // Exact pin: Plus Code RCH5+QX6 (Sitio Pulo-Ilaya, San Juan, Batangas), decoded to the centre of its cell.
+        'map_lat'        => 13.829413,
+        'map_lng'        => 121.409891,
     ],
 
-    // Payment tiles in display order. A logo is used when public/{logo_dir}/{key}.svg or .png exists, otherwise the name is shown.
+    // Payment tiles in display order. A logo is used when public/{logo_dir}/{key}.{svg,png,jpg,jpeg,webp} exists (first match in that order, extension in any case), otherwise the name is shown.
     'logo_dir' => 'images/payments',
+    'logo_extensions' => ['svg', 'png', 'jpg', 'jpeg', 'webp'],
     'payments' => [
         'gcash'      => 'GCash',
         'maya'       => 'Maya',
