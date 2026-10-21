@@ -2,95 +2,143 @@
 
 @section('title', 'Catalog — LP Furniture')
 
+@push('styles')
+<link rel="stylesheet" href="{{ asset('assets/css/catalog.css') }}?v={{ @filemtime(public_path('assets/css/catalog.css')) ?: 1 }}"/>
+<noscript><style>.cx-qv{display:none}</style></noscript>
+@endpush
+
 @section('content')
+@php
+  // Every link keeps the other filters (category, search, max price, sort, Luma type), so they work together.
+  $keep = ['category' => request('category'), 'search' => request('search'), 'max_price' => request('max_price'),
+           'sort' => $sort !== 'newest' ? $sort : null, 'type' => $type];
+  $url = fn (array $over = []) => route('catalog', array_filter(array_merge($keep, $over), fn ($v) => filled($v)));
+  $filtered = filled(request('category')) || filled(request('search')) || filled(request('max_price')) || !empty($type);
+  $placeholder = asset('images/products/placeholder.jpg');
+  $shapes = ['a', 'b', 'c'];
+@endphp
 
-<div class="page-header">
-  <h1>Our <em style="font-family:var(--font-display);font-style:italic;color:var(--gold);">Catalog</em></h1>
-  <p>All pieces handcrafted from quality Philippine wood. Custom sizes available.</p>
-</div>
+<div class="cx-shell" data-nav="light">
+  <aside class="cx-idx" aria-label="Catalog filters">
+    <h1>Catalog</h1>
+    <p class="cx-lede">Ready-made pieces from our workshop in San Juan, Batangas.</p>
 
-<div class="section" style="padding-top:32px;">
+    <ul class="cx-cats">
+      <li><a href="{{ $url(['category' => null]) }}" @if(!request('category')) aria-current="true" @endif>All <small>{{ $totalCount }}</small></a></li>
+      @foreach($categories as $cat)
+        <li><a href="{{ $url(['category' => $cat]) }}" @if(request('category') === $cat) aria-current="true" @endif>{{ $cat }} <small>{{ $categoryCounts[$cat] }}</small></a></li>
+      @endforeach
+    </ul>
 
-  <!-- Category filter pills -->
-  <div class="filter-bar">
-    <a href="{{ route('catalog') }}" class="filter-chip {{ !request('category') ? 'active' : '' }}">All</a>
-    @foreach($categories as $cat)
-      <a href="{{ route('catalog', ['category' => $cat]) }}" class="filter-chip {{ request('category') === $cat ? 'active' : '' }}">{{ $cat }}</a>
-    @endforeach
-  </div>
+    <form method="GET" action="{{ route('catalog') }}" class="cx-tools">
+      @if(request('category'))<input type="hidden" name="category" value="{{ request('category') }}">@endif
+      @if(!empty($type))<input type="hidden" name="type" value="{{ $type }}">@endif
+      <label class="cx-field"><span>Search</span>
+        <input type="search" name="search" placeholder="Search furniture" value="{{ request('search') }}" autocomplete="off"></label>
+      <label class="cx-field"><span>Highest price (₱)</span>
+        <input type="number" name="max_price" min="0" step="any" inputmode="decimal" placeholder="Any" value="{{ request('max_price') }}"></label>
+      <label class="cx-field"><span>Sort by</span>
+        <select name="sort">
+          <option value="newest" @selected($sort === 'newest')>Newest first</option>
+          <option value="price_asc" @selected($sort === 'price_asc')>Price, low to high</option>
+          <option value="price_desc" @selected($sort === 'price_desc')>Price, high to low</option>
+        </select></label>
+      <div class="cx-actions">
+        <button type="submit" class="lp-btn lp-btn--primary">Apply</button>
+        @if($filtered || $sort !== 'newest')
+          <a href="{{ route('catalog') }}" class="lp-link">Clear filters</a>
+        @endif
+      </div>
+    </form>
 
-  <!-- Search + price filter -->
-  <form method="GET" action="{{ route('catalog') }}" class="catalog-filters">
-    @if(request('category'))
-      <input type="hidden" name="category" value="{{ request('category') }}">
-    @endif
+    <div class="cx-custom"><b>Need a different size?</b>We build to your measurements.<br>
+      <a href="{{ route('design.index') }}">Request a custom piece</a></div>
+  </aside>
+
+  <section class="cx-main" aria-label="Products">
     @if(!empty($type))
-      <input type="hidden" name="type" value="{{ $type }}">
+      <p class="cx-note">Showing {{ config('luma.types.' . $type . '.en') }} &middot;
+        <a href="{{ $url(['type' => null]) }}" class="lp-link">Show all</a></p>
     @endif
-    <input type="text" name="search" class="form-input" placeholder="Search furniture..." value="{{ request('search') }}" style="max-width:280px;">
-    <input type="number" name="max_price" class="form-input" placeholder="Max price (₱)" value="{{ request('max_price') }}" style="max-width:180px;">
-    <button type="submit" class="btn btn-outline">Filter</button>
-    @if(request('search') || request('max_price'))
-      <a href="{{ route('catalog', request('category') ? ['category' => request('category')] : []) }}" class="link-text" style="align-self:center;">Clear</a>
+
+    @if($products->isNotEmpty())
+      <p class="cx-count" aria-live="polite">{{ $products->count() === 1 ? '1 piece' : $products->count() . ' pieces' }}</p>
     @endif
-  </form>
 
-  @if(!empty($type))
-    <p style="margin-top:16px;font-size:14px;">Showing {{ config('luma.types.' . $type . '.en') }} &middot;
-      <a href="{{ route('catalog', array_filter(['category' => request('category'), 'max_price' => request('max_price')])) }}" class="link-text">Show all</a></p>
-  @endif
-
-  <div class="product-grid" style="margin-top:24px;">
-    @forelse($products as $product)
-      <div class="product-card-v2">
-        <div class="product-card-v2-img" onclick="openQuickView({{ $product->id }})">
-          <img
-            src="{{ $product->image_url }}"
-            alt="{{ $product->product_name }} — {{ $product->category }} furniture by LP Furniture"
-            loading="lazy"
-            onerror="this.onerror=null;this.src='{{ asset('images/products/placeholder.jpg') }}';"
-          />
-          @if($product->on_sale)
-            <span class="badge-sale">-{{ $product->discount_percent }}%</span>
-          @endif
-          <button class="quick-view-btn" onclick="event.stopPropagation();openQuickView({{ $product->id }})">
-            Quick View
-          </button>
-        </div>
-
-        <div class="product-card-v2-info">
-          <div class="product-cat">{{ $product->category }}</div>
-          <a href="{{ route('product.show', $product->id) }}" class="product-name-link">
-            <div class="product-name">{{ $product->product_name }}</div>
-          </a>
-          <div class="product-desc">{{ Str::limit($product->description, 65) }}</div>
-
-          <div class="product-footer">
-            <div class="product-price">
-              @if($product->on_sale)
-                <span class="price-old">{{ $product->formatted_price }}</span>
-                <span class="price-now">{{ $product->formatted_sale_price }}</span>
-              @else
-                <span class="price-now">{{ $product->formatted_price }}</span>
-              @endif
-            </div>
-            <a href="{{ route('product.show', $product->id) }}" class="btn-view-details">View Details</a>
+    <div class="cx-floor">
+      @forelse($products as $i => $product)
+        @php
+          $img = $product->primaryImage ? $product->primaryImage->url
+               : ($product->product_image ? asset('images/products/' . $product->product_image) : $placeholder);
+          $badge = $badges[$product->id] ?? null;
+        @endphp
+        <article class="cx-card {{ $shapes[$i % 3] }}">
+          <div class="cx-pic">
+            <img src="{{ $img }}" alt="{{ $product->product_name }}" @if($i >= 6) loading="lazy" @endif decoding="async"
+                 onerror="this.onerror=null;this.src='{{ $placeholder }}';">
+            <div class="cx-tag"><span>{{ $product->on_sale ? $product->formatted_sale_price : $product->formatted_price }}</span></div>
+            @if($badge)<span class="cx-badge">{{ $badge }}</span>@endif
+            <button type="button" class="cx-qv" data-quick-view="{{ $product->id }}" data-name="{{ $product->product_name }}"
+                    aria-label="Quick view: {{ $product->product_name }}">Quick view</button>
           </div>
+          <div class="cx-cap">
+            <h3><a href="{{ route('product.show', $product->id) }}">{{ $product->product_name }}</a></h3>
+            <p class="cx-k">{{ $product->category }}@if($product->on_sale)<span class="cx-was">{{ $product->formatted_price }}</span>@endif</p>
+            @if(filled($product->description))<p class="cx-d">{{ $product->description }}</p>@endif
+            <a href="{{ route('product.show', $product->id) }}" class="lp-btn lp-btn--secondary cx-vd">View details</a>
+          </div>
+        </article>
+      @empty
+        <div class="cx-empty">
+          @if($filtered)
+            <b>Nothing matches these filters</b>
+            No pieces fit this category, search or price. Clear the filters to see everything we have.<br>
+            <a href="{{ route('catalog') }}" class="lp-btn lp-btn--primary">Clear filters</a>
+          @else
+            <b>No pieces listed yet</b>
+            Please check back soon, or ask us to build one to your size.
+          @endif
         </div>
+      @endforelse
+    </div>
+  </section>
+</div>
+
+{{-- Quick view: filled by assets/js/catalog-quickview.js from /product/{id}/quick-view (JSON, set with textContent only) --}}
+<div class="cx-mod" id="cxMod" hidden>
+  <div class="cx-qd" id="cxQd" role="dialog" aria-modal="true" aria-labelledby="cxName" data-state="loading">
+    <div class="cx-qd-bg" id="cxBg"></div>
+    <figure class="cx-ph" id="cxPh">
+      <img id="cxImg" src="" alt="">
+      <span class="cx-badge" id="cxBadge" hidden></span>
+      <button type="button" class="cx-gal l" id="cxPrev" aria-label="Previous photo" hidden>
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button type="button" class="cx-gal r" id="cxNext" aria-label="Next photo" hidden>
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <span class="cx-pos" id="cxPos" aria-live="polite" hidden></span>
+    </figure>
+    <div class="cx-pane">
+      <button type="button" class="cx-x" id="cxClose" aria-label="Close quick view">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+      <div>
+        <p class="cx-qd-k" id="cxCat"></p>
+        <h2 id="cxName"></h2>
       </div>
-    @empty
-      <div class="empty-state">
-        <div class="emoji">🪑</div>
-        <h3>No products found</h3>
-        <p>Try a different category or search term.</p>
+      <div class="cx-state cx-state-loading" aria-live="polite"><span class="cx-spin" aria-hidden="true"></span><p>Loading this piece&hellip;</p></div>
+      <div class="cx-state cx-state-error" aria-live="assertive"><p>We could not load this piece. Check your connection and try again.</p>
+        <button type="button" class="lp-btn lp-btn--secondary" id="cxRetry">Retry</button></div>
+      <div class="cx-body" id="cxBody">
+        <div class="cx-price"><span id="cxPriceLbl">Price</span><strong id="cxPrice"></strong></div>
+        <p class="cx-desc" id="cxDesc" hidden></p>
+        <dl class="cx-info" id="cxInfo"></dl>
+        <div id="cxSizeWrap" hidden><span class="cx-lbl">Size</span><div class="cx-dims" id="cxDims"></div></div>
+        <div class="cx-act"><a class="lp-btn" id="cxMore" href="#">View full details</a></div>
       </div>
-    @endforelse
+    </div>
   </div>
 </div>
-
-<!-- QUICK VIEW MODAL -->
-<div class="modal-overlay" id="quickViewModal" onclick="closeQuickViewOutside(event)">
-  <div class="modal quick-view-modal" id="quickViewContent"></div>
-</div>
-
 @endsection
+
+@push('scripts')
+<script src="{{ asset('assets/js/catalog-quickview.js') }}?v={{ @filemtime(public_path('assets/js/catalog-quickview.js')) ?: 1 }}" defer></script>
+@endpush

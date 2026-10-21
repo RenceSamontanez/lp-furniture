@@ -1,0 +1,1287 @@
+{
+  "runs": [
+    {
+      "tag": "guest-1440",
+      "checks": {},
+      "page": {
+        "cards": 11,
+        "tags": 11,
+        "sw": 1425,
+        "cw": 1425,
+        "badges": [
+          "Photoless Stool (no photo):New",
+          "Sofa Frame:New",
+          "Sala Set:New",
+          "Midnight Console:New",
+          "Pale Oak Bench:New",
+          "Rocking Chair:Best seller",
+          "TV Console Cabinet:New",
+          "King Bed Frame:Best seller",
+          "4-Door Wardrobe Cabinet:Best seller",
+          "Narra Dining Table:Best seller"
+        ],
+        "cats": [
+          "All 11",
+          "Beds 1",
+          "Cabinets 2",
+          "Chairs 3",
+          "Sofas 2",
+          "Tables 3"
+        ],
+        "tagFont": "Figtree, \"DM Sans\", \"Segoe UI\", system-ui, sans-serif",
+        "bg": "rgb(255, 254, 251)",
+        "catMinH": 48,
+        "navVisible": "visible"
+      },
+      "consoleErrors": [],
+      "ignoredConsole": 0
+    },
+    {
+      "tag": "guest-1024",
+      "checks": {},
+      "page": {
+        "cards": 11,
+        "tags": 11,
+        "sw": 1009,
+        "cw": 1009,
+        "badges": [
+          "Photoless Stool (no photo):New",
+          "Sofa Frame:New",
+          "Sala Set:New",
+          "Midnight Console:New",
+          "Pale Oak Bench:New",
+          "Rocking Chair:Best seller",
+          "TV Console Cabinet:New",
+          "King Bed Frame:Best seller",
+          "4-Door Wardrobe Cabinet:Best seller",
+          "Narra Dining Table:Best seller"
+        ],
+        "cats": [
+          "All 11",
+          "Beds 1",
+          "Cabinets 2",
+          "Chairs 3",
+          "Sofas 2",
+          "Tables 3"
+        ],
+        "tagFont": "Figtree, \"DM Sans\", \"Segoe UI\", system-ui, sans-serif",
+        "bg": "rgb(255, 254, 251)",
+        "catMinH": 48,
+        "navVisible": "visible"
+      },
+      "consoleErrors": [],
+      "ignoredConsole": 0
+    },
+    {
+      "tag": "guest-390",
+      "checks": {},
+      "page": {
+        "cards": 11,
+        "tags": 11,
+        "sw": 390,
+        "cw": 390,
+        "badges": [
+          "Photoless Stool (no photo):New",
+          "Sofa Frame:New",
+          "Sala Set:New",
+          "Midnight Console:New",
+          "Pale Oak Bench:New",
+          "Rocking Chair:Best seller",
+          "TV Console Cabinet:New",
+          "King Bed Frame:Best seller",
+          "4-Door Wardrobe Cabinet:Best seller",
+          "Narra Dining Table:Best seller"
+        ],
+        "cats": [
+          "All 11",
+          "Beds 1",
+          "Cabinets 2",
+          "Chairs 3",
+          "Sofas 2",
+          "Tables 3"
+        ],
+        "tagFont": "Figtree, \"DM Sans\", \"Segoe UI\", system-ui, sans-serif",
+        "bg": "rgb(255, 254, 251)",
+        "catMinH": 44,
+        "navVisible": "visible"
+      },
+      "consoleErrors": [],
+      "ignoredConsole": 0
+    },
+    {
+      "tag": "user-1440",
+      "checks": {},
+      "page": {
+        "cards": 11,
+        "tags": 11,
+        "sw": 1425,
+        "cw": 1425,
+        "badges": [
+          "Photoless Stool (no photo):New",
+          "Sofa Frame:New",
+          "Sala Set:New",
+          "Midnight Console:New",
+          "Pale Oak Bench:New",
+          "Rocking Chair:Best seller",
+          "TV Console Cabinet:New",
+          "King Bed Frame:Best seller",
+          "4-Door Wardrobe Cabinet:Best seller",
+          "Narra Dining Table:Best seller"
+        ],
+        "cats": [
+          "All 11",
+          "Beds 1",
+          "Cabinets 2",
+          "Chairs 3",
+          "Sofas 2",
+          "Tables 3"
+        ],
+        "tagFont": "Figtree, \"DM Sans\", \"Segoe UI\", system-ui, sans-serif",
+        "bg": "rgb(255, 254, 251)",
+        "catMinH": 48,
+        "navVisible": "visible"
+      },
+      "consoleErrors": [],
+      "ignoredConsole": 0
+    },
+    {
+      "tag": "user-1024",
+      "checks": {},
+      "page": {
+        "cards": 11,
+        "tags": 11,
+        "sw": 1009,
+        "cw": 1009,
+        "badges": [
+          "Photoless Stool (no photo):New",
+          "Sofa Frame:New",
+          "Sala Set:New",
+          "Midnight Console:New",
+          "Pale Oak Bench:New",
+          "Rocking Chair:Best seller",
+          "TV Console Cabinet:New",
+          "King Bed Frame:Best seller",
+          "4-Door Wardrobe Cabinet:Best seller",
+          "Narra Dining Table:Best seller"
+        ],
+        "cats": [
+          "All 11",
+          "Beds 1",
+          "Cabinets 2",
+          "Chairs 3",
+          "Sofas 2",
+          "Tables 3"
+        ],
+        "tagFont": "Figtree, \"DM Sans\", \"Segoe UI\", system-ui, sans-serif",
+        "bg": "rgb(255, 254, 251)",
+        "catMinH": 48,
+        "navVisible": "visible"
+      },
+      "consoleErrors": [],
+      "ignoredConsole": 0
+    },
+    {
+      "tag": "user-390",
+      "checks": {},
+      "page": {
+        "cards": 11,
+        "tags": 11,
+        "sw": 390,
+        "cw": 390,
+        "badges": [
+          "Photoless Stool (no photo):New",
+          "Sofa Frame:New",
+          "Sala Set:New",
+          "Midnight Console:New",
+          "Pale Oak Bench:New",
+          "Rocking Chair:Best seller",
+          "TV Console Cabinet:New",
+          "King Bed Frame:Best seller",
+          "4-Door Wardrobe Cabinet:Best seller",
+          "Narra Dining Table:Best seller"
+        ],
+        "cats": [
+          "All 11",
+          "Beds 1",
+          "Cabinets 2",
+          "Chairs 3",
+          "Sofas 2",
+          "Tables 3"
+        ],
+        "tagFont": "Figtree, \"DM Sans\", \"Segoe UI\", system-ui, sans-serif",
+        "bg": "rgb(255, 254, 251)",
+        "catMinH": 44,
+        "navVisible": "visible"
+      },
+      "consoleErrors": [],
+      "ignoredConsole": 0
+    }
+  ],
+  "buttonContrast": [
+    {
+      "tag": "user-1440-modal",
+      "count": 29,
+      "failures": []
+    },
+    {
+      "tag": "user-1440-page",
+      "count": 27,
+      "failures": []
+    },
+    {
+      "tag": "user-390-modal",
+      "count": 29,
+      "failures": []
+    },
+    {
+      "tag": "user-390-page",
+      "count": 27,
+      "failures": []
+    }
+  ],
+  "modalContrast": [
+    {
+      "tag": "user-1440",
+      "min": 4.88,
+      "rows": [
+        {
+          "name": "light-photo",
+          "text": "Tables",
+          "ratio": 5.43
+        },
+        {
+          "name": "light-photo",
+          "text": "Pale Oak Bench",
+          "ratio": 15.07
+        },
+        {
+          "name": "light-photo",
+          "text": "Price",
+          "ratio": 11
+        },
+        {
+          "name": "light-photo",
+          "text": "₱6,100.00",
+          "ratio": 9.13
+        },
+        {
+          "name": "light-photo",
+          "text": "Solid wood, made to order in",
+          "ratio": 6.57
+        },
+        {
+          "name": "light-photo",
+          "text": "Material",
+          "ratio": 7.9
+        },
+        {
+          "name": "light-photo",
+          "text": "Finish",
+          "ratio": 7.89
+        },
+        {
+          "name": "light-photo",
+          "text": "Narra",
+          "ratio": 14.81
+        },
+        {
+          "name": "light-photo",
+          "text": "Natural varnish",
+          "ratio": 14.67
+        },
+        {
+          "name": "light-photo",
+          "text": "Size",
+          "ratio": 7.84
+        },
+        {
+          "name": "light-photo",
+          "text": "Length",
+          "ratio": 8.45
+        },
+        {
+          "name": "light-photo",
+          "text": "Width",
+          "ratio": 8.45
+        },
+        {
+          "name": "light-photo",
+          "text": "Height",
+          "ratio": 8.39
+        },
+        {
+          "name": "light-photo",
+          "text": "180",
+          "ratio": 15.89
+        },
+        {
+          "name": "light-photo",
+          "text": "cm",
+          "ratio": 8.46
+        },
+        {
+          "name": "light-photo",
+          "text": "90",
+          "ratio": 15.75
+        },
+        {
+          "name": "light-photo",
+          "text": "cm",
+          "ratio": 8.39
+        },
+        {
+          "name": "light-photo",
+          "text": "76",
+          "ratio": 15.84
+        },
+        {
+          "name": "light-photo",
+          "text": "cm",
+          "ratio": 8.44
+        },
+        {
+          "name": "light-photo",
+          "text": "70.9 in",
+          "ratio": 8.46
+        },
+        {
+          "name": "light-photo",
+          "text": "35.4 in",
+          "ratio": 8.37
+        },
+        {
+          "name": "light-photo",
+          "text": "29.9 in",
+          "ratio": 8.39
+        },
+        {
+          "name": "light-photo",
+          "text": "View full details",
+          "ratio": 7.01
+        },
+        {
+          "name": "light-photo",
+          "text": "New",
+          "ratio": 7.89
+        },
+        {
+          "name": "light-photo",
+          "text": "1 / 2",
+          "ratio": 7.89
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Tables",
+          "ratio": 4.88
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Pale Oak Bench",
+          "ratio": 13.31
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Price",
+          "ratio": 11
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "₱6,100.00",
+          "ratio": 9.13
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Solid wood, made to order in",
+          "ratio": 5.76
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Material",
+          "ratio": 6.84
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Finish",
+          "ratio": 6.79
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Narra",
+          "ratio": 12.75
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Natural varnish",
+          "ratio": 12.61
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Size",
+          "ratio": 6.72
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Length",
+          "ratio": 7.95
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Width",
+          "ratio": 7.96
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Height",
+          "ratio": 7.87
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "180",
+          "ratio": 14.92
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "cm",
+          "ratio": 7.94
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "90",
+          "ratio": 14.84
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "cm",
+          "ratio": 7.9
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "76",
+          "ratio": 14.8
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "cm",
+          "ratio": 7.88
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "70.9 in",
+          "ratio": 7.94
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "35.4 in",
+          "ratio": 7.89
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "29.9 in",
+          "ratio": 7.83
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "View full details",
+          "ratio": 7.01
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "New",
+          "ratio": 18.91
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "2 / 2",
+          "ratio": 18.91
+        },
+        {
+          "name": "dark-photo",
+          "text": "Tables",
+          "ratio": 4.88
+        },
+        {
+          "name": "dark-photo",
+          "text": "Midnight Console",
+          "ratio": 13.31
+        },
+        {
+          "name": "dark-photo",
+          "text": "Price",
+          "ratio": 11
+        },
+        {
+          "name": "dark-photo",
+          "text": "₱15,900.00",
+          "ratio": 9.13
+        },
+        {
+          "name": "dark-photo",
+          "text": "Solid wood, made to order in",
+          "ratio": 5.76
+        },
+        {
+          "name": "dark-photo",
+          "text": "Material",
+          "ratio": 6.84
+        },
+        {
+          "name": "dark-photo",
+          "text": "Finish",
+          "ratio": 6.79
+        },
+        {
+          "name": "dark-photo",
+          "text": "Narra",
+          "ratio": 12.75
+        },
+        {
+          "name": "dark-photo",
+          "text": "Natural varnish",
+          "ratio": 12.61
+        },
+        {
+          "name": "dark-photo",
+          "text": "Size",
+          "ratio": 6.72
+        },
+        {
+          "name": "dark-photo",
+          "text": "Length",
+          "ratio": 7.95
+        },
+        {
+          "name": "dark-photo",
+          "text": "Width",
+          "ratio": 7.96
+        },
+        {
+          "name": "dark-photo",
+          "text": "Height",
+          "ratio": 7.87
+        },
+        {
+          "name": "dark-photo",
+          "text": "180",
+          "ratio": 14.92
+        },
+        {
+          "name": "dark-photo",
+          "text": "cm",
+          "ratio": 7.94
+        },
+        {
+          "name": "dark-photo",
+          "text": "90",
+          "ratio": 14.84
+        },
+        {
+          "name": "dark-photo",
+          "text": "cm",
+          "ratio": 7.9
+        },
+        {
+          "name": "dark-photo",
+          "text": "76",
+          "ratio": 14.8
+        },
+        {
+          "name": "dark-photo",
+          "text": "cm",
+          "ratio": 7.88
+        },
+        {
+          "name": "dark-photo",
+          "text": "70.9 in",
+          "ratio": 7.94
+        },
+        {
+          "name": "dark-photo",
+          "text": "35.4 in",
+          "ratio": 7.89
+        },
+        {
+          "name": "dark-photo",
+          "text": "29.9 in",
+          "ratio": 7.83
+        },
+        {
+          "name": "dark-photo",
+          "text": "View full details",
+          "ratio": 7.01
+        },
+        {
+          "name": "dark-photo",
+          "text": "New",
+          "ratio": 18.91
+        }
+      ]
+    },
+    {
+      "tag": "user-390",
+      "min": 4.88,
+      "rows": [
+        {
+          "name": "light-photo",
+          "text": "Tables",
+          "ratio": 5.42
+        },
+        {
+          "name": "light-photo",
+          "text": "Pale Oak Bench",
+          "ratio": 15.08
+        },
+        {
+          "name": "light-photo",
+          "text": "Price",
+          "ratio": 10.99
+        },
+        {
+          "name": "light-photo",
+          "text": "₱6,100.00",
+          "ratio": 9.13
+        },
+        {
+          "name": "light-photo",
+          "text": "Solid wood, made to order in",
+          "ratio": 5.93
+        },
+        {
+          "name": "light-photo",
+          "text": "Material",
+          "ratio": 7.96
+        },
+        {
+          "name": "light-photo",
+          "text": "Finish",
+          "ratio": 7.9
+        },
+        {
+          "name": "light-photo",
+          "text": "Narra",
+          "ratio": 14.86
+        },
+        {
+          "name": "light-photo",
+          "text": "Natural varnish",
+          "ratio": 14.81
+        },
+        {
+          "name": "light-photo",
+          "text": "Size",
+          "ratio": 7.88
+        },
+        {
+          "name": "light-photo",
+          "text": "Length",
+          "ratio": 8.52
+        },
+        {
+          "name": "light-photo",
+          "text": "Width",
+          "ratio": 8.45
+        },
+        {
+          "name": "light-photo",
+          "text": "Height",
+          "ratio": 8.45
+        },
+        {
+          "name": "light-photo",
+          "text": "180",
+          "ratio": 15.86
+        },
+        {
+          "name": "light-photo",
+          "text": "cm",
+          "ratio": 8.45
+        },
+        {
+          "name": "light-photo",
+          "text": "90",
+          "ratio": 15.89
+        },
+        {
+          "name": "light-photo",
+          "text": "cm",
+          "ratio": 8.46
+        },
+        {
+          "name": "light-photo",
+          "text": "76",
+          "ratio": 15.86
+        },
+        {
+          "name": "light-photo",
+          "text": "cm",
+          "ratio": 8.4
+        },
+        {
+          "name": "light-photo",
+          "text": "70.9 in",
+          "ratio": 8.45
+        },
+        {
+          "name": "light-photo",
+          "text": "35.4 in",
+          "ratio": 8.46
+        },
+        {
+          "name": "light-photo",
+          "text": "29.9 in",
+          "ratio": 8.39
+        },
+        {
+          "name": "light-photo",
+          "text": "View full details",
+          "ratio": 7.01
+        },
+        {
+          "name": "light-photo",
+          "text": "New",
+          "ratio": 7.89
+        },
+        {
+          "name": "light-photo",
+          "text": "1 / 2",
+          "ratio": 7.89
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Tables",
+          "ratio": 4.88
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Pale Oak Bench",
+          "ratio": 13.44
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Price",
+          "ratio": 10.99
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "₱6,100.00",
+          "ratio": 9.13
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Solid wood, made to order in",
+          "ratio": 5.19
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Material",
+          "ratio": 6.91
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Finish",
+          "ratio": 6.9
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Narra",
+          "ratio": 12.87
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Natural varnish",
+          "ratio": 12.71
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Size",
+          "ratio": 6.88
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Length",
+          "ratio": 8.02
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Width",
+          "ratio": 7.95
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "Height",
+          "ratio": 7.96
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "180",
+          "ratio": 14.93
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "cm",
+          "ratio": 7.95
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "90",
+          "ratio": 14.92
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "cm",
+          "ratio": 7.94
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "76",
+          "ratio": 14.94
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "cm",
+          "ratio": 7.91
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "70.9 in",
+          "ratio": 7.95
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "35.4 in",
+          "ratio": 7.94
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "29.9 in",
+          "ratio": 7.9
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "View full details",
+          "ratio": 7.01
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "New",
+          "ratio": 18.91
+        },
+        {
+          "name": "dark-photo-2nd",
+          "text": "2 / 2",
+          "ratio": 18.91
+        },
+        {
+          "name": "dark-photo",
+          "text": "Tables",
+          "ratio": 4.88
+        },
+        {
+          "name": "dark-photo",
+          "text": "Midnight Console",
+          "ratio": 13.43
+        },
+        {
+          "name": "dark-photo",
+          "text": "Price",
+          "ratio": 10.99
+        },
+        {
+          "name": "dark-photo",
+          "text": "₱15,900.00",
+          "ratio": 9.13
+        },
+        {
+          "name": "dark-photo",
+          "text": "Solid wood, made to order in",
+          "ratio": 5.19
+        },
+        {
+          "name": "dark-photo",
+          "text": "Material",
+          "ratio": 6.91
+        },
+        {
+          "name": "dark-photo",
+          "text": "Finish",
+          "ratio": 6.9
+        },
+        {
+          "name": "dark-photo",
+          "text": "Narra",
+          "ratio": 12.87
+        },
+        {
+          "name": "dark-photo",
+          "text": "Natural varnish",
+          "ratio": 12.71
+        },
+        {
+          "name": "dark-photo",
+          "text": "Size",
+          "ratio": 6.88
+        },
+        {
+          "name": "dark-photo",
+          "text": "Length",
+          "ratio": 8.02
+        },
+        {
+          "name": "dark-photo",
+          "text": "Width",
+          "ratio": 7.95
+        },
+        {
+          "name": "dark-photo",
+          "text": "Height",
+          "ratio": 7.96
+        },
+        {
+          "name": "dark-photo",
+          "text": "180",
+          "ratio": 14.93
+        },
+        {
+          "name": "dark-photo",
+          "text": "cm",
+          "ratio": 7.95
+        },
+        {
+          "name": "dark-photo",
+          "text": "90",
+          "ratio": 14.92
+        },
+        {
+          "name": "dark-photo",
+          "text": "cm",
+          "ratio": 7.94
+        },
+        {
+          "name": "dark-photo",
+          "text": "76",
+          "ratio": 14.94
+        },
+        {
+          "name": "dark-photo",
+          "text": "cm",
+          "ratio": 7.91
+        },
+        {
+          "name": "dark-photo",
+          "text": "70.9 in",
+          "ratio": 7.95
+        },
+        {
+          "name": "dark-photo",
+          "text": "35.4 in",
+          "ratio": 7.94
+        },
+        {
+          "name": "dark-photo",
+          "text": "29.9 in",
+          "ratio": 7.9
+        },
+        {
+          "name": "dark-photo",
+          "text": "View full details",
+          "ratio": 7.01
+        },
+        {
+          "name": "dark-photo",
+          "text": "New",
+          "ratio": 18.91
+        }
+      ]
+    }
+  ],
+  "problems": [],
+  "cardContrast": [
+    {
+      "tag": "user-1440",
+      "min": 5.86,
+      "rows": [
+        {
+          "name": "card",
+          "text": "₱1,800.00",
+          "ratio": 6.49
+        },
+        {
+          "name": "card",
+          "text": "₱16,500.00",
+          "ratio": 6.47
+        },
+        {
+          "name": "card",
+          "text": "₱6,100.00",
+          "ratio": 6.47
+        },
+        {
+          "name": "card",
+          "text": "₱4,500.00",
+          "ratio": 6.56
+        },
+        {
+          "name": "card",
+          "text": "₱22,000.00",
+          "ratio": 6.47
+        },
+        {
+          "name": "card",
+          "text": "₱7,200.00",
+          "ratio": 6.54
+        },
+        {
+          "name": "card",
+          "text": "Photoless Stool (no photo)",
+          "ratio": 16.68
+        },
+        {
+          "name": "card",
+          "text": "Pale Oak Bench",
+          "ratio": 16.68
+        },
+        {
+          "name": "card",
+          "text": "4-Door Wardrobe Cabinet",
+          "ratio": 16.68
+        },
+        {
+          "name": "card",
+          "text": "Chairs",
+          "ratio": 5.91
+        },
+        {
+          "name": "card",
+          "text": "Tables",
+          "ratio": 5.91
+        },
+        {
+          "name": "card",
+          "text": "Cabinets",
+          "ratio": 5.91
+        },
+        {
+          "name": "card",
+          "text": "Solid wood, made to order in",
+          "ratio": 6.81
+        },
+        {
+          "name": "card",
+          "text": "Solid wood, made to order in",
+          "ratio": 6.81
+        },
+        {
+          "name": "card",
+          "text": "Solid wood, made to order in",
+          "ratio": 6.81
+        },
+        {
+          "name": "card",
+          "text": "11 pieces",
+          "ratio": 6.76
+        },
+        {
+          "name": "card",
+          "text": "Ready-made pieces from our w",
+          "ratio": 6.76
+        },
+        {
+          "name": "card",
+          "text": "All",
+          "ratio": 5.86
+        },
+        {
+          "name": "card",
+          "text": "11",
+          "ratio": 5.86
+        },
+        {
+          "name": "card",
+          "text": "Beds",
+          "ratio": 16.54
+        },
+        {
+          "name": "card",
+          "text": "1",
+          "ratio": 6.76
+        },
+        {
+          "name": "card",
+          "text": "Cabinets",
+          "ratio": 16.54
+        },
+        {
+          "name": "card",
+          "text": "2",
+          "ratio": 6.76
+        },
+        {
+          "name": "card",
+          "text": "Chairs",
+          "ratio": 16.54
+        },
+        {
+          "name": "card",
+          "text": "3",
+          "ratio": 6.76
+        },
+        {
+          "name": "card",
+          "text": "Sofas",
+          "ratio": 16.54
+        },
+        {
+          "name": "card",
+          "text": "2",
+          "ratio": 6.76
+        },
+        {
+          "name": "card",
+          "text": "Tables",
+          "ratio": 16.54
+        },
+        {
+          "name": "card",
+          "text": "3",
+          "ratio": 6.76
+        },
+        {
+          "name": "card",
+          "text": "New",
+          "ratio": 7.67
+        },
+        {
+          "name": "card",
+          "text": "New",
+          "ratio": 8.13
+        },
+        {
+          "name": "card",
+          "text": "New",
+          "ratio": 7.89
+        },
+        {
+          "name": "card",
+          "text": "Best seller",
+          "ratio": 9.99
+        },
+        {
+          "name": "card",
+          "text": "Best seller",
+          "ratio": 13.44
+        },
+        {
+          "name": "card",
+          "text": "Search",
+          "ratio": 6.76
+        },
+        {
+          "name": "card",
+          "text": "Highest price (₱)",
+          "ratio": 6.76
+        },
+        {
+          "name": "card",
+          "text": "Sort by",
+          "ratio": 6.76
+        },
+        {
+          "name": "card",
+          "text": "View details",
+          "ratio": 9.05
+        },
+        {
+          "name": "card",
+          "text": "View details",
+          "ratio": 9.05
+        },
+        {
+          "name": "card",
+          "text": "View details",
+          "ratio": 9.05
+        }
+      ]
+    },
+    {
+      "tag": "user-390",
+      "min": 6.47,
+      "rows": [
+        {
+          "name": "card",
+          "text": "₱1,800.00",
+          "ratio": 6.47
+        },
+        {
+          "name": "card",
+          "text": "11 pieces",
+          "ratio": 6.76
+        },
+        {
+          "name": "card",
+          "text": "Ready-made pieces from our w",
+          "ratio": 6.76
+        },
+        {
+          "name": "card",
+          "text": "All",
+          "ratio": 9.94
+        },
+        {
+          "name": "card",
+          "text": "11",
+          "ratio": 7.49
+        },
+        {
+          "name": "card",
+          "text": "Beds",
+          "ratio": 16.54
+        },
+        {
+          "name": "card",
+          "text": "1",
+          "ratio": 6.76
+        },
+        {
+          "name": "card",
+          "text": "Cabinets",
+          "ratio": 16.54
+        },
+        {
+          "name": "card",
+          "text": "2",
+          "ratio": 6.76
+        },
+        {
+          "name": "card",
+          "text": "Chairs",
+          "ratio": 16.54
+        },
+        {
+          "name": "card",
+          "text": "3",
+          "ratio": 6.76
+        },
+        {
+          "name": "card",
+          "text": "New",
+          "ratio": 7.55
+        },
+        {
+          "name": "card",
+          "text": "Search",
+          "ratio": 6.76
+        },
+        {
+          "name": "card",
+          "text": "Highest price (₱)",
+          "ratio": 6.76
+        },
+        {
+          "name": "card",
+          "text": "Sort by",
+          "ratio": 6.76
+        }
+      ]
+    }
+  ],
+  "priceTagMin": 6.47
+}

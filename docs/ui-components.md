@@ -138,3 +138,13 @@ Every layout (customer, focus, admin) includes the partial, which always renders
 * **Policy links** (`config/shop.policies`, label + route): rendered only when the route exists today; `'route' => null` marks a page not written yet, so adding the page later is one line.
 * The giant wordmark is `aria-hidden` and clipped (`overflow: hidden`) so it can not cause horizontal scroll; the bottom fog is `.sf__frost`. The launcher is kept clear with padding under the copyright line.
 * Browser walk: `tests/UiLinks/browser-footer.cjs` (scratch DB; `php tests/UiLinks/footer-settings.php set|blank`).
+
+## Catalog and glass Quick view (Stage catalog)
+
+`/catalog` (`ProductController@catalog`, `resources/views/catalog.blade.php`, `public/assets/css/catalog.css`, `public/assets/js/catalog-quickview.js`). Look from `docs/catalog/catalog-prototype.html`.
+
+* Filters and sort are plain links/forms (query string: `category`, `search`, `max_price`, `sort` = `newest` (default) | `price_asc` | `price_desc`, Luma `type`); every link keeps the others. Price sorts use the sale price while a sale is on. JavaScript is only for the Quick view.
+* Badges (Best seller / New) come only from `App\Support\HeroRails` (`ProductController::badgeMap()`); no rail, no badge.
+* Quick view reads `GET /product/{id}/quick-view` (JSON: `gallery_images` main photo first then extras by `sort_order`, `price_display`, `material`, `finish` (null when empty), `size_cm`, `size_inches` (null with no size), `badge`, `description`, `detail_url`; the old `images` / `image_url` keys stay for the home and product-page Quick view in `main.js`). All text is set with `textContent`. Empty rows are hidden, never "N/A".
+* One action only ("View full details"); X is the close. Focus trap, Escape, backdrop, focus return, `body.modal-open` (hides the nav) and scroll lock are in `catalog-quickview.js`.
+* Browser walk: `tests/UiLinks/browser-catalog.cjs` (scratch DB; seed with `php tests/UiLinks/seed_catalog.php`). Screenshots in `docs/stage-catalog-screenshots/`.

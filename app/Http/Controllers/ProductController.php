@@ -107,9 +107,11 @@ class ProductController extends Controller
         return $stories[$index] ?? 'Crafted for the life you want to live.';
     }
     // ── CATALOG PAGE ──
+    public const CATALOG_SORTS = ['newest', 'price_asc', 'price_desc'];
+
     public function catalog(Request $request)
     {
-        $query = Product::available();
+        $query = Product::available()->with('primaryImage');
 
         if ($request->filled('category')) {
             $query->byCategory($request->category);
@@ -123,7 +125,17 @@ class ProductController extends Controller
             $query->where('product_name', 'like', '%' . $request->search . '%');
         }
 
-        $products = $query->latest()->get();
+        // Sort is server-side and whitelisted. Price sorts use the price the customer actually pays (sale price when on sale).
+        $sort = $request->query('sort');
+        $sort = is_string($sort) && in_array($sort, self::CATALOG_SORTS, true) ? $sort : 'newest';
+        $effective = 'CASE WHEN sale_price IS NOT NULL AND sale_price < price THEN sale_price ELSE price END';
+        match ($sort) {
+            'price_asc'  => $query->orderByRaw("$effective ASC")->orderByDesc('id'),
+            'price_desc' => $query->orderByRaw("$effective DESC")->orderByDesc('id'),
+            default      => $query->latest()->orderByDesc('id'),
+        };
+
+        $products = $query->get();
 
         // ?type=door (from Luma's "View more products" button): only the furniture types Luma knows
         // are accepted, so nothing from the address bar reaches a query or the page.
@@ -133,12 +145,34 @@ class ProductController extends Controller
             $products = $products->filter(fn ($p) => \App\Support\Luma\ProductFinder::isOfType($p, $type))->values();
         }
 
-        $categories = Product::available()
-            ->select('category')
-            ->distinct()
-            ->pluck('category');
+        // Category index: real categories with the real number of available products in each.
+        $categoryCounts = Product::available()
+            ->whereNotNull('category')
+            ->where('category', '!=', '')
+            ->selectRaw('category, COUNT(*) as total')
+            ->groupBy('category')
+            ->orderBy('category')
+            ->pluck('total', 'category');
+        $categories = $categoryCounts->keys();
+        $totalCount = $categoryCounts->sum();
 
-        return view('catalog', compact('products', 'categories', 'type'));
+        $badges = $this->badgeMap();
+
+        return view('catalog', compact('products', 'categories', 'categoryCounts', 'totalCount', 'type', 'sort', 'badges'));
+    }
+
+    /** Best seller / New tags exactly as HeroRails decides them: [product id => tag]. A product in both rails keeps "Best seller". */
+    private function badgeMap(): array
+    {
+        $rails = \App\Support\HeroRails::get();
+        $map = [];
+        foreach (['fresh', 'best'] as $rail) {
+            foreach ($rails[$rail] as $card) {
+                $map[$card['id']] = $card['tag'];
+            }
+        }
+
+        return $map;
     }
 
     // ── PRODUCT DETAIL ──
@@ -157,23 +191,15 @@ class ProductController extends Controller
     public function quickView($id)
     {
         $product = Product::with('images')->available()->findOrFail($id);
-    
-        // Build images array — gallery first, fallback to single image
-        $images = [];
-        if ($product->images->count() > 0) {
-            foreach ($product->images as $img) {
-                $images[] = [
-                    'url'   => asset('images/products/' . $img->image_path),
-                    'label' => $img->label ?? 'View',
-                ];
-            }
-        } else {
-            $images[] = [
-                'url'   => $product->image_url,
-                'label' => 'Main',
-            ];
+
+        // Main photo first, then the extras in sort_order. A product with no photo at all shows the site's neutral placeholder.
+        $gallery = $product->gallery_images;
+        if (!$gallery) {
+            $gallery = [asset('images/products/placeholder.jpg')];
         }
-    
+
+        $price = $product->on_sale ? $product->formatted_sale_price : $product->formatted_price;
+
         return response()->json([
             'id'               => $product->id,
             'name'             => $product->product_name,
@@ -181,17 +207,20 @@ class ProductController extends Controller
             'description'      => $product->description,
             'price'            => $product->formatted_price,
             'sale_price'       => $product->formatted_sale_price,
+            'price_display'    => $price,
             'on_sale'          => $product->on_sale,
             'discount_percent' => $product->discount_percent,
-            'material'         => $product->material,
-            'finish'           => $product->finish,
+            'badge'            => $this->badgeMap()[$product->id] ?? null,
+            'material'         => filled($product->material) ? $product->material : null,
+            'finish'           => filled($product->finish) ? $product->finish : null,
             'dimensions'       => $product->dimensions_label,
-            'image_url'        => $product->image_url,
-            'images'           => $images,
+            'size_cm'          => $product->size_cm,
+            'size_inches'      => $product->size_inches,
+            'image_url'        => $gallery[0],
+            'gallery_images'   => $gallery,
+            // kept for the older quick view on the home and product pages
+            'images'           => array_map(fn ($u) => ['url' => $u, 'label' => 'View'], $gallery),
             'detail_url'       => route('product.show', $product->id),
         ]);
     }
-    
-    
 }
-
