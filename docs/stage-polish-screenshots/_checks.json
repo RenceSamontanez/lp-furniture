@@ -1,0 +1,83 @@
+{
+  "runs": [
+    {
+      "tag": "guest-1440",
+      "consoleErrors": []
+    },
+    {
+      "tag": "guest-1024",
+      "consoleErrors": []
+    },
+    {
+      "tag": "guest-390",
+      "consoleErrors": []
+    },
+    {
+      "tag": "user-1440",
+      "consoleErrors": []
+    },
+    {
+      "tag": "user-1024",
+      "consoleErrors": []
+    },
+    {
+      "tag": "user-390",
+      "consoleErrors": []
+    }
+  ],
+  "buttonContrast": [
+    {
+      "tag": "guest-1440-luma",
+      "count": 33,
+      "failures": []
+    },
+    {
+      "tag": "guest-1440-home-quickview",
+      "count": 30,
+      "failures": []
+    },
+    {
+      "tag": "guest-1440-product-quickview",
+      "count": 13,
+      "failures": []
+    },
+    {
+      "tag": "guest-1024-luma",
+      "count": 34,
+      "failures": []
+    },
+    {
+      "tag": "guest-390-luma",
+      "count": 35,
+      "failures": []
+    },
+    {
+      "tag": "user-1440-luma",
+      "count": 31,
+      "failures": []
+    },
+    {
+      "tag": "user-1440-home-quickview",
+      "count": 28,
+      "failures": []
+    },
+    {
+      "tag": "user-1440-product-quickview",
+      "count": 11,
+      "failures": []
+    },
+    {
+      "tag": "user-1024-luma",
+      "count": 32,
+      "failures": []
+    },
+    {
+      "tag": "user-390-luma",
+      "count": 35,
+      "failures": []
+    }
+  ],
+  "problems": [],
+  "pageOnlyFailures": 8,
+  "jsFallbackClicks": 3
+}

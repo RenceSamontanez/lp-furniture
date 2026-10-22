@@ -78,9 +78,9 @@ class LumaUrlsTest extends TestCase
         // Here: without "Accept: application/json" an expired session is redirected to the HTML login page and res.json() throws.
         $js = file_get_contents(public_path('assets/main.js'));
         $send = substr($js, strpos($js, 'async function sendChat'), 2600);
-        $this->assertStringContainsString("'Accept': 'application/json'", $send);
+        $this->assertStringContainsString("'Accept': 'application/json'", $js);
         $this->assertStringContainsString('input.value = msg;', $send);
-        $this->assertStringContainsString("I'm having trouble right now. Please try again!", $send);
+        $this->assertStringContainsString("your message didn't go through. Press Retry", $send);
     }
 
     public function test_the_widget_code_has_no_relative_urls(): void

@@ -1,5 +1,5 @@
-/* Catalog Quick view (glass modal). Filters and sorting are plain links/forms; this file is only the Quick view.
-   Data: GET /product/{id}/quick-view (JSON). Every value is written with textContent / setAttribute, never innerHTML.
+/* Shared glass Quick view (catalog, home and product pages). Any element with data-quick-view="{id}" data-name="{name}" opens it.
+   Markup: resources/views/partials/quick-view.blade.php. Styles: assets/css/quickview.css.
    Behaviour: role=dialog + aria-modal, focus moves in and is trapped, Escape / X / backdrop close, focus returns to the
    opener, body scroll locked, body.modal-open hides the nav while open. Left/Right arrows move through the photos. */
 (function () {
@@ -162,7 +162,12 @@
   // wiring
   document.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('[data-quick-view]');
-    if (b) { e.preventDefault(); open(b.getAttribute('data-quick-view'), b.getAttribute('data-name') || '', b); }
+    if (b) {
+      e.preventDefault();
+      // a click on the card photo opens it too; focus comes back to that card's own Quick view button
+      var btn = b.tagName === 'BUTTON' ? b : (b.querySelector('button[data-quick-view]') || b);
+      open(b.getAttribute('data-quick-view'), b.getAttribute('data-name') || '', btn);
+    }
   });
   el.close.addEventListener('click', close);
   el.retry.addEventListener('click', load);

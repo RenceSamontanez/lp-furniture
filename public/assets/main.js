@@ -5,7 +5,7 @@
    1. Mobile Nav Toggle (hamburger menu)
    2. Chatbot Widget
    3. Hero Slideshow
-   4. Quick View Modal (product preview)
+   4. (Quick view now lives in assets/js/quickview.js, shared)
    5. Product Carousel (best sellers slider)
    6. Toast Notification
    7. Init on page load
@@ -180,6 +180,28 @@ function toggleChatbot() {
   lumaOnOpen(win.classList.contains('open'));
 }
 
+/* Close the chat and put focus back on the launcher */
+function closeChatbot() {
+  const win = document.getElementById('chatbot-window');
+  if (!win || !win.classList.contains('open')) return;
+  win.classList.remove('open');
+  lumaOnOpen(false);
+  const btn = document.getElementById('chatbot-fab-btn');
+  if (btn) btn.focus();
+}
+
+/* Escape closes Luma, unless something stacked above her (Quick view, a confirmation modal, the photo viewer) is using it */
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape' || e.defaultPrevented) return;
+  const win = document.getElementById('chatbot-window');
+  if (!win || !win.classList.contains('open')) return;
+  const qv = document.getElementById('cxMod');
+  const box = document.getElementById('lightboxOverlay');
+  if ((qv && qv.classList.contains('on')) || document.body.classList.contains('lp-modal-open') || (box && box.classList.contains('open'))) return;
+  e.preventDefault();
+  closeChatbot();
+});
+
 /* Open chatbot programmatically (e.g. from hero button) */
 function openChatbot() {
   document.getElementById('chatbot-window').classList.add('open');
@@ -283,12 +305,36 @@ function lumaShowErrors(root, n, errors, generic) {
   if (first) first.focus();
 }
 
-async function lumaPost(url, payload) {
-  const res = await fetch(url, {
+/* An idle page outlives its session, so the first POST after a long wait answers 419 (page expired). Luma then asks for a
+   fresh token (GET /csrf-token, which also starts a new session) and sends the SAME request once more. 419 is raised before
+   the request reaches the controller, so nothing was processed the first time. Any other failure is never retried here.
+   The token is never logged. */
+async function lumaRefreshToken() {
+  const res = await fetch(APP.csrfUrl, { headers: { 'Accept': 'application/json' }, credentials: 'same-origin', cache: 'no-store' });
+  if (!res.ok) throw new Error('token refresh failed: ' + res.status);
+  const data = await res.json();
+  if (!data || typeof data.token !== 'string' || !data.token) throw new Error('token refresh failed');
+  APP.csrfToken = data.token;
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  if (meta) meta.setAttribute('content', data.token);
+}
+
+async function lumaFetchJson(url, payload) {
+  const send = () => fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': APP.csrfToken },
     body: JSON.stringify(payload),
   });
+  let res = await send();
+  if (res.status === 419) {
+    await lumaRefreshToken();
+    res = await send();
+  }
+  return res;
+}
+
+async function lumaPost(url, payload) {
+  const res = await lumaFetchJson(url, payload);
   let data = {};
   try { data = await res.json(); } catch (e) { /* not JSON */ }
   return { status: res.status, data: data };
@@ -564,7 +610,8 @@ function setSuggestions(list) {
     'Contact about my order':      () => APP.ordersUrl,
     'Start verification':          () => APP.validationUrl,
     'How to submit ID':            () => APP.validationUrl,
-    'Start AI Design request':     () => APP.designUrl,
+    'Start AI Design request':     () => APP.designUrl,   // old wording, still in rows not yet renamed (luma:rename-ai-design)
+    'Start Customize request':     () => APP.designUrl,
     'Start customizing':           () => APP.designUrl,
     'Try Customize tool':          () => APP.designUrl,
     'Try AI Design tool':          () => APP.designUrl,
@@ -603,16 +650,17 @@ function setSuggestions(list) {
   }
 
 /* Send the user's typed message to the Laravel chatbot API */
-async function sendChat() {
+async function sendChat(retryText) {
   const input = document.getElementById('chat-input');
-  const msg   = input.value.trim();
+  const isRetry = typeof retryText === 'string';   // the Retry button re-sends a message that is already in the log
+  const msg   = isRetry ? retryText : input.value.trim();
   if (!msg || lumaBusy) return;
 
   lumaBusy = true;
   clearTimeout(lumaTypingTimer);
   clearTimeout(lumaIdleTimer);
-  addUserMessage(msg);
-  input.value = '';
+  if (!isRetry) addUserMessage(msg);
+  if (!isRetry || input.value.trim() === msg) input.value = '';
   setSuggestions([]);
   lumaSetPose('asked');
 
@@ -627,15 +675,8 @@ async function sendChat() {
 
   let answered = 'smiling';
   try {
-    const res = await fetch(APP.chatbotUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',   // an expired session answers 419 as JSON instead of redirecting to the login page
-        'X-CSRF-TOKEN': APP.csrfToken,
-      },
-      body: JSON.stringify({ message: msg }),
-    });
+    // Accept: application/json makes an expired session answer 419 as JSON instead of redirecting to the login page
+    const res = await lumaFetchJson(APP.chatbotUrl, { message: msg });
     const data = await res.json();
     if (!res.ok || typeof data.response !== 'string') throw new Error('chat request failed: ' + res.status);
     think.remove();
@@ -645,13 +686,29 @@ async function sendChat() {
     if (/\?/.test(text) || /^(I couldn't quite find an answer|Pasensya na po, hindi ko po masagot)/.test(text)) answered = 'wondering';
   } catch (e) {
     think.remove();
-    addBotMessage("Sorry, I'm having trouble right now. Please try again!", []);
-    input.value = msg;   // keep what the customer typed so they can send it again
+    addBotMessage(lumaTl()
+      ? 'Pasensya na po, hindi po naipadala ang mensahe ninyo. Pindutin po ang Retry para subukan ulit.'
+      : "Sorry, your message didn't go through. Press Retry to send it again.", []);
+    input.value = msg;   // keep what the customer typed, so nothing is lost
+    lumaAddRetry(msg);
     answered = 'wondering';
   }
   lumaBusy = false;
   lumaSetPose(answered);
   lumaIdleSoon(9000);
+}
+
+/* A Retry button under the failure message. It re-sends the same text without adding a second copy of it to the log. */
+function lumaAddRetry(msg) {
+  const bubbles = document.querySelectorAll('#chat-body .chat-msg.bot .chat-bubble');
+  const last = bubbles[bubbles.length - 1];
+  if (!last) return;
+  const row = last.closest('.chat-msg');
+  const btn = lumaEl('button', { type: 'button', class: 'lp-btn lp-btn--secondary chat-retry', text: 'Retry' });
+  btn.addEventListener('click', () => { row.remove(); sendChat(msg); });
+  last.appendChild(btn);
+  const log = document.getElementById('chat-body');
+  if (log) log.scrollTop = log.scrollHeight;
 }
 
 /* Typing: she listens ("asked"); a little after the last key she settles back to "waiting" */
@@ -686,179 +743,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 6000); // Switch every 6 seconds
 })();
 
-
-/* ════════════════════════════════════════════════════════
-   4. QUICK VIEW MODAL
-   Opens a centered popup with product image carousel,
-   specs, price, and action buttons — without a full
-   page reload. Loads product data via AJAX from Laravel.
-════════════════════════════════════════════════════════ */
-
-// Track which image is currently shown and the full image list
-let qvSlideIndex  = 0;
-let qvImages      = [];
-let qvAutoTimer   = null;
-
-/* Open the quick view modal for a specific product */
-async function openQuickView(productId) {
-  const overlay = document.getElementById('quickViewModal');
-  const content = document.getElementById('quickViewContent');
-
-  // Show a spinner while loading
-  content.innerHTML = `
-    <div class="qv-loading">
-      <div class="qv-spinner"></div>
-    </div>
-  `;
-  overlay.classList.add('open');
-  document.body.style.overflow = 'hidden'; // Prevent background scroll
-
-  try {
-    // Fetch product data from the Laravel API
-    const res = await fetch(`/product/${productId}/quick-view`);
-    const p   = await res.json();
-
-    // Use gallery images if available, otherwise fall back to single image
-    qvImages     = (p.images && p.images.length) ? p.images : [{ url: p.image_url, label: 'Main' }];
-    qvSlideIndex = 0;
-
-    // Truncate description — quick view is a preview, not full details
-    const shortDesc = p.description && p.description.length > 120
-      ? p.description.substring(0, 120) + '...'
-      : (p.description || '');
-
-    // Build the modal HTML
-    content.innerHTML = `
-      <div class="qv-layout">
-
-        <!-- LEFT SIDE: Product image with carousel controls -->
-        <div class="qv-left">
-          <div class="qv-img-wrap">
-            <img
-              id="qv-main-img"
-              src="${qvImages[0].url}"
-              alt="${p.name}"
-              onerror="this.onerror=null;this.src='/images/products/placeholder.jpg';"
-            />
-
-            ${qvImages.length > 1 ? `
-              <button class="qv-arrow qv-arrow-left"  onclick="qvSlide(-1)">&#8249;</button>
-              <button class="qv-arrow qv-arrow-right" onclick="qvSlide(1)">&#8250;</button>
-              <div class="qv-img-dots" id="qv-dots">
-                ${qvImages.map((_, i) =>
-                  `<span class="qv-dot ${i === 0 ? 'active' : ''}" onclick="qvGoTo(${i})"></span>`
-                ).join('')}
-              </div>
-            ` : ''}
-          </div>
-        </div>
-
-        <!-- RIGHT SIDE: Product info -->
-        <div class="qv-right">
-
-          <!-- Category label (small gold uppercase) -->
-          <div class="qv-category">${p.category || ''}</div>
-
-          <!-- Product name (large display font) -->
-          <div class="qv-name">${p.name}</div>
-
-          <!-- Price (large if no sale, or crossed out + sale price) -->
-          <div class="qv-price-row">
-            ${p.on_sale
-              ? `<span class="qv-price-old">${p.price}</span>
-                 <span class="qv-price-now">${p.sale_price}</span>
-                 <span class="qv-discount-badge">-${p.discount_percent}%</span>`
-              : `<span class="qv-price-now">${p.price}</span>`
-            }
-          </div>
-
-          <!-- Short description ending in ... -->
-          <p class="qv-desc">${shortDesc}</p>
-
-          <!-- Specs as pill-style rows (Material, Finish, Size) -->
-          <div class="qv-specs">
-            ${p.material   ? `<div class="qv-spec"><span class="qv-spec-label">Material</span><span class="qv-spec-val">${p.material}</span></div>` : ''}
-            ${p.finish     ? `<div class="qv-spec"><span class="qv-spec-label">Finish</span><span class="qv-spec-val">${p.finish}</span></div>` : ''}
-            ${p.dimensions ? `<div class="qv-spec"><span class="qv-spec-label">Size (L x W x H)</span><span class="qv-spec-val">${p.dimensions}</span></div>` : ''}
-          </div>
-
-          <!-- Footer: Go Back closes modal, View Full Details goes to product page -->
-          <div class="qv-footer">
-            <button class="btn btn-outline" onclick="closeQuickView()">← Go Back</button>
-            <a href="${p.detail_url}" class="btn btn-gold">View Full Details →</a>
-          </div>
-
-        </div>
-      </div>
-    `;
-
-    // Start auto-sliding if there are multiple images
-    if (qvImages.length > 1) {
-      startQvAutoSlide();
-    }
-
-  } catch (e) {
-    // Show a friendly error if the API call fails
-    content.innerHTML = `
-      <div class="qv-loading">
-        <p style="color:var(--text-muted);margin-bottom:16px;">
-          Failed to load product. Please try again.
-        </p>
-        <button class="btn btn-outline" onclick="closeQuickView()">← Go Back</button>
-      </div>
-    `;
-  }
-}
-
-/* Slide the image carousel left (-1) or right (1) */
-function qvSlide(direction) {
-  qvGoTo((qvSlideIndex + direction + qvImages.length) % qvImages.length);
-  resetQvAutoSlide(); // Reset the timer so it doesn't jump immediately after manual slide
-}
-
-/* Jump directly to a specific image by index */
-function qvGoTo(index) {
-  qvSlideIndex = index;
-
-  const img  = document.getElementById('qv-main-img');
-  const dots = document.querySelectorAll('.qv-dot');
-
-  if (img) {
-    // Fade out, swap image, fade back in
-    img.style.opacity = '0';
-    setTimeout(() => {
-      img.src = qvImages[index].url;
-      img.style.opacity = '1';
-    }, 180);
-  }
-
-  // Update which dot is highlighted
-  dots.forEach((d, i) => d.classList.toggle('active', i === index));
-}
-
-/* Auto-slide every 3.5 seconds */
-function startQvAutoSlide() {
-  clearInterval(qvAutoTimer);
-  qvAutoTimer = setInterval(() => qvSlide(1), 3500);
-}
-
-/* Reset auto-slide timer (called after manual slide) */
-function resetQvAutoSlide() {
-  clearInterval(qvAutoTimer);
-  startQvAutoSlide();
-}
-
-/* Close the quick view modal */
-function closeQuickView() {
-  clearInterval(qvAutoTimer); // Stop auto-sliding
-  document.getElementById('quickViewModal').classList.remove('open');
-  document.body.style.overflow = ''; // Re-enable background scroll
-}
-
-/* Close modal when clicking the dark overlay background */
-function closeQuickViewOutside(e) {
-  if (e.target.id === 'quickViewModal') closeQuickView();
-}
 
 
 /* ════════════════════════════════════════════════════════

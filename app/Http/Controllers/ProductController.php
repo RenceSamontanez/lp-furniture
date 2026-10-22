@@ -216,10 +216,7 @@ class ProductController extends Controller
             'dimensions'       => $product->dimensions_label,
             'size_cm'          => $product->size_cm,
             'size_inches'      => $product->size_inches,
-            'image_url'        => $gallery[0],
             'gallery_images'   => $gallery,
-            // kept for the older quick view on the home and product pages
-            'images'           => array_map(fn ($u) => ['url' => $u, 'label' => 'View'], $gallery),
             'detail_url'       => route('product.show', $product->id),
         ]);
     }

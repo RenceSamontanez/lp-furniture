@@ -175,9 +175,9 @@ class ProductDimensionsTest extends TestCase
         $this->getJson(route('product.quickview', $p->id))->assertOk()
             ->assertJsonPath('dimensions', '180 x 90 x 75 cm (70.9 x 35.4 x 29.5 in)');
 
-        $js = file_get_contents(public_path('assets/main.js'));
-        $this->assertStringContainsString('Size (L x W x H)', $js);
-        $this->assertStringNotContainsString('qv-spec-label">Dimensions<', $js);
+        $js = file_get_contents(public_path('assets/js/quickview.js'));
+        $this->assertStringContainsString('size_cm', $js);
+        $this->assertStringNotContainsString('Dimensions', $js);
 
         $c = $this->makeUser();
         DB::table('cart_items')->insert(['user_id' => $c->id, 'product_id' => $p->id, 'quantity' => 1, 'added_at' => now(), 'updated_at' => now()]);

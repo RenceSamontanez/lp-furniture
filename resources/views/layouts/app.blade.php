@@ -141,6 +141,7 @@
   const APP = {
     csrfToken: "{{ csrf_token() }}",
     chatbotUrl: "{{ $lpRoute('chatbot.respond') }}",
+    csrfUrl: "{{ $lpRoute('csrf.refresh') }}",
     isLoggedIn: {{ Auth::check() ? 'true' : 'false' }},
     loginUrl: "{{ $lpRoute('login') }}",
     registerUrl: "{{ $lpRoute('register') }}",

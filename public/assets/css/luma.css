@@ -350,3 +350,6 @@ nav .nav-chatbot-reactivate { background: transparent; border: 0; font-family: v
   .chatbot-window *, .chatbot-window *::before, .chatbot-window *::after,
   .chatbot-fab, .chatbot-fab *, .chatbot-fab *::before { animation: none !important; transition: none !important; }
 }
+
+/* Retry under a failed-send message: its own row, full touch size */
+.chatbot-window .chat-bubble .chat-retry.lp-btn { display: flex; margin-top: 10px; min-height: 44px; }

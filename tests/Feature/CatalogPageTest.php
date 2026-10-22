@@ -175,7 +175,8 @@ class CatalogPageTest extends TestCase
             [asset('images/products/main.jpg'), asset('images/products/extra-one.jpg'), asset('images/products/extra-two.jpg')],
             $j['gallery_images']
         );
-        $this->assertSame($j['gallery_images'][0], $j['image_url']);
+        $this->assertArrayNotHasKey('images', $j);
+        $this->assertArrayNotHasKey('image_url', $j);
         $this->assertSame('Narra Table', $j['name']);
         $this->assertSame('₱18,500.00', $j['price_display']);
         $this->assertSame('Narra', $j['material']);

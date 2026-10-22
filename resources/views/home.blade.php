@@ -29,7 +29,7 @@
   <div class="product-grid">
     @forelse($featuredProducts as $product)
       <div class="product-card-v2">
-        <div class="product-card-v2-img" onclick="openQuickView({{ $product->id }})">
+        <div class="product-card-v2-img" data-quick-view="{{ $product->id }}" data-name="{{ $product->product_name }}">
           <img
             src="{{ $product->image_url }}"
             alt="{{ $product->product_name }} — {{ $product->category }} furniture by LP Furniture"
@@ -42,7 +42,7 @@
             <span class="badge-sale">-{{ $product->discount_percent }}%</span>
           @endif
 
-          <button class="quick-view-btn" onclick="event.stopPropagation();openQuickView({{ $product->id }})">
+          <button type="button" class="quick-view-btn" data-quick-view="{{ $product->id }}" data-name="{{ $product->product_name }}" aria-label="Quick view: {{ $product->product_name }}">
             Quick View
           </button>
         </div>
@@ -93,7 +93,7 @@
     <div class="carousel-track" id="bestsellers">
       @foreach($bestSellers as $product)
         <div class="carousel-card">
-          <div class="carousel-card-img" onclick="openQuickView({{ $product->id }})">
+          <div class="carousel-card-img" data-quick-view="{{ $product->id }}" data-name="{{ $product->product_name }}">
             <img
               src="{{ $product->image_url }}"
               alt="{{ $product->product_name }}"
@@ -111,7 +111,7 @@
               <span class="badge-sale">-{{ $product->discount_percent }}%</span>
             @endif
 
-            <button class="quick-view-btn" onclick="event.stopPropagation();openQuickView({{ $product->id }})">
+            <button type="button" class="quick-view-btn" data-quick-view="{{ $product->id }}" data-name="{{ $product->product_name }}" aria-label="Quick view: {{ $product->product_name }}">
               Quick View
             </button>
           </div>
@@ -145,12 +145,7 @@
 </div>
 
 
-<!-- QUICK VIEW MODAL -->
-<div class="modal-overlay" id="quickViewModal" onclick="closeQuickViewOutside(event)">
-  <div class="modal quick-view-modal" id="quickViewContent">
-    <!-- Filled dynamically by JS -->
-  </div>
-</div>
+@include('partials.quick-view')
 
 
 

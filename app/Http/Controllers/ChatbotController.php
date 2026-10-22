@@ -14,6 +14,16 @@ use Illuminate\Validation\ValidationException;
 
 class ChatbotController extends Controller
 {
+    /**
+     * A fresh CSRF token for the chat widget. A page left open past the session lifetime holds a dead token, so the widget
+     * calls this after a 419 and retries once. The request starts a new session if the old one is gone. Never cached, never logged.
+     */
+    public function csrfToken(Request $request)
+    {
+        return response()->json(['token' => csrf_token()])
+            ->header('Cache-Control', 'no-store, private');
+    }
+
     public function respond(Request $request)
     {
         $request->validate(['message' => 'nullable|string|max:500']);

@@ -302,8 +302,7 @@
                 loading="lazy"
                 onerror="this.onerror=null;this.src='{{ asset('images/products/placeholder.jpg') }}';"
               />
-              <button class="quick-view-btn"
-                      onclick="event.stopPropagation();openQuickView({{ $related->id }})">
+              <button type="button" class="quick-view-btn" data-quick-view="{{ $related->id }}" data-name="{{ $related->product_name }}" aria-label="Quick view: {{ $related->product_name }}">
                 Quick View
               </button>
             </div>
@@ -326,10 +325,7 @@
       </div>
     </div>
 
-    {{-- Quick View Modal for related products --}}
-    <div class="modal-overlay" id="quickViewModal" onclick="closeQuickViewOutside(event)">
-      <div class="modal quick-view-modal" id="quickViewContent"></div>
-    </div>
+    @include('partials.quick-view')
   @endif
 
 </div>
