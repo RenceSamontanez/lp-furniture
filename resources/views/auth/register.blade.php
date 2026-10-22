@@ -4,6 +4,7 @@
 
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/auth.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/password-toggle.css') }}"/>
 @endpush
 
 @section('content')
@@ -118,13 +119,7 @@
               required
               oninput="checkPasswordStrength(this.value); checkRequirements(this.value);"
             />
-            <button type="button" class="password-toggle"
-                    onclick="togglePassword('password', this)" aria-label="Show password">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                <circle cx="12" cy="12" r="3"/>
-              </svg>
-            </button>
+            <x-password-toggle for="password"/>
           </div>
 
           <div class="password-strength">
@@ -166,13 +161,7 @@
               required
               oninput="checkPasswordMatch()"
             />
-            <button type="button" class="password-toggle"
-                    onclick="togglePassword('password_confirmation', this)" aria-label="Show password">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                <circle cx="12" cy="12" r="3"/>
-              </svg>
-            </button>
+            <x-password-toggle for="password_confirmation"/>
           </div>
           <span id="password-match-hint" class="password-match-hint"></span>
         </div>
@@ -191,4 +180,5 @@
 
 @push('scripts')
   <script src="{{ asset('assets/js/auth.js') }}"></script>
+  <script src="{{ asset('assets/js/password-toggle.js') }}"></script>
 @endpush

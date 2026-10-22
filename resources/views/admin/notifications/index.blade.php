@@ -11,7 +11,7 @@
     <div class="admin-panel-title">Your notifications</div>
     <form method="POST" action="{{ route('admin.notifications.readAll') }}">
       @csrf
-      <button type="submit" class="admin-btn admin-btn-outline">Mark all as read</button>
+      <button type="submit" class="lp-btn lp-btn--secondary">Mark all as read</button>
     </form>
   </div>
   <div class="admin-panel-body" style="padding:0;">
@@ -38,7 +38,7 @@
                 @unless($n->is_read)
                   <form method="POST" action="{{ route('admin.notifications.read', $n->id) }}">
                     @csrf
-                    <button type="submit" class="admin-btn admin-btn-outline">Mark read</button>
+                    <button type="submit" class="lp-btn lp-btn--secondary" style="min-width:96px;">Mark read</button>
                   </form>
                 @endunless
               </td>

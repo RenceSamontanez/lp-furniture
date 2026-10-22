@@ -118,7 +118,7 @@ Add `<svg class="lp-btn-icon">` (16px) for a leading icon. Glass variants blur w
 * **Hidden entirely** (`opacity 0; visibility hidden; pointer-events none`) while `body.modal-open` (set by `lp-modal.js` and by Luma's open/close) or `body.overlay-open` (design preview and gallery lightbox, set by `site-nav.js`).
 * Items: Home, Catalog, Customize, Assistant, Cart (icon + label + count), Notifications (icon + label + unread pip), Reviews, My Account; guests: Home, Catalog, Assistant, Login, Register. Assistant is always shown and opens the Luma chat (or brings her back first if she was hidden).
 * Hamburger at 1000px and below (panel `rgba(36,21,13,.92)`, light `.94`, 48px rows). `prefers-reduced-motion`: no transitions.
-* The old nav classes (`nav-links`, `nav-btn`, `nav-burger`, `nav-overlay`, ...) are not used in markup; their rules in `style.css` are dead and were left in place (they share media blocks with a bare `nav {}` rule and `main.js` still reads the old ids), so grep cannot prove they are safe to cut.
+* The old nav classes (`nav-links`, `nav-btn`, `nav-burger`, `nav-overlay`, ...) are not used in markup. Polish part 1 removed their 72 dead rules from `style.css` (`tests/UiLinks/prune_nav_css.py` lists them; every selector was proven unused in views, JS and tests). Left on purpose: the bare `nav {}` rule (the admin `nav.admin-nav`, the pagination and profile navs still inherit it), `main.js` `toggleMobileNav()` (reads ids that no markup has any more) and the `.nav-chatbot-reactivate` class rules in `luma.css` (the markup now uses only its id).
 
 ## Focus pages (`layouts/focus.blade.php`)
 
@@ -148,3 +148,6 @@ Every layout (customer, focus, admin) includes the partial, which always renders
 * Quick view reads `GET /product/{id}/quick-view` (JSON: `gallery_images` main photo first then extras by `sort_order`, `price_display`, `material`, `finish` (null when empty), `size_cm`, `size_inches` (null with no size), `badge`, `description`, `detail_url`; the old `images` / `image_url` keys stay for the home and product-page Quick view in `main.js`). All text is set with `textContent`. Empty rows are hidden, never "N/A".
 * One action only ("View full details"); X is the close. Focus trap, Escape, backdrop, focus return, `body.modal-open` (hides the nav) and scroll lock are in `catalog-quickview.js`.
 * Browser walk: `tests/UiLinks/browser-catalog.cjs` (scratch DB; seed with `php tests/UiLinks/seed_catalog.php`). Screenshots in `docs/stage-catalog-screenshots/`.
+
+
+**Password Show/Hide** (polish part 1): `<x-password-toggle for="field-id"/>` renders a real `<button type="button">` with `aria-pressed` and a name that flips between "Show password" / "Hide password"; behaviour is one delegated script `public/assets/js/password-toggle.js`, look is `public/assets/css/password-toggle.css` (44px target, focus ring, absolutely positioned so nothing shifts). Use it for every new password field, customer or admin.

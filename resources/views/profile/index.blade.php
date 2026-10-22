@@ -5,6 +5,7 @@
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/profile.css') }}"/>
   <link rel="stylesheet" href="{{ asset('assets/css/auth.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/password-toggle.css') }}"/>
 @endpush
 
 @section('content')
@@ -198,9 +199,7 @@
                       <input type="password" name="password" id="new-password" class="form-input"
                         placeholder="Min. 8 characters" maxlength="20"
                         oninput="checkPasswordStrength(this.value)"/>
-                      <button type="button" class="password-toggle" onclick="togglePassword('new-password', this)" aria-label="Show password">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                      </button>
+                      <x-password-toggle for="new-password"/>
                     </div>
                     <div class="password-strength" style="margin-top:6px;">
                       <div class="password-strength-bar"><div id="strength-bar"></div></div>
@@ -212,9 +211,7 @@
                     <div class="input-password-wrap">
                       <input type="password" name="password_confirmation" id="confirm-password" class="form-input"
                         placeholder="Repeat new password" maxlength="20" oninput="checkPasswordMatch()"/>
-                      <button type="button" class="password-toggle" onclick="togglePassword('confirm-password', this)" aria-label="Show password">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                      </button>
+                      <x-password-toggle for="confirm-password"/>
                     </div>
                     <span id="password-match-hint" class="password-match-hint"></span>
                   </div>
@@ -350,5 +347,6 @@
     <script>window.profileDefaultPanel = 'security';</script>
   @endif
   <script src="{{ asset('assets/js/auth.js') }}"></script>
+  <script src="{{ asset('assets/js/password-toggle.js') }}"></script>
   <script src="{{ asset('assets/js/profile.js') }}"></script>
 @endpush

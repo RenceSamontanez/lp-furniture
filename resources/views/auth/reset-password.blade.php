@@ -2,6 +2,7 @@
 @section('title', 'Set New Password — LP Furniture')
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/auth.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/password-toggle.css') }}"/>
 @endpush
 
 @section('content')
@@ -44,12 +45,7 @@
             maxlength="20" required
             oninput="checkPasswordStrength(this.value); checkRequirements(this.value);"
           />
-          <button type="button" class="password-toggle" onclick="togglePassword('password', this)">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-              <circle cx="12" cy="12" r="3"/>
-            </svg>
-          </button>
+          <x-password-toggle for="password"/>
         </div>
 
         <div style="margin-top:6px;">
@@ -76,12 +72,7 @@
             class="form-input" placeholder="Repeat new password"
             maxlength="20" required oninput="checkPasswordMatch()"
           />
-          <button type="button" class="password-toggle" onclick="togglePassword('password_confirmation', this)">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-              <circle cx="12" cy="12" r="3"/>
-            </svg>
-          </button>
+          <x-password-toggle for="password_confirmation"/>
         </div>
         <span id="password-match-hint" style="font-size:11px;font-weight:600;margin-top:6px;display:block;"></span>
       </div>
@@ -97,4 +88,5 @@
 
 @push('scripts')
   <script src="{{ asset('assets/js/auth.js') }}"></script>
+  <script src="{{ asset('assets/js/password-toggle.js') }}"></script>
 @endpush

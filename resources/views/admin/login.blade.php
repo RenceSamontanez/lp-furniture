@@ -2,6 +2,13 @@
 
 @section('title', 'Admin Login — LP Furniture')
 
+@push('styles')
+  <link rel="stylesheet" href="{{ asset('assets/css/password-toggle.css') }}"/>
+@endpush
+@push('scripts')
+  <script src="{{ asset('assets/js/password-toggle.js') }}"></script>
+@endpush
+
 @section('content')
 <div class="admin-login-wrap">
 
@@ -69,7 +76,8 @@
           <label class="form-label">Password</label>
           <div class="admin-login-input-wrap">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-            <input type="password" name="password" class="admin-login-input" required placeholder="••••••••"/>
+            <input type="password" name="password" id="admin-password" class="admin-login-input" data-has-toggle required placeholder="••••••••"/>
+            <x-password-toggle for="admin-password"/>
           </div>
         </div>
 

@@ -4,7 +4,10 @@
 
 /* Status chips (same shape as .admin-pill, pipeline colours) */
 .co-chip {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  line-height: 1.2;
   font-size: 11px;
   font-weight: 700;
   padding: 4px 12px;

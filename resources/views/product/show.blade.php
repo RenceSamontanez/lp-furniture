@@ -295,7 +295,7 @@
         @foreach($relatedProducts as $related)
           <div class="product-card-v2">
             <div class="product-card-v2-img"
-                 onclick="window.location='{{ route('product.show', $related->id) }}'">
+                 onclick="if (!event.target.closest('[data-quick-view]')) window.location='{{ route('product.show', $related->id) }}'">
               <img
                 src="{{ $related->image_url }}"
                 alt="{{ $related->product_name }}"

@@ -68,7 +68,7 @@
           <div class="co-block-label">Reference photos</div>
           <div class="si-photos">
             @foreach($t->reference_photos as $n => $path)
-              <a href="{{ route('admin.service-inquiries.photo', [$t->id, $n]) }}" target="_blank" rel="noopener" class="si-photo"><img src="{{ route('admin.service-inquiries.photo', [$t->id, $n]) }}" alt="Reference photo {{ $n + 1 }} of {{ $t->reference_number }}" loading="lazy"/></a>
+              <a href="{{ route('admin.service-inquiries.photo', [$t->id, $n]) }}" target="_blank" rel="noopener noreferrer" class="si-photo" aria-label="Open reference photo {{ $n + 1 }} of {{ $t->reference_number }} in a new tab"><img src="{{ route('admin.service-inquiries.photo', [$t->id, $n]) }}" alt="Reference photo {{ $n + 1 }} of {{ $t->reference_number }}" loading="lazy"/></a>
             @endforeach
           </div>
         @endif

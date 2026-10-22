@@ -133,46 +133,6 @@ main {
    in layouts/app.blade.php has no class, so it is styled by the bare
    `nav { }` rule further down, plus the standalone .nav-* classes below. */
 
-.nav-brand {
-  font-family: var(--font-display);
-  font-size: 22px;
-  letter-spacing: .6px;
-  color: var(--gold-light);
-  text-shadow: 0 2px 18px rgba(200,150,62,.25);
-}
-.nav-brand:visited,
-.nav-brand:hover,
-.nav-brand:focus,
-.nav-brand:active {
-  color: var(--gold-light) !important;
-}
-.nav-brand span {
-  font-style: italic;
-  color: var(--gold-light);
-}
-.nav-links { display: flex; gap: 8px; align-items: center; }
-.nav-btn {
-  font-family: var(--font-body); font-size: 13px; font-weight: 500;
-  padding: 8px 18px; border-radius: 8px; cursor: pointer; border: none;
-  transition: all .2s; display: inline-block;
-}
-.nav-btn.ghost { background: transparent; color: #ccc; }
-.nav-btn.ghost:hover { color: #fff; background: rgba(255,255,255,.1); }
-.nav-btn.primary { background: var(--gold); color: var(--brown-deep); }
-.nav-btn.primary:hover { background: var(--gold-light); }
-.nav-btn.outline { background: transparent; color: var(--gold-light); border: 1px solid var(--gold); }
-.nav-btn.outline:hover { background: var(--gold); color: var(--brown-deep); }
-.nav-icon {
-  cursor: pointer;
-  color: #fff;
-  padding: 8px 10px;
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: color .2s;
-}
-.nav-icon:hover { color: var(--gold-light); }
 
 nav {
   position: sticky; top: 0; z-index: 100;
@@ -188,7 +148,7 @@ nav {
   font-size: 10px; font-weight: 700; width: 16px; height: 16px;
   border-radius: 50%; display: flex; align-items: center; justify-content: center;
 }
-.nav-user { display: flex; align-items: center; gap: 10px; }
+
 .avatar {
   width: 34px; height: 34px; border-radius: 50%;
   background: var(--gold); color: var(--brown-deep);
@@ -202,169 +162,20 @@ nav {
 /* ══════════════════════════════════════════
    MOBILE NAV — Hamburger + Slide-in Drawer
 ══════════════════════════════════════════ */
-.nav-burger {
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    gap: 5px;
-    width: 44px;
-    height: 44px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    z-index: 210;
-  }
-  
-  .nav-burger span {
-    display: block;
-    width: 22px;
-    height: 2px;
-    background: #fff;
-    margin: 0 auto;
-    border-radius: 2px;
-    transition: all .25s ease;
-  }
-  
-  .nav-burger.open span:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-  }
-  .nav-burger.open span:nth-child(2) {
-    opacity: 0;
-  }
-  .nav-burger.open span:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
-  }
-  
-  .nav-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.5);
-    z-index: 199;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .25s ease;
-  }
-  
-  .nav-overlay.open {
-    opacity: 1;
-    pointer-events: all;
-  }
-  
-  .nav-logout-form {
-    display: inline;
-  }
-  @media (max-width: 860px) {
 
-    /* Show hamburger button */
-    .nav-burger {
-      display: flex;
-    }
   
-    /* Slide-in drawer */
-    .nav-links {
-      position: fixed;
-      top: 0;
-      right: -320px;
-      width: 300px;
-      height: 100vh;
-      background: var(--brown-deep);
-      flex-direction: column;
-      align-items: stretch;
-      gap: 0;
-      padding: 80px 0 32px;
-      z-index: 200;
-      transition: right .3s ease;
-      overflow-y: auto;
-      box-shadow: -4px 0 24px rgba(0,0,0,.3);
-    }
   
-    .nav-links.open {
-      right: 0;
-    }
   
-    /* Text nav buttons full width */
-    .nav-links .nav-btn {
-      width: 100%;
-      text-align: left;
-      padding: 15px 24px;
-      font-size: 15px;
-      border-radius: 0;
-      border-bottom: 1px solid rgba(255,255,255,.06);
-    }
   
-    /* Cart and notification icons — show as full-width rows with labels */
-    .nav-links .nav-icon {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 15px 24px;
-      width: 100%;
-      color: #ccc;
-      font-size: 15px;
-      border-bottom: 1px solid rgba(255,255,255,.06);
-    }
   
-    .nav-links .nav-icon::after {
-      content: attr(data-label);
-      font-family: var(--font-body);
-      font-size: 15px;
-      font-weight: 500;
-    }
   
-    .nav-links .nav-icon:hover {
-      color: #fff;
-      background: rgba(255,255,255,.06);
-    }
   
-    /* Cart badge position fix in mobile drawer */
-    .nav-links .nav-icon .cart-badge {
-      position: static;
-      margin-left: auto;
-      width: 20px;
-      height: 20px;
-      font-size: 11px;
-    }
   
-    /* Notification dot fix in mobile drawer */
-    .nav-links .nav-icon .notif-dot {
-      position: static;
-      margin-left: auto;
-    }
   
-    /* User section — verified + avatar in a row */
-    .nav-links .nav-user {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 12px;
-      padding: 16px 24px;
-      border-top: 1px solid rgba(255,255,255,.12);
-      margin-top: 8px;
-      flex-wrap: nowrap;
-    }
   
-    .nav-links .nav-user .validation-badge {
-      font-size: 12px;
-      padding: 4px 12px;
-    }
   
-    .nav-links .nav-user .avatar {
-      margin-left: auto;
-    }
   
-    /* Logout form inside mobile nav */
-    .nav-logout-form {
-      padding: 0 24px;
-      margin-top: 8px;
-    }
   
-    .nav-logout-form .nav-btn {
-      border-bottom: none;
-      color: rgba(255,100,100,.8);
-    }
-  }
 /* ── HERO ── */
 .hero {
   background: var(--brown-deep);
@@ -483,7 +294,7 @@ nav {
 .filter-chip {
   padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 500;
   cursor: pointer; border: 1px solid var(--border); background: var(--warm-white);
-  color: var(--text-muted); transition: all .2s; display: inline-block;
+  color: var(--text-muted); transition: all .2s; display: inline-flex; align-items: center; min-height: 36px; white-space: nowrap;
 }
 .filter-chip.active { background: var(--brown-deep); color: #fff; border-color: var(--brown-deep); }
 .filter-chip:hover:not(.active) { border-color: var(--brown-mid); color: var(--brown-mid); }
@@ -1015,7 +826,7 @@ nav {
   .btn-view-details {
     font-size: 12px;
     font-weight: 500;
-    color: var(--gold);
+    color: #8F6420; /* darker brand gold: 5.2:1 on white (var(--gold) text was 2.56:1) */
     padding: 8px 14px;
     border: 1.5px solid var(--gold);
     border-radius: 8px;
@@ -1023,10 +834,14 @@ nav {
     transition: all .2s;
   }
   
-  .btn-view-details:hover {
+  .btn-view-details:hover,
+  .btn-view-details:focus,
+  .btn-view-details:active {
     background: var(--gold);
     color: var(--brown-deep);
   }
+  .btn-view-details:focus-visible { outline: 2px solid var(--brown-deep); outline-offset: 2px; }
+  @media (max-width: 640px) { .btn-view-details { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; } }
 
   .catalog-filters {
   display: flex;
@@ -2094,127 +1909,9 @@ nav {
 ══════════════════════════════════════════ */
 
 /* ── DESKTOP: force visible colors on nav icons + account ── */
-nav .nav-icon,
-nav .nav-icon svg {
-  color: #fff !important;
-  stroke: currentColor;
-}
 
-nav .nav-icon:hover {
-  color: var(--gold-light) !important;
-}
-
-nav .nav-account {
-  color: #fff !important;
-}
-
-nav .nav-account-label {
-  color: #fff !important;
-}
-
-nav .nav-account:hover .nav-account-label {
-  color: var(--gold-light) !important;
-}
 
 /* ── MOBILE DRAWER: force every row to match exactly ── */
-@media (max-width: 860px) {
-
-  .nav-links {
-    display: flex !important;
-    flex-direction: column !important;
-  }
-
-  /* Every single direct link/icon row uses IDENTICAL layout rules */
-  .nav-links > a,
-  .nav-links .nav-icon,
-  .nav-links .nav-account {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 14px !important;
-    width: 100% !important;
-    padding: 15px 24px !important;
-    font-size: 15px !important;
-    font-weight: 500 !important;
-    color: #E8DDD0 !important;
-    border-bottom: 1px solid rgba(255,255,255,.08) !important;
-    border-radius: 0 !important;
-    text-decoration: none !important;
-    box-sizing: border-box !important;
-    margin: 0 !important;
-  }
-
-  .nav-links > a:hover,
-  .nav-links .nav-icon:hover,
-  .nav-links .nav-account:hover {
-    background: rgba(255,255,255,.08) !important;
-    color: #fff !important;
-  }
-
-  /* Icon rows show their label via data-label after the icon */
-  .nav-links .nav-icon::after {
-    content: attr(data-label);
-    font-size: 15px;
-    font-weight: 500;
-  }
-
-  /* Badge/dot always pinned to the far right of the row */
-  .nav-links .nav-icon .cart-badge {
-    position: static !important;
-    margin-left: auto !important;
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    border-radius: 50%;
-    background: var(--gold);
-    color: var(--brown-deep) !important;
-    font-size: 11px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .nav-links .nav-icon .notif-dot {
-    position: static !important;
-    margin-left: auto !important;
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: var(--gold);
-    display: block;
-  }
-
-  /* My Account row — clearly visible, separated at the bottom */
-  .nav-links .nav-account {
-    margin-top: 8px !important;
-    border-top: 1px solid rgba(255,255,255,.18) !important;
-    border-bottom: none !important;
-  }
-
-  .nav-account-avatar {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background: var(--gold);
-    color: var(--brown-deep) !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-display);
-    font-size: 13px;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-
-  .nav-account-label {
-    font-size: 15px !important;
-    font-weight: 600 !important;
-    color: #fff !important;
-  }
-}
-
 
 
 /* ══════════════════════════════════════════
@@ -2224,82 +1921,16 @@ nav .nav-account:hover .nav-account-label {
    and interactive hover feedback.
 ══════════════════════════════════════════ */
 
-nav .nav-btn,
-nav .nav-icon {
-  font-weight: 500 !important;
-  font-family: var(--font-body) !important;
-  color: #E8DDD0 !important;
-  transition: color .2s, background .2s, transform .15s !important;
-}
-
-nav .nav-btn:hover,
-nav .nav-icon:hover {
-  color: #fff !important;
-  background: rgba(255,255,255,.08) !important;
-  transform: translateY(-1px);
-}
-
-nav .nav-btn.primary {
-  color: var(--brown-deep) !important;
-  font-weight: 600 !important;
-}
-
-nav .nav-btn.primary:hover {
-  color: var(--brown-deep) !important;
-  background: var(--gold-light) !important;
-}
 
 /* Cart/notification icons keep their circular hover feel */
-nav .nav-icon {
-  border-radius: 8px;
-}
 
-nav .nav-icon:active,
-nav .nav-btn:active {
-  transform: translateY(0);
-}
 
 /* Remove any leftover avatar styling since it's no longer used */
-.nav-account-avatar {
-  display: none;
-}
 
 
 /* ══════════════════════════════════════════
    NOTIFICATION DOT — force to right side on mobile
 ══════════════════════════════════════════ */
-@media (max-width: 860px) {
-
-  .nav-links a.nav-icon {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    flex-wrap: nowrap !important;
-    position: relative !important;
-  }
-
-  .nav-links a.nav-icon svg {
-    order: 1;
-    flex-shrink: 0;
-    margin-right: 14px;
-  }
-
-  .nav-links a.nav-icon::after {
-    order: 2;
-    content: attr(data-label);
-    font-size: 15px;
-    font-weight: 500;
-  }
-
-  .nav-links a.nav-icon .notif-dot,
-  .nav-links a.nav-icon .cart-badge {
-    order: 3 !important;
-    margin-left: auto !important;
-    position: static !important;
-    right: auto !important;
-    top: auto !important;
-  }
-}
 
 
 /* ══════════════════════════════════════════
@@ -2509,17 +2140,6 @@ nav .nav-btn:active {
 }
 
 /* Mobile drawer row — match every other row exactly */
-@media (max-width: 860px) {
-  .nav-links .nav-chatbot-reactivate {
-    background: none !important;
-    color: #E8DDD0 !important;
-  }
-
-  .nav-links .nav-chatbot-reactivate:hover {
-    background: rgba(255,255,255,.08) !important;
-    color: #fff !important;
-  }
-}
 
 
 /* ── Slim footer on every page that has no full footer (Stage 17) ── */
@@ -2855,23 +2475,10 @@ a.lp-link.lp-link--tap, button.lp-link.lp-link--tap { display: inline-flex; alig
    Stage 21j: nav icons carry their words on desktop
    (the mobile drawer already shows data-label via ::after)
 ══════════════════════════════════════════ */
-@media (min-width: 861px) {
-  nav .nav-links .nav-icon[data-label]:not(.nav-chatbot-reactivate) {
-    gap: 6px; padding: 8px 12px; font-size: 13px; white-space: nowrap;
-  }
-  nav .nav-links .nav-icon[data-label]:not(.nav-chatbot-reactivate)::after {
-    content: attr(data-label); font-size: 13px; font-weight: 500;
-  }
-  nav .nav-links .nav-icon svg { width: 20px; height: 20px; flex: none; }
-  /* the badge sits on the icon corner; keep it readable beside the label */
-  nav .nav-links .nav-icon .cart-badge { top: 2px; left: 28px; right: auto; }
-  nav .nav-links .nav-icon .notif-dot { top: 6px; left: 28px; right: auto; }
-  .nav-links { gap: 2px; }
-  .nav-btn { padding: 8px 12px; }
-}
+
 @media (min-width: 861px) and (max-width: 1100px) {
   nav { padding: 0 20px; }
-  .nav-brand { font-size: 18px; }
+  
 }
 
 
@@ -2905,7 +2512,6 @@ a.lp-link.lp-link--tap, button.lp-link.lp-link--tap { display: inline-flex; alig
 /* the pager is a <nav>; undo the site header's `nav { ... }` rules for it */
 nav.lp-pager { position: static; z-index: auto; background: transparent; box-shadow: none; height: auto; padding: 14px 0 0; justify-content: center; }
 @media (min-width: 641px) { nav.lp-pager { justify-content: space-between; } }
-@media (max-width: 860px) { .nav-brand { display: inline-flex; align-items: center; min-height: 44px; } }
 
 
 /* ══════════════════════════════════════════

@@ -3,15 +3,6 @@
    Login, Register, Forgot Password, Reset Password
    ============================================================ */
 
-/* ── SHOW / HIDE PASSWORD ── */
-function togglePassword(fieldId, btn) {
-  const input = document.getElementById(fieldId);
-  if (!input) return;
-  const showing = input.type === 'text';
-  input.type = showing ? 'password' : 'text';
-  btn.style.color = showing ? 'var(--text-muted)' : 'var(--gold)';
-}
-
 /* ── PASSWORD STRENGTH BAR ── */
 function checkPasswordStrength(value) {
   const bar   = document.getElementById('strength-bar');

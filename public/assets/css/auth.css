@@ -179,34 +179,7 @@
   border-color: var(--danger) !important;
 }
 
-/* ── PASSWORD FIELD WITH TOGGLE ── */
-.input-password-wrap {
-  position: relative;
-}
-
-.input-password-wrap .form-input {
-  padding-right: 44px;
-  width: 100%;
-}
-
-.password-toggle {
-  position: absolute;
-  top: 50%;
-  right: 14px;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  transition: color .2s;
-}
-
-.password-toggle:hover {
-  color: var(--gold);
-}
+/* Password field Show/Hide: public/assets/css/password-toggle.css (shared with the admin login). */
 
 /* ── STRENGTH BAR ── */
 .password-strength {

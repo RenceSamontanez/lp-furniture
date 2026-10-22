@@ -1,0 +1,795 @@
+{
+ "failures": [],
+ "report": {
+  "orderNow": [
+   {
+    "w": 1440,
+    "p": "/",
+    "buttons": 34,
+    "failures": 0,
+    "orderNowLinks": 8,
+    "worst": 5.03,
+    "states": {
+     "default": 5.03,
+     "hover": 6.33,
+     "focus": 6.33,
+     "active": 6.33,
+     "h": 34
+    }
+   },
+   {
+    "w": 1440,
+    "p": "/product/2",
+    "buttons": 12,
+    "failures": 0,
+    "orderNowLinks": 2,
+    "worst": 5.03,
+    "states": {
+     "default": 5.03,
+     "hover": 6.33,
+     "focus": 6.33,
+     "active": 6.33,
+     "h": 34
+    }
+   },
+   {
+    "w": 390,
+    "p": "/",
+    "buttons": 36,
+    "failures": 0,
+    "orderNowLinks": 8,
+    "worst": 5.03,
+    "states": {
+     "default": 5.03,
+     "hover": 6.33,
+     "focus": 6.33,
+     "active": 6.33,
+     "h": 44
+    }
+   },
+   {
+    "w": 390,
+    "p": "/product/2",
+    "buttons": 10,
+    "failures": 0,
+    "orderNowLinks": 2,
+    "worst": 5.03,
+    "states": {
+     "default": 5.03,
+     "hover": 6.33,
+     "focus": 6.33,
+     "active": 6.33,
+     "h": 44
+    }
+   }
+  ],
+  "password": [
+   {
+    "w": 1440,
+    "p": "/login",
+    "id": "login-password",
+    "size": "56x44"
+   },
+   {
+    "w": 1440,
+    "p": "/register",
+    "id": "password",
+    "size": "56x44"
+   },
+   {
+    "w": 1440,
+    "p": "/register",
+    "id": "password_confirmation",
+    "size": "56x44"
+   },
+   {
+    "w": 1440,
+    "p": "/reset-password/sometoken?email=a%40example.test",
+    "id": "password",
+    "size": "56x44"
+   },
+   {
+    "w": 1440,
+    "p": "/reset-password/sometoken?email=a%40example.test",
+    "id": "password_confirmation",
+    "size": "56x44"
+   },
+   {
+    "w": 1440,
+    "p": "/profile",
+    "id": "new-password",
+    "size": "56x44"
+   },
+   {
+    "w": 1440,
+    "p": "/profile",
+    "id": "confirm-password",
+    "size": "56x44"
+   },
+   {
+    "w": 1440,
+    "p": "/admin/login",
+    "id": "admin-password",
+    "size": "56x44"
+   },
+   {
+    "w": 390,
+    "p": "/login",
+    "id": "login-password",
+    "size": "56x44"
+   },
+   {
+    "w": 390,
+    "p": "/register",
+    "id": "password",
+    "size": "56x44"
+   },
+   {
+    "w": 390,
+    "p": "/register",
+    "id": "password_confirmation",
+    "size": "56x44"
+   },
+   {
+    "w": 390,
+    "p": "/reset-password/sometoken?email=a%40example.test",
+    "id": "password",
+    "size": "56x44"
+   },
+   {
+    "w": 390,
+    "p": "/reset-password/sometoken?email=a%40example.test",
+    "id": "password_confirmation",
+    "size": "56x44"
+   },
+   {
+    "w": 390,
+    "p": "/profile",
+    "id": "new-password",
+    "size": "56x44"
+   },
+   {
+    "w": 390,
+    "p": "/profile",
+    "id": "confirm-password",
+    "size": "56x44"
+   },
+   {
+    "w": 390,
+    "p": "/admin/login",
+    "id": "admin-password",
+    "size": "56x44"
+   }
+  ],
+  "photo": {
+   "390": {
+    "href": "http://127.0.0.1:8011/admin/service-inquiries/3/photos/0",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "w": 120,
+    "h": 120,
+    "alt": "Reference photo 1 of SI-2026-9003",
+    "aria": "Open reference photo 1 of SI-2026-9003 in a new tab",
+    "loaded": true,
+    "status": 200,
+    "ctype": "image/png",
+    "cache": "no-store, private"
+   },
+   "1440": {
+    "href": "http://127.0.0.1:8011/admin/service-inquiries/3/photos/0",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "w": 120,
+    "h": 120,
+    "alt": "Reference photo 1 of SI-2026-9003",
+    "aria": "Open reference photo 1 of SI-2026-9003 in a new tab",
+    "loaded": true,
+    "status": 200,
+    "ctype": "image/png",
+    "cache": "no-store, private"
+   }
+  },
+  "markRead": [
+   {
+    "w": 1440,
+    "label": "admin",
+    "btns": [
+     {
+      "text": "Mark all as read",
+      "w": 145,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 57
+     }
+    ]
+   },
+   {
+    "w": 1440,
+    "label": "customer",
+    "btns": [
+     {
+      "text": "Mark all as read",
+      "w": 145,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     }
+    ]
+   },
+   {
+    "w": 390,
+    "label": "admin",
+    "btns": [
+     {
+      "text": "Mark all as read",
+      "w": 145,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 108,
+      "h": 44
+     }
+    ]
+   },
+   {
+    "w": 390,
+    "label": "customer",
+    "btns": [
+     {
+      "text": "Mark all as read",
+      "w": 145,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     },
+     {
+      "text": "Mark read",
+      "w": 75,
+      "h": 44
+     }
+    ]
+   }
+  ],
+  "chips": [
+   {
+    "w": 1440,
+    "p": "/",
+    "count": 6,
+    "uneven": [],
+    "wrapped": [],
+    "clipped": [],
+    "overflow": false
+   },
+   {
+    "w": 1440,
+    "p": "/catalog",
+    "count": 0,
+    "uneven": [],
+    "wrapped": [],
+    "clipped": [],
+    "overflow": false
+   },
+   {
+    "w": 1440,
+    "p": "/orders",
+    "count": 4,
+    "uneven": [],
+    "wrapped": [],
+    "clipped": [],
+    "overflow": false
+   },
+   {
+    "w": 1440,
+    "p": "/admin/orders",
+    "count": 4,
+    "uneven": [],
+    "wrapped": [],
+    "clipped": [],
+    "overflow": false
+   },
+   {
+    "w": 1440,
+    "p": "/admin/custom-orders",
+    "count": 0,
+    "uneven": [],
+    "wrapped": [],
+    "clipped": [],
+    "overflow": false
+   },
+   {
+    "w": 1440,
+    "p": "/admin/service-inquiries",
+    "count": 15,
+    "uneven": [],
+    "wrapped": [],
+    "clipped": [],
+    "overflow": false
+   },
+   {
+    "w": 1440,
+    "p": "/admin/service-inquiries/3",
+    "count": 2,
+    "uneven": [],
+    "wrapped": [],
+    "clipped": [],
+    "overflow": false
+   },
+   {
+    "w": 1440,
+    "p": "/admin/reviews",
+    "count": 0,
+    "uneven": [],
+    "wrapped": [],
+    "clipped": [],
+    "overflow": false
+   },
+   {
+    "w": 390,
+    "p": "/",
+    "count": 6,
+    "uneven": [],
+    "wrapped": [],
+    "clipped": [],
+    "overflow": false
+   },
+   {
+    "w": 390,
+    "p": "/catalog",
+    "count": 0,
+    "uneven": [],
+    "wrapped": [],
+    "clipped": [],
+    "overflow": false
+   },
+   {
+    "w": 390,
+    "p": "/orders",
+    "count": 4,
+    "uneven": [],
+    "wrapped": [],
+    "clipped": [],
+    "overflow": false
+   },
+   {
+    "w": 390,
+    "p": "/admin/orders",
+    "count": 4,
+    "uneven": [],
+    "wrapped": [],
+    "clipped": [],
+    "overflow": false
+   },
+   {
+    "w": 390,
+    "p": "/admin/custom-orders",
+    "count": 0,
+    "uneven": [],
+    "wrapped": [],
+    "clipped": [],
+    "overflow": false
+   },
+   {
+    "w": 390,
+    "p": "/admin/service-inquiries",
+    "count": 15,
+    "uneven": [],
+    "wrapped": [],
+    "clipped": [],
+    "overflow": false
+   },
+   {
+    "w": 390,
+    "p": "/admin/service-inquiries/3",
+    "count": 2,
+    "uneven": [],
+    "wrapped": [],
+    "clipped": [],
+    "overflow": false
+   },
+   {
+    "w": 390,
+    "p": "/admin/reviews",
+    "count": 0,
+    "uneven": [],
+    "wrapped": [],
+    "clipped": [],
+    "overflow": false
+   }
+  ],
+  "quickView": [
+   {
+    "p": "/",
+    "cards": 8,
+    "openedByRealTap": 8,
+    "fails": []
+   },
+   {
+    "p": "/product/2",
+    "cards": 2,
+    "openedByRealTap": 2,
+    "fails": []
+   },
+   {
+    "p": "/catalog",
+    "cards": 11,
+    "openedByRealTap": 11,
+    "fails": []
+   }
+  ]
+ }
+}

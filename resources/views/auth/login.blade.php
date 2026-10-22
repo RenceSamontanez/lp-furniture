@@ -2,6 +2,7 @@
 @section('title', 'Sign In — LP Furniture')
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/auth.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/password-toggle.css') }}"/>
 @endpush
 
 @section('content')
@@ -73,13 +74,7 @@
           <input type="password" name="password" id="login-password"
             class="form-input" placeholder="Your password"
             maxlength="100" required/>
-          <button type="button" class="password-toggle"
-                  onclick="togglePassword('login-password', this)" aria-label="Show">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-              <circle cx="12" cy="12" r="3"/>
-            </svg>
-          </button>
+          <x-password-toggle for="login-password"/>
         </div>
       </div>
 
@@ -104,6 +99,7 @@
 
 @push('scripts')
   <script src="{{ asset('assets/js/auth.js') }}"></script>
+  <script src="{{ asset('assets/js/password-toggle.js') }}"></script>
   <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
   <script>
     const RECAPTCHA_SITE_KEY = '{{ config('services.recaptcha.site_key') }}';
