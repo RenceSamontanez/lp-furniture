@@ -81,7 +81,7 @@ class PolishPartOneTest extends TestCase
         Notification::create(['user_id' => $admin->id, 'title' => 'Unread', 'message' => 'x', 'type' => 'custom_order', 'is_read' => false]);
         $this->actingAs($admin, 'admin');
         $html = $this->get(route('admin.notifications.index'))->assertOk()->getContent();
-        $this->assertStringContainsString('class="lp-btn lp-btn--secondary" style="min-width:96px;">Mark read</button>', $html);
+        $this->assertStringContainsString('class="lp-btn lp-btn--secondary" aria-label="Mark read: Unread">Mark read</button>', $html);
         $this->assertStringNotContainsString('admin-btn-outline">Mark read', $html);
     }
 

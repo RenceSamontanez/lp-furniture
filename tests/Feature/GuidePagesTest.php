@@ -96,13 +96,13 @@ class GuidePagesTest extends TestCase
         $page->assertDontSee('contact@example.com')->assertDontSee('0917-000-0000');
     }
 
-    public function test_the_footer_links_to_the_guide_on_both_layouts(): void
+    public function test_the_footer_links_to_the_guide_on_the_customer_layout_only(): void
     {
         $this->get(route('catalog'))->assertOk()->assertSee('href="' . route('guide') . '"', false)->assertSee('>Custom Design Guide</a>', false);
 
         $admin = $this->makeUser('admin');
         $this->actingAs($admin, 'admin')->get(route('admin.dashboard'))->assertOk()
-            ->assertSee('href="' . route('guide') . '"', false);
+            ->assertDontSee('href="' . route('guide') . '"', false);
     }
 
     public function test_the_design_form_has_the_collapsible_panel_and_the_guide_link(): void

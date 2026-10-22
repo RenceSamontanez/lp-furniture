@@ -70,14 +70,14 @@ class TermsPagesTest extends TestCase
         $this->get('/terms')->assertOk()->assertSee('not available right now');
     }
 
-    public function test_footer_link_is_on_both_layouts(): void
+    public function test_footer_link_is_on_the_customer_layout_only(): void
     {
         $this->get(route('catalog'))->assertOk()->assertSee('href="' . route('terms') . '"', false)->assertSee('Terms and Conditions');
         $this->get(route('home'))->assertOk()->assertSee('href="' . route('terms') . '"', false);
 
         $admin = $this->makeUser('admin');
         $this->actingAs($admin, 'admin')->get(route('admin.dashboard'))->assertOk()
-            ->assertSee('href="' . route('terms') . '"', false)->assertSee('Terms and Conditions');
+            ->assertDontSee('href="' . route('terms') . '"', false);
     }
 
     /* ───────────── the agreement ───────────── */
