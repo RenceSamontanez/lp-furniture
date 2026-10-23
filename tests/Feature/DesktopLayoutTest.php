@@ -48,7 +48,7 @@ class DesktopLayoutTest extends TestCase
 
         $design = $this->asCustomer($customer)->get(route('design.show', $r->id))->assertOk();
         $design->assertSee('cd-wrap cd-wrap--wide', false)->assertSee('co-layout co-layout--media', false)
-            ->assertSee('<aside class="co-media">', false);
+            ->assertSee('<aside class="co-media cc-media', false);
 
         $this->asCustomer($customer)->get(route('design.quote.review', [$r->id, $quote->id]))->assertOk()
             ->assertSee('co-layout co-layout--media', false)->assertSee('<aside class="co-media">', false);

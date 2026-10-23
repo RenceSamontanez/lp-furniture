@@ -5,9 +5,17 @@
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/design.css') }}"/>
   <link rel="stylesheet" href="{{ asset('assets/css/custom-orders.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/concept.css') }}"/>
 @endpush
 
 @section('content')
+@if($designRequest->isSentToTeam())
+<div class="cd-wrap cd-wrap--wide cc-wrap">
+  @include('design._concept')
+  @include('design._favorite_js')
+  @include('design._validation_error_modal')
+</div>
+@else
 <div class="cd-wrap cd-wrap--wide">
 
   <div class="cd-top-bar">
@@ -403,6 +411,7 @@
   @include('design._validation_error_modal')
 
 </div>
+@endif
 @endsection
 
 @push('scripts')

@@ -5,7 +5,9 @@
   $dim = fn ($n) => rtrim(rtrim(number_format((float) $n, 2, '.', ''), '0'), '.');
   $isSent = $quote->status === 'sent';
 @endphp
+@php $compact = $compact ?? false; @endphp
 <div class="co-quote-card">
+  @unless($compact)
   <div class="co-status-title">
     @if($isSent)
       Your quote for {{ $quote->request->order_name }} is ready
@@ -13,6 +15,7 @@
       This quote expired on {{ $quote->expires_at->timezone('Asia/Manila')->format('M d, Y') }}
     @endif
   </div>
+  @endunless
 
   <dl class="co-quote-list">
     <div><dt>Furniture type</dt><dd>{{ $quote->request->furniture_type_label }}</dd></div>
@@ -34,7 +37,8 @@
     @endif
   </dl>
 
-  @if($isSent)
+  @if($compact)
+  @elseif($isSent)
     <div class="co-status-text">
       Valid until {{ $quote->expires_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}.
     </div>
