@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
+    /** "Keep me signed in on this device": the remember cookie lasts 30 days. */
+    private const REMEMBER_MINUTES = 60 * 24 * 30;
+
     /* ════════════════════════════════
        ADMIN LOGIN
     ════════════════════════════════ */
@@ -55,11 +58,16 @@ class AdminController extends Controller
         // separate error message that would tell an attacker the
         // credentials were valid, and the admin guard's session is never
         // established for a non-admin account in the first place.
+        $remember = $request->boolean('remember');
+        if ($remember) {
+            Auth::guard('admin')->setRememberDuration(self::REMEMBER_MINUTES);
+        }
+
         if (Auth::guard('admin')->attempt([
             'email'    => $request->email,
             'password' => $request->password,
             'role'     => 'admin',
-        ])) {
+        ], $remember)) {
             cache()->forget($key);
             cache()->forget($key . '_lockout');
 
@@ -95,6 +103,7 @@ class AdminController extends Controller
     public function logout(Request $request)
     {
         \App\Support\Luma\ChatState::forget();
+        // logout() also replaces the remember token and expires the cookie.
         Auth::guard('admin')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

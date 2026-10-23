@@ -30,6 +30,17 @@ class User extends Authenticatable implements MustVerifyEmail
         'contact_saved_at',
     ];
 
+    // A changed password cancels every "keep me signed in" cookie: the remember
+    // token is replaced in the same save (unless the caller already set one).
+    protected static function booted(): void
+    {
+        static::saving(function (User $user) {
+            if ($user->exists && $user->isDirty('password') && ! $user->isDirty('remember_token')) {
+                $user->setRememberToken(\Illuminate\Support\Str::random(60));
+            }
+        });
+    }
+
     // Display only; the stored name is never changed.
     public function getDisplayNameAttribute(): string
     {
