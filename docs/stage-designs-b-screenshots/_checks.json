@@ -1,0 +1,506 @@
+{
+  "checks": [
+    {
+      "name": "1366x768 sent: no horizontal overflow",
+      "ok": true,
+      "detail": {
+        "overflowX": 0,
+        "stripBottom": 764,
+        "vh": 768,
+        "chip": "WAITING FOR OUR CALL",
+        "banner": "Request sent, we will call you at 09171234567 during Anytime, 8 AM to 5 PM.",
+        "colsH": 450,
+        "timelineScrolls": false,
+        "promptScrolls": false,
+        "dropdown": false
+      }
+    },
+    {
+      "name": "1366x768 sent: header to contact strip fit one screen",
+      "ok": true,
+      "detail": {
+        "stripBottom": 764,
+        "vh": 768
+      }
+    },
+    {
+      "name": "1366x768 sent: timeline needs no inner scroll",
+      "ok": true
+    },
+    {
+      "name": "1366x768 sent: old prompt dropdown gone",
+      "ok": true
+    },
+    {
+      "name": "1366x768 sent: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "1366x768 quoted: no horizontal overflow",
+      "ok": true,
+      "detail": {
+        "overflowX": 0,
+        "stripBottom": 764,
+        "vh": 768,
+        "chip": "QUOTE READY",
+        "banner": "Your quote for Custom Furniture — Maria is ready.",
+        "colsH": 450,
+        "timelineScrolls": false,
+        "promptScrolls": false,
+        "dropdown": false
+      }
+    },
+    {
+      "name": "1366x768 quoted: header to contact strip fit one screen",
+      "ok": true,
+      "detail": {
+        "stripBottom": 764,
+        "vh": 768
+      }
+    },
+    {
+      "name": "1366x768 quoted: timeline needs no inner scroll",
+      "ok": true
+    },
+    {
+      "name": "1366x768 quoted: old prompt dropdown gone",
+      "ok": true
+    },
+    {
+      "name": "1366x768 quoted: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "1366x768 paid: no horizontal overflow",
+      "ok": true,
+      "detail": {
+        "overflowX": 0,
+        "stripBottom": 764,
+        "vh": 768,
+        "chip": "PAYMENT RECEIVED",
+        "banner": "Payment received. We will start building your order.",
+        "colsH": 450,
+        "timelineScrolls": false,
+        "promptScrolls": true,
+        "dropdown": false
+      }
+    },
+    {
+      "name": "1366x768 paid: header to contact strip fit one screen",
+      "ok": true,
+      "detail": {
+        "stripBottom": 764,
+        "vh": 768
+      }
+    },
+    {
+      "name": "1366x768 paid: timeline needs no inner scroll",
+      "ok": true
+    },
+    {
+      "name": "1366x768 paid: old prompt dropdown gone",
+      "ok": true
+    },
+    {
+      "name": "1366x768 paid: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "1440x900 sent: no horizontal overflow",
+      "ok": true,
+      "detail": {
+        "overflowX": 0,
+        "stripBottom": 874,
+        "vh": 900,
+        "chip": "WAITING FOR OUR CALL",
+        "banner": "Request sent, we will call you at 09171234567 during Anytime, 8 AM to 5 PM.",
+        "colsH": 560,
+        "timelineScrolls": false,
+        "promptScrolls": false,
+        "dropdown": false
+      }
+    },
+    {
+      "name": "1440x900 sent: header to contact strip fit one screen",
+      "ok": true,
+      "detail": {
+        "stripBottom": 874,
+        "vh": 900
+      }
+    },
+    {
+      "name": "1440x900 sent: timeline needs no inner scroll",
+      "ok": true
+    },
+    {
+      "name": "1440x900 sent: old prompt dropdown gone",
+      "ok": true
+    },
+    {
+      "name": "1440x900 sent: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "1440x900 quoted: no horizontal overflow",
+      "ok": true,
+      "detail": {
+        "overflowX": 0,
+        "stripBottom": 874,
+        "vh": 900,
+        "chip": "QUOTE READY",
+        "banner": "Your quote for Custom Furniture — Maria is ready.",
+        "colsH": 560,
+        "timelineScrolls": false,
+        "promptScrolls": false,
+        "dropdown": false
+      }
+    },
+    {
+      "name": "1440x900 quoted: header to contact strip fit one screen",
+      "ok": true,
+      "detail": {
+        "stripBottom": 874,
+        "vh": 900
+      }
+    },
+    {
+      "name": "1440x900 quoted: timeline needs no inner scroll",
+      "ok": true
+    },
+    {
+      "name": "1440x900 quoted: old prompt dropdown gone",
+      "ok": true
+    },
+    {
+      "name": "1440x900 quoted: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "1440x900 paid: no horizontal overflow",
+      "ok": true,
+      "detail": {
+        "overflowX": 0,
+        "stripBottom": 874,
+        "vh": 900,
+        "chip": "PAYMENT RECEIVED",
+        "banner": "Payment received. We will start building your order.",
+        "colsH": 560,
+        "timelineScrolls": false,
+        "promptScrolls": false,
+        "dropdown": false
+      }
+    },
+    {
+      "name": "1440x900 paid: header to contact strip fit one screen",
+      "ok": true,
+      "detail": {
+        "stripBottom": 874,
+        "vh": 900
+      }
+    },
+    {
+      "name": "1440x900 paid: timeline needs no inner scroll",
+      "ok": true
+    },
+    {
+      "name": "1440x900 paid: old prompt dropdown gone",
+      "ok": true
+    },
+    {
+      "name": "1440x900 paid: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "390x844 sent: no horizontal overflow",
+      "ok": true,
+      "detail": {
+        "overflowX": 0,
+        "stripBottom": 1408,
+        "vh": 844,
+        "chip": "WAITING FOR OUR CALL",
+        "banner": "Request sent, we will call you at 09171234567 during Anytime, 8 AM to 5 PM.",
+        "colsH": 918,
+        "timelineScrolls": false,
+        "promptScrolls": true,
+        "dropdown": false
+      }
+    },
+    {
+      "name": "390x844 sent: old prompt dropdown gone",
+      "ok": true
+    },
+    {
+      "name": "390x844 sent: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "390x844 quoted: no horizontal overflow",
+      "ok": true,
+      "detail": {
+        "overflowX": 0,
+        "stripBottom": 1511,
+        "vh": 844,
+        "chip": "QUOTE READY",
+        "banner": "Your quote for Custom Furniture — Maria is ready.",
+        "colsH": 1042,
+        "timelineScrolls": false,
+        "promptScrolls": false,
+        "dropdown": false
+      }
+    },
+    {
+      "name": "390x844 quoted: old prompt dropdown gone",
+      "ok": true
+    },
+    {
+      "name": "390x844 quoted: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "390x844 paid: no horizontal overflow",
+      "ok": true,
+      "detail": {
+        "overflowX": 0,
+        "stripBottom": 1757,
+        "vh": 844,
+        "chip": "PAYMENT RECEIVED",
+        "banner": "Payment received. We will start building your order.",
+        "colsH": 1288,
+        "timelineScrolls": false,
+        "promptScrolls": true,
+        "dropdown": false
+      }
+    },
+    {
+      "name": "390x844 paid: old prompt dropdown gone",
+      "ok": true
+    },
+    {
+      "name": "390x844 paid: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "keyboard reaches back, banner buttons, thumbs, description and contact links",
+      "ok": true,
+      "detail": [
+        "sn-brand|true",
+        "sn-link|true",
+        "sn-link|true",
+        "sn-link|true",
+        "sn-link|true",
+        "sn-link|true",
+        "sn-link|true",
+        "sn-link|true",
+        "sn-link|true",
+        "lp-btn|true",
+        "lp-btn|true",
+        "lp-btn|true",
+        "cc-thumb|true",
+        "ai-concept-heart|true",
+        "cc-thumb|true",
+        "ai-concept-heart|true",
+        "cc-prompt|true",
+        "lp-link|true"
+      ]
+    },
+    {
+      "name": "every focused control shows a focus ring",
+      "ok": true,
+      "detail": [
+        "BODY|false"
+      ]
+    },
+    {
+      "name": "reduced motion: no animation or long transition",
+      "ok": true
+    },
+    {
+      "name": "text contrast Ready/paid chip",
+      "ok": true,
+      "detail": 5.51
+    },
+    {
+      "name": "text contrast Gold chip",
+      "ok": true,
+      "detail": 5.64
+    },
+    {
+      "name": "text contrast Bad chip",
+      "ok": true,
+      "detail": 5.87
+    },
+    {
+      "name": "text contrast Muted chip",
+      "ok": true,
+      "detail": 7.67
+    },
+    {
+      "name": "text contrast Timeline date",
+      "ok": true,
+      "detail": 7.78
+    },
+    {
+      "name": "text contrast Timeline detail",
+      "ok": true,
+      "detail": 7.78
+    },
+    {
+      "name": "text contrast Caption text",
+      "ok": true,
+      "detail": 7.14
+    },
+    {
+      "name": "text contrast Description text",
+      "ok": true,
+      "detail": 18.52
+    },
+    {
+      "name": "text contrast Success banner title",
+      "ok": true,
+      "detail": 12.18
+    },
+    {
+      "name": "text contrast Success banner text",
+      "ok": true,
+      "detail": 9.3
+    },
+    {
+      "name": "text contrast Waiting banner text",
+      "ok": true,
+      "detail": 10.33
+    }
+  ],
+  "buttons": [
+    {
+      "tag": "1366x768",
+      "name": "sent",
+      "count": 11,
+      "failures": []
+    },
+    {
+      "tag": "1366x768",
+      "name": "quoted",
+      "count": 11,
+      "failures": []
+    },
+    {
+      "tag": "1366x768",
+      "name": "paid",
+      "count": 12,
+      "failures": []
+    },
+    {
+      "tag": "1440x900",
+      "name": "sent",
+      "count": 11,
+      "failures": []
+    },
+    {
+      "tag": "1440x900",
+      "name": "quoted",
+      "count": 11,
+      "failures": []
+    },
+    {
+      "tag": "1440x900",
+      "name": "paid",
+      "count": 12,
+      "failures": []
+    },
+    {
+      "tag": "390x844",
+      "name": "sent",
+      "count": 11,
+      "failures": []
+    },
+    {
+      "tag": "390x844",
+      "name": "quoted",
+      "count": 11,
+      "failures": []
+    },
+    {
+      "tag": "390x844",
+      "name": "paid",
+      "count": 12,
+      "failures": []
+    }
+  ],
+  "textContrast": [
+    {
+      "name": "Ready/paid chip",
+      "fg": "#1d6b45",
+      "bg": "#dff1e6",
+      "ratio": 5.51
+    },
+    {
+      "name": "Gold chip",
+      "fg": "#7a5210",
+      "bg": "#f6e7c6",
+      "ratio": 5.64
+    },
+    {
+      "name": "Bad chip",
+      "fg": "#a1262b",
+      "bg": "#fbdede",
+      "ratio": 5.87
+    },
+    {
+      "name": "Muted chip",
+      "fg": "#4f4238",
+      "bg": "#ebe4da",
+      "ratio": 7.67
+    },
+    {
+      "name": "Timeline date",
+      "fg": "#5f4c3f",
+      "bg": "#fdfaf5",
+      "ratio": 7.78
+    },
+    {
+      "name": "Timeline detail",
+      "fg": "#5f4c3f",
+      "bg": "#fdfaf5",
+      "ratio": 7.78
+    },
+    {
+      "name": "Caption text",
+      "fg": "#5f4c3f",
+      "bg": "#f5f0e8",
+      "ratio": 7.14
+    },
+    {
+      "name": "Description text",
+      "fg": "#1a1208",
+      "bg": "#ffffff",
+      "ratio": 18.52
+    },
+    {
+      "name": "Success banner title",
+      "fg": "#17301a",
+      "bg": "#e7f0e2",
+      "ratio": 12.18
+    },
+    {
+      "name": "Success banner text",
+      "fg": "#29432a",
+      "bg": "#e7f0e2",
+      "ratio": 9.3
+    },
+    {
+      "name": "Waiting banner text",
+      "fg": "#4a3426",
+      "bg": "#fbf1da",
+      "ratio": 10.33
+    }
+  ]
+}

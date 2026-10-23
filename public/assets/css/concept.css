@@ -2,14 +2,16 @@
    the banner is the shared .lp-notice. Glass cards fall back to solid cream without backdrop-filter. */
 
 .cc-wrap { --cc-line: rgba(120, 90, 60, .22); --cc-mut: #5f4c3f; --cc-ok: #1d6b45; --cc-okbg: #dff1e6; --cc-gold: #7a5210; --cc-goldbg: #f6e7c6; --cc-bad: #a1262b; --cc-badbg: #fbdede; }
+.cc-wrap.cd-wrap { padding: 14px 24px 20px; min-height: 0; }
 .cc-page { display: flex; flex-direction: column; gap: 12px; }
 .cc-back { align-self: flex-start; min-height: 40px; padding: 8px 16px; }
 
 /* ── header ── */
 .cc-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
 .cc-cap { font-size: 12px; letter-spacing: .09em; font-weight: 700; color: var(--cc-mut); margin: 0; }
+.cc-timeline .cc-cap { text-transform: uppercase; }
 .cc-cap--gap { display: block; margin-top: 12px; }
-.cc-title { font-family: var(--font-display); font-size: clamp(26px, 2.8vw, 36px); color: var(--brown-deep); margin: 2px 0 0; line-height: 1.15; }
+.cc-title { font-family: var(--font-display); font-size: clamp(26px, 2.5vw, 34px); color: var(--brown-deep); margin: 2px 0 0; line-height: 1.15; }
 .cc-name { color: var(--cc-mut); margin: 4px 0 0; overflow-wrap: anywhere; }
 .cc-chip { display: inline-flex; align-items: center; font-size: 12.5px; font-weight: 800; letter-spacing: .04em; border-radius: 999px; padding: 6px 14px; }
 .cc-chip--ok { background: var(--cc-okbg); color: var(--cc-ok); }
@@ -61,7 +63,9 @@
 .cc-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .cc-thumb.selected { border-color: #c99a3e; }
 .cc-thumb:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
-.cc-thumb-wrap .ai-concept-heart { top: 2px; right: 2px; width: 22px; height: 22px; }
+.cc-thumb-wrap .ai-concept-heart { top: 3px; right: 3px; width: 26px; height: 26px; background: #fdfaf5; color: var(--brown-deep); }
+.cc-thumb-wrap .ai-concept-heart.favorited { background: var(--brown-deep); color: #e9b75a; }
+.cc-thumb-wrap .ai-concept-heart:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 .cc-prompt { background: rgba(255, 255, 255, .7); border: 1px solid var(--cc-line); border-radius: 16px; padding: 12px 16px; overflow: auto; min-height: 0; }
 .cc-prompt:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 .cc-prompt p { margin: 6px 0 0; line-height: 1.6; font-size: 15px; color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; }
@@ -79,7 +83,7 @@
 
 /* ── desktop: everything on one screen ── */
 @media (min-width: 981px) {
-  .co-layout.cc-cols, .co-layout--media.cc-cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); gap: 18px; height: var(--cc-cols-h, calc(100vh - 372px)); min-height: 380px; max-height: 560px; }
+  .co-layout.cc-cols, .co-layout--media.cc-cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); gap: 18px; height: var(--cc-cols-h, calc(100vh - 318px)); min-height: 380px; max-height: 560px; }
 }
 
 @media (max-width: 980px) {

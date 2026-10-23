@@ -66,7 +66,7 @@
 
       @if(!empty($timeline))
         <section class="cc-card cc-glass cc-timeline" aria-labelledby="cc-tl-title">
-          <h2 class="cc-cap" id="cc-tl-title">WHAT HAS HAPPENED SO FAR</h2>
+          <h2 class="cc-cap" id="cc-tl-title">What has happened so far</h2>
           <ol class="cc-tl">
             @foreach($timeline as $e)
               @php $at = $e['at']->timezone('Asia/Manila'); @endphp
