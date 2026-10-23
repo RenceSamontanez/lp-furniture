@@ -1,0 +1,21 @@
+{
+  "contrast": {
+    "1366x768": {
+      "count": 2,
+      "failures": []
+    },
+    "1832x974": {
+      "count": 2,
+      "failures": []
+    },
+    "tablet-768x1024": {
+      "count": 2,
+      "failures": []
+    },
+    "phone-390x844": {
+      "count": 2,
+      "failures": []
+    }
+  },
+  "failures": []
+}
