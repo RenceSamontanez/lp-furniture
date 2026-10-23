@@ -243,6 +243,84 @@ class CustomDesignRequest extends Model
         return null;
     }
 
+    /* ── My Designs page ── */
+
+    // ready | generating | failed, the same rule the History tab always used:
+    // an image that can actually be loaded wins over the stored status.
+    public function designState(): string
+    {
+        if ($this->hasLoadableSuggestion()) {
+            return 'ready';
+        }
+
+        return $this->status === 'pending' ? 'generating' : 'failed';
+    }
+
+    // The concept shown for this request: the selected one, else the first loadable.
+    public function representativeSuggestion(): ?AiDesignSuggestion
+    {
+        $loadable = $this->loadableSuggestions();
+
+        return $loadable->firstWhere('is_selected', true) ?? $loadable->first();
+    }
+
+    public function styleLabel(): string
+    {
+        return $this->style_preference ?: 'No preference';
+    }
+
+    // Short name for the preview box: the start of the description.
+    public function designName(): string
+    {
+        $text = trim(preg_replace('/\s+/', ' ', (string) $this->description));
+
+        return $text === '' ? 'Custom furniture design' : \Illuminate\Support\Str::limit($text, 48, '…');
+    }
+
+    // Today / This week / Earlier, used to group the History tab.
+    public function historyGroup(): string
+    {
+        if ($this->created_at->isToday()) {
+            return 'Today';
+        }
+
+        return $this->created_at->greaterThanOrEqualTo(today()->subDays(6)) ? 'This week' : 'Earlier';
+    }
+
+    // "Today, 9:41 AM", "Yesterday, 8:15 AM", "3 days ago", "Oct 16, 2026".
+    public function whenLabel(): string
+    {
+        $t = $this->created_at;
+        if ($t->isToday()) {
+            return 'Today, ' . $t->format('g:i A');
+        }
+        if ($t->isYesterday()) {
+            return 'Yesterday, ' . $t->format('g:i A');
+        }
+
+        return $t->greaterThanOrEqualTo(today()->subDays(6)) ? $t->diffForHumans() : $t->format('M j, Y');
+    }
+
+    // What the preview box and the action button need for one Ready design.
+    public function previewPayload(AiDesignSuggestion $suggestion): array
+    {
+        $ordered = $this->isSentToTeam();
+
+        return [
+            'requestId'    => $this->id,
+            'suggestionId' => $suggestion->id,
+            'image'        => $suggestion->displayUrl(),
+            'name'         => $this->designName(),
+            'style'        => $this->styleLabel(),
+            'created'      => $this->created_at->format('M j, Y, g:i A'),
+            'description'  => (string) $this->description,
+            'ordered'      => $ordered,
+            'favorited'    => (bool) $suggestion->is_favorited,
+            'orderUrl'     => route('design.select', $this->id),
+            'conceptUrl'   => route('design.show', $this->id),
+        ];
+    }
+
     public function callWindowLabel(): ?string
     {
         return self::CALL_WINDOWS[$this->preferred_call_window] ?? null;

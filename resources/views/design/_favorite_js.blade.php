@@ -55,16 +55,34 @@ if (!window.__cdFavoriteJsBound) {
         const isFavorited = !!data.favorited;
         const stateClass = btn.dataset.stateClass || 'saved';
 
-        btn.classList.toggle(stateClass, isFavorited);
+        // Every button for this design (card bookmark, preview box Save, dashboard hearts)
+        // shows the same state.
+        document.querySelectorAll('.js-save-heart[data-suggestion-id="' + suggestionId + '"]').forEach(function (b) {
+          const cls = b.dataset.stateClass || 'saved';
+          b.classList.toggle(cls, isFavorited);
+          if (b.hasAttribute('aria-pressed')) b.setAttribute('aria-pressed', isFavorited ? 'true' : 'false');
 
-        const svg = btn.querySelector('svg');
-        if (svg) svg.setAttribute('fill', isFavorited ? 'currentColor' : 'none');
+          const svg = b.querySelector('svg');
+          if (svg) svg.setAttribute('fill', isFavorited ? 'currentColor' : 'none');
 
-        const textEl = btn.querySelector('.cd-save-btn-text');
-        if (textEl) textEl.textContent = isFavorited ? 'Saved' : 'Save';
+          const textEl = b.querySelector('.cd-save-btn-text');
+          if (textEl) textEl.textContent = isFavorited ? 'Saved' : 'Save';
 
-        if (btn.hasAttribute('title')) {
-          btn.title = isFavorited ? 'Remove from favorites' : 'Save to favorites';
+          if (b.hasAttribute('title')) b.title = isFavorited ? 'Remove from favorites' : 'Save to favorites';
+          if (b.hasAttribute('aria-label')) b.setAttribute('aria-label', isFavorited ? 'Remove from favorites' : 'Save to favorites');
+        });
+
+        // My Designs: keep the Favorites count right, and drop an un-saved card from the Favorites tab.
+        const countEl = document.querySelector('[data-count="favorites"]');
+        if (countEl) {
+          countEl.textContent = Math.max(0, (parseInt(countEl.textContent, 10) || 0) + (isFavorited ? 1 : -1));
+        }
+        const removable = document.querySelector('.js-save-heart[data-suggestion-id="' + suggestionId + '"][data-remove-card]');
+        if (!isFavorited && removable) {
+          const card = removable.closest('.md-card');
+          if (window.closeDesignModal) window.closeDesignModal();
+          if (card) card.remove();
+          if (!document.querySelector('.md-card')) window.location.reload();
         }
       })
       .catch(err => {

@@ -632,43 +632,48 @@ class CustomDesignController extends Controller
     }
 
     /* ════════════════════════════════
-       GALLERY — History tab + Favorites tab
+       MY DESIGNS — History, Gallery and Favorites tabs
     ════════════════════════════════ */
     public function gallery(Request $request)
     {
         CustomDesignRequest::failStale();
 
-        $tab = $request->get('tab', 'history');
+        $tab = in_array($request->get('tab'), ['history', 'gallery', 'favorites'], true) ? $request->get('tab') : 'history';
+        $filter = in_array($request->get('filter'), ['ready', 'failed'], true) ? $request->get('filter') : 'all';
 
-        if ($tab === 'favorites') {
-            $items = AiDesignSuggestion::whereHas('request', function ($q) {
-                    $q->where('user_id', Auth::id());
-                })
-                ->where('is_favorited', true)
-                ->with('request')
-                ->latest('generated_at')
-                ->get();
-
-            return view('design.gallery', compact('tab', 'items'));
-        }
-
-        // Every past attempt, not just the ones that produced an
-        // image — this is a log of what was requested, not just
-        // a gallery of what generated. design.gallery classifies
-        // each row into success/failed/in-progress from here.
-        // Paginated at 15 and grouped by day for the playlist-style
-        // history redesign (PART 3).
-        $items = CustomDesignRequest::where('user_id', Auth::id())
+        $requests = CustomDesignRequest::where('user_id', Auth::id())
             ->with('suggestions')
             ->latest()
-            ->paginate(15);
+            ->get();
 
-        $grouped = $items->getCollection()->groupBy(function ($r) {
-            if ($r->created_at->isToday()) return 'Today';
-            if ($r->created_at->isYesterday()) return 'Yesterday';
-            return 'Earlier';
-        });
+        $ready = $requests->filter(fn ($r) => $r->designState() === 'ready')->values();
 
-        return view('design.gallery', compact('tab', 'items', 'grouped'));
+        $favorites = $ready
+            ->flatMap(fn ($r) => $r->loadableSuggestions()->where('is_favorited', true)->map(fn ($s) => ['request' => $r, 'suggestion' => $s]))
+            ->sortByDesc(fn ($e) => $e['suggestion']->generated_at)
+            ->values();
+
+        $counts = ['history' => $requests->count(), 'gallery' => $ready->count(), 'favorites' => $favorites->count()];
+
+        $grouped = collect();
+        $paginator = null;
+        $galleryItems = collect();
+
+        if ($tab === 'history') {
+            $rows = $requests->filter(fn ($r) => $filter === 'all' || ($filter === 'ready' ? $r->designState() === 'ready' : $r->designState() === 'failed'))->values();
+            $perPage = 15;
+            $page = max(1, (int) $request->get('page', 1));
+            $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
+                $rows->forPage($page, $perPage)->values(), $rows->count(), $perPage, $page,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+            $grouped = $paginator->getCollection()->groupBy(fn ($r) => $r->historyGroup());
+        } elseif ($tab === 'gallery') {
+            $galleryItems = $ready->map(fn ($r) => ['request' => $r, 'suggestion' => $r->representativeSuggestion()]);
+        } else {
+            $galleryItems = $favorites;
+        }
+
+        return view('design.gallery', compact('tab', 'filter', 'counts', 'grouped', 'paginator', 'galleryItems'));
     }
 }

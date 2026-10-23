@@ -5,6 +5,7 @@
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/design.css') }}"/>
   <link rel="stylesheet" href="{{ asset('assets/css/guide.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/my-designs.css') }}"/>
 @endpush
 
 @section('content')
@@ -178,8 +179,7 @@
 
       @if($latestImage)
         <div class="cd-hero-card">
-          <div class="cd-hero-img-wrap"
-               onclick="openDesignModal({{ $latestWithImages->id }}, {{ $latestImage->id }}, '{{ $latestImage->displayUrl() }}', '{{ addslashes($latestWithImages->furniture_type ?? 'Custom Furniture') }}', '{{ addslashes(Str::limit($latestWithImages->description, 150)) }}', '{{ $latestWithImages->status }}', {{ $latestImage->is_favorited ? 'true' : 'false' }})">
+          <div class="cd-hero-img-wrap js-open-design" role="button" tabindex="0" data-design="{{ json_encode($latestWithImages->previewPayload($latestImage)) }}">
             <img src="{{ $latestImage->displayUrl() }}" alt="Latest design" class="cd-hero-img"
                  onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
             <span class="cd-hero-label">Latest Design</span>
@@ -206,8 +206,7 @@
         <div class="cd-history-grid">
           @foreach($historyThumbs as $entry)
             <div class="cd-history-card">
-              <div class="cd-history-thumb"
-                   onclick="openDesignModal({{ $entry['request']->id }}, {{ $entry['image']->id }}, '{{ $entry['image']->displayUrl() }}', '{{ addslashes($entry['request']->furniture_type ?? 'Custom Furniture') }}', '{{ addslashes(Str::limit($entry['request']->description, 150)) }}', '{{ $entry['request']->status }}', {{ $entry['image']->is_favorited ? 'true' : 'false' }})">
+              <div class="cd-history-thumb js-open-design" role="button" tabindex="0" data-design="{{ json_encode($entry['request']->previewPayload($entry['image'])) }}">
                 <img src="{{ $entry['image']->displayUrl() }}" alt="Past design"
                      onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
               </div>
