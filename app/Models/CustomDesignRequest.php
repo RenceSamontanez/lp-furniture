@@ -274,7 +274,7 @@ class CustomDesignRequest extends Model
     {
         $text = trim(preg_replace('/\s+/', ' ', (string) $this->description));
 
-        return $text === '' ? 'Custom furniture design' : \Illuminate\Support\Str::limit($text, 48, '…');
+        return $text === '' ? 'Custom furniture design' : \Illuminate\Support\Str::words($text, 7, '…');
     }
 
     // Today / This week / Earlier, used to group the History tab.

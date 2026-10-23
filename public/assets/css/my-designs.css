@@ -1,7 +1,7 @@
 /* My Designs (History / Gallery / Favorites) and the shared design preview box.
    Plain CSS, loaded by design/gallery and design/index. Buttons are the shared .lp-btn. */
 
-.md-wrap { --md-line: rgba(120, 90, 60, .22); --md-ok: #1d6b45; --md-okbg: #dff1e6; --md-bad: #a1262b; --md-badbg: #fbdede; --md-busy: #7a5a12; --md-busybg: #f6ecc9; --md-mut: #5f4c3f; }
+.md-wrap { padding-bottom: 96px; --md-line: rgba(120, 90, 60, .22); --md-ok: #1d6b45; --md-okbg: #dff1e6; --md-bad: #a1262b; --md-badbg: #fbdede; --md-busy: #7a5a12; --md-busybg: #f6ecc9; --md-mut: #5f4c3f; }
 
 /* ── header ── */
 .md-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin: 6px 0 22px; }
@@ -98,9 +98,8 @@
 .md-modal-acts .md-act-form { display: flex; flex: 1; }
 .md-modal-acts .md-act-primary { flex: 1; }
 .md-modal-acts [hidden] { display: none; }
-.md-save.saved { background: var(--brown-deep); color: #fdfaf5; border-color: var(--brown-deep); }
-.md-save.saved:hover, .md-save.saved:focus { background: var(--brown-mid); color: #fff; border-color: var(--brown-mid); }
-.md-save.saved svg { color: #e9b75a; }
+.md-save.saved, .md-save.saved:hover, .md-save.saved:focus { background: #f6e7c6; color: var(--brown-deep); border-color: #b9801f; }
+.md-save.saved svg { color: #b9801f; }
 .md-modal-all { align-self: flex-start; font-size: 14px; }
 .md-modal-all[hidden] { display: none; }
 

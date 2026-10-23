@@ -1,0 +1,611 @@
+{
+  "checks": [
+    {
+      "name": "1366x768 history: no horizontal overflow",
+      "ok": true,
+      "detail": {
+        "overflow": 0,
+        "count": "8"
+      }
+    },
+    {
+      "name": "1366x768 history: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "1366x768 gallery: no horizontal overflow",
+      "ok": true,
+      "detail": {
+        "overflow": 0,
+        "count": "5"
+      }
+    },
+    {
+      "name": "1366x768 gallery: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "1366x768 favorites: no horizontal overflow",
+      "ok": true,
+      "detail": {
+        "overflow": 0,
+        "count": "2"
+      }
+    },
+    {
+      "name": "1366x768 favorites: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "1366x768 modal (not ordered): opens",
+      "ok": true,
+      "detail": {
+        "top": 134,
+        "bottom": 635,
+        "vh": 768,
+        "modalScroll": 0,
+        "pageScroll": 1432,
+        "bodyOverflow": "hidden",
+        "chip": "✓ Ready",
+        "prim": [
+          "Order this design"
+        ],
+        "descScrolls": false,
+        "focus": "md-modal-close"
+      }
+    },
+    {
+      "name": "1366x768 modal (not ordered): fits one screen, box does not scroll",
+      "ok": true,
+      "detail": {
+        "top": 134,
+        "bottom": 635,
+        "vh": 768,
+        "modalScroll": 0,
+        "pageScroll": 1432,
+        "bodyOverflow": "hidden",
+        "chip": "✓ Ready",
+        "prim": [
+          "Order this design"
+        ],
+        "descScrolls": false,
+        "focus": "md-modal-close"
+      }
+    },
+    {
+      "name": "1366x768 modal (not ordered): one primary action",
+      "ok": true,
+      "detail": [
+        "Order this design"
+      ]
+    },
+    {
+      "name": "1366x768 modal (not ordered): button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "1366x768 modal (ordered): opens",
+      "ok": true,
+      "detail": {
+        "top": 82,
+        "bottom": 686,
+        "vh": 768,
+        "modalScroll": 0,
+        "pageScroll": 1432,
+        "bodyOverflow": "hidden",
+        "chip": "✓ Ordered",
+        "prim": [
+          "View concept"
+        ],
+        "descScrolls": false,
+        "focus": "md-modal-close"
+      }
+    },
+    {
+      "name": "1366x768 modal (ordered): fits one screen, box does not scroll",
+      "ok": true,
+      "detail": {
+        "top": 82,
+        "bottom": 686,
+        "vh": 768,
+        "modalScroll": 0,
+        "pageScroll": 1432,
+        "bodyOverflow": "hidden",
+        "chip": "✓ Ordered",
+        "prim": [
+          "View concept"
+        ],
+        "descScrolls": false,
+        "focus": "md-modal-close"
+      }
+    },
+    {
+      "name": "1366x768 modal (ordered): one primary action",
+      "ok": true,
+      "detail": [
+        "View concept"
+      ]
+    },
+    {
+      "name": "1366x768 modal (ordered): button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "1440x900 history: no horizontal overflow",
+      "ok": true,
+      "detail": {
+        "overflow": 0,
+        "count": "8"
+      }
+    },
+    {
+      "name": "1440x900 history: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "1440x900 gallery: no horizontal overflow",
+      "ok": true,
+      "detail": {
+        "overflow": 0,
+        "count": "5"
+      }
+    },
+    {
+      "name": "1440x900 gallery: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "1440x900 favorites: no horizontal overflow",
+      "ok": true,
+      "detail": {
+        "overflow": 0,
+        "count": "2"
+      }
+    },
+    {
+      "name": "1440x900 favorites: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "1440x900 modal (not ordered): opens",
+      "ok": true,
+      "detail": {
+        "top": 200,
+        "bottom": 701,
+        "vh": 900,
+        "modalScroll": 0,
+        "pageScroll": 1333,
+        "bodyOverflow": "hidden",
+        "chip": "✓ Ready",
+        "prim": [
+          "Order this design"
+        ],
+        "descScrolls": false,
+        "focus": "md-modal-close"
+      }
+    },
+    {
+      "name": "1440x900 modal (not ordered): fits one screen, box does not scroll",
+      "ok": true,
+      "detail": {
+        "top": 200,
+        "bottom": 701,
+        "vh": 900,
+        "modalScroll": 0,
+        "pageScroll": 1333,
+        "bodyOverflow": "hidden",
+        "chip": "✓ Ready",
+        "prim": [
+          "Order this design"
+        ],
+        "descScrolls": false,
+        "focus": "md-modal-close"
+      }
+    },
+    {
+      "name": "1440x900 modal (not ordered): one primary action",
+      "ok": true,
+      "detail": [
+        "Order this design"
+      ]
+    },
+    {
+      "name": "1440x900 modal (not ordered): button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "1440x900 modal (ordered): opens",
+      "ok": true,
+      "detail": {
+        "top": 148,
+        "bottom": 752,
+        "vh": 900,
+        "modalScroll": 0,
+        "pageScroll": 1333,
+        "bodyOverflow": "hidden",
+        "chip": "✓ Ordered",
+        "prim": [
+          "View concept"
+        ],
+        "descScrolls": false,
+        "focus": "md-modal-close"
+      }
+    },
+    {
+      "name": "1440x900 modal (ordered): fits one screen, box does not scroll",
+      "ok": true,
+      "detail": {
+        "top": 148,
+        "bottom": 752,
+        "vh": 900,
+        "modalScroll": 0,
+        "pageScroll": 1333,
+        "bodyOverflow": "hidden",
+        "chip": "✓ Ordered",
+        "prim": [
+          "View concept"
+        ],
+        "descScrolls": false,
+        "focus": "md-modal-close"
+      }
+    },
+    {
+      "name": "1440x900 modal (ordered): one primary action",
+      "ok": true,
+      "detail": [
+        "View concept"
+      ]
+    },
+    {
+      "name": "1440x900 modal (ordered): button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "390x844 history: no horizontal overflow",
+      "ok": true,
+      "detail": {
+        "overflow": 0,
+        "count": "8"
+      }
+    },
+    {
+      "name": "390x844 history: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "390x844 gallery: no horizontal overflow",
+      "ok": true,
+      "detail": {
+        "overflow": 0,
+        "count": "5"
+      }
+    },
+    {
+      "name": "390x844 gallery: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "390x844 favorites: no horizontal overflow",
+      "ok": true,
+      "detail": {
+        "overflow": 0,
+        "count": "2"
+      }
+    },
+    {
+      "name": "390x844 favorites: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "390x844 modal (not ordered): opens",
+      "ok": true,
+      "detail": {
+        "top": 26,
+        "bottom": 818,
+        "vh": 844,
+        "modalScroll": 0,
+        "pageScroll": 3787,
+        "bodyOverflow": "hidden",
+        "chip": "✓ Ready",
+        "prim": [
+          "Order this design"
+        ],
+        "descScrolls": false,
+        "focus": "md-modal-close"
+      }
+    },
+    {
+      "name": "390x844 modal (not ordered): one primary action",
+      "ok": true,
+      "detail": [
+        "Order this design"
+      ]
+    },
+    {
+      "name": "390x844 modal (not ordered): button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "390x844 modal (ordered): opens",
+      "ok": true,
+      "detail": {
+        "top": 28,
+        "bottom": 816,
+        "vh": 844,
+        "modalScroll": 0,
+        "pageScroll": 3787,
+        "bodyOverflow": "hidden",
+        "chip": "✓ Ordered",
+        "prim": [
+          "View concept"
+        ],
+        "descScrolls": true,
+        "focus": "md-modal-close"
+      }
+    },
+    {
+      "name": "390x844 modal (ordered): one primary action",
+      "ok": true,
+      "detail": [
+        "View concept"
+      ]
+    },
+    {
+      "name": "390x844 modal (ordered): button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "ArrowRight moves History -> Gallery and keeps focus on the tab",
+      "ok": true
+    },
+    {
+      "name": "Tab stays inside the open box (12 presses)",
+      "ok": true,
+      "detail": [
+        true
+      ]
+    },
+    {
+      "name": "Shift+Tab stays inside the open box",
+      "ok": true,
+      "detail": [
+        true
+      ]
+    },
+    {
+      "name": "Escape closes the box and focus returns to the control that opened it",
+      "ok": true
+    },
+    {
+      "name": "reduced motion: no animation on the page",
+      "ok": true
+    },
+    {
+      "name": "text contrast Ready chip",
+      "ok": true,
+      "detail": 5.51
+    },
+    {
+      "name": "text contrast Failed chip",
+      "ok": true,
+      "detail": 5.87
+    },
+    {
+      "name": "text contrast Generating chip",
+      "ok": true,
+      "detail": 5.38
+    },
+    {
+      "name": "text contrast Failed reason on card",
+      "ok": true,
+      "detail": 7.13
+    },
+    {
+      "name": "text contrast Muted text on card",
+      "ok": true,
+      "detail": 7.78
+    },
+    {
+      "name": "text contrast Prompt text",
+      "ok": true,
+      "detail": 16.2
+    },
+    {
+      "name": "text contrast Selected tab",
+      "ok": true,
+      "detail": 16.2
+    },
+    {
+      "name": "text contrast Tab count (selected)",
+      "ok": true,
+      "detail": 8.31
+    },
+    {
+      "name": "text contrast Tab count (idle)",
+      "ok": true,
+      "detail": 12.43
+    },
+    {
+      "name": "text contrast Idle tab",
+      "ok": true,
+      "detail": 7.78
+    },
+    {
+      "name": "text contrast Filter chip idle",
+      "ok": true,
+      "detail": 7.78
+    },
+    {
+      "name": "text contrast Day heading",
+      "ok": true,
+      "detail": 7.14
+    },
+    {
+      "name": "text contrast CUSTOM DESIGN tag",
+      "ok": true,
+      "detail": 16.97
+    },
+    {
+      "name": "text contrast Saved bookmark icon on dark",
+      "ok": true,
+      "detail": 9.14
+    }
+  ],
+  "buttons": [
+    {
+      "tag": "1366x768",
+      "tab": "history",
+      "count": 24,
+      "failures": []
+    },
+    {
+      "tag": "1366x768",
+      "tab": "gallery",
+      "count": 26,
+      "failures": []
+    },
+    {
+      "tag": "1366x768",
+      "tab": "favorites",
+      "count": 14,
+      "failures": []
+    },
+    {
+      "tag": "1440x900",
+      "tab": "history",
+      "count": 24,
+      "failures": []
+    },
+    {
+      "tag": "1440x900",
+      "tab": "gallery",
+      "count": 26,
+      "failures": []
+    },
+    {
+      "tag": "1440x900",
+      "tab": "favorites",
+      "count": 14,
+      "failures": []
+    },
+    {
+      "tag": "390x844",
+      "tab": "history",
+      "count": 24,
+      "failures": []
+    },
+    {
+      "tag": "390x844",
+      "tab": "gallery",
+      "count": 26,
+      "failures": []
+    },
+    {
+      "tag": "390x844",
+      "tab": "favorites",
+      "count": 14,
+      "failures": []
+    }
+  ],
+  "textContrast": [
+    {
+      "name": "Ready chip",
+      "fg": "#1d6b45",
+      "bg": "#dff1e6",
+      "ratio": 5.51
+    },
+    {
+      "name": "Failed chip",
+      "fg": "#a1262b",
+      "bg": "#fbdede",
+      "ratio": 5.87
+    },
+    {
+      "name": "Generating chip",
+      "fg": "#7a5a12",
+      "bg": "#f6ecc9",
+      "ratio": 5.38
+    },
+    {
+      "name": "Failed reason on card",
+      "fg": "#a1262b",
+      "bg": "#fdfaf5",
+      "ratio": 7.13
+    },
+    {
+      "name": "Muted text on card",
+      "fg": "#5f4c3f",
+      "bg": "#fdfaf5",
+      "ratio": 7.78
+    },
+    {
+      "name": "Prompt text",
+      "fg": "#2c1810",
+      "bg": "#fdfaf5",
+      "ratio": 16.2
+    },
+    {
+      "name": "Selected tab",
+      "fg": "#fdfaf5",
+      "bg": "#2c1810",
+      "ratio": 16.2
+    },
+    {
+      "name": "Tab count (selected)",
+      "fg": "#ffffff",
+      "bg": "#5a4b45",
+      "ratio": 8.31
+    },
+    {
+      "name": "Tab count (idle)",
+      "fg": "#2c1810",
+      "bg": "#e6dccd",
+      "ratio": 12.43
+    },
+    {
+      "name": "Idle tab",
+      "fg": "#5f4c3f",
+      "bg": "#fdfaf5",
+      "ratio": 7.78
+    },
+    {
+      "name": "Filter chip idle",
+      "fg": "#5f4c3f",
+      "bg": "#fdfaf5",
+      "ratio": 7.78
+    },
+    {
+      "name": "Day heading",
+      "fg": "#5f4c3f",
+      "bg": "#f5f0e8",
+      "ratio": 7.14
+    },
+    {
+      "name": "CUSTOM DESIGN tag",
+      "fg": "#ffffff",
+      "bg": "#2a1812",
+      "ratio": 16.97
+    },
+    {
+      "name": "Saved bookmark icon on dark",
+      "fg": "#e9b75a",
+      "bg": "#2c1810",
+      "ratio": 9.14
+    }
+  ]
+}
