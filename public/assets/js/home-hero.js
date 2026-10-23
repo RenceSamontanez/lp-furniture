@@ -1,5 +1,5 @@
 /* Home hero rails: a rail only loops when one copy of its list is taller than the rail; otherwise it stands still
-   (the clones are hidden by CSS through .is-static). Runs only where the rails are visible (>= 1100px). */
+   (the clones are hidden by CSS through .is-static). Phones show the rails as a sideways swipe, where the loop is switched off by CSS. */
 (function () {
   var rails = document.querySelectorAll('.lp-rail');
   if (!rails.length) return;

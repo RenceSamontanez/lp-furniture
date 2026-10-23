@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════════════════
-   Home page hero: copy + buttons (all sizes), AI Showcase card and two product rails (desktop >= 1100px only).
+   Home page hero: copy + buttons, AI Showcase card and two product rails (equal-height panels; phones stack them).
    Markup: resources/views/partials/home-hero.blade.php. Rails behaviour: assets/js/home-hero.js.
    The rotating background photos and their script (.hero-v2-slide, main.js) are untouched.
    The glass nav floats over the top of the hero, so the hero is pulled up by --sn-flow (see site-nav.css).
@@ -25,12 +25,11 @@
 
 .lp-hero__stage {
   position: relative; z-index: 2; flex: 1; min-height: 0;
-  display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr);
-  align-items: end;
+  display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; align-content: end; align-items: start; row-gap: 28px;
   padding: calc(var(--sn-flow, 76px) + clamp(32px, 8vh, 96px)) clamp(16px, 4vw, 56px) 44px;
 }
 
-.lp-hero .hero-v2-content.lp-hero__copy { align-self: end; max-width: 640px; padding: 0; animation: heroFadeUp .9s ease both; }
+.lp-hero .hero-v2-content.lp-hero__copy { max-width: 640px; padding: 0; animation: heroFadeUp .9s ease both; }
 .lp-hero .hero-v2-tag { font-size: .74rem; letter-spacing: .2em; font-weight: 600; color: var(--lp-gold-2); margin: 0 0 18px; }
 .lp-hero .hero-v2-title { font-size: clamp(2.3rem, 4.2vw, 3.7rem); line-height: 1.1; margin: 0 0 18px; }
 .lp-hero .hero-v2-sub { font-size: 1.04rem; line-height: 1.65; color: #EADCC3; max-width: 46ch; margin: 0 0 28px; }
@@ -42,27 +41,36 @@
 .lp-hero .lp-hero__cta.lp-btn--glass-primary { box-shadow: 0 12px 24px -10px rgba(217, 164, 65, .9), inset 0 1px 0 rgba(255, 255, 255, .5); }
 .lp-hero .lp-hero__cta.lp-btn--glass-outline .lp-btn-icon { color: var(--lp-gold); }
 
-/* desktop-only block: not rendered (and its lazy images not fetched) below 1100px */
-.lp-hero__desk { display: none; }
+/* The three panels (AI Showcase + two rails) share one grid, so they always start and end at the same height.
+   Under 1100px the copy stacks above them (640px tall); on phones they stack too (see the end of this file). */
+.lp-hero__desk {
+  display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr); gap: 12px; height: 640px; min-width: 0;
+}
+.lp-rails { display: contents; }
 
 @media (min-width: 1100px) {
-  .lp-hero__stage {
-    grid-template-columns: minmax(440px, .9fr) minmax(250px, 1.1fr) auto;
-    gap: clamp(12px, 1.6vw, 24px); align-items: stretch;
-    padding: calc(var(--sn-flow, 76px) + 14px) clamp(12px, 1.6vw, 24px) 24px clamp(16px, 3.5vw, 56px);
+  .lp-hero {
+    /* about 820px on a 1080p screen, scaled with the viewport, never under 560px */
+    --lp-panel-h: min(820px, max(560px, calc(100vh - 150px)));
   }
-  .lp-hero .hero-v2-content.lp-hero__copy { align-self: center; }
-  .lp-hero__desk { display: contents; }
-  /* a fixed height (not min-height) so the card and the rails are sized by the screen, never by their content */
+  .lp-hero__stage {
+    grid-template-columns: minmax(380px, .8fr) minmax(0, 1.6fr); grid-template-rows: auto; align-content: start; align-items: start;
+    column-gap: clamp(24px, 2.6vw, 36px);
+    padding: calc(var(--sn-flow, 76px) + 14px) clamp(16px, 2.6vw, 48px) 24px;
+  }
+  .lp-hero .hero-v2-content.lp-hero__copy { height: var(--lp-panel-h); display: flex; flex-direction: column; justify-content: center; }
+  .lp-hero__desk { height: var(--lp-panel-h); }
+  /* a fixed height (not min-height) so the panels are sized by the screen, never by their content */
   .hero-v2.lp-hero { height: max(640px, 100vh); min-height: 0; }
+}
+@media (min-width: 1280px) {
+  .lp-hero__stage { grid-template-columns: minmax(380px, 1fr) minmax(0, 1.75fr); }
+  .lp-hero__desk { grid-template-columns: minmax(0, 2.3fr) minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
 }
 @media (min-width: 1100px) and (max-width: 1500px) {
   .lp-hero .lp-hero__cta { padding: 0 13px; font-size: .86rem; gap: 6px; }
   .lp-hero .hero-v2-actions.lp-hero__ctas { gap: 8px; }
   .lp-hero .hero-v2-title { font-size: clamp(2.3rem, 3.6vw, 3.1rem); }
-}
-@media (min-width: 1100px) and (max-width: 1279px) {
-  .lp-hero__stage { grid-template-columns: minmax(440px, 1fr) minmax(240px, .9fr) auto; }
 }
 
 @media (max-width: 720px) {
@@ -78,7 +86,7 @@
 /* ===== AI Showcase card ===== */
 .lp-ai {
   position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden;
-  justify-self: end; width: 100%; max-width: 760px; padding: 18px; border-radius: 26px;
+  width: 100%; padding: 18px; border-radius: 26px;
   background: var(--lp-glass); border: 1px solid var(--lp-line);
   -webkit-backdrop-filter: blur(14px) saturate(1.2); backdrop-filter: blur(14px) saturate(1.2);
   box-shadow: 0 24px 50px -24px rgba(0, 0, 0, .8), 0 0 0 1px rgba(217, 164, 65, .12), 0 0 60px -20px rgba(217, 164, 65, .35);
@@ -117,14 +125,9 @@
 .lp-ai .lp-ai__link:hover, .lp-ai .lp-ai__link:focus { color: #fff; border-bottom-color: var(--lp-gold-2); }
 .lp-ai__link svg { width: 14px; height: 14px; }
 
-/* ===== product rails ===== */
-.lp-rails {
-  display: flex; gap: clamp(10px, 1vw, 14px); min-height: 0; overflow: hidden;
-  /* keeps Luma's launcher (bottom right, 24px + 64px + her "Ask Luma" label) clear of the last cards */
-  margin-bottom: 96px;
-}
+/* ===== product rails (each .lp-rail is a direct grid item of .lp-hero__desk; .lp-rails is display: contents) ===== */
 .lp-rail {
-  min-height: 0; width: clamp(140px, 12.6vw, 190px); display: flex; flex-direction: column; overflow: hidden;
+  min-height: 0; min-width: 0; display: flex; flex-direction: column; overflow: hidden;
   border-radius: 22px; background: var(--lp-glass-2); border: 1px solid var(--lp-line);
   -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
 }
@@ -175,4 +178,16 @@
   .lp-rail__view { overflow-y: auto; }
   .lp-hero .hero-v2-content.lp-hero__copy { animation: none; }
   .lp-hero .lp-hero__cta:hover, .lp-ai__tile:hover, .lp-hero a.lp-pc:hover { transform: none; }
+}
+
+/* ===== phones: the three panels stack, each rail swipes sideways ===== */
+@media (max-width: 859px) {
+  .lp-hero__desk { grid-template-columns: minmax(0, 1fr); height: auto; }
+  .lp-ai { height: auto; }
+  .lp-ai__grid { grid-template-rows: none; grid-auto-rows: 150px; }
+  .lp-rail { height: auto; }
+  .lp-rail__view { flex: none; overflow: visible; -webkit-mask-image: none; mask-image: none; }
+  .lp-rail .lp-rail__track { display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 4px; animation: none !important; transform: none; }
+  .lp-rail .lp-rail__track > li { flex: 0 0 min(70%, 230px); scroll-snap-align: start; }
+  .lp-rail .is-clone { display: none; }
 }
