@@ -51,7 +51,7 @@
 @media (min-width: 1100px) {
   .lp-hero {
     /* about 820px on a 1080p screen, scaled with the viewport, never under 560px */
-    --lp-panel-h: min(820px, max(560px, calc(100vh - 150px)));
+    --lp-panel-h: min(820px, max(560px, calc(100vh - 187px)));
   }
   .lp-hero__stage {
     grid-template-columns: minmax(380px, .8fr) minmax(0, 1.6fr); grid-template-rows: auto; align-content: start; align-items: start;
