@@ -15,7 +15,7 @@
       </div>
 
       <div>
-        <div class="md-cap">AI DESIGN</div>
+        <div class="md-cap">CUSTOM DESIGN</div>
         <h2 class="md-modal-name" id="md-modal-name">Design</h2>
       </div>
 

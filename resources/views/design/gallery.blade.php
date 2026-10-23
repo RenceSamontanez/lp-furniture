@@ -142,7 +142,7 @@
               <button type="button" class="md-thumb-btn js-open-design" data-design="{{ $payload }}" aria-label="Open preview: {{ $req->designName() }}">
                 <img src="{{ $s->displayUrl() }}" alt="" loading="lazy" onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
               </button>
-              <span class="md-ai-tag">AI DESIGN</span>
+              <span class="md-ai-tag">CUSTOM DESIGN</span>
               <button type="button" class="md-fav js-save-heart {{ $s->is_favorited ? 'saved' : '' }}" data-suggestion-id="{{ $s->id }}"
                       aria-pressed="{{ $s->is_favorited ? 'true' : 'false' }}" aria-label="{{ $s->is_favorited ? 'Remove from favorites' : 'Save to favorites' }}"
                       @if($tab === 'favorites') data-remove-card @endif>
