@@ -146,6 +146,32 @@ class CustomDesignRequest extends Model
         return $this->suggestions->filter(fn (AiDesignSuggestion $s) => $s->isLoadable());
     }
 
+    // Requests that have at least one stored generated image (a cheap pre-filter; hasLoadableSuggestion() still decides "ready").
+    public function scopeWithGeneratedImage($query)
+    {
+        return $query->whereHas('suggestions', fn ($q) => $q->where('image_path', 'like', '%images/ai-designs/%'));
+    }
+
+    /**
+     * A customer's newest successfully generated designs, newest first, for the Recent strip on the Customize page.
+     * Two queries in total (the requests, then all their suggestions), never one per thumbnail.
+     *
+     * @return \Illuminate\Support\Collection<int, array{request: self, suggestion: AiDesignSuggestion}>
+     */
+    public static function recentReadyFor(int $userId, int $limit = 3)
+    {
+        return static::where('user_id', $userId)
+            ->withGeneratedImage()
+            ->with('suggestions')
+            ->latest()->latest('id')
+            ->limit($limit * 4)   // spare rows: a stored path whose file is gone is not "ready"
+            ->get()
+            ->map(fn (self $r) => ['request' => $r, 'suggestion' => $r->designState() === 'ready' ? $r->representativeSuggestion() : null])
+            ->filter(fn ($e) => $e['suggestion'] !== null)
+            ->take($limit)
+            ->values();
+    }
+
     public static function failureReasonLabels(): array
     {
         return [

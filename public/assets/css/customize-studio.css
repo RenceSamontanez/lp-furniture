@@ -204,8 +204,10 @@ select.cz-field { padding-right: 8px; }
 .cz-bd { max-width: 48ch; color: #f0e2cb; line-height: 1.55; font-size: 15px; margin: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
 .cz-bd--empty { color: #d6c4aa; }
 .cz-film { display: flex; gap: 10px; margin-top: 12px; align-items: center; flex: none; flex-wrap: wrap; padding-right: 84px; }
+.cz-viewall { flex: none; }
+.cz-history .lp-btn-icon { flex: none; }
 .cz-film .cz-cap { font-size: 11.5px; letter-spacing: .1em; font-weight: 700; color: #d6c4aa; margin: 0 4px 0 0; }
-.cz-f { width: 52px; height: 52px; border-radius: 13px; border: 2px solid rgba(255,235,205,.35); position: relative; overflow: hidden; background: #5a3a26; display: block; }
+.cz-f { width: 52px; height: 52px; padding: 0; cursor: pointer; border-radius: 13px; border: 2px solid rgba(255,235,205,.35); position: relative; overflow: hidden; background: #3a251b; color: #ffffff; display: block; flex: none; }
 .cz-f:hover { border-color: #e3b24f; }
 .cz-f img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .cz-film-empty, .cz-limit { font-size: 13px; color: #e6d6bd; }
@@ -256,7 +258,7 @@ select.cz-field { padding-right: 8px; }
   .cz-ring { display: none; }
   .cz-bt { font-size: 26px; }
   .cz-film { padding-right: 0; margin-top: 6px; }
-  .cz-f, .cz-film .cz-cap, .cz-film-empty { display: none; }
+  .cz-f { width: 44px; height: 44px; }
   .cz-bd { -webkit-line-clamp: 2; font-size: 14px; }
   .cz-tiles { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 92px; grid-template-rows: none; }
   .cz-woods { grid-template-columns: 1fr 1fr; max-height: none; grid-auto-rows: 130px; }
@@ -280,6 +282,8 @@ select.cz-field { padding-right: 8px; }
   .cz-need { order: -1; flex-basis: 100%; }
   .cz-foot .lp-btn { flex: 1; }
   .cz-pills .lp-btn--chip { min-height: 44px; }
+  .cz-history { width: 44px; padding: 0; }
+  .cz-history-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .cz-chips .lp-btn--chip, .cz-sug .lp-btn--chip { min-height: 44px; }
 }
 

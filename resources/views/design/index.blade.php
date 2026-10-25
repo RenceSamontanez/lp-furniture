@@ -28,11 +28,7 @@
   }
   $errorStep = collect($stepErrors)->filter()->keys()->first();
 
-  // up to three recent designs with a picture, newest first
-  $recent = collect();
-  if ($latestImage) { $recent->push(['request' => $latestWithImages, 'image' => $latestImage]); }
-  foreach ($historyThumbs as $entry) { $recent->push($entry); }
-  $recent = $recent->take(3);
+  $recent = $recentReady;
 
   $studioData = [
     'icons'      => $icons,
@@ -49,6 +45,7 @@
 
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/guide.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/my-designs.css') }}"/>
   <link rel="stylesheet" href="{{ $ver('assets/css/customize-studio.css') }}"/>
 @endpush
 
@@ -65,7 +62,12 @@
         </div>
         <div class="cz-pills">
           <a href="{{ route('home') }}" class="lp-btn lp-btn--secondary lp-btn--chip">&larr; Back</a>
-          <a href="{{ route('design.gallery', ['tab' => 'history']) }}" class="lp-btn lp-btn--secondary lp-btn--chip">My Designs</a>
+          @auth
+            <a href="{{ route('design.gallery', ['tab' => 'history']) }}" class="lp-btn lp-btn--secondary lp-btn--chip cz-history">
+              <svg class="lp-btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span class="cz-history-t">History</span>
+            </a>
+          @endauth
           <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" data-lp-modal-open="cz-howitworks">? How it works</button>
         </div>
       </div>
@@ -278,15 +280,21 @@
         <div class="cz-tags" id="cz-tags"></div>
         <p class="cz-bd cz-bd--empty" id="cz-bd">Start by choosing a furniture type on the left. Everything you pick shows up here.</p>
       </div>
-      <div class="cz-film">
+      @auth
+      <div class="cz-film" aria-label="Your recent designs">
         <span class="cz-cap">RECENT</span>
         @forelse($recent as $entry)
-          <a class="cz-f" href="{{ route('design.show', $entry['request']->id) }}" aria-label="Open your design from {{ $entry['request']->created_at->format('M j') }}">
-            <img src="{{ $entry['image']->displayUrl() }}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'"/>
-          </a>
+          @php $req = $entry['request']; $when = $req->created_at->format('M j, Y, g:i A'); @endphp
+          <button type="button" class="cz-f js-open-design" data-design="{{ json_encode($req->previewPayload($entry['suggestion'])) }}"
+                  aria-label="Open design: {{ $req->designName() }}, made {{ $when }}" title="{{ $when }}">
+            <img src="{{ $entry['suggestion']->displayUrl() }}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'"/>
+          </button>
         @empty
-          <span class="cz-film-empty">Your first design will show here.</span>
+          <span class="cz-film-empty">Your first designs will appear here</span>
         @endforelse
+        @if($recent->isNotEmpty())
+          <a href="{{ route('design.gallery', ['tab' => 'gallery']) }}" class="lp-btn lp-btn--glass-quiet lp-btn--chip cz-viewall">View all</a>
+        @endif
         <span class="cz-limit">
           @if($outOfDesigns)
             You have used all {{ $dailyLimit }} designs for today. The limit resets at midnight.
@@ -295,6 +303,7 @@
           @endif
         </span>
       </div>
+      @endauth
     </section>
 
   </div>
@@ -314,6 +323,11 @@
     </x-slot:footer>
   </x-modal>
 </div>
+
+@auth
+  @include('design._preview_modal')
+  @include('design._favorite_js')
+@endauth
 
 <script type="application/json" id="cz-data">{!! json_encode($studioData, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
 @endsection

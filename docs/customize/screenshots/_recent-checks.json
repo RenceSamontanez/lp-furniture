@@ -1,0 +1,585 @@
+{
+  "checks": [
+    {
+      "name": "with-designs 1366x768: strip on one line, inside the stage",
+      "ok": true,
+      "detail": {
+        "vh": 768,
+        "czBottom": 768,
+        "footBottom": 737,
+        "filmInside": true,
+        "oneLine": true,
+        "thumbs": 3,
+        "viewAll": true,
+        "empty": null,
+        "thumbSize": 52,
+        "historyHref": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "historyW": 92,
+        "historyH": 32,
+        "historyText": "History",
+        "historyHasIcon": true,
+        "viewAllHref": "http://127.0.0.1:8011/design-gallery?tab=gallery",
+        "hOverflow": 0
+      }
+    },
+    {
+      "name": "with-designs 1366x768: one-screen fit unchanged",
+      "ok": true,
+      "detail": {
+        "czBottom": 768,
+        "vh": 768,
+        "footBottom": 737
+      }
+    },
+    {
+      "name": "with-designs 1366x768: no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "with-designs 1366x768: History button, clock icon, Customer-only, right tab",
+      "ok": true,
+      "detail": {
+        "href": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "text": "History",
+        "w": 92,
+        "h": 32
+      }
+    },
+    {
+      "name": "with-designs 1366x768: three thumbnails and View all -> Gallery tab",
+      "ok": true,
+      "detail": {
+        "thumbs": 3,
+        "href": "http://127.0.0.1:8011/design-gallery?tab=gallery"
+      }
+    },
+    {
+      "name": "with-designs 1366x768: button contrast (measure.js)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "with-designs 1440x900: strip on one line, inside the stage",
+      "ok": true,
+      "detail": {
+        "vh": 900,
+        "czBottom": 900,
+        "footBottom": 865,
+        "filmInside": true,
+        "oneLine": true,
+        "thumbs": 3,
+        "viewAll": true,
+        "empty": null,
+        "thumbSize": 52,
+        "historyHref": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "historyW": 92,
+        "historyH": 32,
+        "historyText": "History",
+        "historyHasIcon": true,
+        "viewAllHref": "http://127.0.0.1:8011/design-gallery?tab=gallery",
+        "hOverflow": 0
+      }
+    },
+    {
+      "name": "with-designs 1440x900: one-screen fit unchanged",
+      "ok": true,
+      "detail": {
+        "czBottom": 900,
+        "vh": 900,
+        "footBottom": 865
+      }
+    },
+    {
+      "name": "with-designs 1440x900: no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "with-designs 1440x900: History button, clock icon, Customer-only, right tab",
+      "ok": true,
+      "detail": {
+        "href": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "text": "History",
+        "w": 92,
+        "h": 32
+      }
+    },
+    {
+      "name": "with-designs 1440x900: three thumbnails and View all -> Gallery tab",
+      "ok": true,
+      "detail": {
+        "thumbs": 3,
+        "href": "http://127.0.0.1:8011/design-gallery?tab=gallery"
+      }
+    },
+    {
+      "name": "with-designs 1440x900: button contrast (measure.js)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "with-designs 1920x1080: strip on one line, inside the stage",
+      "ok": true,
+      "detail": {
+        "vh": 1080,
+        "czBottom": 1080,
+        "footBottom": 1045,
+        "filmInside": true,
+        "oneLine": true,
+        "thumbs": 3,
+        "viewAll": true,
+        "empty": null,
+        "thumbSize": 52,
+        "historyHref": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "historyW": 92,
+        "historyH": 32,
+        "historyText": "History",
+        "historyHasIcon": true,
+        "viewAllHref": "http://127.0.0.1:8011/design-gallery?tab=gallery",
+        "hOverflow": 0
+      }
+    },
+    {
+      "name": "with-designs 1920x1080: one-screen fit unchanged",
+      "ok": true,
+      "detail": {
+        "czBottom": 1080,
+        "vh": 1080,
+        "footBottom": 1045
+      }
+    },
+    {
+      "name": "with-designs 1920x1080: no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "with-designs 1920x1080: History button, clock icon, Customer-only, right tab",
+      "ok": true,
+      "detail": {
+        "href": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "text": "History",
+        "w": 92,
+        "h": 32
+      }
+    },
+    {
+      "name": "with-designs 1920x1080: three thumbnails and View all -> Gallery tab",
+      "ok": true,
+      "detail": {
+        "thumbs": 3,
+        "href": "http://127.0.0.1:8011/design-gallery?tab=gallery"
+      }
+    },
+    {
+      "name": "with-designs 1920x1080: button contrast (measure.js)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "with-designs 390x844: strip on one line, inside the stage",
+      "ok": true,
+      "detail": {
+        "vh": 844,
+        "czBottom": 1196,
+        "footBottom": 1167,
+        "filmInside": true,
+        "oneLine": true,
+        "thumbs": 3,
+        "viewAll": true,
+        "empty": null,
+        "thumbSize": 44,
+        "historyHref": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "historyW": 44,
+        "historyH": 44,
+        "historyText": "History",
+        "historyHasIcon": true,
+        "viewAllHref": "http://127.0.0.1:8011/design-gallery?tab=gallery",
+        "hOverflow": 0
+      }
+    },
+    {
+      "name": "with-designs 390x844: no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "with-designs 390x844: History button, clock icon, Customer-only, right tab",
+      "ok": true,
+      "detail": {
+        "href": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "text": "History",
+        "w": 44,
+        "h": 44
+      }
+    },
+    {
+      "name": "with-designs 390x844: three thumbnails and View all -> Gallery tab",
+      "ok": true,
+      "detail": {
+        "thumbs": 3,
+        "href": "http://127.0.0.1:8011/design-gallery?tab=gallery"
+      }
+    },
+    {
+      "name": "with-designs 390x844: phone thumbnails are 44px",
+      "ok": true,
+      "detail": 44
+    },
+    {
+      "name": "with-designs 390x844: History collapses to the icon with an accessible label",
+      "ok": true,
+      "detail": {
+        "vh": 844,
+        "czBottom": 1196,
+        "footBottom": 1167,
+        "filmInside": true,
+        "oneLine": true,
+        "thumbs": 3,
+        "viewAll": true,
+        "empty": null,
+        "thumbSize": 44,
+        "historyHref": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "historyW": 44,
+        "historyH": 44,
+        "historyText": "History",
+        "historyHasIcon": true,
+        "viewAllHref": "http://127.0.0.1:8011/design-gallery?tab=gallery",
+        "hOverflow": 0
+      }
+    },
+    {
+      "name": "with-designs 390x844: button contrast (measure.js)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no-designs 1366x768: strip on one line, inside the stage",
+      "ok": true,
+      "detail": {
+        "vh": 768,
+        "czBottom": 768,
+        "footBottom": 737,
+        "filmInside": true,
+        "oneLine": true,
+        "thumbs": 0,
+        "viewAll": false,
+        "empty": "Your first designs will appear here",
+        "thumbSize": null,
+        "historyHref": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "historyW": 92,
+        "historyH": 32,
+        "historyText": "History",
+        "historyHasIcon": true,
+        "viewAllHref": null,
+        "hOverflow": 0
+      }
+    },
+    {
+      "name": "no-designs 1366x768: one-screen fit unchanged",
+      "ok": true,
+      "detail": {
+        "czBottom": 768,
+        "vh": 768,
+        "footBottom": 737
+      }
+    },
+    {
+      "name": "no-designs 1366x768: no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "no-designs 1366x768: History button, clock icon, Customer-only, right tab",
+      "ok": true,
+      "detail": {
+        "href": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "text": "History",
+        "w": 92,
+        "h": 32
+      }
+    },
+    {
+      "name": "no-designs 1366x768: quiet empty line, no View all",
+      "ok": true,
+      "detail": {
+        "vh": 768,
+        "czBottom": 768,
+        "footBottom": 737,
+        "filmInside": true,
+        "oneLine": true,
+        "thumbs": 0,
+        "viewAll": false,
+        "empty": "Your first designs will appear here",
+        "thumbSize": null,
+        "historyHref": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "historyW": 92,
+        "historyH": 32,
+        "historyText": "History",
+        "historyHasIcon": true,
+        "viewAllHref": null,
+        "hOverflow": 0
+      }
+    },
+    {
+      "name": "no-designs 1366x768: button contrast (measure.js)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no-designs 1440x900: strip on one line, inside the stage",
+      "ok": true,
+      "detail": {
+        "vh": 900,
+        "czBottom": 900,
+        "footBottom": 865,
+        "filmInside": true,
+        "oneLine": true,
+        "thumbs": 0,
+        "viewAll": false,
+        "empty": "Your first designs will appear here",
+        "thumbSize": null,
+        "historyHref": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "historyW": 92,
+        "historyH": 32,
+        "historyText": "History",
+        "historyHasIcon": true,
+        "viewAllHref": null,
+        "hOverflow": 0
+      }
+    },
+    {
+      "name": "no-designs 1440x900: one-screen fit unchanged",
+      "ok": true,
+      "detail": {
+        "czBottom": 900,
+        "vh": 900,
+        "footBottom": 865
+      }
+    },
+    {
+      "name": "no-designs 1440x900: no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "no-designs 1440x900: History button, clock icon, Customer-only, right tab",
+      "ok": true,
+      "detail": {
+        "href": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "text": "History",
+        "w": 92,
+        "h": 32
+      }
+    },
+    {
+      "name": "no-designs 1440x900: quiet empty line, no View all",
+      "ok": true,
+      "detail": {
+        "vh": 900,
+        "czBottom": 900,
+        "footBottom": 865,
+        "filmInside": true,
+        "oneLine": true,
+        "thumbs": 0,
+        "viewAll": false,
+        "empty": "Your first designs will appear here",
+        "thumbSize": null,
+        "historyHref": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "historyW": 92,
+        "historyH": 32,
+        "historyText": "History",
+        "historyHasIcon": true,
+        "viewAllHref": null,
+        "hOverflow": 0
+      }
+    },
+    {
+      "name": "no-designs 1440x900: button contrast (measure.js)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no-designs 1920x1080: strip on one line, inside the stage",
+      "ok": true,
+      "detail": {
+        "vh": 1080,
+        "czBottom": 1080,
+        "footBottom": 1045,
+        "filmInside": true,
+        "oneLine": true,
+        "thumbs": 0,
+        "viewAll": false,
+        "empty": "Your first designs will appear here",
+        "thumbSize": null,
+        "historyHref": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "historyW": 92,
+        "historyH": 32,
+        "historyText": "History",
+        "historyHasIcon": true,
+        "viewAllHref": null,
+        "hOverflow": 0
+      }
+    },
+    {
+      "name": "no-designs 1920x1080: one-screen fit unchanged",
+      "ok": true,
+      "detail": {
+        "czBottom": 1080,
+        "vh": 1080,
+        "footBottom": 1045
+      }
+    },
+    {
+      "name": "no-designs 1920x1080: no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "no-designs 1920x1080: History button, clock icon, Customer-only, right tab",
+      "ok": true,
+      "detail": {
+        "href": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "text": "History",
+        "w": 92,
+        "h": 32
+      }
+    },
+    {
+      "name": "no-designs 1920x1080: quiet empty line, no View all",
+      "ok": true,
+      "detail": {
+        "vh": 1080,
+        "czBottom": 1080,
+        "footBottom": 1045,
+        "filmInside": true,
+        "oneLine": true,
+        "thumbs": 0,
+        "viewAll": false,
+        "empty": "Your first designs will appear here",
+        "thumbSize": null,
+        "historyHref": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "historyW": 92,
+        "historyH": 32,
+        "historyText": "History",
+        "historyHasIcon": true,
+        "viewAllHref": null,
+        "hOverflow": 0
+      }
+    },
+    {
+      "name": "no-designs 1920x1080: button contrast (measure.js)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no-designs 390x844: strip on one line, inside the stage",
+      "ok": true,
+      "detail": {
+        "vh": 844,
+        "czBottom": 1169,
+        "footBottom": 1140,
+        "filmInside": true,
+        "oneLine": true,
+        "thumbs": 0,
+        "viewAll": false,
+        "empty": "Your first designs will appear here",
+        "thumbSize": null,
+        "historyHref": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "historyW": 44,
+        "historyH": 44,
+        "historyText": "History",
+        "historyHasIcon": true,
+        "viewAllHref": null,
+        "hOverflow": 0
+      }
+    },
+    {
+      "name": "no-designs 390x844: no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "no-designs 390x844: History button, clock icon, Customer-only, right tab",
+      "ok": true,
+      "detail": {
+        "href": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "text": "History",
+        "w": 44,
+        "h": 44
+      }
+    },
+    {
+      "name": "no-designs 390x844: quiet empty line, no View all",
+      "ok": true,
+      "detail": {
+        "vh": 844,
+        "czBottom": 1169,
+        "footBottom": 1140,
+        "filmInside": true,
+        "oneLine": true,
+        "thumbs": 0,
+        "viewAll": false,
+        "empty": "Your first designs will appear here",
+        "thumbSize": null,
+        "historyHref": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "historyW": 44,
+        "historyH": 44,
+        "historyText": "History",
+        "historyHasIcon": true,
+        "viewAllHref": null,
+        "hOverflow": 0
+      }
+    },
+    {
+      "name": "no-designs 390x844: History collapses to the icon with an accessible label",
+      "ok": true,
+      "detail": {
+        "vh": 844,
+        "czBottom": 1169,
+        "footBottom": 1140,
+        "filmInside": true,
+        "oneLine": true,
+        "thumbs": 0,
+        "viewAll": false,
+        "empty": "Your first designs will appear here",
+        "thumbSize": null,
+        "historyHref": "http://127.0.0.1:8011/design-gallery?tab=history",
+        "historyW": 44,
+        "historyH": 44,
+        "historyText": "History",
+        "historyHasIcon": true,
+        "viewAllHref": null,
+        "hOverflow": 0
+      }
+    },
+    {
+      "name": "no-designs 390x844: button contrast (measure.js)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "thumbnail opens the shared glass preview box with image, name and one primary action",
+      "ok": true,
+      "detail": {
+        "open": true,
+        "img": "http://127.0.0.1:8011/images/ai-designs/ai-design-backfill-A1tfDyVFVX5CJ317.jpg",
+        "name": "Create a modern entertainment center made from…",
+        "chip": "✓ Ready",
+        "primary": [
+          "Order this design"
+        ],
+        "navHidden": "visible"
+      }
+    },
+    {
+      "name": "Escape closes it and focus returns to the thumbnail",
+      "ok": true
+    },
+    {
+      "name": "thumbnail focus ring is visible after keyboard use",
+      "ok": true,
+      "detail": "solid 3px"
+    },
+    {
+      "name": "a design already sent to the team shows the concept action instead of Order",
+      "ok": true,
+      "detail": [
+        "View concept"
+      ]
+    }
+  ]
+}

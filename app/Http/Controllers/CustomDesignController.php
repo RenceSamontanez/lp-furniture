@@ -96,6 +96,8 @@ class CustomDesignController extends Controller
         $dailyUsed  = $this->generationsUsedToday();
         $dailyLimit = self::DAILY_GENERATION_LIMIT;
 
+        $recentReady = CustomDesignRequest::recentReadyFor((int) Auth::id(), 3);
+
         // "Try again" on a failed history row links here with the
         // original prompt as a query string, prefilling the form
         // instead of resubmitting the dead request.
@@ -103,7 +105,7 @@ class CustomDesignController extends Controller
 
         return view('design.index', compact(
             'myRequests', 'latestWithImages', 'latestImage', 'historyThumbs', 'totalWithImages',
-            'dailyUsed', 'dailyLimit', 'prefillPrompt'
+            'dailyUsed', 'dailyLimit', 'prefillPrompt', 'recentReady'
         ));
     }
 

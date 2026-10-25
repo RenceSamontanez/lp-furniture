@@ -156,7 +156,7 @@
     {
       "name": "1366x768: studio buttons found by the audit",
       "ok": true,
-      "detail": 17
+      "detail": 21
     },
     {
       "name": "1440x900: studio starts right under the nav and ends at the bottom of the screen",
@@ -314,7 +314,7 @@
     {
       "name": "1440x900: studio buttons found by the audit",
       "ok": true,
-      "detail": 17
+      "detail": 21
     },
     {
       "name": "1920x1080: studio starts right under the nav and ends at the bottom of the screen",
@@ -472,14 +472,14 @@
     {
       "name": "1920x1080: studio buttons found by the audit",
       "ok": true,
-      "detail": 17
+      "detail": 21
     },
     {
       "name": "390: no horizontal overflow, page scrolls normally",
       "ok": true,
       "detail": {
         "hOverflow": 0,
-        "czHeight": 1066,
+        "czHeight": 1120,
         "vh": 844
       }
     },
@@ -650,17 +650,17 @@
   "buttons": [
     {
       "tag": "1366x768",
-      "count": 17,
+      "count": 21,
       "failures": []
     },
     {
       "tag": "1440x900",
-      "count": 17,
+      "count": 21,
       "failures": []
     },
     {
       "tag": "1920x1080",
-      "count": 17,
+      "count": 21,
       "failures": []
     }
   ],
