@@ -1,0 +1,675 @@
+{
+  "checks": [
+    {
+      "name": "1366x768: studio starts right under the nav and ends at the bottom of the screen",
+      "ok": true,
+      "detail": {
+        "vh": 768,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 768,
+        "czHeight": 692,
+        "footBottom": 737,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1523,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1366x768: no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "1366x768 step 1: fits, nothing scrolls",
+      "ok": true,
+      "detail": {
+        "vh": 768,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 768,
+        "czHeight": 692,
+        "footBottom": 737,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1523,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1366x768 step 1 (Something else open, note shown): fits",
+      "ok": true,
+      "detail": {
+        "vh": 768,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 768,
+        "czHeight": 692,
+        "footBottom": 737,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1523,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1366x768 step 2: fits",
+      "ok": true,
+      "detail": {
+        "vh": 768,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 768,
+        "czHeight": 692,
+        "footBottom": 737,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1523,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1366x768 step 2 (Other wood open, options and note shown): fits",
+      "ok": true,
+      "detail": {
+        "vh": 768,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 768,
+        "czHeight": 692,
+        "footBottom": 737,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1523,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1366x768 step 3: fits",
+      "ok": true,
+      "detail": {
+        "vh": 768,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 768,
+        "czHeight": 692,
+        "footBottom": 737,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1523,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1366x768 step 4 (size): fits",
+      "ok": true,
+      "detail": {
+        "vh": 768,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 768,
+        "czHeight": 692,
+        "footBottom": 737,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1523,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1366x768 step 5 (describe): fits",
+      "ok": true,
+      "detail": {
+        "vh": 768,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 768,
+        "czHeight": 692,
+        "footBottom": 737,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1523,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1366x768: button contrast (measure.js)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "1366x768: studio buttons found by the audit",
+      "ok": true,
+      "detail": 17
+    },
+    {
+      "name": "1440x900: studio starts right under the nav and ends at the bottom of the screen",
+      "ok": true,
+      "detail": {
+        "vh": 900,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 900,
+        "czHeight": 824,
+        "footBottom": 865,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1664,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1440x900: no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "1440x900 step 1: fits, nothing scrolls",
+      "ok": true,
+      "detail": {
+        "vh": 900,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 900,
+        "czHeight": 824,
+        "footBottom": 865,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1664,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1440x900 step 1 (Something else open, note shown): fits",
+      "ok": true,
+      "detail": {
+        "vh": 900,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 900,
+        "czHeight": 824,
+        "footBottom": 865,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1664,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1440x900 step 2: fits",
+      "ok": true,
+      "detail": {
+        "vh": 900,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 900,
+        "czHeight": 824,
+        "footBottom": 865,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1664,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1440x900 step 2 (Other wood open, options and note shown): fits",
+      "ok": true,
+      "detail": {
+        "vh": 900,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 900,
+        "czHeight": 824,
+        "footBottom": 865,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1664,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1440x900 step 3: fits",
+      "ok": true,
+      "detail": {
+        "vh": 900,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 900,
+        "czHeight": 824,
+        "footBottom": 865,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1664,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1440x900 step 4 (size): fits",
+      "ok": true,
+      "detail": {
+        "vh": 900,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 900,
+        "czHeight": 824,
+        "footBottom": 865,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1664,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1440x900 step 5 (describe): fits",
+      "ok": true,
+      "detail": {
+        "vh": 900,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 900,
+        "czHeight": 824,
+        "footBottom": 865,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1664,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1440x900: button contrast (measure.js)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "1440x900: studio buttons found by the audit",
+      "ok": true,
+      "detail": 17
+    },
+    {
+      "name": "1920x1080: studio starts right under the nav and ends at the bottom of the screen",
+      "ok": true,
+      "detail": {
+        "vh": 1080,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 1080,
+        "czHeight": 1004,
+        "footBottom": 1045,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1890,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1920x1080: no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "1920x1080 step 1: fits, nothing scrolls",
+      "ok": true,
+      "detail": {
+        "vh": 1080,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 1080,
+        "czHeight": 1004,
+        "footBottom": 1045,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1890,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1920x1080 step 1 (Something else open, note shown): fits",
+      "ok": true,
+      "detail": {
+        "vh": 1080,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 1080,
+        "czHeight": 1004,
+        "footBottom": 1045,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1890,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1920x1080 step 2: fits",
+      "ok": true,
+      "detail": {
+        "vh": 1080,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 1080,
+        "czHeight": 1004,
+        "footBottom": 1045,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1890,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1920x1080 step 2 (Other wood open, options and note shown): fits",
+      "ok": true,
+      "detail": {
+        "vh": 1080,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 1080,
+        "czHeight": 1004,
+        "footBottom": 1045,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1890,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1920x1080 step 3: fits",
+      "ok": true,
+      "detail": {
+        "vh": 1080,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 1080,
+        "czHeight": 1004,
+        "footBottom": 1045,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1890,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1920x1080 step 4 (size): fits",
+      "ok": true,
+      "detail": {
+        "vh": 1080,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 1080,
+        "czHeight": 1004,
+        "footBottom": 1045,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1890,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1920x1080 step 5 (describe): fits",
+      "ok": true,
+      "detail": {
+        "vh": 1080,
+        "navBottom": 76,
+        "czTop": 76,
+        "czBottom": 1080,
+        "czHeight": 1004,
+        "footBottom": 1045,
+        "stageFilmInside": true,
+        "briefFits": true,
+        "docHeight": 1890,
+        "hOverflow": 0,
+        "innerScrollers": [],
+        "clipped": []
+      }
+    },
+    {
+      "name": "1920x1080: button contrast (measure.js)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "1920x1080: studio buttons found by the audit",
+      "ok": true,
+      "detail": 17
+    },
+    {
+      "name": "390: no horizontal overflow, page scrolls normally",
+      "ok": true,
+      "detail": {
+        "hOverflow": 0,
+        "czHeight": 1066,
+        "vh": 844
+      }
+    },
+    {
+      "name": "390: buttons are at least 44px (chips excepted)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "390: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "step 1 starts with Next disabled and a plain reason",
+      "ok": true,
+      "detail": {
+        "next": true,
+        "create": true,
+        "need": "Pick a furniture type to continue"
+      }
+    },
+    {
+      "name": "Something else opens the text box and blocks Next until typed",
+      "ok": true,
+      "detail": {
+        "next": true,
+        "open": true
+      }
+    },
+    {
+      "name": "a link in Something else is refused with a message",
+      "ok": true,
+      "detail": {
+        "next": true,
+        "msg": "Links and email addresses are not allowed here."
+      }
+    },
+    {
+      "name": "a plain name continues",
+      "ok": true
+    },
+    {
+      "name": "an answered entry is shown to the customer",
+      "ok": true,
+      "detail": "We have built this before\nWe build railings with solid wood posts. Our team will confirm the length and height by phone."
+    },
+    {
+      "name": "an unknown name shows the \"New to us\" note",
+      "ok": true,
+      "detail": "New to us\nWe have not built this often. We save your request so our team can prepare an answer, and they will confirm details by phone."
+    },
+    {
+      "name": "keyboard focus shows an outline on the tile",
+      "ok": true,
+      "detail": {
+        "outline": "solid 3px",
+        "focused": "furniture_type=Desk"
+      }
+    },
+    {
+      "name": "Other wood opens its panel and blocks Next",
+      "ok": true,
+      "detail": {
+        "next": true,
+        "open": true,
+        "need": "Type the wood you want"
+      }
+    },
+    {
+      "name": "after the name it still asks who supplies the wood",
+      "ok": true,
+      "detail": {
+        "next": true,
+        "need": "Choose who gets the wood"
+      }
+    },
+    {
+      "name": "after choosing, Next works",
+      "ok": true
+    },
+    {
+      "name": "an unknown wood shows the \"We will check this wood\" note",
+      "ok": true,
+      "detail": "We will check this wood\nWe usually build with Gmelina, Mahogany and Acacia. Our team will call you to confirm if we can get this wood."
+    },
+    {
+      "name": "a style can be picked",
+      "ok": true,
+      "detail": "Modern"
+    },
+    {
+      "name": "style cards carry the PLACEHOLDER mark",
+      "ok": true,
+      "detail": 5
+    },
+    {
+      "name": "a GIF renamed .jpg is refused by its content, with a message",
+      "ok": true,
+      "detail": {
+        "msg": "That file is not a JPG or PNG photo. Other types, like WebP or GIF, are not accepted.",
+        "kept": 0
+      }
+    },
+    {
+      "name": "a large PNG is resized to a JPEG under 5 MB and shown",
+      "ok": true,
+      "detail": {
+        "before": 128789,
+        "after": 151697,
+        "type": "image/jpeg",
+        "lab": "0.1 MB",
+        "tag": [
+          "Sofa",
+          "Teak",
+          "We buy the wood",
+          "Modern",
+          "Reference photo"
+        ]
+      }
+    },
+    {
+      "name": "Remove photo clears the file",
+      "ok": true
+    },
+    {
+      "name": "quick ideas follow the type and the style (Sofa + Modern)",
+      "ok": true,
+      "detail": [
+        "+ soft rounded cushions",
+        "+ solid wood legs",
+        "+ seats three people",
+        "+ clean straight legs",
+        "+ matte natural finish",
+        "+ thin edges"
+      ]
+    },
+    {
+      "name": "tapping an idea adds it to the description",
+      "ok": true,
+      "detail": "soft rounded cushions"
+    },
+    {
+      "name": "an email in the description blocks Create with a message",
+      "ok": true,
+      "detail": {
+        "create": true,
+        "msg": "Links and email addresses are not allowed here."
+      }
+    },
+    {
+      "name": "a good description enables Create my design",
+      "ok": true
+    },
+    {
+      "name": "How it works opens the shared .lp-modal",
+      "ok": true,
+      "detail": {
+        "open": true,
+        "role": "true"
+      }
+    },
+    {
+      "name": "prefers-reduced-motion: no animation inside the studio",
+      "ok": true
+    }
+  ],
+  "buttons": [
+    {
+      "tag": "1366x768",
+      "count": 17,
+      "failures": []
+    },
+    {
+      "tag": "1440x900",
+      "count": 17,
+      "failures": []
+    },
+    {
+      "tag": "1920x1080",
+      "count": 17,
+      "failures": []
+    }
+  ],
+  "computed": {
+    "h1": "rgb(42, 24, 18)",
+    "hint": "rgb(42, 24, 18)",
+    "muted": "rgb(79, 61, 49)",
+    "panelBg": "rgba(255, 250, 242, 0.74)",
+    "stageText": "rgb(214, 196, 170)",
+    "live": "rgb(227, 178, 79)"
+  }
+}

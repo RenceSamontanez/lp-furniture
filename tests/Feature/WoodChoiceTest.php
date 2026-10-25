@@ -107,7 +107,7 @@ class WoodChoiceTest extends TestCase
 
         $this->submit($u, $this->special(['wood_special_details' => '']))->assertSessionHasErrors('wood_special_details');
         $this->submit($u, $this->special(['wood_special_details' => '   ']))->assertSessionHasErrors('wood_special_details');
-        $this->submit($u, $this->special(['wood_special_details' => str_repeat('x', 501)]))->assertSessionHasErrors('wood_special_details');
+        $this->submit($u, $this->special(['wood_special_details' => str_repeat('x', 81)]))->assertSessionHasErrors('wood_special_details');
         $this->submit($u, $this->special(['wood_supply' => null]))->assertSessionHasErrors('wood_supply');
         $this->submit($u, $this->special(['wood_supply' => 'someone else']))->assertSessionHasErrors('wood_supply');
         $this->assertSame(0, CustomDesignRequest::count());
@@ -127,7 +127,7 @@ class WoodChoiceTest extends TestCase
         $this->assertFalse($r2->supplies_own_wood);
     }
 
-    public function test_the_form_has_the_four_choices_and_the_special_panel(): void
+    public function test_the_form_has_the_four_choices_and_the_other_wood_panel(): void
     {
         $html = $this->asCustomer($this->flowCustomer())->get(route('design.index'))->assertOk()->getContent();
 
@@ -138,9 +138,9 @@ class WoodChoiceTest extends TestCase
             $this->assertStringNotContainsString('value="' . $old . '"', $html);
         }
         $this->assertStringContainsString('name="wood_special_details"', $html);
-        $this->assertStringContainsString('I will provide my own wood (labor only)', $html);
-        $this->assertStringContainsString('Use a different wood supplied by the shop', $html);
-        $this->assertMatchesRegularExpression('/id="cd-wood-special"\s+hidden/', $html);
+        $this->assertStringContainsString('I will provide the wood', $html);
+        $this->assertStringContainsString('LP Furniture buys the wood', $html);
+        $this->assertMatchesRegularExpression('/id="cz-wood-special"\s+hidden/', $html);
     }
 
     /* ───────────── the AI prompt ───────────── */

@@ -176,6 +176,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'validated'])->group(function () {
     Route::get('/design',              [CustomDesignController::class, 'index'])->name('design.index');
     Route::post('/design',             [CustomDesignController::class, 'submit'])->name('design.submit');
+    Route::get('/design-ideas/answer', [CustomDesignController::class, 'ideaAnswer'])->name('design.ideaAnswer')->middleware('throttle:60,1');
     Route::get('/design/{id}',         [CustomDesignController::class, 'show'])->name('design.show');
     Route::post('/design/{id}/select', [CustomDesignController::class, 'selectDesign'])->name('design.select');
     Route::post('/design/{id}/regenerate', [CustomDesignController::class, 'regenerate'])->name('design.regenerate');

@@ -374,6 +374,10 @@ class GenerateAiDesign implements ShouldQueue
             $parts[] = "Wood: {$request->preferred_material}.";
         }
 
+        if (\App\Support\StyleChoices::isValid($request->style_preference)) {
+            $parts[] = "Style: {$request->style_preference}.";
+        }
+
         if ($request->dimensions) {
             $parts[] = "Approximate size (length x width x height): {$request->dimensions}.";
         }

@@ -13,6 +13,8 @@ namespace App\Support;
 final class WoodChoices
 {
     public const SPECIAL = 'Special request';
+    /** What the customer reads for the stored value SPECIAL (kept as is so old requests and the admin pages stay valid). */
+    public const SPECIAL_LABEL = 'Other wood';
     public const FIXED = ['Gmelina', 'Mahogany', 'Acacia'];
     public const LIST = ['Gmelina', 'Mahogany', 'Acacia', self::SPECIAL];
 
@@ -24,7 +26,7 @@ final class WoodChoices
         self::SUPPLY_SHOP     => 'Use a different wood supplied by the shop',
     ];
 
-    public const DETAILS_MAX = 500;
+    public const DETAILS_MAX = 80;   // a wood name, not an essay
 
     public static function isValid(?string $wood): bool
     {

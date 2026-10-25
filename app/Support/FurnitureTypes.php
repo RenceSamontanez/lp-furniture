@@ -17,6 +17,12 @@ final class FurnitureTypes
         'Door', 'Wardrobe', 'TV stand', 'Bench', 'Stool', self::OTHER,
     ];
 
+    /** What the Customize page offers as tiles, in order: stored value => label on the tile. "Other" is its own wide button. */
+    public const CHOICES = [
+        'Sofa' => 'Sofa', 'Bed' => 'Bed', 'Table' => 'Table', 'Chair' => 'Chair',
+        'Cabinet' => 'Cabinet', 'Door' => 'Door', 'Shelf / Bookcase' => 'Shelf', 'Desk' => 'Desk',
+    ];
+
     public const NOT_SPECIFIED = 'Not specified';
 
     /** The phrase used inside a sentence: "a chair", "a TV stand", "a shelf or bookcase". */

@@ -11,7 +11,11 @@ use App\Support\CustomOrderPipeline;
 use App\Models\Notification;
 use App\Models\User;
 use App\Rules\FurnitureTopic;
+use App\Rules\NoLinkOrEmail;
 use App\Rules\PhilippineMobile;
+use App\Models\UnansweredIdea;
+use App\Support\StyleChoices;
+use App\Support\TextSanitizer;
 use App\Support\DimensionsFormatter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -124,19 +128,38 @@ class CustomDesignController extends Controller
             ]);
         }
 
+        // Free text is cleaned first (tags out, spaces tidied) so the rules below judge what will really be stored.
+        $request->merge([
+            'prompt'               => TextSanitizer::block($request->input('prompt')),
+            'additional_info'      => TextSanitizer::block($request->input('additional_info')),
+            'furniture_type_other' => TextSanitizer::line($request->input('furniture_type_other')),
+            'wood_special_details' => TextSanitizer::line($request->input('wood_special_details')),
+        ]);
+
         $request->validate([
-            'prompt'             => ['required', 'string', 'min:15', 'max:1000', new FurnitureTopic()],
+            'prompt'             => ['required', 'string', 'min:15', 'max:1000', $this->atLeastWords(3), new NoLinkOrEmail(), new FurnitureTopic()],
             'furniture_type'       => ['required', 'string', \Illuminate\Validation\Rule::in(\App\Support\FurnitureTypes::LIST)],
-            'furniture_type_other' => ['nullable', 'required_if:furniture_type,' . \App\Support\FurnitureTypes::OTHER, 'string', 'max:' . \App\Support\FurnitureTypes::OTHER_MAX],
+            'furniture_type_other' => ['nullable', 'required_if:furniture_type,' . \App\Support\FurnitureTypes::OTHER, 'string', 'min:2', 'max:' . \App\Support\FurnitureTypes::OTHER_MAX, new NoLinkOrEmail()],
             'preferred_material'   => ['required', 'string', \Illuminate\Validation\Rule::in(\App\Support\WoodChoices::LIST)],
-            'wood_special_details' => ['nullable', 'required_if:preferred_material,' . \App\Support\WoodChoices::SPECIAL, 'string', 'max:' . \App\Support\WoodChoices::DETAILS_MAX],
+            'wood_special_details' => ['nullable', 'required_if:preferred_material,' . \App\Support\WoodChoices::SPECIAL, 'string', 'min:2', 'max:' . \App\Support\WoodChoices::DETAILS_MAX, new NoLinkOrEmail()],
             'wood_supply'          => ['nullable', 'required_if:preferred_material,' . \App\Support\WoodChoices::SPECIAL, \Illuminate\Validation\Rule::in(array_keys(\App\Support\WoodChoices::SUPPLY))],
+            'style_preference'   => ['nullable', 'string', \Illuminate\Validation\Rule::in(StyleChoices::LIST)],
             'dimension_length'   => ['nullable'],
             'dimension_width'    => ['nullable'],
             'dimension_height'   => ['nullable'],
             'dimension_unit'     => ['nullable', 'string', 'max:4'],
-            'additional_info'    => 'nullable|string|max:1000',
-            'reference_image'    => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'additional_info'    => ['nullable', 'string', 'max:1000', new NoLinkOrEmail()],
+            // content-sniffed type (not the file name), JPEG or PNG only, 5 MB at most
+            'reference_image'    => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png', 'mimetypes:image/jpeg,image/png', 'max:5120'],
+        ], [
+            'reference_image.image'     => 'The reference photo must be a JPG or PNG picture.',
+            'reference_image.mimes'     => 'The reference photo must be a JPG or PNG picture.',
+            'reference_image.mimetypes' => 'The reference photo must be a JPG or PNG picture.',
+            'reference_image.max'       => 'The reference photo is over 5 MB. Choose a smaller one.',
+            'reference_image.uploaded'  => 'The reference photo could not be uploaded. It may be over the size limit. Try a smaller JPG or PNG.',
+            'prompt.min'                => 'Add a little more detail so we can draw it (at least 15 characters).',
+            'furniture_type_other.min'  => 'Tell us what you want built (at least 2 letters).',
+            'wood_special_details.min'  => 'Type the wood you want (at least 2 letters).',
         ]);
 
         // Optional Length x Width x Height. Converted to centimetres here, never trusted from the page.
@@ -183,14 +206,70 @@ class CustomDesignController extends Controller
             'dim_width_cm'       => $size['values']['width_cm'] ?? null,
             'dim_height_cm'      => $size['values']['height_cm'] ?? null,
             'dimension_unit'     => $size['values']['unit'] ?? null,
+            'style_preference'   => $request->filled('style_preference') ? $request->style_preference : null,
             'reference_image'    => $refImagePath,
             'status'             => 'pending',
         ]);
+
+        $this->noteUnansweredIdeas($designRequest, $request->prompt);
 
         GenerateAiDesign::dispatch($designRequest->id);
 
         return redirect()->route('design.show', $designRequest->id)
             ->with('success', 'Your design request has been submitted!');
+    }
+
+    private function atLeastWords(int $min): \Closure
+    {
+        return function (string $attribute, mixed $value, \Closure $fail) use ($min) {
+            if (is_string($value) && TextSanitizer::wordCount($value) < $min) {
+                $fail("Describe it in at least {$min} words so we can draw it.");
+            }
+        };
+    }
+
+    /**
+     * Keeps what the customer typed that we had no answer for (an "Other" type, an "Other wood", odd description phrases)
+     * for the team to review. Never blocks a submission.
+     */
+    private function noteUnansweredIdeas(CustomDesignRequest $designRequest, string $description): void
+    {
+        try {
+            if (\App\Support\FurnitureTypes::needsText($designRequest->furniture_type) && $designRequest->furniture_type_other) {
+                UnansweredIdea::record(UnansweredIdea::KIND_TYPE, $designRequest->furniture_type_other);
+            }
+            if (\App\Support\WoodChoices::isSpecial($designRequest->preferred_material) && $designRequest->wood_special_details) {
+                UnansweredIdea::record(UnansweredIdea::KIND_WOOD, $designRequest->wood_special_details);
+            }
+            foreach (\App\Support\IdeaClauses::unmatched($description) as $phrase) {
+                UnansweredIdea::record(UnansweredIdea::KIND_IDEA, $phrase);
+            }
+        } catch (\Throwable $e) {
+            report($e);
+        }
+    }
+
+    /**
+     * What the page shows under "Something else", "Other wood" and the description: the team's written answer,
+     * if there is one. Read only; nothing is saved here (the request is counted when it is submitted).
+     */
+    public function ideaAnswer(Request $request)
+    {
+        $data = $request->validate([
+            'kind' => ['required', \Illuminate\Validation\Rule::in(UnansweredIdea::KINDS)],
+            'text' => ['required', 'string', 'max:1000'],
+        ]);
+
+        $text = TextSanitizer::line($data['text']);
+        $row = $data['kind'] === UnansweredIdea::KIND_IDEA
+            ? UnansweredIdea::knownWithin($text)
+            : UnansweredIdea::knownFor($data['kind'], $text);
+
+        return response()->json([
+            'known'  => $row !== null,
+            'answer' => $row?->answer,
+            'matched' => $row?->text,
+        ])->header('Cache-Control', 'no-store');
     }
 
     public function show($id)

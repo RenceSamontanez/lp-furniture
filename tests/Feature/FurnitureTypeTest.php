@@ -119,17 +119,21 @@ class FurnitureTypeTest extends TestCase
         }
     }
 
-    public function test_the_form_shows_a_required_select_with_the_list(): void
+    public function test_the_form_shows_the_type_tiles_and_something_else(): void
     {
         $u = $this->flowCustomer();
         $html = $this->asCustomer($u)->get(route('design.index'))->assertOk()->getContent();
 
-        $this->assertMatchesRegularExpression('/<select name="furniture_type" id="cd-furniture-type"[^>]*required/', $html);
-        foreach (FurnitureTypes::LIST as $type) {
-            $this->assertStringContainsString('>' . $type . '</option>', $html);
+        // the eight tiles from the studio, then the wide "Something else" button that stores "Other"
+        foreach (FurnitureTypes::CHOICES as $value => $label) {
+            $this->assertStringContainsString('<input type="radio" name="furniture_type" value="' . $value . '" data-label="' . $label . '" required', $html);
+            $this->assertContains($value, FurnitureTypes::LIST, 'every tile is a value the server accepts');
         }
+        $this->assertSame(['Sofa', 'Bed', 'Table', 'Chair', 'Cabinet', 'Door', 'Shelf / Bookcase', 'Desk'], array_keys(FurnitureTypes::CHOICES));
+        $this->assertStringContainsString('<input type="radio" name="furniture_type" value="Other" data-label="Something else"', $html);
+        $this->assertStringContainsString('Something else', $html);
         $this->assertStringContainsString('name="furniture_type_other"', $html);
-        $this->assertStringNotContainsString('id="cd-hidden-furniture-type"', $html);
+        $this->assertStringNotContainsString('<select name="furniture_type"', $html);
     }
 
     /* ───────────── the AI prompt ───────────── */
