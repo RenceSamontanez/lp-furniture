@@ -16,12 +16,18 @@ class UnansweredIdea extends Model
     public const STATUS_NEW = 'new';
     public const STATUS_ANSWERED = 'answered';
     public const STATUS_ADDED = 'added_as_option';
+    public const STATUS_DISMISSED = 'dismissed';
+    public const STATUSES = ['new', 'answered', 'added_as_option', 'dismissed'];
+
+    public const KIND_LABELS = ['furniture_type' => 'Furniture type', 'wood' => 'Wood', 'idea' => 'Idea phrase'];
+    public const STATUS_LABELS = ['new' => 'New', 'answered' => 'Answered', 'added_as_option' => 'Added as option', 'dismissed' => 'Dismissed'];
+    public const ANSWER_MAX = 500;
 
     public const TEXT_MAX = 120;
 
-    protected $fillable = ['kind', 'text', 'text_key', 'times_asked', 'first_seen_at', 'last_seen_at', 'status', 'answer', 'answered_at'];
+    protected $fillable = ['kind', 'text', 'text_key', 'times_asked', 'first_seen_at', 'last_seen_at', 'status', 'answer', 'answered_at', 'previous_status', 'handled_by', 'handled_at'];
 
-    protected $casts = ['first_seen_at' => 'datetime', 'last_seen_at' => 'datetime', 'answered_at' => 'datetime'];
+    protected $casts = ['first_seen_at' => 'datetime', 'last_seen_at' => 'datetime', 'answered_at' => 'datetime', 'handled_at' => 'datetime'];
 
     public static function keyFor(string $text): string
     {

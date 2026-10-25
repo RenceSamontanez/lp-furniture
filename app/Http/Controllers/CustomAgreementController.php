@@ -273,14 +273,7 @@ class CustomAgreementController extends Controller
             return public_path(substr($path, strpos($path, 'images/ai-designs/')));
         }
 
-        if ($designRequest->reference_image) {
-            $public = Storage::disk('public');
-            if ($public->exists($designRequest->reference_image)) {
-                return $public->path($designRequest->reference_image);
-            }
-        }
-
-        return null;
+        return \App\Support\ReferencePhoto::absolutePath($designRequest->reference_image);
     }
 
     /** Removes a copy we made; never anything else. */

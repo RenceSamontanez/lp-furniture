@@ -25,6 +25,7 @@ return [
         'Acacia'   => ['#d9a85f', '#8a5a2a', 'Golden, bold grain'],
     ],
 
-    // Examples offered under "Something else".
-    'other_type_examples' => ['Staircase railing', 'Altar', 'TV wall panel', 'Headboard', 'Kitchen counter', 'Gazebo'],
+    // The heuristic that saves odd phrases from a description for the team to review (kind "idea" in unanswered_ideas).
+    // It can be noisy: set CUSTOMIZE_CAPTURE_IDEA_PHRASES=false to stop it. Something else and Other wood are always saved.
+    'capture_idea_phrases' => (bool) env('CUSTOMIZE_CAPTURE_IDEA_PHRASES', true),
 ];

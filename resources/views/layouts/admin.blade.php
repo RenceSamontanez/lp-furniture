@@ -84,6 +84,16 @@
         @php $customSubmittedCount = \App\Models\CustomDesignRequest::where('pipeline_status','submitted')->count(); @endphp
         @if($customSubmittedCount > 0)<span class="admin-nav-badge">{{ $customSubmittedCount }}</span>@endif
       </a>
+      <a href="{{ route('admin.ideas.index') }}" class="admin-nav-link {{ request()->routeIs('admin.ideas.*') ? 'active' : '' }}">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.7c.6.5 1 1.2 1 2V17h6v-.3c0-.8.4-1.5 1-2A7 7 0 0012 2z"/></svg>
+        Ideas to review
+        @php $ideasNewCount = \App\Models\UnansweredIdea::where('status', 'new')->count(); @endphp
+        @if($ideasNewCount > 0)<span class="admin-nav-badge">{{ $ideasNewCount }}</span>@endif
+      </a>
+      <a href="{{ route('admin.quick-ideas.index') }}" class="admin-nav-link {{ request()->routeIs('admin.quick-ideas.*') ? 'active' : '' }}">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+        Quick ideas
+      </a>
       <a href="{{ route('admin.service-inquiries.index') }}" class="admin-nav-link {{ request()->routeIs('admin.service-inquiries.*') ? 'active' : '' }}">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
         Other Services

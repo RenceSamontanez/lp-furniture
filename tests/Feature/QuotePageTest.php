@@ -89,7 +89,7 @@ class QuotePageTest extends TestCase
         $withReference = $this->request(['reference_image' => 'design-refs/ref.png'], false);
         Storage::disk('public')->put('design-refs/ref.png', 'IMG');
         $this->actingAs($admin, 'admin')->get(route('admin.custom-orders.quotes.create', $withReference->id))
-            ->assertOk()->assertSee('storage/design-refs/ref.png', false)->assertDontSee('No image generated');
+            ->assertOk()->assertSee(route('admin.reference-photo', $withReference->id), false)->assertDontSee('storage/design-refs/ref.png', false)->assertDontSee('No image generated');
 
         $none = $this->request([], false);
         $this->actingAs($admin, 'admin')->get(route('admin.custom-orders.quotes.create', $none->id))

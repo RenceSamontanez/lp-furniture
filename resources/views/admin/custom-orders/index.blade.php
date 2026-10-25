@@ -4,6 +4,7 @@
 @section('page-title', 'Custom Orders')
 
 @push('styles')
+  <link rel="stylesheet" href="{{ asset('assets/css/admin-ideas.css') }}"/>
   <link rel="stylesheet" href="{{ asset('assets/css/admin-custom-orders.css') }}"/>
 @endpush
 
@@ -48,8 +49,9 @@
               <td data-label="Design">
                 <div style="font-weight:600;color:#2A1810;">{{ $req->order_name }}</div>
                 <div style="font-size:11.5px;color:var(--text-muted);">
-                  @if($req->is_special_wood)<span class="co-flag co-flag--warn">Special wood</span>@if($req->supplies_own_wood)<span class="co-flag co-flag--warn">Own material</span>@endif @endif
-                  {{ $req->furniture_type_label }} · {{ $req->request_mode === 'modified' ? 'With changes' : 'Exact design' }}
+                  @if($req->is_special_wood)<span class="co-flag co-flag--warn">Special wood</span>@if($req->supplies_own_wood)<span class="co-flag co-flag--warn">Own material</span><span class="call-badge-sm">Call about wood quantity</span>@endif @endif
+                  @if($req->reference_image)<span class="co-flag">Reference photo</span>@endif
+                  {{ $req->furniture_type_label }}@if($req->style_preference) · {{ $req->style_preference }} style @endif · {{ $req->request_mode === 'modified' ? 'With changes' : 'Exact design' }}
                   @if(!$req->selected_suggestion_id) · No image generated @endif
                 </div>
               </td>

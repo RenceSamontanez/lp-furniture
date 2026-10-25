@@ -177,6 +177,7 @@ Route::middleware(['auth', 'validated'])->group(function () {
     Route::get('/design',              [CustomDesignController::class, 'index'])->name('design.index');
     Route::post('/design',             [CustomDesignController::class, 'submit'])->name('design.submit');
     Route::get('/design-ideas/answer', [CustomDesignController::class, 'ideaAnswer'])->name('design.ideaAnswer')->middleware('throttle:60,1');
+    Route::get('/design/{id}/reference-photo', [CustomDesignController::class, 'referencePhoto'])->name('design.reference')->whereNumber('id');
     Route::get('/design/{id}',         [CustomDesignController::class, 'show'])->name('design.show');
     Route::post('/design/{id}/select', [CustomDesignController::class, 'selectDesign'])->name('design.select');
     Route::post('/design/{id}/regenerate', [CustomDesignController::class, 'regenerate'])->name('design.regenerate');
@@ -274,6 +275,26 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     // Custom Orders (requests sent to the team through the customer form)
     // ────────────────
     Route::get('/custom-orders',                       [CustomOrderController::class, 'index'])->name('custom-orders.index');
+    Route::get('/custom-requests/{id}/reference-photo', [CustomOrderController::class, 'referencePhoto'])->name('reference-photo')->whereNumber('id');
+
+    // Customize studio, admin side: ideas customers typed that we had no answer for, and the quick ideas / extra "Something else" picks
+    Route::get('/ideas-to-review',                 [\App\Http\Controllers\Admin\IdeasReviewController::class, 'index'])->name('ideas.index');
+    Route::post('/ideas-to-review/{id}/answer',    [\App\Http\Controllers\Admin\IdeasReviewController::class, 'answer'])->name('ideas.answer')->whereNumber('id');
+    Route::post('/ideas-to-review/{id}/option',    [\App\Http\Controllers\Admin\IdeasReviewController::class, 'addAsOption'])->name('ideas.option')->whereNumber('id');
+    Route::post('/ideas-to-review/{id}/dismiss',   [\App\Http\Controllers\Admin\IdeasReviewController::class, 'dismiss'])->name('ideas.dismiss')->whereNumber('id');
+    Route::post('/ideas-to-review/{id}/undo',      [\App\Http\Controllers\Admin\IdeasReviewController::class, 'undo'])->name('ideas.undo')->whereNumber('id');
+    Route::post('/ideas-to-review/{id}/delete',    [\App\Http\Controllers\Admin\IdeasReviewController::class, 'destroy'])->name('ideas.delete')->whereNumber('id');
+    Route::get('/quick-ideas',                     [\App\Http\Controllers\Admin\QuickIdeasController::class, 'index'])->name('quick-ideas.index');
+    Route::post('/quick-ideas',                    [\App\Http\Controllers\Admin\QuickIdeasController::class, 'store'])->name('quick-ideas.store');
+    Route::post('/quick-ideas/{id}',               [\App\Http\Controllers\Admin\QuickIdeasController::class, 'update'])->name('quick-ideas.update')->whereNumber('id');
+    Route::post('/quick-ideas/{id}/toggle',        [\App\Http\Controllers\Admin\QuickIdeasController::class, 'toggle'])->name('quick-ideas.toggle')->whereNumber('id');
+    Route::post('/quick-ideas/{id}/move',          [\App\Http\Controllers\Admin\QuickIdeasController::class, 'move'])->name('quick-ideas.move')->whereNumber('id');
+    Route::post('/quick-ideas/{id}/delete',        [\App\Http\Controllers\Admin\QuickIdeasController::class, 'destroy'])->name('quick-ideas.delete')->whereNumber('id');
+    Route::post('/extra-types',                    [\App\Http\Controllers\Admin\QuickIdeasController::class, 'storeType'])->name('extra-types.store');
+    Route::post('/extra-types/{id}',               [\App\Http\Controllers\Admin\QuickIdeasController::class, 'updateType'])->name('extra-types.update')->whereNumber('id');
+    Route::post('/extra-types/{id}/toggle',        [\App\Http\Controllers\Admin\QuickIdeasController::class, 'toggleType'])->name('extra-types.toggle')->whereNumber('id');
+    Route::post('/extra-types/{id}/move',          [\App\Http\Controllers\Admin\QuickIdeasController::class, 'moveType'])->name('extra-types.move')->whereNumber('id');
+    Route::post('/extra-types/{id}/delete',        [\App\Http\Controllers\Admin\QuickIdeasController::class, 'destroyType'])->name('extra-types.delete')->whereNumber('id');
     Route::get('/custom-orders/{id}',                  [CustomOrderController::class, 'show'])->name('custom-orders.show')->whereNumber('id');
     Route::post('/custom-orders/{id}/calls',           [CustomOrderController::class, 'logCall'])->name('custom-orders.calls')->whereNumber('id');
     Route::post('/custom-orders/{id}/call-update',     [CustomOrderController::class, 'callUpdate'])->name('custom-orders.call-update')->whereNumber('id');

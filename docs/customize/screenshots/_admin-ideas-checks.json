@@ -1,0 +1,212 @@
+{
+  "checks": [
+    {
+      "name": "1366x768 Ideas to review: rows, menu badge, wood rows have no Add as option",
+      "ok": true,
+      "detail": {
+        "rows": 6,
+        "badge": "6",
+        "wood": [
+          "no-option",
+          "no-option"
+        ]
+      }
+    },
+    {
+      "name": "1366x768 Ideas to review: no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "1366x768 Ideas to review: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "1366x768 Write answer opens the shared modal with focus inside",
+      "ok": true,
+      "detail": {
+        "open": true,
+        "inside": true,
+        "title": "Answer for “Teak”"
+      }
+    },
+    {
+      "name": "1366x768 Escape closes it",
+      "ok": true
+    },
+    {
+      "name": "1366x768 filter by kind wood",
+      "ok": true
+    },
+    {
+      "name": "1366x768 dismissed rows have Undo",
+      "ok": true
+    },
+    {
+      "name": "1366x768 empty filter result says so",
+      "ok": true
+    },
+    {
+      "name": "1366x768 Quick ideas: no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "1366x768 Quick ideas: groups and rows",
+      "ok": true,
+      "detail": {
+        "cards": 15,
+        "rows": 50
+      }
+    },
+    {
+      "name": "1366x768 Quick ideas: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "Quick ideas: keyboard focus ring visible",
+      "ok": true,
+      "detail": "solid 3px"
+    },
+    {
+      "name": "1366x768 request detail: call badge with phone, thumbnail, download, style, no public URL",
+      "ok": true,
+      "detail": {
+        "badge": "Call customer about wood quantity\n09171234567",
+        "thumb": true,
+        "dl": true,
+        "style": true,
+        "publicUrl": false
+      }
+    },
+    {
+      "name": "1366x768 request detail: no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "thumbnail opens the photo larger in the shared modal",
+      "ok": true,
+      "detail": {
+        "w": 736,
+        "shown": 358.390625
+      }
+    },
+    {
+      "name": "1366x768 request detail: button contrast (new controls)",
+      "ok": true,
+      "detail": {
+        "mine": [],
+        "existingAdminBtnFailures": 1
+      }
+    },
+    {
+      "name": "1366x768 request list shows the style and the call hint",
+      "ok": true
+    },
+    {
+      "name": "820-tablet Ideas to review: rows, menu badge, wood rows have no Add as option",
+      "ok": true,
+      "detail": {
+        "rows": 6,
+        "badge": "6",
+        "wood": [
+          "no-option",
+          "no-option"
+        ]
+      }
+    },
+    {
+      "name": "820-tablet Ideas to review: no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "820-tablet Ideas to review: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "820-tablet Write answer opens the shared modal with focus inside",
+      "ok": true,
+      "detail": {
+        "open": true,
+        "inside": true,
+        "title": "Answer for “Teak”"
+      }
+    },
+    {
+      "name": "820-tablet Escape closes it",
+      "ok": true
+    },
+    {
+      "name": "820-tablet filter by kind wood",
+      "ok": true
+    },
+    {
+      "name": "820-tablet dismissed rows have Undo",
+      "ok": true
+    },
+    {
+      "name": "820-tablet empty filter result says so",
+      "ok": true
+    },
+    {
+      "name": "820-tablet Quick ideas: no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "820-tablet Quick ideas: groups and rows",
+      "ok": true,
+      "detail": {
+        "cards": 15,
+        "rows": 50
+      }
+    },
+    {
+      "name": "820-tablet Quick ideas: button contrast",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "820-tablet request detail: call badge with phone, thumbnail, download, style, no public URL",
+      "ok": true,
+      "detail": {
+        "badge": "Call customer about wood quantity\n09171234567",
+        "thumb": true,
+        "dl": true,
+        "style": true,
+        "publicUrl": false
+      }
+    },
+    {
+      "name": "820-tablet request detail: no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "820-tablet request detail: button contrast (new controls)",
+      "ok": true,
+      "detail": {
+        "mine": [],
+        "existingAdminBtnFailures": 1
+      }
+    },
+    {
+      "name": "820-tablet request list shows the style and the call hint",
+      "ok": true
+    },
+    {
+      "name": "admin gets the photo with a private cache header",
+      "ok": true,
+      "detail": "200 image/jpeg no-store, public"
+    },
+    {
+      "name": "the old public /storage URL does not serve it",
+      "ok": true,
+      "detail": 403
+    },
+    {
+      "name": "no session: the photo is not served",
+      "ok": true,
+      "detail": "opaqueredirect 0"
+    }
+  ]
+}

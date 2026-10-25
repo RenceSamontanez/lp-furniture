@@ -177,7 +177,7 @@
     <div class="admin-panel">
       <div class="admin-panel-header"><div class="admin-panel-title">Selected design</div></div>
       <div class="admin-panel-body">
-        @php $designImage = $r->previewImageUrl(); @endphp
+        @php $designImage = $r->previewImageUrl(true); @endphp
         <div class="co-design-summary co-design-summary--stack">
         @if($designImage)
           <div class="co-design-frame co-design-frame--side">

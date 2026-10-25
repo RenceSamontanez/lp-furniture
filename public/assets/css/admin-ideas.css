@@ -1,0 +1,57 @@
+/* Admin: Ideas to review and the Quick ideas editor. Built inside the current admin layout; shared .lp-btn / .lp-notice / .lp-modal for controls. */
+.ir-page { max-width: 1180px; }
+.ir-lead { margin: 0 0 14px; color: #4a3a30; font-size: 14.5px; line-height: 1.5; max-width: 70ch; }
+.ir-page .lp-notice { margin-bottom: 14px; }
+.ir-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin: 14px 0; }
+.ir-field { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; font-weight: 700; color: #3b2a1f; min-width: 160px; }
+.ir-field input, .ir-field select { min-height: 40px; }
+.ir-filters .lp-btn { min-height: 40px; }
+.ir-empty { padding: 36px 20px; text-align: center; color: #4a3a30; }
+.ir-table td { vertical-align: top; }
+.ir-text { font-weight: 700; color: #2a1810; overflow-wrap: anywhere; }
+.ir-answer { margin-top: 4px; font-size: 12.5px; color: #4a3a30; line-height: 1.4; overflow-wrap: anywhere; }
+.ir-answer span { font-weight: 700; color: #1d6b45; }
+.ir-kind, .ir-status { display: inline-block; font-size: 11.5px; font-weight: 800; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.ir-kind { background: #efe9e2; color: #3b2a1f; }
+.ir-status--new { background: #f6e7c6; color: #5c3d00; }
+.ir-status--answered { background: #dff1e6; color: #14502f; }
+.ir-status--added_as_option { background: #dde8f6; color: #1c3c6b; }
+.ir-status--dismissed { background: #ebe6e1; color: #4a3d34; }
+.ir-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.ir-actions form { margin: 0; }
+.ir-form label { display: block; font-weight: 700; font-size: 13.5px; margin: 10px 0 4px; }
+.ir-form label:first-child { margin-top: 0; }
+.ir-form .form-input { width: 100%; }
+.ir-hint { margin: 6px 0 0; font-size: 12.5px; color: #4a3a30; line-height: 1.4; }
+
+/* quick ideas editor */
+.qi-lead { max-width: 74ch; }
+.qi-section { margin: 22px 0 8px; font-family: 'Playfair Display', Georgia, serif; font-size: 20px; color: #2a1810; }
+.qi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+.qi-card { background: #fff; border: 1px solid #e0d5c5; border-radius: 14px; padding: 14px; }
+.qi-card h3 { margin: 0 0 8px; font-size: 15px; color: #2a1810; }
+.qi-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 0; border-top: 1px solid #efe7da; }
+.qi-row.is-off .qi-input { color: #6a5a4e; background: #f4efe8; }
+.qi-edit { display: flex; gap: 6px; flex: 1 1 200px; margin: 0; min-width: 0; }
+.qi-input { flex: 1; min-width: 0; min-height: 36px; border: 1.5px solid #cdbfa9; border-radius: 10px; padding: 4px 10px; font: inherit; font-size: 14px; color: #2a1810; background: #fff; }
+.qi-input:focus-visible { outline: 3px solid #7a5210; outline-offset: 1px; }
+.qi-tools { display: flex; gap: 4px; margin: 0; }
+.qi-tools form { margin: 0; }
+.qi-add { display: flex; gap: 6px; margin: 10px 0 0; }
+.qi-empty { margin: 4px 0 8px; font-size: 13px; color: #4a3a30; }
+.qi-state { font-size: 11.5px; font-weight: 800; border-radius: 999px; padding: 2px 8px; background: #dff1e6; color: #14502f; }
+.is-off .qi-state { background: #ebe6e1; color: #4a3d34; }
+
+/* request detail: photo and call badge */
+.ref-thumb { display: inline-block; padding: 0; border: 1.5px solid #d9ccb8; border-radius: 12px; overflow: hidden; background: #fff; cursor: zoom-in; max-width: 100%; }
+.ref-thumb img { display: block; max-width: 100%; max-height: 220px; width: auto; height: auto; }
+.ref-thumb:focus-visible { outline: 3px solid #7a5210; outline-offset: 2px; }
+.ref-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.ref-big { display: block; max-width: 100%; max-height: 70vh; margin: 0 auto; border-radius: 10px; }
+.call-badge { display: inline-flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; background: #f6e7c6; color: #4a2f00; border: 1.5px solid #c99a3e; border-radius: 12px; padding: 8px 12px; font-weight: 800; font-size: 13.5px; margin-top: 8px; }
+.call-badge a { color: #4a2f00; text-decoration: underline; font-weight: 800; }
+.call-badge-sm { display: inline-block; background: #f6e7c6; color: #4a2f00; border: 1px solid #c99a3e; border-radius: 999px; padding: 1px 8px; font-weight: 800; font-size: 11px; }
+
+@media (max-width: 760px) { .qi-grid { grid-template-columns: 1fr; } .ir-field { min-width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .ir-page * { transition: none !important; } }
+.ir-field input[type="search"] { min-width: 260px; }

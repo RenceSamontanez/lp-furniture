@@ -24,6 +24,14 @@ class CustomOrderController extends Controller
     {
     }
 
+    /** The customer's reference photo, admin only (this route group), never a public URL. ?download=1 saves it. */
+    public function referencePhoto(Request $request, int $id)
+    {
+        $designRequest = CustomDesignRequest::findOrFail($id);
+
+        return \App\Support\ReferencePhotoResponse::for($designRequest, $request->boolean('download'));
+    }
+
     public function index(Request $request)
     {
         $this->pipeline->expireStaleQuotes();

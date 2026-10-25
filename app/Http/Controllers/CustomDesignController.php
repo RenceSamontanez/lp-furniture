@@ -106,7 +106,7 @@ class CustomDesignController extends Controller
         return view('design.index', compact(
             'myRequests', 'latestWithImages', 'latestImage', 'historyThumbs', 'totalWithImages',
             'dailyUsed', 'dailyLimit', 'prefillPrompt', 'recentReady'
-        ));
+        ) + ['extraTypes' => \App\Models\ExtraFurnitureType::chips()]);
     }
 
     public function submit(Request $request)
@@ -180,8 +180,7 @@ class CustomDesignController extends Controller
 
         $refImagePath = null;
         if ($request->hasFile('reference_image')) {
-            $refImagePath = $request->file('reference_image')
-                ->store('design-references/' . Auth::id(), 'public');
+            $refImagePath = \App\Support\ReferencePhoto::store($request->file('reference_image'), (int) Auth::id());
         }
 
         // Same optional 3-field Width/Depth/Height (cm) pattern as the
@@ -243,8 +242,10 @@ class CustomDesignController extends Controller
             if (\App\Support\WoodChoices::isSpecial($designRequest->preferred_material) && $designRequest->wood_special_details) {
                 UnansweredIdea::record(UnansweredIdea::KIND_WOOD, $designRequest->wood_special_details);
             }
-            foreach (\App\Support\IdeaClauses::unmatched($description) as $phrase) {
-                UnansweredIdea::record(UnansweredIdea::KIND_IDEA, $phrase);
+            if (config('customize.capture_idea_phrases')) {
+                foreach (\App\Support\IdeaClauses::unmatched($description) as $phrase) {
+                    UnansweredIdea::record(UnansweredIdea::KIND_IDEA, $phrase);
+                }
             }
         } catch (\Throwable $e) {
             report($e);
@@ -272,6 +273,14 @@ class CustomDesignController extends Controller
             'answer' => $row?->answer,
             'matched' => $row?->text,
         ])->header('Cache-Control', 'no-store');
+    }
+
+    /** The customer's own reference photo, owner-checked. Never a public URL. */
+    public function referencePhoto($id)
+    {
+        $designRequest = CustomDesignRequest::where('user_id', Auth::id())->findOrFail($id);
+
+        return \App\Support\ReferencePhotoResponse::for($designRequest, false);
     }
 
     public function show($id)

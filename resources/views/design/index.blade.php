@@ -111,7 +111,7 @@
               <input type="text" id="cz-type-text" name="furniture_type_other" class="cz-field" maxlength="{{ \App\Support\FurnitureTypes::OTHER_MAX }}"
                      value="{{ old('furniture_type_other') }}" placeholder="e.g. Staircase railing, altar, TV wall panel" autocomplete="off" aria-describedby="cz-type-msg"/>
               <div class="cz-chips" aria-label="Examples">
-                @foreach(config('customize.other_type_examples') as $example)
+                @foreach($extraTypes as $example)
                   <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" data-example="{{ $example }}">{{ $example }}</button>
                 @endforeach
               </div>

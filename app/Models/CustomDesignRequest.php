@@ -250,7 +250,7 @@ class CustomDesignRequest extends Model
 
     // The picture to show the team: the selected concept if it can be
     // loaded, else the customer's own reference image, else null.
-    public function previewImageUrl(): ?string
+    public function previewImageUrl(bool $forAdmin = false): ?string
     {
         $selected = $this->selectedSuggestion;
         if ($selected && $selected->isLoadable()) {
@@ -262,8 +262,8 @@ class CustomDesignRequest extends Model
             return $chosen->displayUrl();
         }
 
-        if ($this->reference_image && \Illuminate\Support\Facades\Storage::disk('public')->exists($this->reference_image)) {
-            return asset('storage/' . $this->reference_image);
+        if (\App\Support\ReferencePhoto::locate($this->reference_image)) {
+            return $forAdmin ? route('admin.reference-photo', $this->id) : route('design.reference', $this->id);
         }
 
         return null;

@@ -4,6 +4,7 @@
 @section('page-title', 'Custom Order')
 
 @push('styles')
+  <link rel="stylesheet" href="{{ asset('assets/css/admin-ideas.css') }}"/>
   <link rel="stylesheet" href="{{ asset('assets/css/admin-custom-orders.css') }}"/>
   <link rel="stylesheet" href="{{ asset('assets/css/custom-orders.css') }}"/>
 @endpush
@@ -74,15 +75,24 @@
               @endif
             </dd>
           </div>
+          <div><dt>Style</dt><dd>{{ $r->style_preference ?: 'No style chosen' }}</dd></div>
           <div class="co-span-2">
             <dt>Wood</dt>
             <dd>
-              {{ \App\Support\WoodChoices::isSpecial($r->preferred_material) ? 'Special request' : ($r->preferred_material ?: '—') }}
+              {{ \App\Support\WoodChoices::isSpecial($r->preferred_material) ? \App\Support\WoodChoices::SPECIAL_LABEL : ($r->preferred_material ?: '—') }}
               @if($r->is_special_wood)
                 <span class="co-flag co-flag--warn">Special wood request</span>
                 @if($r->supplies_own_wood)<span class="co-flag co-flag--warn">Customer-supplied material</span>@else<span class="co-flag">Wood supplied by the shop</span>@endif
-                <div class="co-flag-note">{{ $r->wood_special_details }}</div>
+                <div class="co-flag-note">Customer chose: {{ $r->supplies_own_wood ? "I will provide the wood (lower cost)" : "LP Furniture buys the wood (longer, costs more)" }}</div>
+                <div class="co-flag-note">Wood asked for: {{ $r->wood_special_details }}</div>
                 <div class="co-flag-note">No automatic price. Set the quote price by hand.</div>
+                @if($r->supplies_own_wood)
+                  @php $woodPhone = $r->contact_phone ?: $r->user?->phone_number; @endphp
+                  <div class="call-badge" role="note">
+                    <span>Call customer about wood quantity</span>
+                    @if($woodPhone)<a href="tel:{{ preg_replace('/[^0-9+]/', '', $woodPhone) }}">{{ $woodPhone }}</a>@else<span>No phone number on file</span>@endif
+                  </div>
+                @endif
               @endif
             </dd>
           </div>
@@ -201,7 +211,7 @@
     <div class="admin-panel">
       <div class="admin-panel-header"><div class="admin-panel-title">Selected design</div></div>
       <div class="admin-panel-body">
-        @php $designImage = $r->previewImageUrl(); @endphp
+        @php $designImage = $r->previewImageUrl(true); @endphp
         <div class="co-design-summary co-design-summary--stack">
         @if($designImage)
           <div class="co-design-frame co-design-frame--side">
@@ -221,14 +231,7 @@
         @endif
         </div>
 
-        @if($r->reference_image)
-          <div class="co-block-label">Customer's reference image</div>
-          <div class="co-design-frame co-design-frame--side">
-            <a href="{{ asset('storage/' . $r->reference_image) }}" target="_blank" rel="noopener">
-              <img src="{{ asset('storage/' . $r->reference_image) }}" alt="Customer-uploaded reference"/>
-            </a>
-          </div>
-        @endif
+        @include('admin.custom-orders._reference-photo', ['r' => $r])
       </div>
     </div>
 

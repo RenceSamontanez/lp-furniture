@@ -3,6 +3,10 @@
 @section('title', 'Design Request — Admin')
 @section('page-title', 'Design Request Details')
 
+@push('styles')
+  <link rel="stylesheet" href="{{ asset('assets/css/admin-ideas.css') }}"/>
+@endpush
+
 @section('content')
 
 <a href="{{ route('admin.design-requests.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">← Back to Design Requests</a>
@@ -56,14 +60,9 @@
          when one was actually provided (this field is optional). --}}
     @if($designRequest->reference_image)
       <div class="admin-panel">
-        <div class="admin-panel-header"><div class="admin-panel-title">Customer's Reference Image</div></div>
+        <div class="admin-panel-header"><div class="admin-panel-title">Customer's Reference Photo</div></div>
         <div class="admin-panel-body">
-          <div style="max-width:360px;border-radius:12px;overflow:hidden;border:1px solid var(--border);">
-            <a href="{{ asset('storage/' . $designRequest->reference_image) }}" target="_blank">
-              <img src="{{ asset('storage/' . $designRequest->reference_image) }}" alt="Customer-uploaded reference" style="width:100%;display:block;"/>
-            </a>
-          </div>
-          <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">Uploaded by the customer as inspiration — click to view full size.</div>
+          @include('admin.custom-orders._reference-photo', ['r' => $designRequest])
         </div>
       </div>
     @endif
