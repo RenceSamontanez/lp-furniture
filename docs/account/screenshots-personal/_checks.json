@@ -1,0 +1,434 @@
+{
+  "checks": [
+    {
+      "name": "page loads without script errors",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "3 read-only cards, no old bottom Save/Discard bar on Personal info",
+      "ok": true,
+      "detail": {
+        "fDisc": false,
+        "footHidden": true,
+        "cards": 3,
+        "editing": 0,
+        "edHidden": true
+      }
+    },
+    {
+      "name": "past-orders line under the address card",
+      "ok": true
+    },
+    {
+      "name": "Tab reaches the Edit name button",
+      "ok": true
+    },
+    {
+      "name": "Enter on Edit opens the card and focus moves into the first field",
+      "ok": true,
+      "detail": {
+        "editing": true,
+        "just": false,
+        "edVisible": true,
+        "editBtnHidden": true,
+        "busy": false,
+        "btnText": "Save name",
+        "ariaBusy": null,
+        "fsDisabled": false,
+        "cancelDisabled": false,
+        "active": "edit",
+        "activeId": "fn",
+        "savedTag": "none"
+      }
+    },
+    {
+      "name": "Space on Cancel closes the card and focus returns to Edit",
+      "ok": true,
+      "detail": {
+        "editing": false,
+        "just": false,
+        "edVisible": false,
+        "editBtnHidden": false,
+        "busy": false,
+        "btnText": "Save name",
+        "ariaBusy": null,
+        "fsDisabled": false,
+        "cancelDisabled": false,
+        "active": "edit",
+        "activeId": "",
+        "savedTag": "none"
+      }
+    },
+    {
+      "name": "name: invalid value shows an error at the field and a toast",
+      "ok": true
+    },
+    {
+      "name": "name: Cancel restores the saved value and clears errors",
+      "ok": true
+    },
+    {
+      "name": "opening another card closes the first (one card at a time)",
+      "ok": true
+    },
+    {
+      "name": "country selector opens with countries",
+      "ok": true,
+      "detail": {
+        "open": true,
+        "n": 32
+      }
+    },
+    {
+      "name": "country selector picks Singapore",
+      "ok": true
+    },
+    {
+      "name": "phone: Cancel restores the country",
+      "ok": true
+    },
+    {
+      "name": "phone Save shows the spinner and \"Saving…\" at once, fields locked, aria-busy",
+      "ok": true,
+      "detail": {
+        "editing": true,
+        "just": false,
+        "edVisible": true,
+        "editBtnHidden": true,
+        "busy": true,
+        "btnText": "Saving…",
+        "ariaBusy": "true",
+        "fsDisabled": true,
+        "cancelDisabled": true,
+        "active": "BODY",
+        "activeId": "",
+        "savedTag": "none"
+      }
+    },
+    {
+      "name": "spinner stays at least about 400 ms",
+      "ok": true,
+      "detail": 705
+    },
+    {
+      "name": "double click sent one request",
+      "ok": true,
+      "detail": 1
+    },
+    {
+      "name": "phone saved: card read-only, Saved tag shown, focus back on Edit",
+      "ok": true,
+      "detail": {
+        "editing": false,
+        "just": true,
+        "edVisible": false,
+        "editBtnHidden": false,
+        "busy": false,
+        "btnText": "Save number",
+        "ariaBusy": null,
+        "fsDisabled": false,
+        "cancelDisabled": false,
+        "active": "edit",
+        "activeId": "",
+        "savedTag": "flex"
+      }
+    },
+    {
+      "name": "phone saved: new value shown and toast says what was saved",
+      "ok": true,
+      "detail": [
+        {
+          "role": "status",
+          "text": "Phone number saved"
+        },
+        {
+          "role": "alert",
+          "text": "Fix the highlighted name and try again."
+        }
+      ]
+    },
+    {
+      "name": "Saved tag disappears after about 3 seconds",
+      "ok": true
+    },
+    {
+      "name": "phone persisted after reload (empty address)",
+      "ok": true
+    },
+    {
+      "name": "network failure: card stays open, fields enabled again, error toast",
+      "ok": true,
+      "detail": {
+        "editing": true,
+        "just": false,
+        "edVisible": true,
+        "editBtnHidden": true,
+        "busy": false,
+        "btnText": "Save number",
+        "ariaBusy": null,
+        "fsDisabled": false,
+        "cancelDisabled": false,
+        "active": "BUTTON",
+        "activeId": "",
+        "savedTag": "none"
+      }
+    },
+    {
+      "name": "address: empty Save refused with errors at every missing field",
+      "ok": true
+    },
+    {
+      "name": "three dropdowns pick real places in order",
+      "ok": true
+    },
+    {
+      "name": "address: postal code is required",
+      "ok": true
+    },
+    {
+      "name": "address saved: read-only text shown, button reads Change address",
+      "ok": true,
+      "detail": {
+        "editing": false,
+        "just": true,
+        "edVisible": false,
+        "editBtnHidden": false,
+        "busy": false,
+        "btnText": "Save address",
+        "ariaBusy": null,
+        "fsDisabled": false,
+        "cancelDisabled": false,
+        "active": "edit",
+        "activeId": "",
+        "savedTag": "flex"
+      }
+    },
+    {
+      "name": "server error is shown at the field and the card stays open",
+      "ok": true,
+      "detail": "Choose a place from the list."
+    },
+    {
+      "name": "address Cancel restores the saved values",
+      "ok": true
+    },
+    {
+      "name": "closing the browser tab with unsaved changes is warned",
+      "ok": true
+    },
+    {
+      "name": "Security tab with unsaved changes asks \"Save your changes?\" with 3 choices",
+      "ok": true,
+      "detail": {
+        "open": true,
+        "title": "Save your changes?",
+        "buttons": [
+          "Keep editing",
+          "Discard",
+          "Save"
+        ]
+      }
+    },
+    {
+      "name": "Keep editing stays on the card",
+      "ok": true
+    },
+    {
+      "name": "Discard switches tab and restores the value",
+      "ok": true
+    },
+    {
+      "name": "a navbar link with unsaved changes asks first",
+      "ok": true
+    },
+    {
+      "name": "the browser Back button with unsaved changes asks first",
+      "ok": true
+    },
+    {
+      "name": "Save in the dialog saves the card (name) and then leaves",
+      "ok": true
+    },
+    {
+      "name": "name saved from the dialog persisted (unverified: no notice)",
+      "ok": true
+    },
+    {
+      "name": "Show/Hide password buttons exist",
+      "ok": true
+    },
+    {
+      "name": "Show password toggles the field type",
+      "ok": true,
+      "detail": [
+        "password",
+        "text"
+      ]
+    },
+    {
+      "name": "Update password becomes enabled when every rule is met",
+      "ok": true
+    },
+    {
+      "name": "Update password shows the spinner and \"Updating…\" at once",
+      "ok": true,
+      "detail": {
+        "busy": true,
+        "text": "Updating…",
+        "aria": "true"
+      }
+    },
+    {
+      "name": "after Update password the page shows the change",
+      "ok": true,
+      "detail": "LP\nFurniture\nHome\nCatalog\nAssistant\nCart\nNotifications\nReviews\nMy Account\nPassword updated. Other devices were signed out.\nMR\nMariana Reyes\nacct-fresh@example.test\nNot verified\nPersonal info\nSecurity\n"
+    },
+    {
+      "name": "Go to link works: /orders",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "name": "Go to link works: /design-gallery",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "name": "Go to link works: /notifications",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "name": "Go to link works: /reviews",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "name": "Verify now opens the Verification tab",
+      "ok": true
+    },
+    {
+      "name": "Submit for review is disabled until both photos and the box",
+      "ok": true
+    },
+    {
+      "name": "both upload areas show their preview",
+      "ok": true
+    },
+    {
+      "name": "Submit for review enabled after photos and the tick",
+      "ok": true
+    },
+    {
+      "name": "Submit for review shows the spinner and \"Submitting…\"",
+      "ok": true,
+      "detail": {
+        "busy": true,
+        "text": "Submitting…",
+        "aria": "true"
+      }
+    },
+    {
+      "name": "after submitting, the page says it is under review",
+      "ok": true
+    },
+    {
+      "name": "Sign out works",
+      "ok": true,
+      "detail": "/"
+    },
+    {
+      "name": "verified: notice appears inside the Name card before saving, nothing saved yet",
+      "ok": true,
+      "detail": {
+        "shown": true,
+        "text": "Your name must match your ID. If it changes, we may ask you to verify again. Keep editingSave anyway",
+        "buttons": [
+          "Keep editing",
+          "Save anyway"
+        ],
+        "saved": "Maria"
+      }
+    },
+    {
+      "name": "Keep editing hides the notice and keeps the card open",
+      "ok": true
+    },
+    {
+      "name": "Save anyway saves the name and closes the card",
+      "ok": true,
+      "detail": {
+        "editing": false,
+        "just": true,
+        "edVisible": false,
+        "editBtnHidden": false,
+        "busy": false,
+        "btnText": "Save name",
+        "ariaBusy": null,
+        "fsDisabled": false,
+        "cancelDisabled": false,
+        "active": "edit",
+        "activeId": "",
+        "savedTag": "flex"
+      }
+    },
+    {
+      "name": "verification stays after the name change",
+      "ok": true
+    },
+    {
+      "name": "name change recorded with old and new name",
+      "ok": true,
+      "detail": [
+        {
+          "old_first_name": "Maria",
+          "new_first_name": "Maribel",
+          "new_last_name": "Reyes",
+          "was_verified": true
+        }
+      ]
+    },
+    {
+      "name": "Use a different address opens the empty address form",
+      "ok": true
+    },
+    {
+      "name": "Continue with details missing stays and shows what is missing",
+      "ok": true
+    },
+    {
+      "name": "Continue shows the spinner and \"Continuing…\" at once",
+      "ok": true,
+      "detail": {
+        "busy": true,
+        "text": "Continuing…"
+      }
+    },
+    {
+      "name": "Continue then moves on and the label is back",
+      "ok": true
+    },
+    {
+      "name": "phone: every visible button and field is at least 44px tall",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "phone: no horizontal scroll with the address card open",
+      "ok": true
+    },
+    {
+      "name": "no script errors across the walk",
+      "ok": true
+    }
+  ],
+  "pass": 62,
+  "fail": 0,
+  "shots": [
+    "leave-dialog-1440x900",
+    "name-notice-1440x900",
+    "order-continue-1440x900"
+  ],
+  "lumaLauncher": null
+}
