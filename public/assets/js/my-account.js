@@ -17,6 +17,23 @@
   function $$(s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); }
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function toast(type, msg) { if (window.LpToast) { window.LpToast.show(type, msg); } }
+
+  /* ───────── saving feedback: the same on every submit button ─────────
+   * The button shows a spinner and a short word ("Saving…"), is locked against double clicks and says aria-busy. A request
+   * that finishes in under MIN_SPIN ms keeps the spinner up to that long, so it is noticed. */
+  var MIN_SPIN = 400;
+  var reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  function isBusy(btn) { return !!btn && btn.classList.contains('is-busy'); }
+  function setBusy(btn, label) {
+    if (btn.__old === undefined) { btn.__old = btn.innerHTML; }
+    btn.classList.add('is-busy'); btn.setAttribute('aria-busy', 'true');
+    btn.innerHTML = '<i class="spin" aria-hidden="true"></i><span>' + esc(label) + '</span>';
+  }
+  function clearBusy(btn) {
+    if (btn.__old !== undefined) { btn.innerHTML = btn.__old; btn.__old = undefined; }
+    btn.classList.remove('is-busy'); btn.removeAttribute('aria-busy');
+  }
+  function minTime(started, fn) { var wait = Math.max(0, MIN_SPIN - (Date.now() - started)); if (wait) { setTimeout(fn, wait); } else { fn(); } }
   var BAD = /(https?:\/\/|hxxps?:\/\/|www\s?\.|[\w.+-]+\s?(@|\(at\)|\[at\])\s?[\w-]+\s?(\.|\(dot\))\s?[a-z]{2,}|\b[a-z0-9-]+\.(com|net|org|ph|io|co|info|biz|xyz|me|app|dev|shop|store|online|site|gov|edu)\b)/i;
 
   /* ───────── page height: below the shared nav ───────── */
@@ -46,6 +63,7 @@
     ul.setAttribute('role', 'listbox');
     ul.id = (inp.getAttribute('aria-controls') || ('mx-cb-' + (++comboSeq)));
     ul.hidden = true;
+    var quiet = false;
     var items = null, loading = null, shown = [], act = -1, val = hid.value, text = inp.value, isOpen = false;
     var label = o.label || function (it) { return it.name; };
 
@@ -140,7 +158,7 @@
       if (o.onPick) { o.onPick(it); }
     }
 
-    inp.addEventListener('focus', function () { if (!inp.disabled) { inp.select(); open(''); } });
+    inp.addEventListener('focus', function () { if (quiet) { return; } if (!inp.disabled) { inp.select(); open(''); } });
     inp.addEventListener('click', function () { if (ul.hidden) { open(''); } });
     inp.addEventListener('input', function () { open(inp.value); });
     inp.addEventListener('keydown', function (e) {
@@ -188,7 +206,8 @@
       invalidate: function () { items = null; loading = null; },
       disable: function (b, ph) { inp.disabled = b; btn.disabled = b; inp.placeholder = ph || 'Search or choose'; if (b) { close(); } },
       err: function (m) { if (err) { err.textContent = m; err.classList.toggle('show', !!m); } inp.classList.toggle('bad', !!m); },
-      focus: function () { inp.focus(); }
+      // focus without opening the list (used after opening a card or showing an error: the list would cover the other fields)
+      focus: function () { quiet = true; inp.focus(); quiet = false; }
     };
   }
 
@@ -324,8 +343,8 @@
     function validate() {
       var ok = true, a = get();
       if (!a.province_id) { P.err('Choose a province.'); ok = false; }
-      if (!a.city_id) { C.err(a.province_id ? 'Choose a city or municipality.' : ''); ok = false; }
-      if (!a.barangay_id) { B.err(a.city_id ? 'Choose a barangay.' : ''); ok = false; }
+      if (!a.city_id) { C.err('Choose a city or municipality.'); ok = false; }
+      if (!a.barangay_id) { B.err('Choose a barangay.'); ok = false; }
       if (!checkStreet()) { ok = false; }
       if (!checkZip()) { ok = false; }
       if (!checkNote()) { ok = false; }
@@ -422,12 +441,25 @@
     conts.forEach(function (b) {
       // runs before the button's own handler: a click with details missing stops here
       b.addEventListener('click', function (e) {
+        if (b.__go) { b.__go = false; return; }                 // second pass: the page's own handler runs now
+        if (isBusy(b)) { e.preventDefault(); e.stopImmediatePropagation(); return; }
         var m = refresh();
         if (m.length) {
           e.preventDefault(); e.stopImmediatePropagation();
           showErrors(); focusFirstMissing();
           toast('error', 'Add the missing delivery details first');
+          return;
         }
+        // details are complete: show the spinner at once, then hand the click on (a step change or the real submit)
+        e.preventDefault(); e.stopImmediatePropagation();
+        var started = Date.now(), submits = b.type === 'submit';
+        setBusy(b, 'Continuing…');
+        box.inert = true; box.setAttribute('aria-busy', 'true');
+        minTime(started, function () {
+          box.inert = false; box.removeAttribute('aria-busy');
+          if (!submits) { clearBusy(b); }                        // a submit keeps its spinner until the next page loads
+          b.__go = true; b.click();
+        });
       }, true);
     });
     if (form) {
@@ -438,6 +470,7 @@
     }
     $$('input[name=delivery_option]').forEach(function (r) { r.addEventListener('change', applyMode); });
     applyMode();
+    window.addEventListener('pageshow', function (ev) { if (ev.persisted) { conts.forEach(function (b) { if (isBusy(b)) { clearBusy(b); } }); } });
     window.MAOrder = {
       ready: function () { return missing().length === 0; },
       summary: function () {
@@ -449,37 +482,282 @@
   }
 
   /* ───────── My Account page ───────── */
+  var LABELS = { name: 'name', phone: 'phone number', address: 'delivery address' };
+  var GENERIC_FAIL = 'We could not save. Check your connection and try again.';
+
+  /*
+   * One card of Personal info. Read-only until its Edit button is pressed. Saves go through fetch to PUT /profile/section
+   * and the server answers with the values it stored; the page only shows what the server returned.
+   *   adapter.cur()   what the fields hold now          adapter.ser(v)  the same shape from saved values
+   *   adapter.reset() put the saved values back         adapter.validate() quick check before the request
+   */
+  function Card(el, adapter, saved, hooks) {
+    var name = el.dataset.sec;
+    var form = $('form', el), editBtn = $('[data-edit]', el), saveBtn = $('[data-save]', el), cancelBtn = $('[data-cancel]', el);
+    var ed = $('.ed', el), fs = $('.edf', el), tag = $('.sv', el), notice = $('[data-name-notice]', el), acts = $('[data-acts]', ed);
+    var hide = $$('[data-rd]', el);
+    var self = { el: el, name: name, label: LABELS[name], isOpen: false, busy: false };
+    var confirmed = false, tagTimer = null;
+    var tokenEl = $('input[name=_token]', form);
+
+    function clearErrors() {
+      $$('.err', el).forEach(function (e) { e.classList.remove('show'); });
+      $$('.inp.bad', el).forEach(function (i) { i.classList.remove('bad'); i.removeAttribute('aria-invalid'); });
+    }
+    function showNotice(on) {
+      if (!notice) { return; }
+      notice.hidden = !on; acts.hidden = !!on;
+      if (on) { try { notice.focus(); } catch (e) { /* fine */ } }
+    }
+
+    self.dirty = function () { return self.isOpen && adapter.cur() !== adapter.ser(saved); };
+
+    self.openEdit = function () {
+      if (self.isOpen) { return; }
+      self.isOpen = true; confirmed = false;
+      hide.forEach(function (n) { n.hidden = true; });
+      ed.hidden = false; editBtn.hidden = true;
+      el.classList.add('editing'); el.classList.remove('just');
+      clearTimeout(tagTimer);
+      hooks.opened(self);
+      var first = adapter.focus;
+      requestAnimationFrame(function () { try { first(); } catch (e) { /* fine */ } });
+    };
+    function close(focusEdit) {
+      self.isOpen = false; confirmed = false;
+      showNotice(false);
+      hide.forEach(function (n) { n.hidden = false; });
+      ed.hidden = true; editBtn.hidden = false;
+      el.classList.remove('editing');
+      hooks.closed(self);
+      if (focusEdit) { try { editBtn.focus(); } catch (e) { /* fine */ } }
+    }
+    self.cancel = function (focusEdit) {
+      if (self.busy) { return; }
+      adapter.reset(saved); clearErrors(); close(focusEdit !== false);
+    };
+
+    function showErrors(errors) {
+      var firstBad = null;
+      Object.keys(errors || {}).forEach(function (k) {
+        var inp = $('[name="' + k + '"]', form);
+        if (!inp) { return; }
+        var fld = inp.closest('.fld') || inp.parentNode;
+        var e = $('[data-phone-err]', fld) || $('.err', fld);
+        var box = inp.type === 'hidden' ? $('input[role=combobox]', inp.closest('.fld') || fld) : inp;
+        if (e) { e.textContent = [].concat(errors[k])[0]; e.classList.add('show'); }
+        if (box) { box.classList.add('bad'); box.setAttribute('aria-invalid', 'true'); if (!firstBad) { firstBad = box; } }
+      });
+      if (firstBad) { try { firstBad.focus(); } catch (e) { /* fine */ } }
+    }
+    function lock(on) {
+      self.busy = on;
+      fs.disabled = on; cancelBtn.disabled = on;
+      if (notice) { $$('button', notice).forEach(function (b) { b.disabled = on; }); }
+      if (on) { el.setAttribute('aria-busy', 'true'); } else { el.removeAttribute('aria-busy'); }
+    }
+    function done(res) {
+      var j = res.json || {};
+      if (res.status === 200 && j.ok) {
+        Object.keys(j.values || {}).forEach(function (k) { saved[k] = j.values[k]; });
+        adapter.show(saved);
+        adapter.reset(saved);
+        clearErrors(); close(true);
+        el.classList.add('just');
+        tagTimer = setTimeout(function () { el.classList.remove('just'); }, 3000);
+        toast('success', j.message || 'Saved');
+        return true;
+      }
+      if (res.status === 422 && j.errors) {
+        if (j.errors.name_confirm) { showNotice(true); return false; }
+        showErrors(j.errors);
+        toast('error', [].concat(j.errors[Object.keys(j.errors)[0]])[0] || 'Fix the highlighted fields and try again.');
+        return false;
+      }
+      toast('error', res.status === 419 ? 'Your session timed out. Reload the page and sign in again.' : GENERIC_FAIL);
+      return false;
+    }
+
+    self.save = function () {
+      if (self.busy || !self.isOpen) { return Promise.resolve(false); }
+      clearErrors();
+      if (!adapter.validate()) { toast('error', adapter.invalid()); return Promise.resolve(false); }
+      if (adapter.needsConfirm && adapter.needsConfirm(saved) && !confirmed) { showNotice(true); return Promise.resolve(false); }
+      var fd = new FormData(form);                       // built before the fields are locked: disabled fields are not sent
+      if (name === 'name') { fd.set('confirm_name_change', confirmed ? '1' : '0'); }
+      var started = Date.now();
+      setBusy(saveBtn, saveBtn.dataset.busyText || 'Saving…');
+      lock(true);
+      return fetch(form.action, {
+        method: 'POST', body: fd, credentials: 'same-origin',
+        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': tokenEl ? tokenEl.value : '' }
+      }).then(function (r) { return r.json().then(function (j) { return { status: r.status, json: j }; }, function () { return { status: r.ok ? 0 : r.status, json: {} }; }); },
+              function () { return { status: 0, json: {} }; })
+        .then(function (res) {
+          return new Promise(function (resolve) {
+            minTime(started, function () { clearBusy(saveBtn); lock(false); resolve(done(res)); });
+          });
+        });
+    };
+
+    editBtn.addEventListener('click', function () { hooks.request(self); });
+    cancelBtn.addEventListener('click', function () { self.cancel(true); });
+    form.addEventListener('submit', function (e) { e.preventDefault(); self.save(); });
+    if (notice) {
+      $('[data-keep]', notice).addEventListener('click', function () { showNotice(false); try { adapter.focus(); } catch (e) { /* fine */ } });
+      $('[data-anyway]', notice).addEventListener('click', function () { confirmed = true; showNotice(false); self.save(); });
+      // typing again means the customer may have changed their mind: ask once more only if the name still differs
+      $$('[data-name]', el).forEach(function (i) { i.addEventListener('input', function () { if (!notice.hidden) { showNotice(false); } }); });
+    }
+    return self;
+  }
+
   function initPage() {
     var data = DATA;
     var tabs = $$('.tab', root), views = $$('.view', root);
-    var foot = $('#foot'), fSave = $('#fSave'), fDisc = $('#fDisc'), fMsg = $('#fMsg');
+    var foot = $('#foot'), fSave = $('#fSave'), fMsg = $('#fMsg');
     var pT = $('#pT'), pS = $('#pS'), pChip = $('#pChip');
     var personal = $('#v-personal');
     var tab = data.tab || 'personal';
-
-    var phone = initPhone($('[data-phone]', personal));
-    var addr = initAddress($('[data-address]', personal));
     var init = JSON.parse(personal.getAttribute('data-init') || '{}');
-    var nameIns = $$('[data-name]', personal);
+    var saved = {
+      first_name: init.first_name || '', last_name: init.last_name || '', phone_country: init.phone_country || 'PH', phone_number: init.phone_number || '',
+      province_id: init.province_id || '', province: init.province || '', city_id: init.city_id || '', city: init.city || '', barangay_id: init.barangay_id || '', barangay: init.barangay || '',
+      street: init.street || '', postal_code: init.postal_code || '', landmark: init.landmark || '', line: ''
+    };
+    var cards = [];
 
+    /* ── the three cards ── */
+    var nameEl = $('#s-name'), phoneEl = $('#s-phone'), addrEl = $('#s-addr');
+    var nameIns = $$('[data-name]', nameEl);
     function nameCheck(i) {
       var v = i.value.trim(), e = i.parentNode.querySelector('.err'), m = '';
-      if (!v) { m = 'Enter your name.'; }
+      if (!v) { m = 'Enter your ' + (i.id === 'fn' ? 'first' : 'last') + ' name.'; }
       else if (BAD.test(v)) { m = 'Links and emails are not allowed here.'; }
       else if (!/^[A-Za-zÀ-ɏ][A-Za-zÀ-ɏ '’.\-]{0,59}$/.test(v)) { m = 'Use letters only. No numbers or symbols.'; }
       e.textContent = m; e.classList.toggle('show', !!m); i.classList.toggle('bad', !!m);
+      if (m) { i.setAttribute('aria-invalid', 'true'); } else { i.removeAttribute('aria-invalid'); }
       return !m;
     }
-    function currentState() {
-      var a = addr.get();
-      return [$('#fn').value.trim(), $('#ln').value.trim(), phone.country(), phone.number.value.replace(/[\s\-()]/g, ''),
-              a.province_id, a.city_id, a.barangay_id, a.street, a.postal_code, a.landmark].join('|');
-    }
-    var initState = [init.first_name, init.last_name, init.phone_country, String(init.phone_number || '').replace(/[\s\-()]/g, ''),
-                     String(init.province_id || ''), String(init.city_id || ''), String(init.barangay_id || ''), init.street || '', init.postal_code || '', init.landmark || ''].join('|');
-    function dirty() { return currentState() !== initState; }
+    nameIns.forEach(function (i) { i.addEventListener('blur', function () { if (i.value.trim()) { nameCheck(i); } }); });
+    var nameAdapter = {
+      cur: function () { return $('#fn').value.trim() + '|' + $('#ln').value.trim(); },
+      ser: function (v) { return v.first_name + '|' + v.last_name; },
+      reset: function (v) { $('#fn').value = v.first_name; $('#ln').value = v.last_name; },
+      show: function (v) { $('[data-v=first_name]', nameEl).textContent = v.first_name; $('[data-v=last_name]', nameEl).textContent = v.last_name; $('.who h2').textContent = (v.first_name + ' ' + v.last_name).trim(); $('.who .mono').textContent = ((v.first_name.charAt(0) + v.last_name.charAt(0)).toUpperCase()) || 'U'; },
+      validate: function () { return nameIns.map(nameCheck).every(Boolean); },
+      invalid: function () { return 'Fix the highlighted name and try again.'; },
+      focus: function () { $('#fn').focus(); },
+      needsConfirm: function (v) { return data.verified && (nameAdapter.cur() !== nameAdapter.ser(v)); }
+    };
 
-    /* footer */
+    var phone = initPhone($('[data-phone]', phoneEl));
+    var digits = function (s) { return String(s || '').replace(/[\s\-()]/g, ''); };
+    var phoneAdapter = {
+      cur: function () { return phone.country() + '|' + digits(phone.number.value); },
+      ser: function (v) { return v.phone_country + '|' + digits(v.phone_number); },
+      reset: function (v) { phone.set(v.phone_country, v.phone_number); },
+      show: function (v) {
+        var b = $('[data-v=phone]', phoneEl);
+        b.textContent = v.display || v.phone_number;
+        $('[data-edit-text]', phoneEl).textContent = 'Change number';
+        $('[data-edit]', phoneEl).setAttribute('aria-label', 'Change phone number');
+      },
+      validate: function () { return phone.check(); },
+      invalid: function () { return 'Enter a phone number we can call.'; },
+      focus: function () { phone.number.focus(); }
+    };
+
+    var addr = initAddress($('[data-address]', addrEl));
+    var addrKey = function (v) { return [v.province_id, v.city_id, v.barangay_id, v.street, v.postal_code, v.landmark].map(function (x) { return String(x == null ? '' : x).trim(); }).join('|'); };
+    var addrAdapter = {
+      cur: function () { return addrKey(addr.get()); },
+      ser: function (v) { return addrKey(v); },
+      reset: function (v) { addr.set(v); },
+      show: function (v) {
+        var read = $('[data-addr-read]', addrEl);
+        var html = '<div class="rdr"><span class="k">Saved address</span><b data-v="address">' + esc(v.line || addr.line()) + '</b></div>';
+        if (v.landmark) { html += '<div class="rdr"><span class="k">Landmark</span><b data-v="landmark">' + esc(v.landmark) + '</b></div>'; }
+        read.innerHTML = html;
+        $('[data-edit-text]', addrEl).textContent = 'Change address';
+        $('[data-edit]', addrEl).setAttribute('aria-label', 'Change delivery address');
+      },
+      validate: function () { return addr.validate(); },        // an empty address fails here: Cancel is how to leave without saving
+      invalid: function () { return addr.missing().length ? 'Fill in the highlighted address fields.' : 'Fix the highlighted address fields.'; },
+      focus: function () { addr.focusFirst(); }
+    };
+
+    /* ── leaving with unsaved changes ── */
+    var leave = { modal: $('#ma-leave'), card: null, proceed: null };
+    function openCard() { return cards.filter(function (c) { return c.isOpen; })[0] || null; }
+    function dirtyCard() { return cards.filter(function (c) { return c.dirty(); })[0] || null; }
+    function guard(proceed) {
+      var c = dirtyCard();
+      if (!c) { proceed(); return; }
+      if (!leave.modal || !window.LpModal) { if (window.confirm('You have unsaved changes. Leave without saving?')) { c.cancel(false); proceed(); } return; }
+      leave.card = c; leave.proceed = proceed;
+      $('#ma-leave-text').textContent = 'You changed your ' + c.label + ' but did not save it.';
+      window.LpModal.open(leave.modal, document.activeElement);
+    }
+    if (leave.modal) {
+      leave.modal.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-ma-leave]');
+        if (!b) { return; }
+        var act = b.getAttribute('data-ma-leave'), c = leave.card, go2 = leave.proceed;
+        if (act === 'keep') { leave.proceed = null; return; }
+        window.LpModal.close();
+        if (act === 'discard') { c.cancel(false); if (go2) { go2(); } }
+        if (act === 'save') { c.save().then(function (ok) { if (ok && go2) { go2(); } }); }
+      });
+    }
+
+    var guardPushed = false;
+    function armBack() { if (!guardPushed) { try { window.history.pushState({ maGuard: 1 }, '', window.location.href); guardPushed = true; } catch (e) { /* no history: fine */ } } }
+    window.addEventListener('popstate', function () {
+      if (!guardPushed) { return; }
+      if (dirtyCard()) {
+        try { window.history.pushState({ maGuard: 1 }, '', window.location.href); } catch (e) { /* fine */ }
+        guard(function () { guardPushed = false; window.history.go(-2); });
+      } else { guardPushed = false; window.history.back(); }
+    });
+    window.addEventListener('beforeunload', function (e) { if (dirtyCard()) { e.preventDefault(); e.returnValue = ''; } });
+    document.addEventListener('click', function (e) {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) { return; }
+      var a = e.target.closest ? e.target.closest('a[href]') : null;
+      if (!a || a.target === '_blank' || a.hasAttribute('download')) { return; }
+      var h = a.getAttribute('href');
+      if (!h || h.charAt(0) === '#' || /^(javascript|mailto|tel):/i.test(h) || !dirtyCard()) { return; }
+      e.preventDefault(); e.stopPropagation();
+      guard(function () { window.location.href = a.href; });
+    }, true);
+    document.addEventListener('submit', function (e) {
+      var f = e.target;
+      if (!f || !f.matches || f.matches('[data-section]') || !dirtyCard()) { return; }
+      e.preventDefault(); e.stopImmediatePropagation();
+      guard(function () { f.submit(); });
+    }, true);
+
+    var hooks = {
+      opened: function () { armBack(); },
+      closed: function () { /* the history guard stays: the next Back press is passed on by the popstate handler */ },
+      // one card open at a time: opening another cancels the first (asking first when it holds unsaved changes)
+      request: function (c) {
+        var o = openCard();
+        if (!o || o === c) { c.openEdit(); return; }
+        guard(function () { var still = openCard(); if (still && still !== c) { still.cancel(false); } c.openEdit(); });
+      }
+    };
+    cards.push(Card(nameEl, nameAdapter, saved, hooks), Card(phoneEl, phoneAdapter, saved, hooks), Card(addrEl, addrAdapter, saved, hooks));
+    cards.forEach(function (c) { if (c.el.dataset.open) { c.openEdit(); } });
+
+    // phone and tablet: keep the field being typed in on screen when the keyboard opens
+    personal.addEventListener('focusin', function (e) {
+      if (window.innerWidth > 860 || !e.target.closest('.sec.editing')) { return; }
+      var t = e.target;
+      setTimeout(function () { try { t.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' }); } catch (x) { /* fine */ } }, 300);
+    });
+
+    /* ── footer: only the Security tab has one (Update password) ── */
     function secState() {
       var p0 = $('#p0'), p1 = $('#p1'), p2 = $('#p2');
       if (!p0 || p0.disabled) { return { ok: false, rules: false }; }
@@ -490,24 +768,17 @@
       return { ok: all && !!c, rules: all };
     }
     function renderFoot() {
-      var email = !data.googleOnly;
-      if (tab === 'personal') {
+      if (tab === 'security' && !data.googleOnly) {
         foot.hidden = false;
-        var d = dirty();
-        fSave.setAttribute('form', 'f-personal'); fSave.textContent = 'Save changes';
-        fDisc.hidden = !d;
-        fMsg.innerHTML = d ? '<b>You have unsaved changes.</b>' : 'Your changes are saved to your account only.';
-        fSave.setAttribute('aria-disabled', d ? 'false' : 'true');
-      } else if (tab === 'security' && email) {
-        foot.hidden = false; fDisc.hidden = true;
-        fSave.setAttribute('form', 'f-password'); fSave.textContent = 'Update password';
         fMsg.textContent = data.locked ? 'You can change your password once a week.' : 'Changing your password signs you out of other devices.';
-        fSave.setAttribute('aria-disabled', (data.locked || !secState().ok) ? 'true' : 'false');
+        if (!isBusy(fSave)) { fSave.setAttribute('aria-disabled', (data.locked || !secState().ok) ? 'true' : 'false'); }
       } else { foot.hidden = true; }
     }
 
-    /* tabs */
-    function go(t, focus) {
+    /* ── tabs ── */
+    function go(t) {
+      var o = openCard();
+      if (o && t !== 'personal') { o.cancel(false); }
       tab = t;
       tabs.forEach(function (b) {
         var on = b.dataset.t === t;
@@ -520,42 +791,34 @@
       if (t === 'verify') { pChip.hidden = false; pChip.className = 'chip ' + v.dataset.chipClass; pChip.textContent = v.dataset.chip; } else { pChip.hidden = true; }
       renderFoot();
       $('.pb', root).scrollTop = 0;
-      try { var u = new URL(window.location.href); u.searchParams.set('tab', t); window.history.replaceState(null, '', u.toString()); } catch (e) { /* no history: fine */ }
-      if (focus) { v.setAttribute('tabindex', '-1'); }
+      try { var u = new URL(window.location.href); u.searchParams.set('tab', t); window.history.replaceState(window.history.state, '', u.toString()); } catch (e) { /* no history: fine */ }
     }
-    tabs.forEach(function (b) { b.addEventListener('click', function () { go(b.dataset.t); }); });
-    $$('[data-go]', root).forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); go(a.dataset.go); }); });
+    tabs.forEach(function (b) { b.addEventListener('click', function () { if (b.dataset.t === tab) { return; } guard(function () { go(b.dataset.t); }); }); });
+    $$('[data-go]', root).forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); guard(function () { go(a.dataset.go); }); }); });
 
-    /* personal form */
-    nameIns.forEach(function (i) { i.addEventListener('input', function () { nameCheck(i); renderFoot(); }); });
-    phone.onChange(renderFoot); addr.onChange(renderFoot);
-    personal.addEventListener('input', renderFoot);
-    fDisc.addEventListener('click', function () {
-      $('#fn').value = init.first_name || ''; $('#ln').value = init.last_name || '';
-      phone.set(init.phone_country, init.phone_number);
-      addr.set(init);
-      $$('.inp.bad', personal).forEach(function (i) { i.classList.remove('bad'); });
-      $$('.err', personal).forEach(function (e) { e.classList.remove('show'); });
-      renderFoot();
-    });
+    /* ── Update password ── */
     fSave.addEventListener('click', function (e) {
+      if (isBusy(fSave)) { e.preventDefault(); return; }
       if (fSave.getAttribute('aria-disabled') === 'true') {
         e.preventDefault();
         if (tab === 'security' && data.locked) { toast('info', 'You can change your password again after the date shown.'); }
+        else if (tab === 'security') { toast('error', 'Fill in all three password boxes and meet every rule first.'); }
         return;
       }
-      if (tab === 'personal') {
-        var ok = nameIns.map(nameCheck).every(Boolean);
-        if (!phone.check()) { ok = false; }
-        if (!addr.empty() && !addr.validate()) { ok = false; }
-        if (!ok) { e.preventDefault(); toast('error', !addr.empty() && addr.missing().length ? 'Finish the address or clear it, then save' : 'Fix the highlighted fields first'); }
-      } else if (tab === 'security') {
-        if (!secState().ok) { e.preventDefault(); }
-      }
+      if (tab === 'security' && !secState().ok) { e.preventDefault(); }
     });
+    var pf = $('#f-password');
+    if (pf) {
+      pf.addEventListener('submit', function (e) {
+        if (isBusy(fSave) || fSave.getAttribute('aria-disabled') === 'true') { e.preventDefault(); return; }
+        setBusy(fSave, fSave.dataset.busyText || 'Updating…');
+        $$('input', pf).forEach(function (i) { i.readOnly = true; });
+        pf.setAttribute('aria-busy', 'true');
+      });
+    }
     ['p0', 'p1', 'p2'].forEach(function (id) { var el = $('#' + id); if (el) { el.addEventListener('input', renderFoot); } });
 
-    /* verification uploads */
+    /* ── verification uploads ── */
     var vf = $('#f-verify');
     if (vf) {
       var MAX = 5 * 1024 * 1024, files = [false, false], gen = $('#gen'), sub = $('#vSub');
@@ -568,7 +831,7 @@
           li.querySelector('b').innerHTML = s < n ? '&#10003;' : String(s);
         });
       };
-      var syncUp = function () { sub.setAttribute('aria-disabled', files[0] && files[1] && gen.checked ? 'false' : 'true'); setSteps(); };
+      var syncUp = function () { if (!isBusy(sub)) { sub.setAttribute('aria-disabled', files[0] && files[1] && gen.checked ? 'false' : 'true'); } setSteps(); };
       var magic = function (f, cb) {
         var r = new FileReader();
         r.onload = function () { var b = new Uint8Array(r.result); cb((b[0] === 0xFF && b[1] === 0xD8 && b[2] === 0xFF) || (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4E && b[3] === 0x47)); };
@@ -592,14 +855,25 @@
         });
       });
       gen.addEventListener('change', syncUp);
+      sub.addEventListener('click', function (e) { if (isBusy(sub)) { e.preventDefault(); } });
       vf.addEventListener('submit', function (e) {
+        if (isBusy(sub)) { e.preventDefault(); return; }
         if (sub.getAttribute('aria-disabled') === 'true') { e.preventDefault(); toast('error', 'Add both photos and tick the box first'); return; }
-        sub.setAttribute('aria-disabled', 'true');
+        setBusy(sub, 'Submitting…');
+        vf.classList.add('is-sending'); vf.setAttribute('aria-busy', 'true');   // pointer lock; the fields stay enabled so they are still sent
       });
       syncUp();
     }
 
-    /* the first paint of the footer, and an error from the server opens the tab that holds it */
+    // coming back with the browser's Back button can show the page as it was left: clear any spinner
+    window.addEventListener('pageshow', function (e) {
+      if (!e.persisted) { return; }
+      [fSave, $('#vSub')].forEach(function (b) { if (b && isBusy(b)) { clearBusy(b); } });
+      if (vf) { vf.classList.remove('is-sending'); vf.removeAttribute('aria-busy'); }
+      if (pf) { pf.removeAttribute('aria-busy'); $$('input', pf).forEach(function (i) { i.readOnly = false; }); }
+      renderFoot();
+    });
+
     go(tab);
     if (data.hasErrors && tab === 'personal') { var bad = $('.inp.bad, .err.show', personal); if (bad && bad.focus) { try { bad.focus(); } catch (e) { /* fine */ } } }
   }

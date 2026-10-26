@@ -35,9 +35,10 @@
   if ($pwErrors) { $tab = 'security'; }
   elseif ($errors->hasAny(['id_photo', 'selfie_photo', 'confirm'])) { $tab = 'verify'; }
   elseif ($errors->any()) { $tab = 'personal'; }
+  $openSection = old('section');
   $maData = [
     'tab' => $tab, 'googleOnly' => $googleOnly, 'locked' => $locked, 'hasErrors' => $errors->any(),
-    'countries' => $countries, 'phoneRules' => \App\Support\PhoneNumber::rulesForScript(),
+    'verified' => (bool) $user->is_validated, 'countries' => $countries, 'phoneRules' => \App\Support\PhoneNumber::rulesForScript(),
   ];
   $init = [
     'first_name' => $user->first_name, 'last_name' => $user->last_name,
@@ -68,6 +69,7 @@
  <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0112 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 004 0"/></symbol>
  <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></symbol>
  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11.5A7 7 0 005 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+ <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.1 2.1 0 00-3-3L5 17l-1 3z"/><path d="M14 7l3 3"/></symbol>
  <symbol id="i-badge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="11" r="2"/><path d="M14 10h4M14 14h3M6 16c1-2 5-2 6 0"/></symbol>
 </svg>
 
@@ -100,32 +102,96 @@
       <div class="ph"><div><h1 id="pT">{{ $titles[$tab][0] }}</h1><p id="pS">{{ $titles[$tab][1] }}</p></div><span class="chip {{ $chipCls }}" id="pChip" @if($tab !== 'verify') hidden @endif>{{ $chipText }}</span></div>
 
       <div class="pb">
-        {{-- PERSONAL --}}
-        <form class="view{{ $tab === 'personal' ? ' on' : '' }}" id="v-personal" role="tabpanel" aria-labelledby="tab-personal" data-title="{{ $titles['personal'][0] }}" data-sub="{{ $titles['personal'][1] }}"
-              method="POST" action="{{ route('profile.update') }}" novalidate data-init='@json($init)'>
-          @csrf @method('PUT')
-          <div class="g12">
-            <div class="fld c6"><label for="fn">First name <span class="rq" aria-hidden="true">*</span></label>
-              <input class="inp{{ $errors->has('first_name') ? ' bad' : '' }}" id="fn" name="first_name" value="{{ old('first_name', $user->first_name) }}" maxlength="60" autocomplete="given-name" data-name aria-required="true">
-              <p class="err{{ $errors->has('first_name') ? ' show' : '' }}">{{ $errors->first('first_name') }}</p></div>
-            <div class="fld c6"><label for="ln">Last name <span class="rq" aria-hidden="true">*</span></label>
-              <input class="inp{{ $errors->has('last_name') ? ' bad' : '' }}" id="ln" name="last_name" value="{{ old('last_name', $user->last_name) }}" maxlength="60" autocomplete="family-name" data-name aria-required="true">
-              <p class="err{{ $errors->has('last_name') ? ' show' : '' }}">{{ $errors->first('last_name') }}</p></div>
-            <div class="fld c6"><label for="em">Email</label>
-              <div class="lock"><input class="inp" id="em" value="{{ $user->email }}" readonly aria-describedby="emh">{!! $sym('lock') !!}</div>
-              <p class="hint" id="emh">This is your sign-in email. It cannot be changed here.</p></div>
-            <div class="fld c6">
-              @include('partials.phone-field', ['idp' => 'p', 'numName' => 'phone_number', 'ccName' => 'phone_country', 'country' => $phoneCountry, 'national' => $phoneNational])
-            </div>
+        {{-- PERSONAL: three cards, each read-only until its own button is pressed (behaviour: public/assets/js/my-account.js) --}}
+        <div class="view{{ $tab === 'personal' ? ' on' : '' }}" id="v-personal" role="tabpanel" aria-labelledby="tab-personal" data-title="{{ $titles['personal'][0] }}" data-sub="{{ $titles['personal'][1] }}" data-init='@json($init)'>
+          @php
+            $sectionAction = route('profile.section');
+            $savedTag = '<span class="chip ok sv" role="status"><svg aria-hidden="true"><use href="#i-ok"/></svg>Saved</span>';
+            $editIcon = $sym('edit');
+          @endphp
+          <div class="pcols">
+            {{-- NAME --}}
+            <section class="glass card sec" id="s-name" data-sec="name" aria-labelledby="hName" @if($openSection === 'name') data-open="1" @endif>
+              <form method="POST" action="{{ $sectionAction }}" data-section="name" data-verified="{{ $user->is_validated ? '1' : '0' }}" novalidate>
+                @csrf @method('PUT')
+                <input type="hidden" name="section" value="name">
+                <input type="hidden" name="confirm_name_change" value="0" data-confirm-name>
+                <header><h3 id="hName">Name</h3><div class="hr">{!! $savedTag !!}<button class="lp-btn lp-btn--secondary lpe" type="button" data-edit aria-label="Edit name">{!! $editIcon !!}Edit</button></div></header>
+                <div class="rd" data-rd><div class="rdr"><span class="k">First name</span><b data-v="first_name">{{ $user->first_name }}</b></div><div class="rdr"><span class="k">Last name</span><b data-v="last_name">{{ $user->last_name }}</b></div></div>
+                <div class="ed" hidden>
+                  <fieldset class="edf">
+                    <div class="g12">
+                      <div class="fld c12"><label for="fn">First name <span class="rq" aria-hidden="true">*</span></label>
+                        <input class="inp{{ $errors->has('first_name') ? ' bad' : '' }}" id="fn" name="first_name" value="{{ old('first_name', $user->first_name) }}" maxlength="60" autocomplete="given-name" data-name aria-required="true">
+                        <p class="err{{ $errors->has('first_name') ? ' show' : '' }}" role="alert">{{ $errors->first('first_name') }}</p></div>
+                      <div class="fld c12"><label for="ln">Last name <span class="rq" aria-hidden="true">*</span></label>
+                        <input class="inp{{ $errors->has('last_name') ? ' bad' : '' }}" id="ln" name="last_name" value="{{ old('last_name', $user->last_name) }}" maxlength="60" autocomplete="family-name" data-name aria-required="true">
+                        <p class="err{{ $errors->has('last_name') ? ' show' : '' }}" role="alert">{{ $errors->first('last_name') }}</p></div>
+                    </div>
+                  </fieldset>
+                  @if($user->is_validated)
+                    <div class="vnote" data-name-notice hidden role="alert" tabindex="-1">
+                      <p><b>Your name must match your ID.</b> If it changes, we may ask you to verify again.</p>
+                      <div class="acts"><button class="lp-btn lp-btn--secondary" type="button" data-keep>Keep editing</button><button class="lp-btn lp-btn--primary" type="button" data-anyway>Save anyway</button></div>
+                    </div>
+                  @endif
+                  <div class="acts" data-acts><button class="lp-btn lp-btn--secondary" type="button" data-cancel>Cancel</button><button class="lp-btn lp-btn--primary" type="submit" data-save data-busy-text="Saving…">Save name</button></div>
+                </div>
+              </form>
+            </section>
+
+            {{-- CONTACT --}}
+            <section class="glass card sec" id="s-phone" data-sec="phone" aria-labelledby="hPhone" @if($openSection === 'phone') data-open="1" @endif>
+              <form method="POST" action="{{ $sectionAction }}" data-section="phone" novalidate>
+                @csrf @method('PUT')
+                <input type="hidden" name="section" value="phone">
+                <header><h3 id="hPhone">Contact</h3><div class="hr">{!! $savedTag !!}<button class="lp-btn lp-btn--secondary lpe" type="button" data-edit aria-label="{{ $phoneDisplay ? 'Change phone number' : 'Add phone number' }}">{!! $editIcon !!}<span data-edit-text>{{ $phoneDisplay ? 'Change number' : 'Add number' }}</span></button></div></header>
+                <div class="rd">
+                  <div class="rdr"><span class="k">Email</span><b><span>{{ $user->email }}</span>{!! $sym('lock') !!}</b><span class="hint" id="emh">This is your sign-in email. It cannot be changed here.</span></div>
+                  <div class="rdr" data-rd><span class="k">Phone number</span><b data-v="phone">@if($phoneDisplay){{ $phoneDisplay }}@else<span class="none">No phone number yet</span>@endif</b></div>
+                </div>
+                <div class="ed" hidden>
+                  <fieldset class="edf">
+                    <div class="fld">
+                      @include('partials.phone-field', ['idp' => 'p', 'numName' => 'phone_number', 'ccName' => 'phone_country', 'country' => $phoneCountry, 'national' => $phoneNational])
+                    </div>
+                  </fieldset>
+                  <div class="acts"><button class="lp-btn lp-btn--secondary" type="button" data-cancel>Cancel</button><button class="lp-btn lp-btn--primary" type="submit" data-save data-busy-text="Saving…">Save number</button></div>
+                </div>
+              </form>
+            </section>
           </div>
-          <div class="asec">
-            <div class="ash"><h2>Delivery address</h2><span>Required to place an order. You can also add it when you order. <span class="rq">*</span> required</span></div>
-            @if($legacyAddress)
-              <p class="prevnote" id="prevAddress">{!! $sym('pin') !!}<span><b>Previous address (read only):</b> {{ $legacyAddress }}<br>Please choose the province, city and barangay below before your next order.</span></p>
-            @endif
-            @include('partials.address-fields', ['p' => '', 'idp' => 'p', 'v' => $addr])
-          </div>
-        </form>
+
+          {{-- DELIVERY ADDRESS --}}
+          <section class="glass card sec" id="s-addr" data-sec="address" aria-labelledby="hAddr" @if($openSection === 'address') data-open="1" @endif>
+            <form method="POST" action="{{ $sectionAction }}" data-section="address" novalidate>
+              @csrf @method('PUT')
+              <input type="hidden" name="section" value="address">
+              <header><h3 id="hAddr">Delivery address</h3><div class="hr">{!! $savedTag !!}<button class="lp-btn lp-btn--secondary lpe" type="button" data-edit aria-label="{{ $addr ? 'Change delivery address' : 'Add delivery address' }}">{!! $editIcon !!}<span data-edit-text>{{ $addr ? 'Change address' : 'Add address' }}</span></button></div></header>
+              <div class="rd" data-rd>
+                <div data-addr-read>
+                  @if($addr)
+                    <div class="rdr"><span class="k">Saved address</span><b data-v="address">{{ $addressLine }}</b></div>
+                    @if(!empty($addr['landmark']))<div class="rdr"><span class="k">Landmark</span><b data-v="landmark">{{ $addr['landmark'] }}</b></div>@endif
+                  @else
+                    <div class="rdr"><b class="none" data-v="address">No delivery address yet</b></div>
+                    @if($legacyAddress)
+                      <p class="prevnote" id="prevAddress">{!! $sym('pin') !!}<span><b>Previous address (read only):</b> {{ $legacyAddress }}</span></p>
+                    @endif
+                  @endif
+                </div>
+              </div>
+              <p class="hint addr-note">Changes here apply to your next orders. Past orders keep the address they were placed with.</p>
+              <div class="ed" hidden>
+                <p class="hint" style="margin:0 0 10px">Needed to place a delivery order. <span class="rq">*</span> required</p>
+                <fieldset class="edf">
+                  @include('partials.address-fields', ['p' => '', 'idp' => 'p', 'v' => $addr ?: []])
+                </fieldset>
+                <div class="acts"><button class="lp-btn lp-btn--secondary" type="button" data-cancel>Cancel</button><button class="lp-btn lp-btn--primary" type="submit" data-save data-busy-text="Saving…">Save address</button></div>
+              </div>
+            </form>
+          </section>
+        </div>
 
         {{-- SECURITY --}}
         <div class="view{{ $tab === 'security' ? ' on' : '' }}" id="v-security" role="tabpanel" aria-labelledby="tab-security" data-title="{{ $titles['security'][0] }}" data-sub="{{ $titles['security'][1] }}">
@@ -256,14 +322,22 @@
       </div>
 
       <div class="foot" id="foot">
-        <span class="msg" id="fMsg" aria-live="polite">Your changes are saved to your account only.</span>
-        <button class="lp-btn lp-btn--secondary ghost" type="button" id="fDisc" hidden>Discard</button>
-        <button class="lp-btn lp-btn--primary" type="submit" id="fSave" form="f-personal" aria-disabled="true">Save changes</button>
+        <span class="msg" id="fMsg" aria-live="polite"></span>
+        <button class="lp-btn lp-btn--primary" type="submit" id="fSave" form="f-password" aria-disabled="true" data-busy-text="Updating…">Update password</button>
       </div>
     </section>
   </div>
  </div>
 </div>
+
+<x-modal id="ma-leave" title="Save your changes?">
+  <p id="ma-leave-text">You changed something but did not save it.</p>
+  <x-slot:footer>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close data-ma-leave="keep">Keep editing</button>
+    <button type="button" class="lp-btn lp-btn--secondary" data-ma-leave="discard">Discard</button>
+    <button type="button" class="lp-btn lp-btn--primary" data-ma-leave="save">Save</button>
+  </x-slot:footer>
+</x-modal>
 
 <script type="application/json" id="ma-data">@json($maData)</script>
 @endsection

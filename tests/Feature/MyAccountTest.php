@@ -65,7 +65,7 @@ class MyAccountTest extends TestCase
 
     private function save(User $u, array $over = [])
     {
-        return $this->actingAs($u)->from(route('profile'))->put(route('profile.update'), $this->profileInput($over));
+        return $this->putProfileSections($u, $this->profileInput($over));
     }
 
     private function product(): Product
@@ -192,15 +192,15 @@ class MyAccountTest extends TestCase
         $this->save($u, ['postal_code' => '4217'])->assertSessionHasNoErrors();
     }
 
-    public function test_a_half_filled_address_is_refused_and_an_empty_one_clears_it(): void
+    public function test_a_half_filled_or_empty_address_is_refused_and_the_saved_one_stays(): void
     {
         $u = $this->customer();
         $this->save($u, ['barangay_id' => ''])->assertSessionHasErrors('barangay_id');
         $this->assertNotNull($u->fresh()->address_barangay_id);
 
-        $this->save($u, ['province_id' => '', 'city_id' => '', 'barangay_id' => '', 'street' => '', 'postal_code' => '', 'landmark' => ''])->assertSessionHasNoErrors();
-        $this->assertNull($u->fresh()->address_province_id);
-        $this->assertNull($u->fresh()->address_street);
+        $this->save($u, ['province_id' => '', 'city_id' => '', 'barangay_id' => '', 'street' => '', 'postal_code' => '', 'landmark' => ''])->assertSessionHasErrors('province_id');
+        $this->assertNotNull($u->fresh()->address_province_id);      // saving an empty address is not possible: Cancel is how to leave
+        $this->assertNotNull($u->fresh()->address_street);
     }
 
     /* ───────────── places ───────────── */

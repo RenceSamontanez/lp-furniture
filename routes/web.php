@@ -103,8 +103,8 @@ Route::middleware(['auth', \App\Http\Middleware\SignOutOnPasswordChange::class])
 
     Route::get('/profile', [AuthController::class, 'profile'])
          ->name('profile');
-    Route::put('/profile', [AuthController::class, 'updateProfile'])
-         ->name('profile.update');
+    Route::put('/profile/section', [AuthController::class, 'updateSection'])
+         ->name('profile.section');
     Route::put('/profile/password', [AuthController::class, 'updatePassword'])
          ->name('profile.password');
 

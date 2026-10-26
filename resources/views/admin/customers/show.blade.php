@@ -33,6 +33,30 @@
         @endif
       </div>
     </div>
+
+    <div class="admin-panel" id="name-history" style="margin-top:20px;">
+      <div class="admin-panel-header"><div class="admin-panel-title">Name changes</div></div>
+      <div class="admin-panel-body" style="padding:0;">
+        @if($nameChanges->isEmpty())
+          <div class="admin-empty" style="padding:24px;"><p>This customer has not changed their name.</p></div>
+        @else
+          <p style="margin:0;padding:14px 20px 0;font-size:13px;color:#6B5D52;">Changing a name does not reset identity verification. Check that the new name still matches the ID photo.</p>
+          <table class="admin-table">
+            <thead><tr><th>When</th><th>Old name</th><th>New name</th><th>Verified then</th></tr></thead>
+            <tbody>
+              @foreach($nameChanges as $c)
+                <tr>
+                  <td data-label="When">{{ $c->created_at->format('M d, Y g:i A') }}</td>
+                  <td data-label="Old name">{{ $c->oldName() }}</td>
+                  <td data-label="New name">{{ $c->newName() }}</td>
+                  <td data-label="Verified then">{{ $c->was_verified ? 'Yes' : 'No' }}</td>
+                </tr>
+              @endforeach
+            </tbody>
+          </table>
+        @endif
+      </div>
+    </div>
   </div>
 
   <div>

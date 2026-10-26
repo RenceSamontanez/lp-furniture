@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserNameChange;
 use App\Rules\PhilippineMobile;
 use App\Support\AccountPassword;
 use App\Support\DeliveryAddress;
@@ -336,6 +337,8 @@ return redirect($intended)
             'countries'     => PhoneNumber::countries(),
             'phoneCountry'  => $user->phone_country ?: $country,
             'phoneNational' => $e164 ? $national : '',
+            'phoneDisplay'  => PhoneNumber::display($e164),
+            'addressLine'   => $saved ? DeliveryAddress::line($saved) : '',
             'savedAddress'  => $saved ? $saved + DeliveryAddress::names($saved) : null,
             'legacyAddress' => $saved ? null : (trim((string) $user->address) !== '' ? trim($user->address) : null),
             'googleOnly'    => AccountPassword::isGoogleOnly($user),
@@ -345,48 +348,104 @@ return redirect($intended)
     }
 
     /* ════════════════════════════════════════
-       UPDATE PROFILE
+       UPDATE ONE CARD OF PERSONAL INFO
+       One endpoint, a `section` field: name | phone | address. Each card saves on its own and never touches the
+       others. JSON for the page script (fetch), a normal redirect without it.
     ════════════════════════════════════════ */
-    public function updateProfile(Request $request)
-    {
-        $user = Auth::user();
+    public const NAME_CHANGE_NOTICE = 'Your name must match your ID. If it changes, we may ask you to verify again.';
 
+    public function updateSection(Request $request)
+    {
+        $section = (string) $request->input('section');
+        if (!in_array($section, ['name', 'phone', 'address'], true)) {
+            throw ValidationException::withMessages(['section' => 'We could not tell which part to save. Reload the page and try again.']);
+        }
+
+        [$message, $values] = match ($section) {
+            'name'    => $this->saveName($request),
+            'phone'   => $this->savePhone($request),
+            'address' => $this->saveAddress($request),
+        };
+
+        if ($request->expectsJson()) {
+            return response()->json(['ok' => true, 'section' => $section, 'message' => $message, 'values' => $values]);
+        }
+
+        return redirect()->route('profile', ['tab' => 'personal'])->with('success', $message);
+    }
+
+    private function saveName(Request $request): array
+    {
         $request->validate([
             'first_name' => DeliveryAddress::nameRules(),
             'last_name'  => DeliveryAddress::nameRules(),
         ], [
-            'first_name.required' => 'Enter your name.',
-            'last_name.required'  => 'Enter your name.',
+            'first_name.required' => 'Enter your first name.',
+            'last_name.required'  => 'Enter your last name.',
             'first_name.regex'    => 'Use letters only. No numbers or symbols.',
             'last_name.regex'     => 'Use letters only. No numbers or symbols.',
         ]);
 
-        // The phone is required (the shop calls it about orders). Stored as E.164; users.phone_number mirrors it.
+        $first = TextSanitizer::line($request->first_name);
+        $last  = TextSanitizer::line($request->last_name);
+
+        $changed = DB::transaction(function () use ($request, $first, $last) {
+            $user = User::whereKey(Auth::id())->lockForUpdate()->first();
+            if ($user->first_name === $first && $user->last_name === $last) {
+                return false;
+            }
+            // A verified account is matched against an ID photo: the customer must see that warning before saving.
+            if ($user->is_validated && !$request->boolean('confirm_name_change')) {
+                throw ValidationException::withMessages(['name_confirm' => self::NAME_CHANGE_NOTICE]);
+            }
+
+            UserNameChange::create([
+                'user_id' => $user->id, 'old_first_name' => (string) $user->first_name, 'old_last_name' => (string) $user->last_name,
+                'new_first_name' => $first, 'new_last_name' => $last, 'was_verified' => (bool) $user->is_validated,
+            ]);
+            // the verification is NOT reset here: an admin decides from the history on the customer page
+            $user->forceFill(['first_name' => $first, 'last_name' => $last])->save();
+
+            return true;
+        });
+
+        return [$changed ? 'Name saved' : 'Name saved. Nothing was different.', ['first_name' => $first, 'last_name' => $last, 'full_name' => trim($first . ' ' . $last)]];
+    }
+
+    private function savePhone(Request $request): array
+    {
         $phone = PhoneNumber::parse((string) $request->input('phone_number'), (string) $request->input('phone_country', PhoneNumber::DEFAULT_COUNTRY));
         if (!$phone['ok']) {
             throw ValidationException::withMessages(['phone_number' => $phone['message']]);
         }
 
-        // The structured address is optional on this page, but never half-filled: all of it, or none of it.
-        $address = DeliveryAddress::extract($request->all());
-        $clearAddress = DeliveryAddress::isBlank($address);
-        if (!$clearAddress) {
-            $address = DeliveryAddress::validate($request->all());
-        }
-
-        DB::transaction(function () use ($user, $request, $phone, $address, $clearAddress) {
-            $user = User::whereKey($user->id)->lockForUpdate()->first();
-            $user->first_name    = TextSanitizer::line($request->first_name);
-            $user->last_name     = TextSanitizer::line($request->last_name);
-            $user->phone_e164    = $phone['e164'];
-            $user->phone_country = $phone['country'];
-            $user->phone_number  = $phone['legacy'];
-            $user->save();
-
-            $clearAddress ? DeliveryAddress::clearFor($user) : DeliveryAddress::saveFor($user, $address);
+        DB::transaction(function () use ($phone) {
+            $user = User::whereKey(Auth::id())->lockForUpdate()->first();
+            $user->forceFill([
+                'phone_e164' => $phone['e164'], 'phone_country' => $phone['country'], 'phone_number' => $phone['legacy'],
+            ])->save();
         });
 
-        return redirect()->route('profile', ['tab' => 'personal'])->with('success', 'Changes saved.');
+        [$country, $national] = PhoneNumber::split($phone['e164']);
+
+        return ['Phone number saved', [
+            'phone_country' => $country, 'phone_number' => $national, 'display' => PhoneNumber::display($phone['e164']), 'e164' => $phone['e164'],
+        ]];
+    }
+
+    private function saveAddress(Request $request): array
+    {
+        // all of it or nothing: an empty or half-filled address is refused (Cancel is how to leave without saving)
+        $address = DeliveryAddress::validate($request->all());
+
+        DB::transaction(function () use ($address) {
+            $user = User::whereKey(Auth::id())->lockForUpdate()->first();
+            DeliveryAddress::saveFor($user, $address);
+        });
+
+        $names = DeliveryAddress::names($address);
+
+        return ['Delivery address saved', $address + $names + ['line' => DeliveryAddress::line($address, $names)]];
     }
 
     /* ════════════════════════════════════════

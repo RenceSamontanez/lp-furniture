@@ -427,7 +427,9 @@ class AdminController extends Controller
         $orders = Order::where('user_id', $id)->latest()->get();
         $totalSpent = $orders->where('order_status', 'completed')->sum('total_amount');
 
-        return view('admin.customers.show', compact('customer', 'orders', 'totalSpent'));
+        $nameChanges = $customer->nameChanges()->get();
+
+        return view('admin.customers.show', compact('customer', 'orders', 'totalSpent', 'nameChanges'));
     }
 
 

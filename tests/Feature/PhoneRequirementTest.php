@@ -48,7 +48,7 @@ class PhoneRequirementTest extends TestCase
 
     private function saveProfile($user, array $overrides = [])
     {
-        return $this->actingAs($user)->from(route('profile'))->put(route('profile.update'), array_merge([
+        return $this->putProfileSections($user, array_merge([
             'first_name'    => 'Ana',
             'last_name'     => 'Cruz',
             'phone_country' => 'PH',

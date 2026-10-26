@@ -51,4 +51,29 @@ trait GivesDeliveryDetails
 
         return $user;
     }
+
+    /**
+     * Post the Personal info cards the way the page does, one section at a time (phone, address, name). Returns the first
+     * response that carried errors, otherwise the last one. $input holds the same keys the old single form used.
+     */
+    protected function putProfileSections($user, array $input)
+    {
+        $sections = [
+            'phone'   => ['phone_country', 'phone_number'],
+            'address' => ['province_id', 'city_id', 'barangay_id', 'street', 'postal_code', 'landmark'],
+            'name'    => ['first_name', 'last_name'],
+        ];
+        $last = null;
+        foreach ($sections as $name => $keys) {
+            if (!array_intersect($keys, array_keys($input))) {
+                continue;
+            }
+            $last = $this->actingAs($user)->from(route('profile'))->put(route('profile.section'), ['section' => $name, 'confirm_name_change' => 1] + array_intersect_key($input, array_flip($keys)));
+            if ($last->getSession()->has('errors')) {
+                return $last;
+            }
+        }
+
+        return $last;
+    }
 }

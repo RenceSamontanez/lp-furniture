@@ -66,6 +66,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /* ── RELATIONSHIPS ── */
     public function cartItems()    { return $this->hasMany(CartItem::class); }
     public function orders()       { return $this->hasMany(Order::class); }
+    public function nameChanges()  { return $this->hasMany(UserNameChange::class)->latest('id'); }
     public function notifications(){ return $this->hasMany(Notification::class); }
     public function feedbacks()    { return $this->hasMany(Feedback::class); }
     public function chatbotLogs()  { return $this->hasMany(ChatbotLog::class); }
