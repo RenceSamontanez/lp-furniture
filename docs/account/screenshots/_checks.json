@@ -1,0 +1,945 @@
+{
+  "sizes": [
+    "1920x1080",
+    "1440x900",
+    "1366x768",
+    "820x1180",
+    "390x844"
+  ],
+  "pages": [
+    {
+      "page": "account/fresh/personal",
+      "size": "1920x1080",
+      "horizontalScroll": false,
+      "maBottom": 1080,
+      "viewportH": 1080,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 1061,
+        "visible": true
+      }
+    },
+    {
+      "page": "account/fresh/security",
+      "size": "1920x1080",
+      "horizontalScroll": false,
+      "maBottom": 1080,
+      "viewportH": 1080,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 1061,
+        "visible": true
+      }
+    },
+    {
+      "page": "account/fresh/verify",
+      "size": "1920x1080",
+      "horizontalScroll": false,
+      "maBottom": 1080,
+      "viewportH": 1080,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/fresh/account",
+      "size": "1920x1080",
+      "horizontalScroll": false,
+      "maBottom": 1080,
+      "viewportH": 1080,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/saved/personal",
+      "size": "1920x1080",
+      "horizontalScroll": false,
+      "maBottom": 1080,
+      "viewportH": 1080,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 1061,
+        "visible": true
+      }
+    },
+    {
+      "page": "account/saved/security",
+      "size": "1920x1080",
+      "horizontalScroll": false,
+      "maBottom": 1080,
+      "viewportH": 1080,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 1061,
+        "visible": true
+      }
+    },
+    {
+      "page": "account/google/security",
+      "size": "1920x1080",
+      "horizontalScroll": false,
+      "maBottom": 1080,
+      "viewportH": 1080,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/google/verify",
+      "size": "1920x1080",
+      "horizontalScroll": false,
+      "maBottom": 1080,
+      "viewportH": 1080,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/google/account",
+      "size": "1920x1080",
+      "horizontalScroll": false,
+      "maBottom": 1080,
+      "viewportH": 1080,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/pending/personal",
+      "size": "1920x1080",
+      "horizontalScroll": false,
+      "maBottom": 1080,
+      "viewportH": 1080,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 1061,
+        "visible": true
+      }
+    },
+    {
+      "page": "account/pending/verify",
+      "size": "1920x1080",
+      "horizontalScroll": false,
+      "maBottom": 1080,
+      "viewportH": 1080,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "combobox",
+      "size": "1920x1080",
+      "listOpen": true,
+      "items": 82,
+      "letters": 18,
+      "inViewport": true,
+      "notClipped": true,
+      "insideBody": true,
+      "filtered": [
+        "Cebu"
+      ],
+      "provPicked": "Cebu",
+      "provId": "25",
+      "cityEnabled": true,
+      "cityCleared": true,
+      "badWordMessage": "Choose a place from the list."
+    },
+    {
+      "page": "order/none-yet",
+      "size": "1920x1080",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "true",
+        "true"
+      ],
+      "msg": "To continue, add: Province, City or municipality, Barangay, House no. and street, Postal code."
+    },
+    {
+      "page": "order/already-saved",
+      "size": "1920x1080",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "false",
+        "false"
+      ],
+      "msg": "Everything we need to deliver is here."
+    },
+    {
+      "page": "order/different-address",
+      "size": "1920x1080",
+      "horizontalScroll": false,
+      "legend": "Replace your saved delivery address with this one?",
+      "defaultKeep": "no",
+      "continueDisabled": "true",
+      "msg": "To continue, add: Province, City or municipality, Barangay, House no. and street, Postal code."
+    },
+    {
+      "page": "account/fresh/personal",
+      "size": "1440x900",
+      "horizontalScroll": false,
+      "maBottom": 900,
+      "viewportH": 900,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 881,
+        "visible": true
+      }
+    },
+    {
+      "page": "account/fresh/security",
+      "size": "1440x900",
+      "horizontalScroll": false,
+      "maBottom": 900,
+      "viewportH": 900,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 881,
+        "visible": true
+      }
+    },
+    {
+      "page": "account/fresh/verify",
+      "size": "1440x900",
+      "horizontalScroll": false,
+      "maBottom": 900,
+      "viewportH": 900,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/fresh/account",
+      "size": "1440x900",
+      "horizontalScroll": false,
+      "maBottom": 900,
+      "viewportH": 900,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/saved/personal",
+      "size": "1440x900",
+      "horizontalScroll": false,
+      "maBottom": 900,
+      "viewportH": 900,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 881,
+        "visible": true
+      }
+    },
+    {
+      "page": "account/saved/security",
+      "size": "1440x900",
+      "horizontalScroll": false,
+      "maBottom": 900,
+      "viewportH": 900,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 881,
+        "visible": true
+      }
+    },
+    {
+      "page": "account/google/security",
+      "size": "1440x900",
+      "horizontalScroll": false,
+      "maBottom": 900,
+      "viewportH": 900,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/google/verify",
+      "size": "1440x900",
+      "horizontalScroll": false,
+      "maBottom": 900,
+      "viewportH": 900,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/google/account",
+      "size": "1440x900",
+      "horizontalScroll": false,
+      "maBottom": 900,
+      "viewportH": 900,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/pending/personal",
+      "size": "1440x900",
+      "horizontalScroll": false,
+      "maBottom": 900,
+      "viewportH": 900,
+      "maFitsViewport": true,
+      "paneScrolls": true,
+      "paneOverflowPx": 16,
+      "footerBar": {
+        "bottom": 881,
+        "visible": true
+      }
+    },
+    {
+      "page": "account/pending/verify",
+      "size": "1440x900",
+      "horizontalScroll": false,
+      "maBottom": 900,
+      "viewportH": 900,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "combobox",
+      "size": "1440x900",
+      "listOpen": true,
+      "items": 82,
+      "letters": 18,
+      "inViewport": true,
+      "notClipped": true,
+      "insideBody": true,
+      "filtered": [
+        "Cebu"
+      ],
+      "provPicked": "Cebu",
+      "provId": "25",
+      "cityEnabled": true,
+      "cityCleared": true,
+      "badWordMessage": "Choose a place from the list."
+    },
+    {
+      "page": "order/none-yet",
+      "size": "1440x900",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "true",
+        "true"
+      ],
+      "msg": "To continue, add: Province, City or municipality, Barangay, House no. and street, Postal code."
+    },
+    {
+      "page": "order/already-saved",
+      "size": "1440x900",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "false",
+        "false"
+      ],
+      "msg": "Everything we need to deliver is here."
+    },
+    {
+      "page": "order/different-address",
+      "size": "1440x900",
+      "horizontalScroll": false,
+      "legend": "Replace your saved delivery address with this one?",
+      "defaultKeep": "no",
+      "continueDisabled": "true",
+      "msg": "To continue, add: Province, City or municipality, Barangay, House no. and street, Postal code."
+    },
+    {
+      "page": "account/fresh/personal",
+      "size": "1366x768",
+      "horizontalScroll": false,
+      "maBottom": 768,
+      "viewportH": 768,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 755,
+        "visible": true
+      }
+    },
+    {
+      "page": "account/fresh/security",
+      "size": "1366x768",
+      "horizontalScroll": false,
+      "maBottom": 768,
+      "viewportH": 768,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 755,
+        "visible": true
+      }
+    },
+    {
+      "page": "account/fresh/verify",
+      "size": "1366x768",
+      "horizontalScroll": false,
+      "maBottom": 768,
+      "viewportH": 768,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/fresh/account",
+      "size": "1366x768",
+      "horizontalScroll": false,
+      "maBottom": 768,
+      "viewportH": 768,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/saved/personal",
+      "size": "1366x768",
+      "horizontalScroll": false,
+      "maBottom": 768,
+      "viewportH": 768,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 755,
+        "visible": true
+      }
+    },
+    {
+      "page": "account/saved/security",
+      "size": "1366x768",
+      "horizontalScroll": false,
+      "maBottom": 768,
+      "viewportH": 768,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 755,
+        "visible": true
+      }
+    },
+    {
+      "page": "account/google/security",
+      "size": "1366x768",
+      "horizontalScroll": false,
+      "maBottom": 768,
+      "viewportH": 768,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/google/verify",
+      "size": "1366x768",
+      "horizontalScroll": false,
+      "maBottom": 768,
+      "viewportH": 768,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/google/account",
+      "size": "1366x768",
+      "horizontalScroll": false,
+      "maBottom": 768,
+      "viewportH": 768,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/pending/personal",
+      "size": "1366x768",
+      "horizontalScroll": false,
+      "maBottom": 768,
+      "viewportH": 768,
+      "maFitsViewport": true,
+      "paneScrolls": true,
+      "paneOverflowPx": 21,
+      "footerBar": {
+        "bottom": 755,
+        "visible": true
+      }
+    },
+    {
+      "page": "account/pending/verify",
+      "size": "1366x768",
+      "horizontalScroll": false,
+      "maBottom": 768,
+      "viewportH": 768,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "combobox",
+      "size": "1366x768",
+      "listOpen": true,
+      "items": 82,
+      "letters": 18,
+      "inViewport": true,
+      "notClipped": true,
+      "insideBody": true,
+      "filtered": [
+        "Cebu"
+      ],
+      "provPicked": "Cebu",
+      "provId": "25",
+      "cityEnabled": true,
+      "cityCleared": true,
+      "badWordMessage": "Choose a place from the list."
+    },
+    {
+      "page": "order/none-yet",
+      "size": "1366x768",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "true",
+        "true"
+      ],
+      "msg": "To continue, add: Province, City or municipality, Barangay, House no. and street, Postal code."
+    },
+    {
+      "page": "order/already-saved",
+      "size": "1366x768",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "false",
+        "false"
+      ],
+      "msg": "Everything we need to deliver is here."
+    },
+    {
+      "page": "order/different-address",
+      "size": "1366x768",
+      "horizontalScroll": false,
+      "legend": "Replace your saved delivery address with this one?",
+      "defaultKeep": "no",
+      "continueDisabled": "true",
+      "msg": "To continue, add: Province, City or municipality, Barangay, House no. and street, Postal code."
+    },
+    {
+      "page": "account/fresh/personal",
+      "size": "820x1180",
+      "horizontalScroll": false,
+      "maBottom": 1568,
+      "viewportH": 1180,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 1459,
+        "visible": false
+      }
+    },
+    {
+      "page": "account/fresh/security",
+      "size": "820x1180",
+      "horizontalScroll": false,
+      "maBottom": 1202,
+      "viewportH": 1180,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 1093,
+        "visible": true
+      }
+    },
+    {
+      "page": "account/fresh/verify",
+      "size": "820x1180",
+      "horizontalScroll": false,
+      "maBottom": 1525,
+      "viewportH": 1180,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/fresh/account",
+      "size": "820x1180",
+      "horizontalScroll": false,
+      "maBottom": 1362,
+      "viewportH": 1180,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/saved/personal",
+      "size": "820x1180",
+      "horizontalScroll": false,
+      "maBottom": 1568,
+      "viewportH": 1180,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 1459,
+        "visible": false
+      }
+    },
+    {
+      "page": "account/saved/security",
+      "size": "820x1180",
+      "horizontalScroll": false,
+      "maBottom": 1202,
+      "viewportH": 1180,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 1093,
+        "visible": true
+      }
+    },
+    {
+      "page": "account/google/security",
+      "size": "820x1180",
+      "horizontalScroll": false,
+      "maBottom": 922,
+      "viewportH": 1180,
+      "maFitsViewport": true,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/google/verify",
+      "size": "820x1180",
+      "horizontalScroll": false,
+      "maBottom": 1607,
+      "viewportH": 1180,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/google/account",
+      "size": "820x1180",
+      "horizontalScroll": false,
+      "maBottom": 1362,
+      "viewportH": 1180,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/pending/personal",
+      "size": "820x1180",
+      "horizontalScroll": false,
+      "maBottom": 1646,
+      "viewportH": 1180,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 1537,
+        "visible": false
+      }
+    },
+    {
+      "page": "account/pending/verify",
+      "size": "820x1180",
+      "horizontalScroll": false,
+      "maBottom": 1641,
+      "viewportH": 1180,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "combobox",
+      "size": "820x1180",
+      "listOpen": true,
+      "items": 82,
+      "letters": 18,
+      "inViewport": true,
+      "notClipped": true,
+      "insideBody": true,
+      "filtered": [
+        "Cebu"
+      ],
+      "provPicked": "Cebu",
+      "provId": "25",
+      "cityEnabled": true,
+      "cityCleared": true,
+      "badWordMessage": "Choose a place from the list."
+    },
+    {
+      "page": "order/none-yet",
+      "size": "820x1180",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "true",
+        "true"
+      ],
+      "msg": "To continue, add: Province, City or municipality, Barangay, House no. and street, Postal code."
+    },
+    {
+      "page": "order/already-saved",
+      "size": "820x1180",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "false",
+        "false"
+      ],
+      "msg": "Everything we need to deliver is here."
+    },
+    {
+      "page": "order/different-address",
+      "size": "820x1180",
+      "horizontalScroll": false,
+      "legend": "Replace your saved delivery address with this one?",
+      "defaultKeep": "no",
+      "continueDisabled": "true",
+      "msg": "To continue, add: Province, City or municipality, Barangay, House no. and street, Postal code."
+    },
+    {
+      "page": "account/fresh/personal",
+      "size": "390x844",
+      "horizontalScroll": false,
+      "maBottom": 1665,
+      "viewportH": 844,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 1556,
+        "visible": false
+      }
+    },
+    {
+      "page": "account/fresh/security",
+      "size": "390x844",
+      "horizontalScroll": false,
+      "maBottom": 1359,
+      "viewportH": 844,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 1250,
+        "visible": false
+      }
+    },
+    {
+      "page": "account/fresh/verify",
+      "size": "390x844",
+      "horizontalScroll": false,
+      "maBottom": 1719,
+      "viewportH": 844,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/fresh/account",
+      "size": "390x844",
+      "horizontalScroll": false,
+      "maBottom": 1362,
+      "viewportH": 844,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/saved/personal",
+      "size": "390x844",
+      "horizontalScroll": false,
+      "maBottom": 1665,
+      "viewportH": 844,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 1556,
+        "visible": false
+      }
+    },
+    {
+      "page": "account/saved/security",
+      "size": "390x844",
+      "horizontalScroll": false,
+      "maBottom": 1359,
+      "viewportH": 844,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 1250,
+        "visible": false
+      }
+    },
+    {
+      "page": "account/google/security",
+      "size": "390x844",
+      "horizontalScroll": false,
+      "maBottom": 987,
+      "viewportH": 844,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/google/verify",
+      "size": "390x844",
+      "horizontalScroll": false,
+      "maBottom": 1819,
+      "viewportH": 844,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/google/account",
+      "size": "390x844",
+      "horizontalScroll": false,
+      "maBottom": 1362,
+      "viewportH": 844,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "account/pending/personal",
+      "size": "390x844",
+      "horizontalScroll": false,
+      "maBottom": 1785,
+      "viewportH": 844,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": {
+        "bottom": 1676,
+        "visible": false
+      }
+    },
+    {
+      "page": "account/pending/verify",
+      "size": "390x844",
+      "horizontalScroll": false,
+      "maBottom": 1735,
+      "viewportH": 844,
+      "maFitsViewport": false,
+      "paneScrolls": false,
+      "paneOverflowPx": 0,
+      "footerBar": null
+    },
+    {
+      "page": "combobox",
+      "size": "390x844",
+      "listOpen": true,
+      "items": 82,
+      "letters": 18,
+      "inViewport": true,
+      "notClipped": true,
+      "insideBody": true,
+      "filtered": [
+        "Cebu"
+      ],
+      "provPicked": "Cebu",
+      "provId": "25",
+      "cityEnabled": true,
+      "cityCleared": true,
+      "badWordMessage": "Choose a place from the list."
+    },
+    {
+      "page": "order/none-yet",
+      "size": "390x844",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "true",
+        "true"
+      ],
+      "msg": "To continue, add: Province, City or municipality, Barangay, House no. and street, Postal code."
+    },
+    {
+      "page": "order/already-saved",
+      "size": "390x844",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "false",
+        "false"
+      ],
+      "msg": "Everything we need to deliver is here."
+    },
+    {
+      "page": "order/different-address",
+      "size": "390x844",
+      "horizontalScroll": false,
+      "legend": "Replace your saved delivery address with this one?",
+      "defaultKeep": "no",
+      "continueDisabled": "true",
+      "msg": "To continue, add: Province, City or municipality, Barangay, House no. and street, Postal code."
+    },
+    {
+      "page": "contrast/personal",
+      "buttons": 14,
+      "failing": 0,
+      "failures": []
+    },
+    {
+      "page": "contrast/security",
+      "buttons": 13,
+      "failing": 0,
+      "failures": []
+    },
+    {
+      "page": "contrast/verify",
+      "buttons": 10,
+      "failing": 0,
+      "failures": []
+    }
+  ],
+  "notes": []
+}
