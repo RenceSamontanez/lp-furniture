@@ -21,6 +21,7 @@ use Tests\TestCase;
 class PaymentLedgerGatewayTest extends TestCase
 {
     use RefreshDatabase;
+    use \Tests\Concerns\GivesDeliveryDetails;
 
     private const STRIPE_SECRET   = 'whsec_test_fake_secret';
     private const PAYMONGO_SECRET = 'whsec_paymongo_fake_secret';
@@ -55,7 +56,7 @@ class PaymentLedgerGatewayTest extends TestCase
             'is_validated' => true, 'account_status' => 'active',
         ])->save();
 
-        return $u;
+        return $this->giveDeliveryDetails($u);
     }
 
     private function admin(): User

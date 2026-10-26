@@ -9,7 +9,10 @@ use App\Models\Delivery;
 use App\Models\CartItem;
 use App\Models\Product;
 use App\Models\Notification;
+use App\Models\User;
 use App\Support\InstallmentScheduler;
+use App\Support\OrderContact;
+use App\Support\PhoneNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -54,7 +57,6 @@ class OrderController extends Controller
     {
         $request->validate([
             'delivery_option'        => 'required|in:pickup,delivery',
-            'delivery_address'       => 'required_if:delivery_option,delivery|nullable|string',
             'payment_type'           => 'required|in:full,installment',
             // Duration (months) and frequency (days between payments)
             // are picked independently and combined to determine the
@@ -64,6 +66,10 @@ class OrderController extends Controller
             'payment_method'         => 'required|in:stripe,gcash,onsite',
             'customization_note'     => 'nullable|string',
         ]);
+
+        // Every order needs a phone and a complete structured address, whichever way it is collected. Checked here, on the
+        // server, whatever the page did; redirects back with the field errors when something is missing.
+        $contact = OrderContact::fromRequest($request, Auth::user());
 
         $isBuyNow = $request->filled('buy_now_product_id');
 
@@ -97,7 +103,7 @@ class OrderController extends Controller
         $stockError = null;
 
         try {
-            DB::transaction(function () use ($request, $cartItems, $subtotal, $deliveryFee, $total, $isBuyNow, &$order, &$stockError) {
+            DB::transaction(function () use ($request, $cartItems, $subtotal, $deliveryFee, $total, $isBuyNow, $contact, &$order, &$stockError) {
                 $isInstallment = $request->payment_type === 'installment';
                 // 50% down now, the rest split into the schedule below.
                 // Derived by subtraction (not computed independently)
@@ -125,6 +131,9 @@ class OrderController extends Controller
                     }
                 }
 
+                // Keep the address the customer asked to keep (and a missing account phone) with the order itself.
+                OrderContact::persist(User::whereKey(Auth::id())->lockForUpdate()->first(), $contact);
+
                 // Generate unique order number
                 $orderNumber = 'LP-' . date('Y') . '-' . str_pad(
                     Order::count() + 1, 5, '0', STR_PAD_LEFT
@@ -136,7 +145,8 @@ class OrderController extends Controller
                     'order_number'        => $orderNumber,
                     'total_amount'        => $total,
                     'delivery_option'     => $request->delivery_option,
-                    'delivery_address'    => $request->delivery_address,
+                    'delivery_address'    => $contact['snapshot']['full'],
+                    'delivery_snapshot'   => $contact['snapshot'],
                     'delivery_fee'        => $deliveryFee,
                     'customization_note'  => $request->customization_note,
                     'production_status'   => 'pending',
@@ -189,8 +199,8 @@ class OrderController extends Controller
                 if ($request->delivery_option === 'delivery') {
                     Delivery::create([
                         'order_id'         => $order->id,
-                        'delivery_address' => $request->delivery_address,
-                        'contact_number'   => Auth::user()->phone_number,
+                        'delivery_address' => $contact['snapshot']['full'],
+                        'contact_number'   => PhoneNumber::display($contact['phone']),
                         'status'           => 'waiting_for_courier',
                     ]);
                 }

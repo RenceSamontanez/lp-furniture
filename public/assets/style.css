@@ -1946,6 +1946,7 @@ nav {
 [class*="total"],
 [class*="stat-value"],
 [class*="stat-num"],
+.mx-num,
 .qty-display,
 .cart-qty-value,
 .order-card-total,

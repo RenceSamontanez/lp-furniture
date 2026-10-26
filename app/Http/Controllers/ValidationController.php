@@ -93,12 +93,20 @@ class ValidationController extends Controller
                 return back()->with('error', 'Your photos were already sent. Please refresh the page.');
             }
             if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException && $e->getStatusCode() === 409) {
-                return redirect()->route('validation.show')->with('error', $e->getMessage());
+                return $this->backToVerification($request)->with('error', $e->getMessage());
             }
             throw $e;
         }
 
-        return redirect()->route('validation.show')->with('success', 'Submitted. We will review your photos and notify you here.');
+        return $this->backToVerification($request)->with('success', 'Submitted. We will review your photos and notify you here.');
+    }
+
+    /* The Verification tab of My Account posts here too and comes back to itself; the standalone page keeps its own redirect. */
+    private function backToVerification(Request $request)
+    {
+        return $request->input('return_to') === 'profile'
+            ? redirect()->route('profile', ['tab' => 'verify'])
+            : redirect()->route('validation.show');
     }
 
     /* The owner's own photo, never anyone else's (404 either way). */

@@ -12,6 +12,7 @@ class Order extends Model
         'total_amount',
         'delivery_option',
         'delivery_address',
+        'delivery_snapshot',
         'delivery_fee',
         'customization_note',
         'production_status',
@@ -27,6 +28,7 @@ class Order extends Model
         'status_updated_at' => 'datetime',
         'amount_paid'       => 'decimal:2',
         'needs_review'      => 'boolean',
+        'delivery_snapshot' => 'array',
         'reviewed_at'       => 'datetime',
     ];
 

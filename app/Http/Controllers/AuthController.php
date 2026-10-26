@@ -4,7 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Rules\PhilippineMobile;
+use App\Support\AccountPassword;
+use App\Support\DeliveryAddress;
+use App\Support\PhoneNumber;
 use App\Support\SafeIntendedUrl;
+use App\Support\TextSanitizer;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\Password as PasswordRule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -196,6 +203,8 @@ class AuthController extends Controller
             'last_name'      => $request->last_name,
             'email'          => $request->email,
             'phone_number'   => $request->phone_number,
+            'phone_e164'     => PhoneNumber::parse($request->phone_number, 'PH')['e164'] ?? null,
+            'phone_country'  => 'PH',
             'password'       => Hash::make($request->password),
             'role'           => 'customer',
             'account_status' => 'active',
@@ -307,8 +316,31 @@ return redirect($intended)
     ════════════════════════════════════════ */
     public function profile()
     {
+        $user = Auth::user();
+        $validation = $user->validation;
+        $e164 = PhoneNumber::forUser($user);
+        [$country, $national] = PhoneNumber::split($e164);
+        $saved = DeliveryAddress::fromUser($user);
+        $tab = request('tab');
+        if (!in_array($tab, ['personal', 'security', 'verify', 'account'], true)) {
+            $tab = session('tab', 'personal');
+        }
+
         return view('profile.index', [
-            'user' => Auth::user(),
+            'user'          => $user,
+            'tab'           => $tab,
+            'validation'    => $validation,
+            'acceptedIds'   => config('identity.accepted_ids'),
+            'checks'        => config('identity.checks'),
+            'attempt'       => ($validation?->attempt_number ?? 0) + 1,
+            'countries'     => PhoneNumber::countries(),
+            'phoneCountry'  => $user->phone_country ?: $country,
+            'phoneNational' => $e164 ? $national : '',
+            'savedAddress'  => $saved ? $saved + DeliveryAddress::names($saved) : null,
+            'legacyAddress' => $saved ? null : (trim((string) $user->address) !== '' ? trim($user->address) : null),
+            'googleOnly'    => AccountPassword::isGoogleOnly($user),
+            'pwAvailableAt' => AccountPassword::availableAt($user),
+            'pwDaysAgo'     => AccountPassword::daysAgo($user),
         ]);
     }
 
@@ -319,45 +351,102 @@ return redirect($intended)
     {
         $user = Auth::user();
 
-        // The phone format is only checked when the number is edited, so
-        // an older account whose stored number predates the rule can still
-        // save its name/address/password untouched. An account with no
-        // phone yet (Google sign-ups) may keep it empty.
-        $submittedPhone = trim((string) $request->input('phone_number', ''));
-        $phoneUnchanged = $user->phone_number !== null && $submittedPhone === $user->phone_number;
-
-        $phoneRules = match (true) {
-            $phoneUnchanged                                        => ['required', 'string', 'max:20'],
-            $user->phone_number === null && $submittedPhone === '' => ['nullable'],
-            default                                                => ['required', 'string', 'max:20', new PhilippineMobile()],
-        };
-
         $request->validate([
-            'first_name'   => 'required|string|max:100',
-            'last_name'    => 'required|string|max:100',
-            'phone_number' => $phoneRules,
-            'address'      => 'nullable|string|max:500',
-            'password'     => 'nullable|string|min:8|confirmed',
+            'first_name' => DeliveryAddress::nameRules(),
+            'last_name'  => DeliveryAddress::nameRules(),
+        ], [
+            'first_name.required' => 'Enter your name.',
+            'last_name.required'  => 'Enter your name.',
+            'first_name.regex'    => 'Use letters only. No numbers or symbols.',
+            'last_name.regex'     => 'Use letters only. No numbers or symbols.',
         ]);
 
-        $user->first_name   = $request->first_name;
-        $user->last_name    = $request->last_name;
-        $user->phone_number = $phoneUnchanged
-            ? $user->phone_number
-            : PhilippineMobile::normalize($submittedPhone);
-        // Only forms that carry the field may change it (the Security tab
-        // form doesn't send it); an explicitly empty value still clears it.
-        if ($request->has('address')) {
-            $user->address = $request->address;
+        // The phone is required (the shop calls it about orders). Stored as E.164; users.phone_number mirrors it.
+        $phone = PhoneNumber::parse((string) $request->input('phone_number'), (string) $request->input('phone_country', PhoneNumber::DEFAULT_COUNTRY));
+        if (!$phone['ok']) {
+            throw ValidationException::withMessages(['phone_number' => $phone['message']]);
         }
 
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
+        // The structured address is optional on this page, but never half-filled: all of it, or none of it.
+        $address = DeliveryAddress::extract($request->all());
+        $clearAddress = DeliveryAddress::isBlank($address);
+        if (!$clearAddress) {
+            $address = DeliveryAddress::validate($request->all());
         }
 
-        $user->save();
+        DB::transaction(function () use ($user, $request, $phone, $address, $clearAddress) {
+            $user = User::whereKey($user->id)->lockForUpdate()->first();
+            $user->first_name    = TextSanitizer::line($request->first_name);
+            $user->last_name     = TextSanitizer::line($request->last_name);
+            $user->phone_e164    = $phone['e164'];
+            $user->phone_country = $phone['country'];
+            $user->phone_number  = $phone['legacy'];
+            $user->save();
 
-        return back()->with('success', 'Profile updated successfully.');
+            $clearAddress ? DeliveryAddress::clearFor($user) : DeliveryAddress::saveFor($user, $address);
+        });
+
+        return redirect()->route('profile', ['tab' => 'personal'])->with('success', 'Changes saved.');
+    }
+
+    /* ════════════════════════════════════════
+       CHANGE PASSWORD (Security tab)
+       Never expires. After a change here the next one waits 7 days. Forgot-password is not affected.
+    ════════════════════════════════════════ */
+    public function updatePassword(Request $request)
+    {
+        $back = fn () => redirect()->route('profile', ['tab' => 'security']);
+
+        $user = Auth::user();
+        if (AccountPassword::isGoogleOnly($user)) {
+            return $back()->with('error', 'This account signs in with Google, so there is no password to change here.');
+        }
+
+        $request->validate([
+            'current_password' => ['required', 'string'],
+            'password'         => ['required', 'string', 'confirmed', PasswordRule::min(8)->mixedCase()->numbers()],
+        ], [
+            'current_password.required' => 'Enter your current password.',
+            'password.required'         => 'Enter a new password.',
+            'password.confirmed'        => 'The two new passwords do not match.',
+            'password.min'              => 'Use at least 8 characters.',
+            'password.mixed'            => 'Use upper and lower case letters.',
+            'password.numbers'          => 'Include a number.',
+        ]);
+
+        $changed = DB::transaction(function () use ($user, $request, &$error) {
+            $locked = User::whereKey($user->id)->lockForUpdate()->first();
+
+            if (AccountPassword::isLocked($locked)) {
+                $error = AccountPassword::lockedMessage($locked);
+                return false;
+            }
+            if (!Hash::check($request->current_password, (string) $locked->password)) {
+                $error = 'Your current password is not correct.';
+                return false;
+            }
+            if (Hash::check($request->password, (string) $locked->password)) {
+                $error = 'Choose a password that is different from your current one.';
+                return false;
+            }
+
+            $locked->password = $request->password;          // hashed by the model cast
+            $locked->password_changed_at = now();
+            $locked->save();
+
+            return true;
+        });
+
+        if (!$changed) {
+            return $back()->withErrors(['password_form' => $error]);
+        }
+
+        // Other browsers and devices hold a stamp of the old password and are signed out on their next request;
+        // this one takes the new stamp and stays signed in.
+        $user->setRawAttributes(User::findOrFail($user->id)->getAttributes(), true);
+        \App\Http\Middleware\SignOutOnPasswordChange::stamp($request, $user);
+
+        return $back()->with('success', 'Password updated. Other devices were signed out.');
     }
 
     /* ════════════════════════════════════════

@@ -79,7 +79,8 @@ Route::middleware('guest')->group(function () {
 // AUTHENTICATED ROUTES
 // ============================================================
 
-Route::middleware('auth')->group(function () {
+// SignOutOnPasswordChange: once the password is changed, the customer's other browsers and devices are signed out.
+Route::middleware(['auth', \App\Http\Middleware\SignOutOnPasswordChange::class])->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])
          ->name('logout');
@@ -104,6 +105,13 @@ Route::middleware('auth')->group(function () {
          ->name('profile');
     Route::put('/profile', [AuthController::class, 'updateProfile'])
          ->name('profile.update');
+    Route::put('/profile/password', [AuthController::class, 'updatePassword'])
+         ->name('profile.password');
+
+    // Delivery address dropdowns (our own place tables, cached, loaded one level at a time)
+    Route::get('/places/provinces', [\App\Http\Controllers\PlaceController::class, 'provinces'])->name('places.provinces');
+    Route::get('/places/provinces/{province}/cities', [\App\Http\Controllers\PlaceController::class, 'cities'])->name('places.cities')->whereNumber('province');
+    Route::get('/places/cities/{city}/barangays', [\App\Http\Controllers\PlaceController::class, 'barangays'])->name('places.barangays')->whereNumber('city');
 
     Route::get('/validate-account', [ValidationController::class, 'show'])
          ->name('validation.show');

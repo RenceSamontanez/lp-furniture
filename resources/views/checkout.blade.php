@@ -260,26 +260,18 @@
                   </label>
                 </div>
 
-                <div class="delivery-address-fields" id="delivery-address-fields">
-                  <div class="field-group">
-                    <label class="form-label">Full Delivery Address</label>
-                    <input type="text" name="delivery_address" id="input-delivery-address" class="form-input" placeholder="House no., Street, Barangay, City, Province" value="{{ old('delivery_address') }}"/>
-                  </div>
-                  <div class="field-group">
-                    <label class="form-label">Landmark <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
-                    <input type="text" name="delivery_landmark" id="input-delivery-landmark" class="form-input" placeholder="Near... in front of..." value="{{ old('delivery_landmark') }}"/>
-                  </div>
-                </div>
+                {{-- Order details: recipient, phone and the structured delivery address (every order needs them; the server checks again) --}}
+                @include('partials.order-details', ['continue' => '[data-od-continue]'])
 
                 <div class="ckn-continue-wrap">
-                  <button type="button" class="ckn-continue-btn" onclick="goNext('delivery')">Continue to Payment Type →</button>
+                  <button type="button" class="ckn-continue-btn" data-od-continue onclick="goNext('delivery')">Continue to Payment Type →</button>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="checkout-screen-footer">
-            <button type="button" class="checkout-screen-continue" onclick="pushToScreen('delivery','paytype')">Next: Payment Type →</button>
+            <button type="button" class="checkout-screen-continue" data-od-continue onclick="pushToScreen('delivery','paytype')">Next: Payment Type →</button>
           </div>
         </div>
 
@@ -710,11 +702,6 @@ function selectDelivery(type) {
   document.getElementById('label-pickup').classList.toggle('selected', type === 'pickup');
   document.getElementById('label-delivery').classList.toggle('selected', type === 'delivery');
 
-  const addressFields = document.getElementById('delivery-address-fields');
-  addressFields.classList.toggle('visible', type === 'delivery');
-  const addressInput = addressFields.querySelector('input[name="delivery_address"]');
-  if (addressInput) addressInput.required = (type === 'delivery');
-
   document.getElementById('ckn-savings-banner').style.display = type === 'pickup' ? 'flex' : 'none';
 
   updateTotal();
@@ -891,7 +878,7 @@ function updateReviewScreen() {
       deliveryAddrEl.style.display = 'none';
     } else {
       deliveryValueEl.textContent = 'Door-to-Door Delivery · +₱500';
-      const addr = document.getElementById('input-delivery-address')?.value || '';
+      const addr = (window.MAOrder && window.MAOrder.summary()) || '';
       if (addr) {
         deliveryAddrEl.textContent = addr;
         deliveryAddrEl.style.display = 'block';

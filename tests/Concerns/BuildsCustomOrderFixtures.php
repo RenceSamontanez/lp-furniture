@@ -15,6 +15,8 @@ use App\Models\User;
  */
 trait BuildsCustomOrderFixtures
 {
+    use GivesDeliveryDetails;
+
     protected function makeUser(string $role = 'customer'): User
     {
         $user = new User();
@@ -28,7 +30,8 @@ trait BuildsCustomOrderFixtures
             'account_status' => 'active',
         ])->save();
 
-        return $user;
+        // a customer who may place orders: phone and a complete delivery address (tests that need less clear them)
+        return $role === 'customer' ? $this->giveDeliveryDetails($user) : $user;
     }
 
     protected function makeRequest(User $customer): CustomDesignRequest

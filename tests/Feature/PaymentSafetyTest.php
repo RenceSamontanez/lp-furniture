@@ -34,6 +34,7 @@ use Tests\TestCase;
 class PaymentSafetyTest extends TestCase
 {
     use RefreshDatabase;
+    use \Tests\Concerns\GivesDeliveryDetails;
 
     private const STRIPE_WEBHOOK_SECRET   = 'whsec_test_fake_secret';
     private const PAYMONGO_WEBHOOK_SECRET = 'whsec_paymongo_fake_secret';
@@ -71,7 +72,7 @@ class PaymentSafetyTest extends TestCase
             'account_status' => 'active',
         ])->save();
 
-        return $user;
+        return $this->giveDeliveryDetails($user);
     }
 
     private function makeProduct(float $price = 1000.00, int $stock = 10): Product

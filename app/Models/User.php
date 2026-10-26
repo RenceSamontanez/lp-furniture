@@ -17,6 +17,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'phone_number',
+        'phone_e164',
+        'phone_country',
         'address',
         'role',
         'profile_image',
@@ -57,6 +59,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
         'is_validated'      => 'boolean',
         'contact_saved_at'  => 'datetime',
+        'password_changed_at' => 'datetime',
         'password'          => 'hashed',
     ];
 
@@ -78,7 +81,7 @@ class User extends Authenticatable implements MustVerifyEmail
     // format). Numbers are not OTP-verified; this is a format check only.
     public function hasValidPhone(): bool
     {
-        return \App\Rules\PhilippineMobile::isValid($this->phone_number);
+        return \App\Support\PhoneNumber::forUser($this) !== null;
     }
 
     /* ── SCOPES ── */

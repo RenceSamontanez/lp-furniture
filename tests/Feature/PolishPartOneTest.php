@@ -38,7 +38,7 @@ class PolishPartOneTest extends TestCase
         $this->assertToggle($this->get(route('admin.login'))->assertOk()->getContent(), 1);
 
         $this->actingAs($this->makeUser(), 'web');
-        $this->assertToggle($this->get(route('profile'))->assertOk()->getContent(), 2);
+        $this->assertToggle($this->get(route('profile'))->assertOk()->getContent(), 3);   // current, new and confirm on the Security tab
     }
 
     public function test_the_toggle_script_only_flips_type_and_label_and_never_touches_the_value(): void

@@ -87,7 +87,7 @@ class AgreementCheckout
      *
      * @throws CheckoutRefused
      */
-    public function place(int $agreementId, User $customer, string $method): array
+    public function place(int $agreementId, User $customer, string $method, ?array $contact = null): array
     {
         if (!in_array($method, self::METHODS, true)) {
             throw new CheckoutRefused('Choose Stripe or GCash.');
@@ -97,7 +97,7 @@ class AgreementCheckout
 
         while (true) {
             try {
-                return DB::transaction(fn () => $this->placeLocked($agreementId, $customer, $method, $attempt));
+                return DB::transaction(fn () => $this->placeLocked($agreementId, $customer, $method, $attempt, $contact));
             } catch (QueryException $e) {
                 // order_number collision (design_agreement_id is handled
                 // under the lock before insert): retry with a later number.
@@ -117,7 +117,7 @@ class AgreementCheckout
         }
     }
 
-    private function placeLocked(int $agreementId, User $customer, string $method, int $attempt): array
+    private function placeLocked(int $agreementId, User $customer, string $method, int $attempt, ?array $contact = null): array
     {
         $agreement = DesignAgreement::where('user_id', $customer->id)->findOrFail($agreementId);
 
@@ -131,6 +131,13 @@ class AgreementCheckout
 
         if ($problem = $this->problem($agreement->load('quote'), $request)) {
             throw new CheckoutRefused($problem);
+        }
+
+        // A phone and a complete delivery address are required for every order, also for an accepted agreement. The
+        // checkout form sends them; without a form the account must already hold both.
+        $contact ??= OrderContact::fromAccount($customer);
+        if ($contact === null) {
+            throw new CheckoutRefused('Add your phone number and delivery address before you pay. You can do this on the checkout page or in My Account.');
         }
 
         $terms = $agreement->terms_snapshot;
@@ -165,6 +172,8 @@ class AgreementCheckout
         $delivery = ($terms['delivery']['option'] ?? 'pickup') === 'delivery';
         $title = (string) ($terms['design']['title'] ?? $request->order_name);
 
+        OrderContact::persist(User::whereKey($customer->id)->lockForUpdate()->first(), $contact);
+
         $order = new Order();
         $order->forceFill([
             'user_id'             => $customer->id,
@@ -175,6 +184,7 @@ class AgreementCheckout
             'delivery_option'     => $delivery ? 'delivery' : 'pickup',
             'delivery_address'    => $delivery ? $terms['delivery']['address'] : null,
             'delivery_fee'        => round((float) ($terms['delivery']['fee'] ?? 0), 2),
+            'delivery_snapshot'   => $contact['snapshot'],
             'production_status'   => 'pending',
             'order_status'        => 'pending',
         ])->save();
@@ -210,7 +220,7 @@ class AgreementCheckout
             Delivery::create([
                 'order_id'         => $order->id,
                 'delivery_address' => $terms['delivery']['address'],
-                'contact_number'   => $request->contact_phone ?: $customer->phone_number,
+                'contact_number'   => PhoneNumber::display($contact['phone']),
                 'status'           => 'waiting_for_courier',
             ]);
         }

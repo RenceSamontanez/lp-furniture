@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Support\AgreementCheckout;
 use App\Support\CheckoutRefused;
 use App\Support\InstallmentScheduler;
+use App\Support\OrderContact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -56,8 +57,13 @@ class CustomCheckoutController extends Controller
         // 404 for anyone else's agreement, before anything else.
         $agreement = DesignAgreement::where('user_id', Auth::id())->findOrFail($agreementId);
 
+        // Phone and delivery address are required here too (an order that already exists needs nothing new).
+        $contact = Order::where('design_agreement_id', $agreement->id)->exists()
+            ? null
+            : OrderContact::fromRequest($request, Auth::user());
+
         try {
-            [$order, $created] = $this->checkout->place($agreement->id, Auth::user(), $data['payment_method']);
+            [$order, $created] = $this->checkout->place($agreement->id, Auth::user(), $data['payment_method'], $contact);
         } catch (CheckoutRefused $e) {
             return $this->noStore(redirect()->route('design.show', $agreement->request_id)
                 ->withErrors(['quote' => $e->getMessage()]));

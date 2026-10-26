@@ -151,3 +151,12 @@ Every layout (customer, focus, admin) includes the partial, which always renders
 
 
 **Password Show/Hide** (polish part 1): `<x-password-toggle for="field-id"/>` renders a real `<button type="button">` with `aria-pressed` and a name that flips between "Show password" / "Hide password"; behaviour is one delegated script `public/assets/js/password-toggle.js`, look is `public/assets/css/password-toggle.css` (44px target, focus ring, absolutely positioned so nothing shifts). Use it for every new password field, customer or admin.
+
+## My Account and order details (`.mx`, `.ma`)
+
+`public/assets/css/my-account.css` + `public/assets/js/my-account.js`, from the approved prototype `docs/account/my-account-v6.html`.
+
+* `.mx` scopes the shared form parts: `.inp`, `.fld`, `.err`, `.hint`, the 12-column `.g12` grid, the searchable comboboxes (`partials/address-fields.blade.php`, `partials/phone-field.blade.php`) and the order details block (`partials/order-details.blade.php`). `.ma` is only the account page frame (dark side column, glass pane, tabs, sticky footer).
+* A combobox list is moved to `<body>` while open (`.mx-cbl`, `position: fixed`), so no card or scroll area can clip it. The visible text never submits: the hidden input next to it carries the place id, and the server checks that the barangay is in the city and the city in the province.
+* Numbers (dates, phone, postal code) use `.mx-num`, which is added to the existing lining-numerals rule in `style.css` (DM Sans, `lnum`); Playfair headings also set `font-variant-numeric: lining-nums`.
+* Buttons are the shared `.lp-btn` (primary / secondary); the dark side column's tabs and the sign-out button are page controls measured by `tests/ButtonContrast/measure.js` like everything else.
