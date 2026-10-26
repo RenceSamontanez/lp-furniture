@@ -18,6 +18,8 @@ final class IdentityPhotos
 
     public static function store(UploadedFile $file, int $userId, string $kind): string
     {
+        UploadedImage::optimize($file);
+
         return $file->store("validations/{$userId}/{$kind}", self::DISK);
     }
 

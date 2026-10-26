@@ -454,4 +454,8 @@ Route::delete('/chatbot/{id}', [ChatbotIntentController::class, 'destroy'])->nam
 // Contact Settings (phone / email / Facebook shown to customers)
 Route::get('/settings/contact', [BusinessSettingController::class, 'edit'])->name('settings.contact.edit');
 Route::put('/settings/contact', [BusinessSettingController::class, 'update'])->name('settings.contact.update');
+
+// System health: upload disk use, orphan files, last cleanup, clear cache
+Route::get('/system-health', [\App\Http\Controllers\Admin\SystemHealthController::class, 'index'])->name('system-health.index');
+Route::post('/system-health/clear-cache', [\App\Http\Controllers\Admin\SystemHealthController::class, 'clearCache'])->name('system-health.clear-cache');
 });

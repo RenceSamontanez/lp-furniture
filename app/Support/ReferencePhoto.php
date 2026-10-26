@@ -21,6 +21,8 @@ final class ReferencePhoto
 
     public static function store(UploadedFile $file, int $userId): string
     {
+        UploadedImage::optimize($file);
+
         return $file->store('design-references/' . $userId, self::PRIVATE_DISK);
     }
 

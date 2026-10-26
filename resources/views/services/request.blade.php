@@ -70,8 +70,8 @@
           </div>
           <div class="co-field" style="margin-top:14px;">
             <label class="form-label" for="photos">Photos (optional if you wrote a clear description)</label>
-            <input type="file" id="photos" name="photos[]" class="form-input" accept="image/jpeg,image/png,image/webp" multiple aria-describedby="photos-help"/>
-            <p class="co-hint" id="photos-help">Up to 3 photos, JPG, PNG or WebP, 4 MB each. A photo of the problem is enough to start.</p>
+            <input type="file" id="photos" name="photos[]" class="form-input" accept="image/jpeg,image/png" multiple aria-describedby="photos-help"/>
+            <p class="co-hint" id="photos-help">Up to 3 photos, JPG or PNG, 5 MB each. A photo of the problem is enough to start.</p>
           </div>
           <div class="co-field" style="margin-top:14px;">
             <span class="form-label" id="work-location-label">Where should the work be done?</span>

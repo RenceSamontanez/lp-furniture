@@ -64,14 +64,14 @@ class ServiceInquiryController extends Controller
             'terms'         => ['accepted'],
             'work_location' => ['nullable', Rule::in(array_keys(ServiceInquiry::WORK_LOCATIONS))],
             'photos'        => ['nullable', 'array', 'max:3'],
-            'photos.*'      => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'photos.*'      => ['image', 'mimes:jpg,jpeg,png', 'max:' . \App\Support\UploadedImage::MAX_KB, new \App\Rules\RealJpegOrPng()],
         ], ServiceInquiryDesk::messages() + [
             'terms.accepted'   => 'Please confirm that you have read and agree to the Other Services terms.',
             'work_location.in' => 'Choose one of the listed places.',
             'photos.max'       => 'You can add up to 3 photos.',
-            'photos.*.image'   => 'Each photo must be an image (JPG, PNG or WebP).',
-            'photos.*.mimes'   => 'Each photo must be a JPG, PNG or WebP image.',
-            'photos.*.max'     => 'Each photo must be 4 MB or smaller.',
+            'photos.*.image'   => 'Each photo must be a JPG or PNG image.',
+            'photos.*.mimes'   => 'Each photo must be a JPG or PNG image.',
+            'photos.*.max'     => 'Each photo must be 5 MB or smaller.',
         ]);
         // The problem must be described before an invoice goes out: a clear written description (40 characters or more) OR a photo.
         $validator->after(function ($v) use ($request) {
@@ -82,7 +82,11 @@ class ServiceInquiryController extends Controller
         $data = $validator->validate();
 
         // Photos go to the private disk (never public); only their paths are kept on the ticket.
-        $data['reference_photos'] = collect($request->file('photos', []))->map(fn ($file) => Storage::disk('local')->putFile('service-photos', $file))->values()->all() ?: null;
+        $data['reference_photos'] = collect($request->file('photos', []))->map(function ($file) {
+            \App\Support\UploadedImage::optimize($file);
+
+            return Storage::disk('local')->putFile('service-photos', $file);
+        })->values()->all() ?: null;
 
         $inquiry = $this->desk->create($data, Auth::user());
         RateLimiter::hit($key, 3600);

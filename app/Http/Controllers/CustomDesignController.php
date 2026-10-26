@@ -152,7 +152,7 @@ class CustomDesignController extends Controller
             'dimension_unit'     => ['nullable', 'string', 'max:4'],
             'additional_info'    => ['nullable', 'string', 'max:1000', new NoLinkOrEmail()],
             // content-sniffed type (not the file name), JPEG or PNG only, 5 MB at most
-            'reference_image'    => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png', 'mimetypes:image/jpeg,image/png', 'max:5120'],
+            'reference_image'    => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png', 'mimetypes:image/jpeg,image/png', 'max:5120', new \App\Rules\RealJpegOrPng()],
         ], [
             'reference_image.image'     => 'The reference photo must be a JPG or PNG picture.',
             'reference_image.mimes'     => 'The reference photo must be a JPG or PNG picture.',

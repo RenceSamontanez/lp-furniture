@@ -100,14 +100,13 @@ class ProductExtraPhotosTest extends TestCase
         }
     }
 
-    public function test_a_webp_photo_is_accepted(): void
+    public function test_a_webp_photo_is_refused(): void
     {
         $p = $this->product();
 
-        $this->update($p, ['extra_images' => [UploadedFile::fake()->createWithContent('a.webp', base64_decode(self::WEBP))]])->assertSessionHasNoErrors();
+        $this->update($p, ['extra_images' => [UploadedFile::fake()->createWithContent('a.webp', base64_decode(self::WEBP))]])->assertSessionHasErrors('extra_images.0');
 
-        $this->assertSame(1, $p->extraImages()->count());
-        $this->assertStringEndsWith('.webp', $p->extraImages()->first()->image_path);
+        $this->assertSame(0, $p->extraImages()->count());
     }
 
     public function test_an_oversized_photo_is_refused(): void

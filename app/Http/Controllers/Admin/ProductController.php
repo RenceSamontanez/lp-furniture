@@ -221,7 +221,8 @@ class ProductController extends Controller
     private function storeImage(Request $request): string
     {
         $file     = $request->file('product_image');
-        $filename = Str::random(20) . '.' . $file->getClientOriginalExtension();
+        $filename = Str::random(20) . '.' . \App\Support\UploadedImage::extensionOf($file);
+        \App\Support\UploadedImage::optimize($file);
 
         $destination = public_path('images/products');
         if (!file_exists($destination)) {
@@ -274,7 +275,8 @@ class ProductController extends Controller
 
         $order = max(1, (int) $product->images()->max('sort_order'));
         foreach ($files as $file) {
-            $filename = Str::random(20) . '.' . ($file->guessExtension() ?: 'jpg');
+            $filename = Str::random(20) . '.' . \App\Support\UploadedImage::extensionOf($file);
+            \App\Support\UploadedImage::optimize($file);
             $file->move($destination, $filename);
             ProductImage::create([
                 'product_id' => $product->id, 'image_path' => $filename,
@@ -338,15 +340,15 @@ class ProductController extends Controller
             'dimension_unit'   => ['nullable', 'string', 'max:4'],
 
             'product_status' => ['required', 'in:available,unavailable'],
-            'product_image'  => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120'],
+            'product_image'  => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120', new \App\Rules\RealJpegOrPng()],
 
             'extra_images'   => ['nullable', 'array', 'max:' . Product::MAX_EXTRA_IMAGES],
-            'extra_images.*' => ['file', 'image', 'mimes:jpg,jpeg,png,webp', 'mimetypes:image/jpeg,image/png,image/webp', 'max:5120'],
+            'extra_images.*' => ['file', 'image', 'mimes:jpg,jpeg,png', 'mimetypes:image/jpeg,image/png', 'max:5120', new \App\Rules\RealJpegOrPng()],
         ], [
             'extra_images.max'         => 'You can add at most ' . Product::MAX_EXTRA_IMAGES . ' extra photos.',
-            'extra_images.*.image'     => 'Each extra photo must be a JPG, PNG or WebP picture.',
-            'extra_images.*.mimes'     => 'Each extra photo must be a JPG, PNG or WebP picture.',
-            'extra_images.*.mimetypes' => 'Each extra photo must be a JPG, PNG or WebP picture.',
+            'extra_images.*.image'     => 'Each extra photo must be a JPG or PNG picture.',
+            'extra_images.*.mimes'     => 'Each extra photo must be a JPG or PNG picture.',
+            'extra_images.*.mimetypes' => 'Each extra photo must be a JPG or PNG picture.',
             'extra_images.*.max'       => 'Each extra photo must be 5 MB or smaller.',
             'extra_images.*.uploaded'  => 'An extra photo could not be uploaded. It may be larger than 5 MB.',
             'new_category.required_if' => 'Please enter a name for the new category.',

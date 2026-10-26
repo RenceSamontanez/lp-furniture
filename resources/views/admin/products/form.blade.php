@@ -228,7 +228,7 @@
           <div class="admin-panel-header"><div class="admin-panel-title">Extra Photos</div></div>
           <div class="admin-panel-body">
             <p class="form-help" id="extra-photos-help" style="font-size:12px;color:var(--text-muted);margin:0 0 12px;">
-              Other angles of the same piece. The Product Image above stays the first photo. Up to {{ \App\Models\Product::MAX_EXTRA_IMAGES }} extra photos, JPG, PNG or WebP, 5 MB each.
+              Other angles of the same piece. The Product Image above stays the first photo. Up to {{ \App\Models\Product::MAX_EXTRA_IMAGES }} extra photos, JPG or PNG, 5 MB each.
             </p>
 
             @if($extras->isNotEmpty())
@@ -245,7 +245,7 @@
             @if($extraRoom > 0)
               <label for="extra-images-input" class="form-label">Add photos ({{ $extraRoom }} more allowed)</label>
               <input type="file" id="extra-images-input" name="extra_images[]" multiple
-                     accept="image/jpeg,image/png,image/webp" class="form-input"
+                     accept="image/jpeg,image/png" class="form-input"
                      aria-describedby="extra-photos-help"/>
               @error('extra_images')<p class="cd-size-error" role="alert" style="display:block;">{{ $message }}</p>@enderror
               @error('extra_images.*')<p class="cd-size-error" role="alert" style="display:block;">{{ $message }}</p>@enderror

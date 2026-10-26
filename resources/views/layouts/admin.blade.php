@@ -67,6 +67,11 @@
   Contact Settings
 </a>
 
+<a href="{{ route('admin.system-health.index') }}" class="admin-nav-link {{ request()->routeIs('admin.system-health.*') ? 'active' : '' }}">
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+  System health
+</a>
+
       <div class="admin-nav-group-label">Customers</div>
       <a href="{{ route('admin.validations.index') }}" class="admin-nav-link {{ request()->routeIs('admin.validations.*') ? 'active' : '' }}">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
