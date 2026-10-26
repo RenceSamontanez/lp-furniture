@@ -33,7 +33,7 @@ class MyAccountCustomOrderTest extends TestCase
     }
 
     /** A customer with an accepted agreement but no phone and no saved address. */
-    private function acceptedForBareCustomer(): array
+    private function acceptedForBareCustomer(array $quote = []): array
     {
         $admin = $this->flowAdmin();
         $customer = $this->flowCustomer();
@@ -44,7 +44,7 @@ class MyAccountCustomOrderTest extends TestCase
         ])->save();
         [$r, $s] = $this->generatedRequest($customer);
         $this->submitRequest($customer, $r, $s)->assertRedirect();
-        $quote = $this->quoteAndSend($admin, $r->fresh());
+        $quote = $this->quoteAndSend($admin, $r->fresh(), $quote);
         $this->asCustomer($customer)->post(route('design.quote.accept', [$r->id, $quote->id]), ['agree' => '1'])->assertRedirect();
 
         return [$customer->fresh(), $this->agreementOf($r)];
@@ -96,5 +96,22 @@ class MyAccountCustomOrderTest extends TestCase
 
         $this->asCustomer($customer)->post(route('custom.checkout.place', $agreement->id), ['payment_method' => 'stripe'])->assertSessionHasNoErrors()->assertRedirect();
         $this->assertSame(1, Order::where('design_agreement_id', $agreement->id)->count());
+    }
+
+    public function test_a_pickup_agreement_needs_a_phone_but_no_address_and_keeps_no_snapshot(): void
+    {
+        [$customer, $agreement] = $this->acceptedForBareCustomer(['delivery_option' => 'pickup', 'delivery_fee' => '0', 'delivery_address' => '']);
+
+        $this->asCustomer($customer)->get(route('custom.checkout', $agreement->id))->assertOk()->assertSee('Pick up at our shop')->assertSee('data-od-pickup', false);
+
+        $this->asCustomer($customer)->post(route('custom.checkout.place', $agreement->id), ['payment_method' => 'stripe'])->assertSessionHasErrors('contact_phone');
+        $this->assertSame(0, Order::count());
+
+        $this->asCustomer($customer)->post(route('custom.checkout.place', $agreement->id), ['payment_method' => 'stripe', 'contact_phone' => '0917 123 4567'])
+            ->assertSessionHasNoErrors()->assertRedirect();
+        $order = Order::where('design_agreement_id', $agreement->id)->sole();
+        $this->assertSame('pickup', $order->delivery_option);
+        $this->assertNull($order->delivery_snapshot);
+        $this->assertSame(0, Delivery::count());
     }
 }

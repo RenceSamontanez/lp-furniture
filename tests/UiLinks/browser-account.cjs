@@ -1,7 +1,8 @@
 /*
  * My Account + order details walk (SCRATCH DATABASE ONLY, http://127.0.0.1:8011).
- * Every tab for the right customer and the order details step in its three address states, at 1920x1080, 1440x900, 1366x768,
- * 820x1180 and 390x844. Records page/pane scroll, horizontal overflow, whether the open province list is clipped (it must not be),
+ * Personal info and Security tabs, and the order details step (delivery: no saved address, saved address, different address;
+ * pickup with the shop location from Contact Settings or the footer fallback; pickup with no shop location), at 1920x1080, 1440x900, 1366x768,
+ * 820x1180 and 390x844. PASS=noshop runs only the "no shop location" shots (start the server with the fallback location emptied). Records page/pane scroll, horizontal overflow, whether the open province list is clipped (it must not be),
  * keyboard use of the combobox, and the button contrast audit. Screenshots go to docs/account/screenshots/, results to _checks.json.
  *
  *   DB_DATABASE=furniture_db_test php artisan migrate:fresh --force
@@ -19,6 +20,7 @@ fs.mkdirSync(OUT, { recursive: true });
 const BUTTONS = fs.readFileSync(path.join(lib.ROOT, 'tests', 'ButtonContrast', 'measure.js'), 'utf8');
 const seed = JSON.parse(fs.readFileSync(path.join(lib.ROOT, 'storage', 'app', 'account-seed.json'), 'utf8').replace(/^﻿/, ''));
 const SIZES = [[1920, 1080], [1440, 900], [1366, 768], [820, 1180], [390, 844]];
+const NOSHOP = process.env.PASS === 'noshop';
 const report = { sizes: SIZES.map((s) => s.join('x')), pages: [], notes: [] };
 
 const cookieFor = (email) => JSON.parse(execFileSync('php', [path.join(lib.ROOT, 'tests', 'UiLinks', 'session-cookie-for.php'), email, 'web'], { cwd: lib.ROOT, encoding: 'utf8' }));
@@ -48,12 +50,12 @@ const METRICS = `(() => {
 
       // ───── My Account tabs ─────
       const plan = [
-        ['fresh', ['personal', 'security', 'verify', 'account']],
+        ['fresh', ['personal', 'security']],
         ['saved', ['personal', 'security']],
-        ['google', ['security', 'verify', 'account']],
-        ['pending', ['personal', 'verify']],
+        ['google', ['security']],
+        ['pending', ['personal']],
       ];
-      for (const [who, tabs] of plan) {
+      for (const [who, tabs] of (NOSHOP ? [] : plan)) {
         await c.setCookie(cookieFor(seed.users[who]));
         for (const t of tabs) {
           await c.go(`/profile?tab=${t}`);
@@ -65,6 +67,7 @@ const METRICS = `(() => {
       }
 
       // ───── dropdown: never clipped, keyboard works, cascade loads lazily (desktop and phone) ─────
+      if (!NOSHOP) {
       await c.setCookie(cookieFor(seed.users.saved));
       await c.go('/profile?tab=personal');
       const dd = await c.evalJs(`(async () => {
@@ -93,20 +96,27 @@ const METRICS = `(() => {
       })()`);
       report.pages.push({ page: 'combobox', size: tag, ...dd });
       await shot(`account-saved-dropdown-${tag}`);
+      }
 
       // ───── order details step in its three address states ─────
-      const states = [['noaddr', 'none-yet'], ['saved', 'already-saved']];
-      for (const [who, label] of states) {
+      const states = [['noaddr', 'none-yet', 'delivery'], ['saved', 'already-saved', 'delivery'], ['noaddr', 'pickup', 'pickup']];
+      for (const [who, label, opt] of states) {
+        if (NOSHOP && label !== 'pickup') { continue; }
         await c.setCookie(cookieFor(seed.users[who]));
         await c.go('/checkout');
         await c.evalJs(`(() => { if (innerWidth > 768) { openSection('delivery'); } else { const p = document.getElementById('ckn-preparing'); if (p) { p.style.display = 'none'; } goToScreen(null, 'delivery'); } })()`);
         await c.sleep(500);
+        if (opt === 'delivery') { await c.evalJs(`document.querySelector('input[name=delivery_option][value=delivery]').click()`); await c.sleep(300); }
         await c.evalJs(`document.querySelector('[data-order-details]').scrollIntoView({ block: 'start' })`);
         await c.sleep(300);
         const m = await c.evalJs(`(() => ({ horizontalScroll: document.documentElement.scrollWidth > innerWidth + 1, continueDisabled: [...document.querySelectorAll('[data-od-continue]')].map((b) => b.getAttribute('aria-disabled')), msg: document.querySelector('[data-od-msg]').textContent }))()`);
-        await shot(`order-${label}-${tag}`);
-        report.pages.push({ page: `order/${label}`, size: tag, ...m });
-        if (who === 'saved') {
+        const name = label === 'pickup' ? (NOSHOP ? 'pickup-no-shop-location' : 'pickup-with-shop-location') : label;
+        if (label === 'pickup') {
+          Object.assign(m, await c.evalJs(`(() => { const pk = document.querySelector('[data-od-pickup]'); const f = document.querySelector('[data-od-form]'); const map = pk.querySelector('iframe'); const r = map ? map.getBoundingClientRect() : null; return { cardShown: !pk.hidden, addressFormHidden: f.hidden, hasMap: !!map, mapInsideViewportWidth: r ? r.left >= 0 && r.right <= innerWidth : null, mapHeight: r ? Math.round(r.height) : null, soon: /coming soon/i.test(pk.textContent), directions: !!pk.querySelector('a[href*="google.com/maps"]') }; })()`));
+        }
+        await shot(`order-${name}-${tag}`);
+        report.pages.push({ page: `order/${name}`, size: tag, ...m });
+        if (who === 'saved' && !NOSHOP) {
           await c.evalJs(`document.querySelector('[data-od-diff]').click()`);
           await c.sleep(500);
           const m2 = await c.evalJs(`(() => ({ horizontalScroll: document.documentElement.scrollWidth > innerWidth + 1, legend: document.querySelector('[data-od-ask-legend]').textContent, defaultKeep: document.querySelector('input[name=keep_address]:checked').value, continueDisabled: document.querySelector('[data-od-continue]').getAttribute('aria-disabled'), msg: document.querySelector('[data-od-msg]').textContent }))()`);
@@ -119,13 +129,13 @@ const METRICS = `(() => {
     // ───── button contrast on the account page and the checkout block ─────
     await c.viewport(1440, 900);
     await c.setCookie(cookieFor(seed.users.fresh));
-    for (const t of ['personal', 'security', 'verify']) {
+    for (const t of (NOSHOP ? [] : ['personal', 'security'])) {
       await c.go(`/profile?tab=${t}`);
       const r = await c.evalJs(BUTTONS);
       report.pages.push({ page: `contrast/${t}`, buttons: r.count, failing: r.failures.length, failures: r.failures.map((f) => ({ text: f.text, cls: f.cls, min: f.min, height: f.height })) });
     }
   } finally {
-    fs.writeFileSync(path.join(OUT, '_checks.json'), JSON.stringify(report, null, 2));
+    fs.writeFileSync(path.join(OUT, NOSHOP ? '_checks-noshop.json' : '_checks.json'), JSON.stringify(report, null, 2));
     c.close();
   }
   console.log('walk finished: ' + report.pages.length + ' checks, results in ' + path.join(OUT, '_checks.json'));

@@ -182,6 +182,18 @@
 .mx .opt2 input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--ma-peach); flex: none; }
 .mx .opt2 small { display: block; font-weight: 400; color: var(--ma-mute); }
 .mx .opt2:has(input:checked) { border-color: var(--ma-peach); background: #fff; box-shadow: 0 0 0 2px rgba(169,85,43,.18); }
+/* pick up at our shop: the footer location block in the glass look of this step */
+.mx .pk { padding: 16px 18px; border-radius: 18px; border: 1px solid rgba(201,151,63,.4); background: #FFF8EE; display: grid; gap: 12px; }
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .mx .pk { background: linear-gradient(150deg, rgba(255,255,255,.9), rgba(252,240,222,.6)); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); } }
+.mx .pk .ash { margin: 0; }
+.mx .pk__map { border-radius: 14px; overflow: hidden; border: 1px solid var(--ma-line2); height: 190px; background: #EADFCF; }
+.mx .pk__map iframe { width: 100%; height: 100%; border: 0; display: block; max-width: 100%; }
+.mx .pk__info { display: grid; gap: 6px; justify-items: start; min-width: 0; }
+.mx .pk address { font-style: normal; font-weight: 600; line-height: 1.45; overflow-wrap: anywhere; }
+.mx .pk__near, .mx .pk__note, .mx .pk__soon { margin: 0; color: var(--ma-mute); font-size: .9rem; }
+.mx .pk__soon { font-size: .98rem; color: var(--ma-ink); font-weight: 600; }
+.mx .pk__phone { margin: 0; display: flex; gap: 8px; align-items: center; }
+.mx .pk__phone svg { width: 18px; height: 18px; color: var(--ma-peach); flex: none; }
 .mx .od-foot { display: flex; align-items: center; gap: 14px; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(201,151,63,.25); flex-wrap: wrap; }
 .mx .od-foot .msg { flex: 1; min-width: 200px; color: var(--ma-mute); font-size: .9rem; }
 .mx .od-foot .msg b { color: #8E2616; }
@@ -258,11 +270,18 @@
 
 .ma-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
+/* My Account only: the prototype gold gradient on the primary buttons (the shared dark brown stays everywhere else) */
+.ma .lp-btn.lp-btn--primary, .ma .lp-btn.lp-btn--primary:visited { background-color: #D9A84A; background-image: linear-gradient(135deg, #D9A84A, #C2902F); color: #2A1A10; border-color: #B6842A; }
+.ma .lp-btn.lp-btn--primary:hover, .ma .lp-btn.lp-btn--primary:focus { background-color: #E3B25E; background-image: linear-gradient(135deg, #E3B25E, #C9973F); color: #2A1A10; border-color: #B6842A; }
+.ma .lp-btn.lp-btn--primary:active { background-color: #C9973F; background-image: none; color: #2A1A10; border-color: #9C7020; }
+.ma .lp-btn.lp-btn--primary[aria-disabled="true"], .ma .lp-btn.lp-btn--primary:disabled { background-image: none; background-color: var(--btn-disabled); color: var(--btn-disabled-text); border-color: var(--btn-disabled); }
+
 /* ───────── fit one screen (laptops and desktops): the page never scrolls, only a long tab scrolls inside its pane ───────── */
 @media (min-width: 861px) {
   .ma { height: var(--ma-h, calc(100vh - 76px)); height: var(--ma-h, calc(100dvh - 76px)); overflow: hidden; }
   .ma-wrap { height: 100%; }
   .ma .acct { height: 100%; }
+  .ma .foot { padding-right: 104px; }   /* keeps the buttons clear of the shared Luma button in the corner */
   .ma .pane { overflow: visible; }
 }
 @media (max-height: 800px) and (min-width: 861px) {

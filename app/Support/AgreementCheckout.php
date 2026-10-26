@@ -135,12 +135,14 @@ class AgreementCheckout
 
         // A phone and a complete delivery address are required for every order, also for an accepted agreement. The
         // checkout form sends them; without a form the account must already hold both.
-        $contact ??= OrderContact::fromAccount($customer);
-        if ($contact === null) {
-            throw new CheckoutRefused('Add your phone number and delivery address before you pay. You can do this on the checkout page or in My Account.');
-        }
-
         $terms = $agreement->terms_snapshot;
+        $delivery = ($terms['delivery']['option'] ?? 'pickup') === 'delivery';
+        $contact ??= OrderContact::fromAccount($customer, $delivery);
+        if ($contact === null) {
+            throw new CheckoutRefused($delivery
+                ? 'Add your phone number and delivery address before you pay. You can do this on the checkout page or in My Account.'
+                : 'Add your phone number before you pay. You can do this on the checkout page or in My Account.');
+        }
         $money = $terms['money'];
         $total = round((float) $money['total'], 2);
         $upfront = round((float) $money['upfront'], 2);
@@ -169,7 +171,6 @@ class AgreementCheckout
             }
         }
 
-        $delivery = ($terms['delivery']['option'] ?? 'pickup') === 'delivery';
         $title = (string) ($terms['design']['title'] ?? $request->order_name);
 
         OrderContact::persist(User::whereKey($customer->id)->lockForUpdate()->first(), $contact);

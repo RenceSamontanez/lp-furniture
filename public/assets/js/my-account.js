@@ -363,6 +363,19 @@
     var hasSaved = box.dataset.hasSaved === '1';
     var conts = box.dataset['continue'] ? $$(box.dataset['continue']) : [];
     var form = box.closest('form');
+    var pk = $('[data-od-pickup]', box);
+    var fixed = box.dataset.fixed || '';
+    function isPickup() {
+      var r = document.querySelector('input[name=delivery_option]:checked');
+      return fixed ? fixed === 'pickup' : (r ? r.value === 'pickup' : false);
+    }
+    function applyMode() {
+      var p = isPickup();
+      pk.hidden = !p;
+      formBox.hidden = p || (hasSaved && mode.value === 'saved');
+      if (saved) { saved.hidden = p || mode.value !== 'saved'; }
+      refresh();
+    }
 
     function nameOk() {
       var v = nameIn.value.trim();
@@ -372,22 +385,22 @@
       var m = [];
       if (!nameOk()) { m.push('Recipient name'); }
       if (!phone.valid()) { m.push('Phone number'); }
-      if (!(hasSaved && mode.value === 'saved')) { m = m.concat(addr.missing()); }
+      if (!isPickup() && !(hasSaved && mode.value === 'saved')) { m = m.concat(addr.missing()); }
       return m;
     }
     function refresh() {
       var m = missing();
       conts.forEach(function (b) { b.setAttribute('aria-disabled', m.length ? 'true' : 'false'); });
-      msg.innerHTML = m.length ? '<b>To continue, add:</b> ' + m.map(esc).join(', ') + '.' : 'Everything we need to deliver is here.';
+      msg.innerHTML = m.length ? '<b>To continue, add:</b> ' + m.map(esc).join(', ') + '.' : (isPickup() ? 'Everything we need is here.' : 'Everything we need to deliver is here.');
       return m;
     }
     function showErrors() {
       if (!nameOk()) { nameIn.classList.add('bad'); nameErr.textContent = nameIn.value.trim() ? 'Use letters only. No numbers or symbols.' : 'Enter the recipient name.'; nameErr.classList.add('show'); }
       phone.check();
-      if (!(hasSaved && mode.value === 'saved')) { addr.validate(); }
+      if (!isPickup() && !(hasSaved && mode.value === 'saved')) { addr.validate(); }
     }
     function focusFirstMissing() {
-      if (!nameOk()) { nameIn.focus(); } else if (!phone.valid()) { phone.number.focus(); } else if (!(hasSaved && mode.value === 'saved')) { addr.focusFirst(); }
+      if (!nameOk()) { nameIn.focus(); } else if (!phone.valid()) { phone.number.focus(); } else if (!isPickup() && !(hasSaved && mode.value === 'saved')) { addr.focusFirst(); }
     }
     nameIn.addEventListener('input', function () { nameIn.classList.remove('bad'); nameErr.classList.remove('show'); refresh(); });
     phone.onChange(refresh); addr.onChange(refresh);
@@ -423,10 +436,12 @@
         if (m.length) { e.preventDefault(); showErrors(); focusFirstMissing(); toast('error', 'Add the missing delivery details first'); }
       });
     }
-    refresh();
+    $$('input[name=delivery_option]').forEach(function (r) { r.addEventListener('change', applyMode); });
+    applyMode();
     window.MAOrder = {
       ready: function () { return missing().length === 0; },
       summary: function () {
+        if (isPickup()) { return nameIn.value.trim() + ' · ' + phone.number.value.trim() + ' · Pick up at our shop'; }
         var line = (hasSaved && mode.value === 'saved') ? $('[data-od-saved] b', box).textContent + ', ' + $('[data-od-saved] small', box).textContent.trim() : addr.line();
         return nameIn.value.trim() + ' · ' + (phone.number.value.trim()) + ' · ' + line;
       }

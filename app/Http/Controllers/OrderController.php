@@ -67,9 +67,9 @@ class OrderController extends Controller
             'customization_note'     => 'nullable|string',
         ]);
 
-        // Every order needs a phone and a complete structured address, whichever way it is collected. Checked here, on the
-        // server, whatever the page did; redirects back with the field errors when something is missing.
-        $contact = OrderContact::fromRequest($request, Auth::user());
+        // Every order needs a valid phone; a delivery order also needs the complete structured address (pickup at our shop
+        // needs none). Checked here, on the server, whatever the page did; redirects back with the field errors.
+        $contact = OrderContact::fromRequest($request, Auth::user(), $request->delivery_option === 'delivery');
 
         $isBuyNow = $request->filled('buy_now_product_id');
 
@@ -145,7 +145,7 @@ class OrderController extends Controller
                     'order_number'        => $orderNumber,
                     'total_amount'        => $total,
                     'delivery_option'     => $request->delivery_option,
-                    'delivery_address'    => $contact['snapshot']['full'],
+                    'delivery_address'    => $contact['snapshot']['full'] ?? null,
                     'delivery_snapshot'   => $contact['snapshot'],
                     'delivery_fee'        => $deliveryFee,
                     'customization_note'  => $request->customization_note,
@@ -199,7 +199,7 @@ class OrderController extends Controller
                 if ($request->delivery_option === 'delivery') {
                     Delivery::create([
                         'order_id'         => $order->id,
-                        'delivery_address' => $contact['snapshot']['full'],
+                        'delivery_address' => $contact['snapshot']['full'] ?? null,
                         'contact_number'   => PhoneNumber::display($contact['phone']),
                         'status'           => 'waiting_for_courier',
                     ]);

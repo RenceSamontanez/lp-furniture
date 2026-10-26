@@ -57,10 +57,10 @@ class CustomCheckoutController extends Controller
         // 404 for anyone else's agreement, before anything else.
         $agreement = DesignAgreement::where('user_id', Auth::id())->findOrFail($agreementId);
 
-        // Phone and delivery address are required here too (an order that already exists needs nothing new).
+        // A valid phone is required here too, and the full address when the agreement is for delivery (an order that already exists needs nothing new).
         $contact = Order::where('design_agreement_id', $agreement->id)->exists()
             ? null
-            : OrderContact::fromRequest($request, Auth::user());
+            : OrderContact::fromRequest($request, Auth::user(), ($agreement->terms_snapshot['delivery']['option'] ?? 'pickup') === 'delivery');
 
         try {
             [$order, $created] = $this->checkout->place($agreement->id, Auth::user(), $data['payment_method'], $contact);

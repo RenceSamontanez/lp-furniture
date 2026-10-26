@@ -54,7 +54,7 @@
     <form method="POST" action="{{ route('custom.checkout.place', $agreement->id) }}" class="co-decline-form" style="border-top:0;margin-top:20px;padding-top:0;">
       @csrf
       <div class="co-action-title">Who receives it, and where?</div>
-      @include('partials.order-details', ['continue' => '#co-pay-btn'])
+      @include('partials.order-details', ['continue' => '#co-pay-btn', 'deliveryMode' => ($terms['delivery']['option'] ?? 'pickup') === 'delivery' ? 'delivery' : 'pickup'])
       <div class="co-action-title">How would you like to pay?</div>
       <label class="co-agree"><input type="radio" name="payment_method" value="stripe" required {{ old('payment_method', 'stripe') === 'stripe' ? 'checked' : '' }}/> <span>Card (Stripe)</span></label>
       <label class="co-agree"><input type="radio" name="payment_method" value="gcash" required {{ old('payment_method') === 'gcash' ? 'checked' : '' }}/> <span>GCash</span></label>

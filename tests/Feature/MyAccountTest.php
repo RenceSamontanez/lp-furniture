@@ -83,7 +83,7 @@ class MyAccountTest extends TestCase
 
     private function orderForm(array $over = []): array
     {
-        return array_merge(['delivery_option' => 'pickup', 'payment_type' => 'full', 'payment_method' => 'onsite'], $over);
+        return array_merge(['delivery_option' => 'delivery', 'payment_type' => 'full', 'payment_method' => 'onsite'], $over);
     }
 
     /* ───────────── the page ───────────── */
@@ -297,14 +297,136 @@ class MyAccountTest extends TestCase
         $this->assertSame(0, Order::count());
     }
 
-    public function test_pickup_orders_need_the_same_details_as_delivery_orders(): void
+    /* ───────────── pickup (collected at our shop) vs delivery ───────────── */
+
+    public function test_pickup_means_the_customer_collects_at_the_shop_and_needs_a_phone_but_no_address(): void
     {
         $u = $this->bareCustomer();
         $this->cart($u);
-        foreach (['pickup', 'delivery'] as $opt) {
-            $this->actingAs($u)->post(route('order.place'), $this->orderForm(['delivery_option' => $opt]))->assertSessionHasErrors('contact_phone');
+
+        // no phone: refused, even for pickup
+        $this->actingAs($u)->post(route('order.place'), $this->orderForm(['delivery_option' => 'pickup']))->assertSessionHasErrors('contact_phone');
+        $this->assertSame(0, Order::count());
+
+        // a bad phone: refused
+        $this->actingAs($u)->post(route('order.place'), $this->orderForm(['delivery_option' => 'pickup', 'contact_phone' => '12345']))->assertSessionHasErrors('contact_phone');
+
+        // a valid phone and no address at all: placed
+        $this->actingAs($u)->post(route('order.place'), $this->orderForm(['delivery_option' => 'pickup', 'contact_phone' => '0917 123 4567']))
+            ->assertSessionHasNoErrors();
+        $o = Order::sole();
+        $this->assertSame('pickup', $o->delivery_option);
+        $this->assertNull($o->delivery_snapshot);          // pickup stores no address snapshot
+        $this->assertNull($o->delivery_address);
+        $this->assertSame(0, Delivery::count());
+        $this->assertSame('+639171234567', $u->fresh()->phone_e164);   // the phone given is kept on the account
+    }
+
+    public function test_pickup_with_an_address_filled_in_stores_and_saves_none_of_it(): void
+    {
+        $u = $this->bareCustomer();
+        $this->cart($u);
+        $this->actingAs($u)->post(route('order.place'), $this->orderForm([
+            'delivery_option' => 'pickup', 'contact_phone' => '0917 123 4567', 'address_mode' => 'new', 'keep_address' => 'yes',
+        ] + $this->addressInput('addr_')))->assertSessionHasNoErrors();
+
+        $this->assertNull(Order::sole()->delivery_snapshot);
+        $this->assertNull($u->fresh()->address_street);     // "save it" is ignored for pickup
+    }
+
+    public function test_pickup_for_an_account_with_a_phone_needs_nothing_else(): void
+    {
+        $u = $this->bareCustomer();
+        $u->forceFill(['phone_number' => '09171234567', 'phone_e164' => '+639171234567', 'phone_country' => 'PH'])->save();
+        $this->cart($u);
+        $this->actingAs($u)->post(route('order.place'), $this->orderForm(['delivery_option' => 'pickup']))->assertSessionHasNoErrors();
+        $this->assertNull(Order::sole()->delivery_snapshot);
+    }
+
+    public function test_a_delivery_order_still_needs_the_full_address_and_a_phone(): void
+    {
+        $u = $this->bareCustomer();
+        $u->forceFill(['phone_number' => '09171234567', 'phone_e164' => '+639171234567', 'phone_country' => 'PH'])->save();
+        $this->cart($u);
+
+        $this->actingAs($u)->post(route('order.place'), $this->orderForm())->assertSessionHasErrors('addr_province_id');
+        foreach (['province_id', 'city_id', 'barangay_id', 'street', 'postal_code'] as $field) {
+            $this->actingAs($u)->post(route('order.place'), $this->orderForm(['address_mode' => 'new'] + $this->addressInput('addr_', [$field => ''])))
+                ->assertSessionHasErrors('addr_' . $field);
         }
         $this->assertSame(0, Order::count());
+
+        $this->actingAs($u)->post(route('order.place'), $this->orderForm(['address_mode' => 'new', 'keep_address' => 'no'] + $this->addressInput('addr_')))->assertSessionHasNoErrors();
+        $this->assertSame('Blk 5 Lot 12, Sampaguita St.', Order::sole()->delivery_snapshot['street']);
+        $this->assertSame(1, Delivery::count());
+    }
+
+    public function test_a_delivery_order_without_a_phone_is_refused_even_with_an_address(): void
+    {
+        $u = $this->bareCustomer();
+        $this->cart($u);
+        $this->actingAs($u)->post(route('order.place'), $this->orderForm(['address_mode' => 'new', 'keep_address' => 'no'] + $this->addressInput('addr_')))
+            ->assertSessionHasErrors('contact_phone');
+        $this->assertSame(0, Order::count());
+    }
+
+    /* ───────────── the pickup shop card follows Contact Settings (same source as the footer) ───────────── */
+
+    private function shopSettings(array $v): void
+    {
+        $row = \App\Models\BusinessSetting::query()->orderBy('id')->first() ?? new \App\Models\BusinessSetting();
+        $row->forceFill($v + ['phone' => '', 'email' => '', 'facebook_url' => '', 'tiktok_url' => null,
+            'shop_address' => null, 'shop_landmarks' => null, 'map_lat' => null, 'map_lng' => null])->save();
+        \Illuminate\Support\Facades\Cache::forget(\App\Models\BusinessSetting::CACHE_KEY);
+    }
+
+    private function noFallbacks(): void
+    {
+        config(['shop.fallback' => array_fill_keys(['facebook_url', 'tiktok_url', 'phone', 'email', 'shop_address', 'shop_landmarks', 'map_lat', 'map_lng'], null)]);
+    }
+
+    public function test_the_pickup_card_shows_the_contact_settings_location_map_phone_and_directions(): void
+    {
+        $this->noFallbacks();
+        $this->shopSettings(['shop_address' => '12 Rizal Avenue, Test City', 'shop_landmarks' => 'Beside the old church', 'map_lat' => 13.5, 'map_lng' => 121.25, 'phone' => '09181112222']);
+        $u = $this->customer();
+        $this->cart($u);
+
+        $page = $this->actingAs($u)->get(route('checkout'))->assertOk();
+        $page->assertSee('data-od-pickup', false)->assertSee('Pick up at our shop')->assertSee('12 Rizal Avenue, Test City')->assertSee('Beside the old church')
+             ->assertSee('maps.google.com/maps?q=13.5%2C121.25', false)->assertSee('Get directions')
+             ->assertSee('0918 111 2222')->assertSee('https://www.google.com/maps/search/?api=1&amp;query=13.5%2C121.25', false)
+             ->assertDontSee('Shop location coming soon');
+        $footer = \App\Support\FooterData::build()['visit'];
+        $this->assertStringContainsString(e($footer['embed']), $page->getContent());   // the very same map link the footer uses
+
+        // the admin moves the shop: the card follows
+        $this->shopSettings(['shop_address' => '99 Mabini Street, Another Town', 'map_lat' => 14.1, 'map_lng' => 120.9]);
+        $page = $this->actingAs($u)->get(route('checkout'))->assertOk();
+        $page->assertSee('99 Mabini Street, Another Town')->assertDontSee('12 Rizal Avenue')->assertSee('maps.google.com/maps?q=14.1%2C120.9', false);
+    }
+
+    public function test_the_pickup_card_says_the_location_is_coming_soon_when_none_is_set(): void
+    {
+        $this->noFallbacks();
+        $this->shopSettings([]);
+        $u = $this->customer();
+        $this->cart($u);
+
+        $page = $this->actingAs($u)->get(route('checkout'))->assertOk();
+        $page->assertSee('Shop location coming soon. We will confirm the pickup details with you.')->assertDontSee('pk__map')->assertDontSee('Get directions');
+    }
+
+    public function test_pickup_is_the_default_choice_so_the_shop_card_shows_and_the_address_form_is_hidden(): void
+    {
+        // the card and the address blocks are both in the page; the page script hides what the delivery option does not need.
+        $u = $this->customer();
+        $this->cart($u);
+        $html = $this->actingAs($u)->get(route('checkout'))->assertOk()->getContent();
+        $this->assertStringContainsString('data-od-form', $html);
+        $this->assertStringContainsString('data-od-pickup', $html);
+        $this->assertMatchesRegularExpression('/data-od-form[^>]*hidden/', $html);        // pickup is the default choice: address form hidden
+        $this->assertDoesNotMatchRegularExpression('/data-od-pickup[^>]*hidden/', $html); // and the shop card is visible
     }
 
     public function test_first_time_order_with_save_it_keeps_the_address_and_the_phone(): void

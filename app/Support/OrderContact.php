@@ -21,10 +21,13 @@ final class OrderContact
     public const PREFIX = 'addr_';
 
     /**
-     * @return array{recipient:string,phone:string,country:string,address:array,save_address:bool,use_saved:bool,snapshot:array}
+     * A pickup order (the customer collects at our shop) needs the recipient and a valid phone but no address, and keeps
+     * no address snapshot. A delivery order needs the full structured address.
+     *
+     * @return array{recipient:string,phone:string,country:string,address:?array,save_address:bool,use_saved:bool,snapshot:?array,delivery:bool}
      * @throws ValidationException
      */
-    public static function fromRequest(Request $request, User $user): array
+    public static function fromRequest(Request $request, User $user, bool $delivery = true): array
     {
         $in = $request->all();
         $errors = [];
@@ -59,12 +62,15 @@ final class OrderContact
 
         // address
         $saved = DeliveryAddress::fromUser($user);
-        $mode = ($in['address_mode'] ?? null) === 'new' ? 'new' : (($in['address_mode'] ?? null) === 'saved' ? 'saved' : ($saved ? 'saved' : 'new'));
+        $asked = $in['address_mode'] ?? null;
+        $mode = !$delivery ? 'none' : ($asked === 'new' ? 'new' : ($asked === 'saved' ? 'saved' : ($saved ? 'saved' : 'new')));
         $address = null;
         $useSaved = false;
         $save = false;
 
-        if ($mode === 'saved') {
+        if ($mode === 'none') {
+            // pickup: nothing about an address is read, saved or stored
+        } elseif ($mode === 'saved') {
             if (!$saved) {
                 $errors[self::PREFIX . 'province_id'] = 'Add your delivery address to continue.';
             } else {
@@ -93,16 +99,17 @@ final class OrderContact
             'address'      => $address,
             'save_address' => $save,
             'use_saved'    => $useSaved,
-            'snapshot'     => DeliveryAddress::snapshot($address, $recipient, $phone['e164']),
+            'snapshot'     => $delivery ? DeliveryAddress::snapshot($address, $recipient, $phone['e164']) : null,
+            'delivery'     => $delivery,
         ];
     }
 
     /** Contact taken only from the account (for code that places an order without a form). Null when the account is not ready. */
-    public static function fromAccount(User $user): ?array
+    public static function fromAccount(User $user, bool $delivery = true): ?array
     {
         $e164 = PhoneNumber::forUser($user);
-        $address = DeliveryAddress::fromUser($user);
-        if (!$e164 || !$address) {
+        $address = $delivery ? DeliveryAddress::fromUser($user) : null;
+        if (!$e164 || ($delivery && !$address)) {
             return null;
         }
         [$country] = PhoneNumber::split($e164);
@@ -114,14 +121,15 @@ final class OrderContact
             'address'      => $address,
             'save_address' => false,
             'use_saved'    => true,
-            'snapshot'     => DeliveryAddress::snapshot($address, $user->display_name, $e164),
+            'snapshot'     => $delivery ? DeliveryAddress::snapshot($address, $user->display_name, $e164) : null,
+            'delivery'     => $delivery,
         ];
     }
 
     /** Called inside the order transaction, with the customer row locked: keeps the address and fills in a missing phone. */
     public static function persist(User $user, array $contact): void
     {
-        if ($contact['save_address']) {
+        if ($contact['delivery'] && $contact['save_address']) {
             DeliveryAddress::saveFor($user, $contact['address']);
         }
         if (!PhoneNumber::forUser($user)) {
