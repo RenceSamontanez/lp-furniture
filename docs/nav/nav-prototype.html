@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Smart Nav and Toasts Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&display=swap">
+<style>
+:root{
+  --ink:#2B1A12; --cream:#FBF3E6; --paper:#F6EFE3; --gold:#D9A441; --gold-2:#F1D391;
+  --glass:rgba(26,14,9,.74); --line:rgba(255,236,200,.22); --focus:#F1D391;
+  --ok:#9FD08A; --err:#F2A097; --warn:#F1D391; --info:#8EC5E8;
+  --f-display:'Playfair Display',Georgia,serif; --f-body:'DM Sans','Segoe UI',system-ui,sans-serif;
+  --nav-h:68px;--gut:clamp(12px,3vw,40px);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:auto}
+body{margin:0;font-family:var(--f-body);background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:10px}
+
+/* ---------- smart nav ---------- */
+.snav{position:fixed;top:12px;left:clamp(12px,3vw,40px);right:clamp(12px,3vw,40px);z-index:50;height:var(--nav-h);pointer-events:none}
+.snav>*{pointer-events:auto}
+.bar{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:8px 10px 8px 22px;border-radius:18px;
+  background:var(--glass);border:1px solid var(--line);box-shadow:0 10px 30px -12px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.12);
+  backdrop-filter:blur(16px) saturate(1.25);-webkit-backdrop-filter:blur(16px) saturate(1.25);
+  transition:background .35s ease,border-color .35s ease,box-shadow .35s ease,backdrop-filter .35s ease}
+.logo{position:relative;z-index:2;font-family:var(--f-display);font-size:1.4rem;font-weight:600;color:var(--gold-2);white-space:nowrap;display:inline-flex;align-items:center;min-height:44px;padding:0 4px;
+  transition:text-shadow .35s ease,transform .35s ease}
+.logo em{color:#fff;font-style:italic;font-weight:600}
+.links{display:flex;align-items:center;gap:4px;transition:opacity .28s ease,transform .32s ease}
+.links a{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border-radius:12px;font-weight:600;font-size:.9rem;color:#fff;position:relative;transition:background .18s}
+.links a:hover{background:rgba(255,236,200,.14)}
+.links a svg.ic{width:19px;height:19px;flex:none;color:var(--gold-2)}
+.links a .cnt{min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:var(--gold);color:#2B1A12;font-size:.7rem;font-weight:700;display:inline-grid;place-items:center;margin-left:-1px}
+.links a .pip{width:9px;height:9px;border-radius:50%;background:#E3AE4A;box-shadow:0 0 0 2px rgba(26,14,9,.9);margin-left:-3px;align-self:flex-start;margin-top:10px}
+.links a.cur::after{content:"";position:absolute;left:14px;right:14px;bottom:6px;height:2px;border-radius:2px;background:var(--gold)}
+.links a.ghost{border:1.5px solid rgba(255,236,200,.5);margin-left:6px}
+.links a.solid{background:linear-gradient(180deg,#E7B654,#D9A441);color:#2B1A12;box-shadow:0 6px 14px -6px rgba(217,164,65,.8),inset 0 1px 0 rgba(255,255,255,.45)}
+.burger{all:unset;display:none;box-sizing:border-box;cursor:pointer;width:48px;height:48px;border-radius:14px;border:1.5px solid rgba(255,236,200,.5);position:relative;flex:none}
+.burger span{position:absolute;left:13px;right:13px;height:2.5px;border-radius:2px;background:#fff}
+.burger span:nth-child(1){top:16px}.burger span:nth-child(2){top:22px}.burger span:nth-child(3){top:28px}
+
+/* collapsed: bar background and links melt away, logo stays put with a soft dark halo */
+.snav.collapsed .bar{background:transparent;border-color:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.snav.collapsed .links,.snav.collapsed .burger{opacity:0;transform:translateY(-10px);visibility:hidden;transition:opacity .25s ease,transform .3s ease,visibility 0s .3s}
+.snav.collapsed .logo{transform:translate(calc(-1 * (22px + var(--gut) - 14px)),-22px) scale(.84);transform-origin:left center;-webkit-text-stroke:1.6px rgba(24,12,7,.62);paint-order:stroke fill;text-shadow:0 1px 1px rgba(15,7,3,.35)}
+.snav.collapsed .bar{pointer-events:none}
+.snav.collapsed .logo{pointer-events:auto}
+@media (max-width:1180px){.links a{padding:0 9px;font-size:.86rem}.links{gap:2px}}
+@media (max-width:1000px){
+  .burger{display:block}.links{display:none}
+  .snav.open .bar{position:relative;inset:auto;height:auto;flex-wrap:wrap;background:rgba(26,14,9,.92)}
+  .links a.cur::after{display:none}.links a.cur{background:rgba(255,236,200,.1)}
+  .links a .pip{margin-top:0;align-self:center;margin-left:2px}
+  .snav.open .links{display:flex;flex-direction:column;align-items:stretch;flex-basis:100%;order:3;padding:10px 4px 6px;margin-top:8px;border-top:1px solid var(--line)}
+  .snav.open .links a{min-height:48px;font-size:1rem}
+  .snav.open{height:auto}
+}
+
+/* glass nav: translucent so it blurs what it covers, and it flips to a light variant over light areas */
+.snav .bar{background:rgba(36,21,13,.6);border:1px solid rgba(255,236,200,.3);backdrop-filter:blur(22px) saturate(1.6);-webkit-backdrop-filter:blur(22px) saturate(1.6);box-shadow:0 14px 30px -16px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.14)}
+.snav:not(.light) .logo{color:#F1D391}.snav:not(.light) .links a svg.ic{color:#F1D391}
+.snav.light .bar{background:rgba(255,252,246,.62);border:1px solid rgba(90,53,36,.18);box-shadow:0 14px 30px -18px rgba(43,26,18,.5),inset 0 1px 0 rgba(255,255,255,.8)}
+.snav.light .logo{color:#8A5A12}.snav.light .logo em{color:#2B1A12}
+.snav.light .links a{color:#2B1A12}.snav.light .links a:hover{background:rgba(90,53,36,.09)}
+.snav.light .links a svg.ic{color:#8A5A12}
+.snav.light .links a .pip{box-shadow:0 0 0 2px rgba(255,252,246,.95)}
+.snav.light .links a.cur::after{background:#B7791F}
+.snav.light .burger{border-color:rgba(90,53,36,.4)}.snav.light .burger span{background:#2B1A12}
+.snav.light.collapsed .bar{background:transparent;border-color:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.snav.light.collapsed .logo{-webkit-text-stroke:0;text-shadow:0 0 10px rgba(255,255,255,.95),0 0 2px rgba(255,255,255,.9)}
+.snav.light.open .bar{background:rgba(255,252,246,.94)}
+@media (max-width:1000px){.snav.open .bar{background:rgba(36,21,13,.92)}.snav.light.open .bar{background:rgba(255,252,246,.94)}}
+
+/* ---------- demo page ---------- */
+.hero{height:100vh;min-height:560px;display:flex;align-items:flex-end;padding:0 clamp(16px,5vw,64px) 12vh;color:#fff;
+  background:radial-gradient(900px 560px at 20% 15%,#8a6b4d,transparent 62%),radial-gradient(800px 520px at 80% 75%,#5a4230,transparent 65%),linear-gradient(160deg,#3b2a1e,#1f140d)}
+.hero h1{font-family:var(--f-display);font-size:clamp(2.2rem,5vw,4rem);margin:0 0 10px;max-width:14ch;line-height:1.08}
+.hero p{margin:0;color:#EADCC3;max-width:46ch}
+section.light{padding:clamp(40px,8vh,90px) clamp(16px,5vw,64px)}
+section.light h2{font-family:var(--f-display);font-size:2rem;margin:0 0 6px}
+section.light p.sub{margin:0 0 24px;color:#6b5648}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px}
+.card{background:#FFFCF6;border:1px solid #E4D6BD;border-radius:16px;overflow:hidden}
+.card i{display:block;aspect-ratio:4/3;background:linear-gradient(135deg,#7a5a3c,#46301f)}
+.card div{padding:12px 14px 16px}.card b{display:block;font-family:var(--f-display);font-size:1.05rem}.card span{color:#6b5648;font-size:.9rem}
+.tall{height:60px}
+
+/* demo-only toolbar */
+.demo{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:90;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:calc(100vw - 20px);
+  background:#fff;border:1px solid #cdbb9c;border-radius:14px;padding:8px;box-shadow:0 14px 30px -12px rgba(0,0,0,.5)}
+.demo button{all:unset;box-sizing:border-box;cursor:pointer;min-height:44px;padding:0 14px;border-radius:10px;background:#2B1A12;color:#FBF3E6;font-weight:700;font-size:.84rem;display:inline-flex;align-items:center}
+.demo button:focus-visible{outline:3px solid #B7791F;outline-offset:2px}
+.demo small{align-self:center;color:#6b5648;font-size:.75rem;padding:0 6px}
+
+/* ---------- focus page (login) ---------- */
+.focus{display:none;min-height:100vh;padding:28px 16px 90px;background:var(--paper);align-items:flex-start;justify-content:center;flex-direction:column;align-items:center;gap:18px}
+body.focus-mode .focus{display:flex}body.focus-mode .normal,body.focus-mode .snav{display:none}
+.fl{font-family:var(--f-display);font-size:1.4rem;font-weight:600;color:#3A2218}.fl em{font-style:italic}
+.fcard{width:100%;max-width:520px;background:#FFFCF6;border:1px solid #E4D6BD;border-radius:22px;padding:28px}
+.fcard h2{font-family:var(--f-display);margin:8px 0 18px}
+.fcard input{width:100%;min-height:50px;border:1.5px solid #D9C7A6;border-radius:12px;padding:0 14px;font:inherit;margin:0 0 12px;background:#fff}
+.fcard .go{all:unset;box-sizing:border-box;width:100%;min-height:52px;border-radius:12px;background:#2B1A12;color:#FBF3E6;display:flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer}
+.back{all:unset;box-sizing:border-box;cursor:pointer;min-height:44px;padding:0 14px;display:inline-flex;align-items:center;border:1px solid #D9C7A6;border-radius:12px;background:#F4EBDB;font-weight:600;font-size:.9rem}
+
+/* ---------- glass toasts ---------- */
+.toasts{position:fixed;z-index:80;top:96px;right:clamp(12px,3vw,40px);display:flex;flex-direction:column;gap:12px;width:min(390px,calc(100vw - 24px));pointer-events:none}
+.toast{--c:var(--ok);--tx:#FBF3E6;--tx2:#E6D6BA;pointer-events:auto;position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;padding:14px 12px 16px 16px;border-radius:18px;color:var(--tx);overflow:hidden;
+  background:rgba(36,21,13,.58);border:1px solid rgba(255,236,200,.3);
+  box-shadow:0 18px 40px -16px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.16);
+  backdrop-filter:blur(22px) saturate(1.6);-webkit-backdrop-filter:blur(22px) saturate(1.6);
+  transition:background .35s ease,border-color .35s ease,color .35s ease;
+  transform:translateX(30px);opacity:0;animation:tin .38s cubic-bezier(.2,.8,.2,1) forwards}
+/* same rule as the nav: over light areas the glass turns light and the text turns dark */
+.toast.light{--tx:#2B1A12;--tx2:#4a3a2d;background:rgba(255,252,246,.76);border-color:rgba(90,53,36,.18);
+  box-shadow:0 18px 40px -20px rgba(43,26,18,.5),inset 0 1px 0 rgba(255,255,255,.85)}
+.toast.light .ic{color:color-mix(in srgb,var(--c) 62%,#2B1A12)}
+.toast.light .x{color:#5b4739}.toast.light .x:hover{background:rgba(90,53,36,.09)}
+.toast.out{animation:tout .28s ease forwards}
+@keyframes tin{to{transform:none;opacity:1}}@keyframes tout{to{transform:translateX(30px);opacity:0}}
+.toast.ok{--c:var(--ok)}.toast.err{--c:var(--err)}.toast.warn{--c:var(--warn)}.toast.info{--c:var(--info)}
+.toast .ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 22%,transparent);color:var(--c);border:1px solid color-mix(in srgb,var(--c) 55%,transparent)}
+.toast .ic svg{width:18px;height:18px}
+.toast b{display:block;font-size:.96rem;line-height:1.3}
+.toast p{margin:2px 0 0;font-size:.86rem;line-height:1.4;color:var(--tx2)}
+.toast .x{all:unset;box-sizing:border-box;cursor:pointer;width:44px;height:44px;margin:-10px -6px -10px 0;display:grid;place-items:center;border-radius:12px;color:var(--tx2);font-size:1.3rem}
+.toast .x:hover{background:rgba(255,236,200,.12)}
+.toast .bar2{position:absolute;left:0;bottom:0;height:3px;width:100%;background:var(--c);transform-origin:left;animation:drain var(--d,5s) linear forwards}
+.toast:hover .bar2,.toast:focus-within .bar2{animation-play-state:paused}
+@keyframes drain{to{transform:scaleX(0)}}
+@media (max-width:520px){.toasts{top:88px;left:12px;right:12px;width:auto}}
+@media (prefers-reduced-motion:reduce){
+  .snav *,.toast{transition:none!important;animation-duration:.01s!important}
+  .toast .bar2{animation:none;transform:scaleX(.5)}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="sp" viewBox="0 0 24 24"><path d="M12 1.5c.6 5.4 3.6 9 9.5 10.5-5.9 1.5-8.9 5.1-9.5 10.5C11.4 17.1 8.4 13.5 2.5 12 8.4 10.5 11.4 6.9 12 1.5z" fill="currentColor"/></symbol>
+  <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h2.5l2 11h10l2-8H7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9.5" cy="19" r="1.4" fill="currentColor"/><circle cx="16.5" cy="19" r="1.4" fill="currentColor"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0112 0v6l1.5 2h-15zM10 21h4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="t-ok" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="t-err" viewBox="0 0 24 24"><path d="M12 7v6M12 17v.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="t-warn" viewBox="0 0 24 24"><path d="M12 4l9 16H3zM12 10v4M12 17v.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="t-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v6M12 7.5v.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+</svg>
+
+<header class="snav" id="snav">
+  <div class="bar">
+    <a class="logo" id="logo" href="#top"><span style="position:relative">LP <em>Furniture</em></span></a>
+    <nav class="links" id="links" aria-label="Main"></nav>
+    <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="links"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main class="normal" id="top">
+  <div class="hero" data-nav="dark"><div><h1>Crafting Comfort and Elegance</h1><p>Scroll down: the bar melts into just the logo. Scroll up, or hover or tap the logo, and the bar comes back.</p></div></div>
+  <section class="light" id="grid" data-nav="light">
+    <h2>Featured Collection</h2><p class="sub">A light page, to test how the collapsed logo reads over cream and over photos.</p>
+    <div class="cards" id="cards"></div>
+    <div class="tall"></div>
+    <h2 style="margin-top:30px">More pieces</h2><p class="sub">Keep scrolling. Notice the logo stays readable as cards pass behind it.</p>
+    <div class="cards" id="cards2"></div>
+    <div style="height:240px"></div>
+  </section>
+</main>
+
+<section class="focus" aria-label="Sign in page">
+  <a class="fl" href="#">LP <em>Furniture</em></a>
+  <div class="fcard">
+    <button class="back" type="button">&larr; Back to Home</button>
+    <h2>Sign In</h2>
+    <input placeholder="Email address" aria-label="Email address"><input placeholder="Your password" type="password" aria-label="Password">
+    <button class="go" type="button" id="goBtn">Sign In &rarr;</button>
+  </div>
+  <small style="color:#6b5648">Focus page: no nav bar, only the form and its own buttons.</small>
+</section>
+
+<div class="toasts" id="toasts" aria-live="polite" role="status"></div>
+
+<div class="demo" role="group" aria-label="Prototype controls">
+  <button type="button" data-t="ok">Toast: success</button>
+  <button type="button" data-t="err">Toast: error</button>
+  <button type="button" data-t="warn">Toast: warning</button>
+  <button type="button" data-t="info">Toast: info</button>
+  <button type="button" id="who">View: signed in</button>
+  <button type="button" id="mode">Switch to login page</button>
+</div>
+
+<script>
+// demo content
+const mk=(n)=>Array.from({length:n},(_,i)=>`<div class="card"><i style="filter:hue-rotate(${i*9}deg)"></i><div><b>Sample piece ${i+1}</b><span>₱${(5000+i*1700).toLocaleString()}.00</span></div></div>`).join('');
+document.getElementById('cards').innerHTML=mk(10);document.getElementById('cards2').innerHTML=mk(10);
+
+
+const ITEMS={
+  guest:[['Home','#top',0,1],['Catalog','#grid'],['Assistant','#grid','sp'],['Login','#grid',0,0,'ghost'],['Register','#grid',0,0,'solid']],
+  user:[['Home','#top',0,1],['Catalog','#grid'],['Customize','#grid'],['Assistant','#grid','sp'],['Cart','#grid','i-cart','2'],['Notifications','#grid','i-bell','pip'],['Reviews','#grid'],['My Account','#grid']]
+};
+let who='user';
+function renderLinks(){
+  document.getElementById('links').innerHTML=ITEMS[who].map(([t,h,ic,x,cls])=>{
+    const cur=(t==='Home')?' cur':'';
+    const icon=ic?`<svg class="ic" aria-hidden="true"><use href="#${ic}"/></svg>`:'';
+    const extra=(ic==='i-cart')?`<span class="cnt" aria-label="2 items">${x}</span>`:(x==='pip'?'<span class="pip" aria-label="unread"></span>':'');
+    return `<a class="${(cls||'')+cur}" href="${h}">${icon}${t}${extra}</a>`}).join('');
+}
+renderLinks();
+document.getElementById('who').addEventListener('click',e=>{who=who==='user'?'guest':'user';e.target.textContent='View: '+(who==='user'?'signed in':'guest');renderLinks()});
+// ---------- smart nav behaviour ----------
+const snav=document.getElementById('snav'),logo=document.getElementById('logo'),burger=document.getElementById('burger'),links=document.getElementById('links');
+const TOP=40,HIDE_AFTER=140,DELTA=8;
+let lastY=scrollY,collapsed=false,peek=false,peekT=null;
+const coarse=matchMedia('(pointer:coarse)').matches;
+const setCollapsed=c=>{ if(c===collapsed)return; collapsed=c; snav.classList.toggle('collapsed',c);
+  links.toggleAttribute('inert',c); burger.toggleAttribute('inert',c); };
+const menuOpen=()=>snav.classList.contains('open');
+const focusInside=()=>snav.contains(document.activeElement)&&document.activeElement!==document.body&&document.activeElement!==logo;
+function onScroll(){
+  const y=scrollY,d=y-lastY; if(Math.abs(d)<DELTA&&y>TOP){return}
+  if(y<=TOP){setCollapsed(false)}
+  else if(d>0&&y>HIDE_AFTER&&!menuOpen()&&!focusInside()&&!peek){setCollapsed(true)}
+  else if(d<0){setCollapsed(false)}
+  lastY=y;
+}
+addEventListener('scroll',onScroll,{passive:true});
+// hover (mouse) shows the bar; leaving hides it again after a short delay if we are scrolled down
+const show=()=>{clearTimeout(peekT);peek=true;setCollapsed(false)};
+const maybeHide=()=>{clearTimeout(peekT);peekT=setTimeout(()=>{peek=false;if(scrollY>HIDE_AFTER&&!menuOpen()&&!focusInside())setCollapsed(true)},700)};
+logo.addEventListener('mouseenter',()=>{if(!coarse)show()});
+snav.addEventListener('mouseleave',()=>{if(!coarse&&peek)maybeHide()});
+snav.addEventListener('focusin',e=>{ if(collapsed) setCollapsed(false) });
+// touch: first tap on a collapsed logo reveals the bar instead of navigating
+logo.addEventListener('click',e=>{ if(collapsed&&coarse){e.preventDefault();show();maybeHide();} });
+burger.addEventListener('click',()=>{const o=!snav.classList.contains('open');snav.classList.toggle('open',o);burger.setAttribute('aria-expanded',o);burger.setAttribute('aria-label',o?'Close menu':'Open menu')});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&menuOpen()){burger.click();burger.focus()}});
+
+// ---------- glass toasts ----------
+
+// toasts follow the same light or dark rule as the nav, based on what sits behind each one
+function themeToasts(){document.querySelectorAll('.toast').forEach(el=>{const r=el.getBoundingClientRect();if(!r.width)return;
+  const els=document.elementsFromPoint(r.left+r.width/2,r.top+r.height/2).filter(e=>!e.closest('.toasts')&&!e.closest('.snav')&&!e.closest('.demo'));
+  let t='light';for(const e of els){const h=e.closest('[data-nav]');if(h){t=h.dataset.nav;break}}
+  el.classList.toggle('light',t==='light')})}
+let tq=0;addEventListener('scroll',()=>{cancelAnimationFrame(tq);tq=requestAnimationFrame(themeToasts)},{passive:true});addEventListener('resize',themeToasts);
+const ICON={ok:'t-ok',err:'t-err',warn:'t-warn',info:'t-info'};
+const COPY={ok:['Login successful','Welcome back. Taking you to your account.'],err:['Payment did not go through','Your card was declined. Please try another card or pay with GCash.'],
+            warn:['Session expiring soon','You will be signed out in 2 minutes unless you keep working.'],info:['Order update','Your custom order OC-2026-0042 is now in production.']};
+function toast(k){
+  const [t,m]=COPY[k],el=document.createElement('div');el.className='toast '+k;el.style.setProperty('--d','5s');
+  el.innerHTML=`<span class="ic" aria-hidden="true"><svg><use href="#${ICON[k]}"/></svg></span><div><b>${t}</b><p>${m}</p></div><button class="x" type="button" aria-label="Dismiss notification">×</button><span class="bar2" aria-hidden="true"></span>`;
+  const box=document.getElementById('toasts');box.prepend(el);themeToasts();
+  const kill=()=>{el.classList.add('out');setTimeout(()=>el.remove(),280)};
+  let timer=setTimeout(kill,5000),left=5000,t0=Date.now();
+  el.addEventListener('mouseenter',()=>{clearTimeout(timer);left-=Date.now()-t0});
+  el.addEventListener('mouseleave',()=>{t0=Date.now();timer=setTimeout(kill,Math.max(left,1200))});
+  el.querySelector('.x').addEventListener('click',kill);
+  while(box.children.length>4)box.lastElementChild.remove();
+}
+document.querySelectorAll('[data-t]').forEach(b=>b.addEventListener('click',()=>toast(b.dataset.t)));
+document.getElementById('goBtn').addEventListener('click',()=>toast('ok'));
+document.getElementById('mode').addEventListener('click',e=>{const f=document.body.classList.toggle('focus-mode');e.target.textContent=f?'Switch to normal page':'Switch to login page';scrollTo(0,0)});
+(function(){const sn=document.getElementById('snav');
+ function pick(){const col=sn.classList.contains('collapsed');const x=col?60:innerWidth/2,y=col?26:46;
+  const els=document.elementsFromPoint(x,y).filter(e=>!sn.contains(e));
+  let t='light';for(const e of els){const h=e.closest&&e.closest('[data-nav]');if(h){t=h.dataset.nav;break}}
+  sn.classList.toggle('light',t==='light')}
+ addEventListener('scroll',pick,{passive:true});addEventListener('resize',pick);
+ new MutationObserver(pick).observe(sn,{attributes:true,attributeFilter:['class']});pick()})();
+</script>
+</body>
+</html>

@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Identity validation prototype v2</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap">
+<style>
+:root{
+  --night:#F6F0E7; --peach:#A9552B; --gold:#C9973F; --gold-soft:#8F6420;
+  --text:#2A1A10; --text2:#6B5848; --line:rgba(90,55,30,.16); --line2:rgba(90,55,30,.34);
+  --glass:rgba(255,255,255,.55); --ok:#1F6B43; --bad:#B3321F; --rail:76px;
+  --f-body:'DM Sans',system-ui,sans-serif; --f-display:'Playfair Display',Georgia,serif;
+}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{margin:0;height:100%}
+body{background:var(--night);color:var(--text);font-family:var(--f-body);font-size:15px;line-height:1.45;overflow-x:hidden}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg::before,.bg::after,.bg i{content:"";position:absolute;border-radius:50%;filter:blur(8px)}
+.bg::before{width:520px;height:520px;left:-120px;top:120px;background:radial-gradient(circle at 40% 40%,#F2C06B 0%,rgba(242,192,107,0) 70%)}
+.bg::after{width:620px;height:620px;right:-160px;top:-120px;background:radial-gradient(circle at 50% 50%,#EE9A72 0%,rgba(238,154,114,0) 70%)}
+.bg i{width:560px;height:560px;left:38%;bottom:-260px;background:radial-gradient(circle at 50% 50%,#E3A24E 0%,rgba(227,162,78,0) 70%)}
+:is(a,button,input,select,textarea,summary):focus-visible{outline:3px solid var(--peach);outline-offset:2px}
+
+/* rail: the approved collapsed admin menu, shown only for context */
+.rail{position:fixed;left:0;top:0;bottom:0;width:var(--rail);z-index:30;display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 0;
+  background:linear-gradient(170deg,rgba(66,40,26,.94),rgba(36,20,13,.96));backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:inset -1px 0 0 rgba(255,232,205,.1),24px 0 50px -34px rgba(60,30,10,.6)}
+.rail b{font-family:var(--f-display);color:#fff;font-size:1.05rem;margin:2px 0 10px}
+.rail b em{color:#E8B25C;font-style:italic}
+.rail a{position:relative;display:grid;place-items:center;width:48px;height:48px;border-radius:14px;color:#F3E6D6;border:1px solid transparent}
+.rail a svg{width:22px;height:22px}
+.rail a.on{background:linear-gradient(135deg,#E3B25E,#C9973F);color:#2A1A10}
+.rail a .bd{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;border-radius:10px;background:#2A1A10;color:#fff;font-size:.72rem;font-weight:700;display:grid;place-items:center;border:2px solid #E3B25E}
+.rail .sp{flex:1}
+.wrap{position:relative;z-index:1;margin-left:var(--rail);height:100vh;display:flex;flex-direction:column}
+
+.top{display:flex;align-items:center;gap:14px;height:64px;flex:none;padding:0 clamp(16px,2.2vw,30px);border-bottom:1px solid var(--line);background:rgba(255,252,247,.7);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.top h1{font-family:var(--f-display);font-size:1.35rem;font-weight:700;margin:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;border:1px solid var(--line2);background:var(--glass);color:var(--text);font:inherit;font-weight:600;text-decoration:none;cursor:pointer;transition:background .15s,transform .1s}
+.btn:hover{background:rgba(255,255,255,.95)}
+.btn:active{transform:translateY(1px)}
+.btn svg{width:17px;height:17px}
+.btn.ok{background:var(--ok);border-color:var(--ok);color:#fff;min-width:200px}
+.btn.ok:hover{background:#185738}
+.btn.no{border-color:rgba(179,50,31,.6);color:var(--bad);background:rgba(255,255,255,.7);min-width:150px}
+.btn.no:hover{background:rgba(179,50,31,.09)}
+.btn.sm{min-height:36px;padding:0 12px;font-size:.88rem;border-radius:10px}
+.who{margin-left:auto;display:flex;align-items:center;gap:12px;font-weight:600}
+.av{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;font-weight:700;background:rgba(255,255,255,.85);border:1px solid rgba(169,85,43,.4);color:var(--gold-soft);font-size:.85rem}
+
+main{flex:1;min-height:0;padding:clamp(12px,1.4vw,18px) clamp(16px,2.2vw,30px);display:flex;flex-direction:column;gap:14px}
+.glass{border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.64),rgba(255,255,255,.36));border:1px solid rgba(255,255,255,.78);
+  backdrop-filter:blur(22px) saturate(1.6);-webkit-backdrop-filter:blur(22px) saturate(1.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 22px 44px -30px rgba(90,55,30,.45)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-weight:700;font-size:.82rem;border:1px solid}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.pill.pending{color:#6B4710;background:rgba(201,151,63,.22);border-color:rgba(143,100,32,.45)}
+.pill.approved{color:#185738;background:rgba(31,107,67,.14);border-color:rgba(31,107,67,.45)}
+.pill.rejected{color:#8E2616;background:rgba(179,50,31,.12);border-color:rgba(179,50,31,.45)}
+.view{display:none;flex:1;min-height:0;flex-direction:column;gap:14px}
+.view.on{display:flex}
+
+/* review */
+.info{flex:none;display:flex;align-items:center;gap:20px;padding:14px 20px;flex-wrap:wrap}
+.who2{display:flex;align-items:center;gap:14px;min-width:220px}
+.big{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#F2C06B,#C9973F);color:#2A1A10;font-weight:700;font-size:1.05rem;border:2px solid rgba(255,255,255,.9)}
+.who2 h2{margin:0;font-family:var(--f-display);font-size:1.3rem;line-height:1.15}
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 24px;flex:1;min-width:300px}
+.f dt{font-size:.74rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text2)}
+.f dd{margin:2px 0 0;font-weight:600;overflow-wrap:anywhere}
+.f dd small{display:block;font-weight:400;color:var(--text2);font-size:.8rem}
+.docs{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.doc{display:flex;flex-direction:column;min-height:0;padding:12px;gap:10px}
+.doc header{display:flex;align-items:center;gap:10px;flex:none;padding:0 4px}
+.doc header i{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;border:1px solid rgba(169,85,43,.4);color:var(--peach);background:rgba(255,255,255,.65)}
+.doc header i svg{width:16px;height:16px}
+.doc h3{margin:0;font-size:1rem;font-weight:700;color:#8F4A22}
+.doc header .tools{margin-left:auto;display:flex;gap:8px}
+.stage{position:relative;flex:1;min-height:0;border-radius:14px;overflow:hidden;background:radial-gradient(circle at 50% 40%,#4a382b,#251810);border:1px solid rgba(255,255,255,.35);cursor:zoom-in}
+.stage svg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(0deg);transition:transform .25s ease}
+.stage .hint{position:absolute;left:12px;bottom:10px;padding:4px 10px;border-radius:999px;background:rgba(20,10,5,.7);color:#fff;font-size:.8rem;font-weight:600}
+.bar{flex:none;padding:14px 18px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 18px;align-items:end}
+.bar .l{display:grid;gap:10px;min-width:0}
+.checks{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.checks .cap{font-size:.82rem;font-weight:700;color:var(--text2);margin-right:2px}
+.chk{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line2);background:rgba(255,255,255,.6);color:var(--text);font:inherit;font-size:.88rem;font-weight:600;cursor:pointer}
+.chk::before{content:"";width:16px;height:16px;border-radius:5px;border:2px solid var(--text2);background:#fff}
+.chk[aria-pressed=true]{border-color:rgba(31,107,67,.6);background:rgba(31,107,67,.12);color:#185738}
+.chk[aria-pressed=true]::before{border-color:var(--ok);background:var(--ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E") center/12px no-repeat}
+.reason{display:grid;gap:6px}
+.reason .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.reason .cap{font-size:.82rem;font-weight:700;color:var(--text2)}
+.rchip{min-height:34px;padding:0 12px;border-radius:999px;border:1px dashed var(--line2);background:rgba(255,255,255,.5);color:var(--text);font:inherit;font-size:.85rem;font-weight:600;cursor:pointer}
+.rchip:hover{background:#fff;border-style:solid}
+.inp{width:100%;min-height:44px;padding:0 14px;border-radius:13px;background:rgba(255,255,255,.85);border:1px solid var(--line);color:var(--text);font:inherit}
+.inp::placeholder{color:#7A685A}
+.inp:focus-visible{border-color:var(--peach);box-shadow:0 0 0 3px rgba(169,85,43,.25);outline:none}
+.inp.err{border-color:var(--bad);box-shadow:0 0 0 3px rgba(179,50,31,.18)}
+.msg{display:none;color:#8E2616;font-size:.86rem;font-weight:600}
+.msg.show{display:block}
+.acts{display:flex;gap:10px;align-items:center}
+.done{display:none;align-items:center;gap:14px;flex-wrap:wrap}
+.done p{margin:0;font-weight:600}
+.bar.decided .l,.bar.decided .acts{display:none}
+.bar.decided{grid-template-columns:1fr}
+.bar.decided .done{display:flex}
+
+/* queue */
+.qhead{flex:none;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;padding:5px;border-radius:14px;max-width:100%;overflow:auto}
+.tab{min-height:40px;padding:0 14px;border-radius:10px;border:0;background:transparent;color:var(--text);font:inherit;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.tab[aria-selected=true]{background:#2A1A10;color:#fff}
+.tab span{min-width:22px;height:22px;border-radius:11px;display:grid;place-items:center;font-size:.76rem;background:rgba(90,55,30,.14)}
+.tab[aria-selected=true] span{background:rgba(255,255,255,.22)}
+.search{margin-left:auto;width:min(320px,100%)}
+.list{flex:1;min-height:0;overflow:auto;padding:8px}
+.qrow{display:grid;grid-template-columns:48px minmax(0,1.7fr) minmax(0,.9fr) 96px 124px 112px;gap:14px;align-items:center;padding:10px 14px;border-radius:14px}
+.qrow+.qrow{border-top:1px solid var(--line)}
+.qrow.h{font-size:.74rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text2);padding-bottom:6px}
+.qrow .big{width:40px;height:40px;font-size:.9rem}
+.qrow .nm{min-width:0}.qrow .nm b{display:block}.qrow .nm small{display:block;color:var(--text2);overflow-wrap:anywhere}
+.att{font-weight:600;color:var(--text2);font-size:.9rem}
+.att.re{color:#8F4A22}
+.empty{padding:36px 16px;text-align:center;color:var(--text2);margin:0}.empty b{display:block;color:var(--text);font-size:1.05rem}
+.chip2{display:inline-flex;align-items:center;min-height:26px;padding:0 10px;border-radius:999px;background:rgba(169,85,43,.12);border:1px solid rgba(169,85,43,.4);color:#7A3A19;font-weight:700;font-size:.8rem}
+.cnt{font-size:.84rem;font-weight:700;color:var(--text2);margin:0 6px 0 -2px;padding:2px 8px;border-radius:999px;background:rgba(90,55,30,.1)}.cnt.full{background:rgba(31,107,67,.16)}
+.cnt.full{color:#185738}
+.shake{animation:shake .35s}
+@keyframes shake{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.btn[aria-disabled=true]{background:rgba(31,107,67,.18);border-color:rgba(31,107,67,.35);color:#4F6B5B;cursor:not-allowed}
+.btn[aria-disabled=true]:hover{background:rgba(31,107,67,.18)}
+.record{display:none;align-items:center;gap:14px;flex-wrap:wrap;grid-column:1/-1}
+.record .t{min-width:0;flex:1}
+.record .t p{margin:0;font-weight:600}.record .t small{display:block;color:var(--text2);font-size:.88rem;margin-top:2px}
+.record .why{margin-top:8px;padding:9px 13px;border-radius:12px;background:rgba(179,50,31,.08);border:1px solid rgba(179,50,31,.3);color:#6E1D10;font-weight:600}
+.record .oks{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.record .oks span{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:0 12px;border-radius:999px;background:rgba(31,107,67,.12);border:1px solid rgba(31,107,67,.4);color:#185738;font-size:.84rem;font-weight:600}
+.record .ra{display:flex;gap:10px;flex-wrap:wrap}
+.btn.gold{background:#2A1A10;border-color:#2A1A10;color:#fff}.btn.gold:hover{background:#43291a}
+.bar[data-mode=approved] :is(.l,.acts),.bar[data-mode=rejected] :is(.l,.acts){display:none}
+.bar[data-mode=approved],.bar[data-mode=rejected]{grid-template-columns:1fr}
+.bar[data-mode=approved] .record,.bar[data-mode=rejected] .record{display:flex}
+.bar[data-mode=approved] .rj,.bar[data-mode=rejected] .ap{display:none}
+.bar[data-mode=pending] .record{display:none}
+.hist li{padding:10px 0;border-top:1px solid var(--line);list-style:none}.hist li:first-child{border-top:0}
+.hist ul{margin:0 0 14px;padding:0}.hist b{display:block}.hist small{color:var(--text2)}
+
+/* customer page */
+.cust{flex:1;min-height:0;overflow:auto}
+.cn{display:flex;align-items:center;gap:14px;padding:12px clamp(16px,2.2vw,30px);margin:0 0 14px;border-radius:18px}
+.cn b{font-family:var(--f-display);font-size:1.2rem}.cn b em{color:var(--gold-soft)}
+.cn span{margin-left:auto;color:var(--text2);font-size:.82rem;font-weight:600;text-align:right}
+.ch{margin:0 0 4px;font-family:var(--f-display);font-size:clamp(1.5rem,2.4vw,2rem)}
+.cs{margin:0 0 14px;color:var(--text2);max-width:62ch}
+.banner{display:none;margin:0 0 14px;padding:12px 16px;border-radius:14px;background:rgba(179,50,31,.09);border:1px solid rgba(179,50,31,.4);color:#6E1D10;font-weight:600}
+.banner.on{display:block}
+.cg{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;align-items:start}
+.up{padding:16px 18px;display:grid;gap:14px}
+.slots{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.slot{display:grid;gap:8px}
+.slot h3{margin:0;font-size:.98rem;color:#8F4A22}
+.drop{position:relative;display:grid;place-items:center;text-align:center;min-height:190px;border-radius:16px;border:2px dashed var(--line2);background:rgba(255,255,255,.55);padding:10px;cursor:pointer;overflow:hidden}
+.drop:hover,.drop:focus-within{border-color:var(--peach);background:rgba(255,255,255,.85)}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.drop p{margin:0;font-weight:600}.drop small{display:block;color:var(--text2);font-weight:400;margin-top:2px}
+.drop img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.drop.has img{display:block}.drop.has p{display:none}
+.drop.bad{border-color:var(--bad);background:rgba(179,50,31,.06)}
+.slot .msg{display:none}.slot .msg.show{display:block}
+.crit{padding:16px 18px;display:grid;gap:12px}
+.crit h2{margin:0;font-size:1.05rem;color:#8F4A22}
+.crit ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.crit li{display:flex;gap:10px;align-items:flex-start}
+.crit li i{flex:none;display:grid;place-items:center;width:24px;height:24px;border-radius:8px;background:rgba(31,107,67,.14);border:1px solid rgba(31,107,67,.4);color:#185738;margin-top:1px}
+.crit li i svg{width:14px;height:14px}
+.crit li i.x{background:rgba(179,50,31,.1);border-color:rgba(179,50,31,.4);color:#8E2616}
+.crit li span{min-width:0}.crit li small{display:block;color:var(--text2)}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tags span{padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.7);border:1px solid var(--line2);font-size:.84rem;font-weight:600}
+.crit .note{margin:0;padding:10px 12px;border-radius:12px;background:rgba(201,151,63,.14);border:1px solid rgba(143,100,32,.35);font-size:.88rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sent{display:none;padding:14px 16px;border-radius:14px;background:rgba(31,107,67,.12);border:1px solid rgba(31,107,67,.45);color:#185738;font-weight:600}
+.sent.on{display:block}
+/* dialogs */
+dialog{border:0;padding:0;background:transparent;max-width:none;max-height:none;color:var(--text)}
+dialog::backdrop{background:rgba(30,15,6,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.modal{width:min(480px,92vw);padding:24px;border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.9),rgba(255,248,238,.82));border:1px solid rgba(255,255,255,.9);box-shadow:0 40px 80px -30px rgba(40,20,8,.6)}
+.modal h2{margin:0 0 6px;font-family:var(--f-display);font-size:1.4rem}
+.modal p{margin:0 0 14px;color:var(--text2)}
+.modal .quote{padding:10px 14px;border-radius:12px;background:rgba(179,50,31,.08);border:1px solid rgba(179,50,31,.3);color:#6E1D10;margin-bottom:14px;font-weight:600}
+.modal .btns{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.lb{width:min(1100px,94vw);padding:14px;border-radius:24px}
+.lb .stage{height:min(72vh,720px);flex:none;cursor:default;display:block}
+.lb .bt{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.lb .bt h2{margin:0;font-size:1.05rem;font-weight:700;color:#8F4A22}
+.lb .bt .btn:first-of-type{margin-left:auto}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);z-index:60;padding:12px 18px;border-radius:14px;background:#2A1A10;color:#fff;font-weight:600;opacity:0;pointer-events:none;transition:.25s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* prototype-only switch */
+.proto{position:fixed;right:170px;top:10px;max-width:calc(100vw - 16px);overflow-x:auto;z-index:50;display:flex;gap:4px;padding:5px;border-radius:999px;background:#2A1A10;box-shadow:0 10px 30px -10px rgba(0,0,0,.6)}
+.proto button{min-height:34px;padding:0 12px;white-space:nowrap;border-radius:999px;border:0;background:transparent;color:#F3E6D6;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer}
+.proto button.on{background:#C9973F;color:#2A1A10}
+
+@media (max-height:830px){.info{padding:10px 18px}.big{width:44px;height:44px}.bar{padding:10px 16px}.reason .row .rchip{min-height:30px}}
+@media (max-width:1100px){.proto{right:auto;left:50%;transform:translateX(-50%);top:auto;bottom:12px}.facts{grid-template-columns:repeat(2,minmax(0,1fr))}.qrow{grid-template-columns:44px minmax(0,1.6fr) 90px 120px 104px}.qrow .c4{display:none}.cg{grid-template-columns:1fr}}
+@media (max-width:760px){
+  :root{--rail:0px}.rail{display:none}.proto{top:auto;bottom:12px}
+  body{overflow:auto}.wrap{height:auto;min-height:100vh}
+  .top{padding:0 12px;gap:10px}.top .tt{display:none}.top .btn{padding:0 12px}.top h1{font-size:1rem;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.who span{display:none}.who{margin-left:0}
+  .docs{grid-template-columns:1fr}.stage{min-height:300px}
+  .facts{grid-template-columns:1fr 1fr}
+  .bar{grid-template-columns:1fr}.acts{flex-direction:column-reverse;align-items:stretch}.btn.ok,.btn.no{width:100%}
+  .record .ra{width:100%}.record .ra .btn{flex:1}
+  main{padding-bottom:78px}
+  .search{margin-left:0;width:100%}
+  .list{overflow:visible;padding:6px}
+  .qrow.h{display:none}
+  .qrow{grid-template-columns:44px minmax(0,1fr) auto;grid-template-areas:"av nm st" "dt dt at" "bt bt bt";gap:8px 12px;padding:14px 10px}
+  .qrow .big{grid-area:av}.qrow .nm{grid-area:nm}.qrow .st{grid-area:st}.qrow .c4{display:block;grid-area:dt;color:var(--text2);font-size:.88rem}.qrow .att{grid-area:at;text-align:right}.qrow .bt{grid-area:bt;width:100%}
+  .slots{grid-template-columns:1fr}.two{grid-template-columns:1fr}.cn span{display:none}
+  .info{gap:14px}.who2{min-width:0;width:100%}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="bg"><i></i></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="idimg" viewBox="0 0 400 260"><rect width="400" height="260" rx="18" fill="#E9E2D3"/><rect x="0" y="0" width="400" height="46" rx="18" fill="#A9552B"/><rect y="28" width="400" height="18" fill="#A9552B"/><rect x="18" y="16" width="130" height="10" rx="5" fill="#fff" opacity=".9"/><rect x="28" y="70" width="104" height="132" rx="10" fill="#CBBFA8"/><circle cx="80" cy="115" r="22" fill="#8C7B64"/><path d="M40 202c4-34 22-46 40-46s36 12 40 46z" fill="#8C7B64"/><rect x="156" y="74" width="190" height="12" rx="6" fill="#8C7B64"/><rect x="156" y="100" width="150" height="10" rx="5" fill="#B5A78E"/><rect x="156" y="122" width="170" height="10" rx="5" fill="#B5A78E"/><rect x="156" y="144" width="120" height="10" rx="5" fill="#B5A78E"/><rect x="156" y="178" width="90" height="10" rx="5" fill="#B5A78E"/><rect x="262" y="178" width="84" height="10" rx="5" fill="#B5A78E"/><text x="200" y="244" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="700" fill="#6B5848">SAMPLE IMAGE, NOT A REAL ID</text></symbol>
+  <symbol id="selimg" viewBox="0 0 400 260"><defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EAD9BF"/><stop offset="1" stop-color="#C9A980"/></linearGradient></defs><rect width="400" height="260" rx="18" fill="url(#sg)"/><circle cx="200" cy="96" r="42" fill="#8C6A4B"/><path d="M92 260c6-74 52-104 108-104s102 30 108 104z" fill="#6E5139"/><g transform="rotate(-6 250 190)"><rect x="214" y="160" width="104" height="66" rx="8" fill="#E9E2D3" stroke="#A9552B" stroke-width="4"/><circle cx="238" cy="184" r="9" fill="#8C7B64"/><rect x="254" y="174" width="52" height="7" rx="3.5" fill="#B5A78E"/><rect x="254" y="190" width="40" height="7" rx="3.5" fill="#B5A78E"/></g><text x="200" y="248" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="700" fill="#3D2A1B">SAMPLE IMAGE, NOT A REAL PERSON</text></symbol>
+</svg>
+
+<nav class="rail" aria-label="Admin menu (collapsed, as in the approved menu)">
+  <b>LP<em>A</em></b>
+  <a href="#" aria-label="Dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></a>
+  <a href="#" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0112 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 004 0"/></svg></a>
+  <a href="#" aria-label="Products"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></a>
+  <a href="#" aria-label="Orders"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/></svg></a>
+  <a href="#" aria-label="Installments"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M3 10h18"/></svg></a>
+  <a href="#" aria-label="Contact Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></a>
+  <a href="#" class="on" aria-label="Identity Validation, 1 pending" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg><span class="bd" id="badge">2</span></a>
+  <span class="sp"></span>
+</nav>
+
+<div class="wrap">
+  <header class="top">
+    <a class="btn" href="#" id="backTop" aria-label="Back to list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg><span class="tt">Back to list</span></a>
+    <h1 id="ttl">Identity validation</h1>
+    <div class="who"><span>LP Admin</span><div class="av">LA</div></div>
+  </header>
+
+  <main>
+    <!-- REVIEW -->
+    <section class="view on" id="vReview" aria-label="Review identity validation">
+      <div class="glass info">
+        <div class="who2"><div class="big" id="rI">TU</div><div><h2 id="rN">Test User</h2><span class="pill pending" id="pill">Pending</span> <span class="chip2" id="attChip" hidden>Attempt 2</span> <button class="btn sm" type="button" id="histBtn" hidden>Past attempts</button></div></div>
+        <dl class="facts" style="margin:0">
+          <div class="f"><dt>Email</dt><dd id="rE">testuser@lpfurniture.com</dd></div>
+          <div class="f"><dt>Phone</dt><dd id="rP">0917 123 4567</dd></div>
+          <div class="f"><dt>Submitted</dt><dd id="rS">Jul 16, 2026, 7:06 AM</dd></div>
+          <div class="f"><dt>Account created</dt><dd id="rA">Jul 11, 2026</dd></div>
+        </dl>
+      </div>
+
+      <div class="docs">
+        <article class="glass doc">
+          <header><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="11" r="2"/><path d="M14 10h4M14 14h3M6 16c1-2 5-2 6 0"/></svg></i><h3>Government ID</h3>
+            <div class="tools"><button class="btn sm" data-rot="0" type="button">Rotate</button><button class="btn sm" data-zoom="0" type="button">Enlarge</button></div></header>
+          <div class="stage" data-i="0" tabindex="0" role="button" aria-label="Enlarge Government ID photo"><svg><use href="#idimg"/></svg><span class="hint">Click to enlarge</span></div>
+        </article>
+        <article class="glass doc">
+          <header><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 4-7 8-7s7 2 8 7"/></svg></i><h3>Selfie with ID</h3>
+            <div class="tools"><button class="btn sm" data-rot="1" type="button">Rotate</button><button class="btn sm" data-zoom="1" type="button">Enlarge</button></div></header>
+          <div class="stage" data-i="1" tabindex="0" role="button" aria-label="Enlarge selfie with ID photo"><svg><use href="#selimg"/></svg><span class="hint">Click to enlarge</span></div>
+        </article>
+      </div>
+
+      <div class="glass bar" id="bar">
+        <div class="l">
+          <div class="checks" id="checks" role="group" aria-label="Checks required to approve"><span class="cap">Checks to approve</span><span class="cnt" id="cnt" aria-live="polite">0 of 3</span>
+            <button class="chk" type="button" aria-pressed="false">Name matches</button>
+            <button class="chk" type="button" aria-pressed="false">Face matches selfie</button>
+            <button class="chk" type="button" aria-pressed="false">ID valid and readable</button>
+          </div>
+          <div class="reason">
+            <div class="row"><label class="cap" for="why">Reason, needed only to reject</label>
+              <button class="rchip" type="button">Photo is blurry</button><button class="rchip" type="button">ID is expired</button><button class="rchip" type="button">Face is not visible</button><button class="rchip" type="button">Name does not match</button></div>
+            <input class="inp" id="why" type="text" maxlength="300" placeholder="Tell the customer what to fix, for example: please resubmit with better lighting" aria-describedby="whyMsg">
+            <span class="msg" id="whyMsg" role="alert">Add a reason so the customer knows what to fix.</span>
+          </div>
+        </div>
+        <div class="acts">
+          <button class="btn no rj" type="button" id="rej"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Reject</button>
+          <button class="btn ok ap" type="button" id="apr" aria-disabled="true" aria-describedby="cnt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>Approve verification</button>
+        </div>
+        <div class="record" id="record"><span class="pill approved" id="donePill">Approved</span><div class="t"><p id="doneTxt"></p><small id="doneSub"></small><div class="oks" id="oks"></div><div class="why" id="whyBox" hidden></div></div><div class="ra"><button class="btn gold" type="button" id="followBtn" hidden>Ask for a new submission</button><button class="btn" type="button" id="doneBack">Back to list</button></div></div>
+      </div>
+    </section>
+
+
+    <!-- CUSTOMER -->
+    <section class="view" id="vCust" aria-label="Customer identity page">
+     <div class="cust">
+      <div class="glass cn"><b>LP<em>Furniture</em></b><span>Stand-in for the real navbar, which stays as it is</span></div>
+      <h2 class="ch">Verify your identity</h2>
+      <p class="cs">We check every customer once before custom orders. It takes about a minute: add two photos and we review them.</p>
+      <div class="banner" id="cBan"></div>
+      <div class="sent" id="cSent" role="status">Submitted. We will review your photos and notify you here and by email.</div>
+      <div class="cg">
+        <div class="glass up">
+          <div class="slots">
+            <div class="slot"><h3>1. Photo of your ID</h3><label class="drop" id="d0"><input type="file" accept="image/jpeg,image/png" data-s="0" aria-label="Upload photo of your ID"><img alt=""><p>Tap to add<small>JPEG or PNG, up to 5 MB</small></p></label><span class="msg" id="m0" role="alert"></span></div>
+            <div class="slot"><h3>2. Selfie holding your ID</h3><label class="drop" id="d1"><input type="file" accept="image/jpeg,image/png" data-s="1" aria-label="Upload selfie holding your ID"><img alt=""><p>Tap to add<small>JPEG or PNG, up to 5 MB</small></p></label><span class="msg" id="m1" role="alert"></span></div>
+          </div>
+          <button class="btn gold" type="button" id="cSub" aria-disabled="true" style="width:100%">Submit for review</button>
+        </div>
+        <div class="glass crit">
+          <h2>What we check</h2>
+          <ul>
+            <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></i><span><b>The name matches your account</b><small>Use the same full name you registered with.</small></span></li>
+            <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></i><span><b>Your face matches the selfie</b><small>Your whole face is visible, without a mask, filters or sunglasses.</small></span></li>
+            <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></i><span><b>The ID is valid and readable</b><small>Not expired. All four corners show, with no glare or blur.</small></span></li>
+          </ul>
+          <div><b style="font-size:.92rem">IDs we accept</b><div class="tags" style="margin-top:6px"><span>Passport</span><span>Driver's license</span><span>PhilSys National ID</span><span>UMID</span><span>PRC ID</span><span>Postal ID</span></div></div>
+          <div class="two">
+            <ul><li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></i><span>Bright, even light</span></li><li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></i><span>Photo of the original ID</span></li></ul>
+            <ul><li><i class="x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></i><span>Edited or cropped photos</span></li><li><i class="x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></i><span>Screenshots or photocopies</span></li></ul>
+          </div>
+          <p class="note">Only LP Furniture admins can see your photos. We use them to verify you and for nothing else.</p>
+        </div>
+      </div>
+     </div>
+    </section>
+
+    <!-- QUEUE -->
+    <section class="view" id="vQueue" aria-label="Identity validation list">
+      <div class="qhead">
+        <div class="glass tabs" role="tablist" aria-label="Status">
+          <button class="tab" role="tab" aria-selected="true" data-s="pending">Pending <span id="cP">2</span></button>
+          <button class="tab" role="tab" aria-selected="false" data-s="approved">Approved <span id="cA">3</span></button>
+          <button class="tab" role="tab" aria-selected="false" data-s="rejected">Rejected <span id="cR">1</span></button>
+        </div>
+        <input class="inp search" id="q" type="search" placeholder="Search name or email" aria-label="Search name or email">
+      </div>
+      <div class="glass list" id="list"></div>
+    </section>
+  </main>
+</div>
+
+<dialog id="dApr"><div class="modal"><h2>Approve this verification?</h2><p>Test User will be marked as verified and notified right away.</p><div class="btns"><button class="btn" type="button" data-close>Cancel</button><button class="btn ok" type="button" id="aprGo" style="min-width:0">Approve</button></div></div></dialog>
+<dialog id="dRej"><div class="modal"><h2>Reject this verification?</h2><p>Test User will see this reason and can submit new photos.</p><div class="quote" id="rejQ"></div><div class="btns"><button class="btn" type="button" data-close>Cancel</button><button class="btn no" type="button" id="rejGo" style="min-width:0">Reject</button></div></div></dialog>
+<dialog id="dFol"><div class="modal"><h2>Ask for a new submission?</h2><p id="folP">The customer is notified with your reason and can send new photos. Their new submission appears under Pending as a new attempt.</p><div class="quote" id="folQ"></div><div class="btns"><button class="btn" type="button" data-close>Cancel</button><button class="btn gold" type="button" id="folGo" style="min-width:0">Send request</button></div></div></dialog>
+<dialog id="dHist"><div class="modal hist"><h2>Past attempts</h2><p id="histP"></p><ul id="histL"></ul><div class="btns"><button class="btn" type="button" data-close>Close</button></div></div></dialog>
+<dialog id="dLb"><div class="glass lb"><div class="bt"><h2 id="lbT"></h2><button class="btn sm" type="button" id="lbRot">Rotate</button><button class="btn sm" type="button" data-close>Close</button></div><div class="stage" id="lbStage"><svg><use id="lbUse" href="#idimg"/></svg></div></div></dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<div class="proto" role="group" aria-label="Prototype view (not part of the real page)"><button class="on" data-v="review">Review</button><button data-v="queue">List</button><button data-v="cust">Customer</button><button data-v="cust2">Rejected view</button></div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const names=['Government ID','Selfie with ID'], syms=['#idimg','#selimg'], rot=[0,0];
+const fmt=d=>d.toLocaleString('en-PH',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
+const rows=[
+ {n:'Test User',i:'TU',e:'testuser@lpfurniture.com',p:'0917 123 4567',sub:'Jul 16, 2026, 7:06 AM',d:'Jul 16, 2026',ac:'Jul 11, 2026',s:'pending',att:1,hist:[]},
+ {n:'Sample Customer E',i:'SE',e:'customer.e@example.com',p:'0917 000 0005',sub:'Jul 15, 2026, 4:40 PM',d:'Jul 15, 2026',ac:'Jul 2, 2026',s:'pending',att:2,hist:[{r:'ID is expired',d:'Jul 9, 2026, 10:12 AM'}]},
+ {n:'Sample Customer A',i:'SA',e:'customer.a@example.com',p:'0917 000 0001',sub:'Jul 14, 2026, 9:05 AM',d:'Jul 14, 2026',ac:'Jun 30, 2026',s:'approved',att:1,hist:[],by:'LP Admin',at:'Jul 14, 2026, 11:20 AM'},
+ {n:'Sample Customer B',i:'SB',e:'customer.b@example.com',p:'0917 000 0002',sub:'Jul 12, 2026, 2:15 PM',d:'Jul 12, 2026',ac:'Jul 1, 2026',s:'approved',att:2,hist:[{r:'Photo is blurry',d:'Jul 10, 2026, 8:00 AM'}],by:'LP Admin',at:'Jul 12, 2026, 3:02 PM'},
+ {n:'Sample Customer C',i:'SC',e:'customer.c@example.com',p:'0917 000 0003',sub:'Jul 9, 2026, 1:30 PM',d:'Jul 9, 2026',ac:'Jul 5, 2026',s:'approved',att:1,hist:[],by:'LP Admin',at:'Jul 9, 2026, 2:44 PM'},
+ {n:'Sample Customer D',i:'SD',e:'customer.d@example.com',p:'0917 000 0004',sub:'Jul 8, 2026, 10:00 AM',d:'Jul 8, 2026',ac:'Jul 3, 2026',s:'rejected',att:1,hist:[],by:'LP Admin',at:'Jul 8, 2026, 11:30 AM',reason:'Photo is blurry',follow:null}];
+let cur=0,view='review',tab='pending';
+
+/* image fit */
+function fit(stage,deg){const svg=stage.querySelector('svg');const w=stage.clientWidth,h=stage.clientHeight;const sw=(deg/90)%2?h:w, sh=(deg/90)%2?w:h;
+  const r=400/260;let W=sw,H=sw/r;if(H>sh){H=sh;W=sh*r}
+  svg.setAttribute('width',W);svg.setAttribute('height',H);svg.style.transform='translate(-50%,-50%) rotate('+deg+'deg)';}
+let lbDeg=0;
+function fitAll(){$$('.docs .stage').forEach(s=>fit(s,rot[+s.dataset.i]));if($('#dLb').open)fit($('#lbStage'),lbDeg)}
+addEventListener('resize',fitAll);
+if(window.ResizeObserver){const ro=new ResizeObserver(()=>fitAll());$$('.docs .stage').forEach(s=>ro.observe(s))}
+function openLb(i){lbDeg=rot[i];$('#lbT').textContent=names[i];$('#lbUse').setAttribute('href',syms[i]);$('#dLb').showModal();fit($('#lbStage'),lbDeg)}
+$$('[data-rot]').forEach(b=>b.onclick=()=>{const i=+b.dataset.rot;rot[i]=(rot[i]+90)%360;fitAll()});
+$$('[data-zoom]').forEach(b=>b.onclick=()=>openLb(+b.dataset.zoom));
+$$('.docs .stage').forEach(s=>{s.onclick=()=>openLb(+s.dataset.i);s.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openLb(+s.dataset.i)}}});
+$('#lbRot').onclick=()=>{lbDeg=(lbDeg+90)%360;fit($('#lbStage'),lbDeg)};
+$$('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
+$$('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d)d.close()}));
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2800)}
+
+/* checks */
+const chks=$$('.chk'),why=$('#why');
+function count(){const n=chks.filter(c=>c.getAttribute('aria-pressed')==='true').length;const c=$('#cnt');c.textContent=n+' of 3';c.classList.toggle('full',n===3);
+  $('#apr').setAttribute('aria-disabled',n===3?'false':'true');return n}
+chks.forEach(c=>c.onclick=()=>{c.setAttribute('aria-pressed',c.getAttribute('aria-pressed')==='true'?'false':'true');count()});
+$$('.rchip').forEach(c=>c.onclick=()=>{why.value=c.textContent;why.classList.remove('err');$('#whyMsg').classList.remove('show');why.focus()});
+why.oninput=()=>{why.classList.remove('err');$('#whyMsg').classList.remove('show')};
+$('#apr').onclick=()=>{if(count()<3){const k=$('#checks');k.classList.remove('shake');void k.offsetWidth;k.classList.add('shake');toast('Tick all three checks before approving');return}$('#dApr').showModal()};
+$('#rej').onclick=()=>{if(!why.value.trim()){why.classList.add('err');$('#whyMsg').classList.add('show');why.focus();return}$('#rejQ').textContent=why.value.trim();$('#dRej').showModal()};
+
+/* review render */
+function renderReview(){const r=rows[cur];
+  $('#rI').textContent=r.i;$('#rN').textContent=r.n;$('#rE').textContent=r.e;$('#rP').textContent=r.p;$('#rS').textContent=r.sub;$('#rA').textContent=r.ac;
+  const p=$('#pill');p.className='pill '+r.s;p.textContent=r.s[0].toUpperCase()+r.s.slice(1);
+  $('#attChip').hidden=r.att<2;$('#attChip').textContent='Attempt '+r.att;$('#histBtn').hidden=!r.hist.length;
+  chks.forEach(c=>c.setAttribute('aria-pressed','false'));why.value='';why.classList.remove('err');$('#whyMsg').classList.remove('show');count();
+  const bar=$('#bar');bar.dataset.mode=r.s;
+  const d=$('#donePill');d.className='pill '+r.s;d.textContent=r.s[0].toUpperCase()+r.s.slice(1);
+  $('#oks').innerHTML='';$('#whyBox').hidden=true;$('#followBtn').hidden=true;
+  if(r.s==='approved'){$('#doneTxt').textContent='Approved by '+r.by+' on '+r.at+'. This decision is final.';$('#doneSub').textContent='All three checks were confirmed before approving.';
+    $('#oks').innerHTML=['Name matches the account','Face matches the selfie','ID is valid and readable'].map(x=>'<span>&#10003; '+x+'</span>').join('')}
+  if(r.s==='rejected'){$('#doneTxt').textContent='Rejected by '+r.by+' on '+r.at+'. This decision is final.';$('#whyBox').hidden=false;$('#whyBox').textContent='Reason sent to the customer: '+r.reason;
+    if(r.follow){$('#doneSub').textContent='New submission requested on '+r.follow+'. Waiting for the customer to send new photos.'}
+    else{$('#doneSub').textContent='The customer can send new photos at any time. You can also ask them for a new submission.';$('#followBtn').hidden=false}}
+  fitAll()}
+function decide(ok){const r=rows[cur];$('#dApr').close();$('#dRej').close();r.s=ok?'approved':'rejected';r.by='LP Admin';r.at=fmt(new Date());if(!ok){r.reason=why.value.trim();r.follow=null}
+  renderReview();counts();toast(ok?'Verification approved. The customer was notified.':'Verification rejected. The customer was notified.')}
+$('#aprGo').onclick=()=>decide(true);$('#rejGo').onclick=()=>decide(false);
+$('#followBtn').onclick=()=>{$('#folQ').textContent='Reason on file: '+rows[cur].reason;$('#dFol').showModal()};
+$('#folGo').onclick=()=>{rows[cur].follow=fmt(new Date());$('#dFol').close();renderReview();toast('Request sent to '+rows[cur].n)};
+$('#histBtn').onclick=()=>{const r=rows[cur];$('#histP').textContent=r.n+' has been rejected '+r.hist.length+(r.hist.length>1?' times':' time')+' before this attempt.';
+  $('#histL').innerHTML=r.hist.map((h,k)=>'<li><b>Attempt '+(k+1)+': rejected</b><small>'+h.d+'</small><br>Reason: '+h.r+'</li>').join('');$('#dHist').showModal()};
+
+/* queue */
+function counts(){$('#cP').textContent=rows.filter(r=>r.s==='pending').length;$('#cA').textContent=rows.filter(r=>r.s==='approved').length;$('#cR').textContent=rows.filter(r=>r.s==='rejected').length;
+  $('#badge').textContent=rows.filter(r=>r.s==='pending').length;draw()}
+function draw(){const L=$('#list');const q=($('#q').value||'').toLowerCase();const m=rows.filter(r=>r.s===tab&&(r.n+r.e).toLowerCase().includes(q));
+  const lab={pending:'Review',approved:'View',rejected:'View'};
+  L.innerHTML='<div class="qrow h"><span></span><span>Customer</span><span class="c4">Submitted</span><span>Attempt</span><span>Status</span><span></span></div>'+
+  (m.length?m.map(r=>'<div class="qrow"><div class="big">'+r.i+'</div><div class="nm"><b>'+r.n+'</b><small>'+r.e+'</small></div><span class="c4">'+r.d+'</span><span class="att'+(r.att>1?' re':'')+'">Attempt '+r.att+'</span><span class="pill st '+r.s+'">'+r.s[0].toUpperCase()+r.s.slice(1)+'</span><button class="btn sm bt" data-open="'+rows.indexOf(r)+'" type="button">'+lab[r.s]+'</button></div>').join('')
+  :'<p class="empty"><b>Nothing here</b>'+(tab==='pending'?'New identity submissions will show up here.':'No '+tab+' customers match.')+'</p>');
+  $$('[data-open]').forEach(b=>b.onclick=()=>{cur=+b.dataset.open;show('review')})}
+$$('.tab').forEach(t=>t.onclick=()=>{tab=t.dataset.s;$$('.tab').forEach(x=>x.setAttribute('aria-selected',x===t));draw()});
+$('#q').oninput=draw;
+
+/* customer */
+const files=[null,null];
+function sync(){const ok=files[0]&&files[1];$('#cSub').setAttribute('aria-disabled',ok?'false':'true')}
+$$('.drop input').forEach(inp=>inp.onchange=()=>{const i=+inp.dataset.s,f=inp.files[0],box=$('#d'+i),m=$('#m'+i);
+  m.classList.remove('show');box.classList.remove('bad');if(!f)return;
+  if(!['image/jpeg','image/png'].includes(f.type)){m.textContent='Only JPEG or PNG photos are accepted.';m.classList.add('show');box.classList.add('bad');inp.value='';files[i]=null;box.classList.remove('has');sync();return}
+  if(f.size>5*1024*1024){m.textContent='This photo is over 5 MB. Choose a smaller one.';m.classList.add('show');box.classList.add('bad');inp.value='';files[i]=null;box.classList.remove('has');sync();return}
+  files[i]=f;box.classList.add('has');box.querySelector('img').src=URL.createObjectURL(f);box.querySelector('img').alt=names[i]+' preview';sync()});
+$('#cSub').onclick=()=>{if($('#cSub').getAttribute('aria-disabled')==='true'){toast('Add both photos first');return}$('#cSent').classList.add('on');$('#cBan').classList.remove('on');toast('Submitted for review')};
+
+/* views */
+function show(v,sub){view=v;$$('.view').forEach(x=>x.classList.remove('on'));
+  const id={review:'#vReview',queue:'#vQueue',cust:'#vCust',cust2:'#vCust'}[v];$(id).classList.add('on');
+  if(v==='review')renderReview();
+  if(v==='cust'||v==='cust2'){const b=$('#cBan');if(v==='cust2'){b.textContent='Your last submission was rejected: Photo is blurry. Please send new photos using the tips on this page.';b.classList.add('on')}else b.classList.remove('on');$('#cSent').classList.remove('on')}
+  $('#ttl').textContent=v==='review'?'Review identity validation':(v==='queue'?'Identity validation':'Customer view');
+  $('#backTop').hidden=v!=='review';
+  $$('.proto button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));fitAll()}
+$$('.proto button').forEach(b=>b.onclick=()=>show(b.dataset.v));
+$('#backTop').onclick=e=>{e.preventDefault();show('queue')};$('#doneBack').onclick=()=>show('queue');
+counts();show('review');addEventListener('load',fitAll);
+})();
+</script>
+</body>
+</html>

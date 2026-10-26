@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin sign in – Ember Glass v3</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&display=swap">
+<style>
+:root{
+  --night:#0F0B0A; --ember-deep:#4A1E0E; --ember:#A9552B; --ember-hot:#D9793F; --peach:#EDA27F;
+  --gold:#C9973F; --gold-soft:#F1D391;
+  --text:#F4EAE3; --text2:#CDBDB1; --line:rgba(255,230,210,.16);
+  --glass:rgba(255,238,224,.07); --glass-strong:rgba(255,238,224,.1);
+  --f-body:'DM Sans',system-ui,sans-serif; --f-display:'Playfair Display',Georgia,serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--night);color:var(--text);font-family:var(--f-body);font-size:16px;line-height:1.5;min-height:100vh;position:relative;overflow-x:hidden}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+   radial-gradient(ellipse 60% 70% at 100% 108%,#EDA27F 0%,var(--ember-hot) 22%,var(--ember) 42%,var(--ember-deep) 64%,transparent 84%),
+   radial-gradient(ellipse 38% 55% at -6% 112%,rgba(120,50,22,.8) 0%,transparent 72%),
+   radial-gradient(ellipse 40% 45% at 8% -10%,rgba(201,151,63,.2) 0%,transparent 70%),
+   var(--night)}
+.page{position:relative;z-index:1;min-height:100vh;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(360px,.8fr);gap:clamp(24px,4vw,64px);align-items:center;max-width:1320px;margin:0 auto;padding:clamp(24px,4vw,56px) clamp(20px,4vw,56px)}
+
+/* left: what the admin is for */
+.intro{display:flex;flex-direction:column;gap:clamp(24px,3.4vw,40px);min-width:0}
+.brand{font-family:var(--f-display);font-size:1.7rem;font-weight:600;color:var(--gold-soft);letter-spacing:-.005em;margin:0}
+.brand em{font-style:italic;color:#fff}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(2rem,3.9vw,3.4rem);line-height:1.1;letter-spacing:-.015em;margin:0;max-width:16ch}
+.lead{margin:0;max-width:46ch;color:var(--text2);font-size:1.05rem;line-height:1.65}
+.tiles{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.tile{padding:20px 18px;border-radius:20px;background:var(--glass);border:1px solid var(--line);
+  backdrop-filter:blur(14px) saturate(1.25);-webkit-backdrop-filter:blur(14px) saturate(1.25);
+  box-shadow:inset 0 1px 0 rgba(255,240,228,.12),0 18px 40px -24px rgba(0,0,0,.7)}
+.tile i{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;border:1px solid rgba(237,162,127,.5);color:var(--peach);margin-bottom:14px}
+.tile svg{width:20px;height:20px}
+.tile b{display:block;font-weight:600;color:var(--text);font-size:1rem;line-height:1.35}
+.tile span{display:block;margin-top:6px;color:var(--text2);font-size:.9rem;line-height:1.5}
+.copy{margin:0;color:var(--text2);font-size:.88rem}
+
+/* right: sign in */
+.card{position:relative;padding:clamp(26px,3vw,40px);border-radius:28px;background:var(--glass-strong);border:1px solid rgba(255,230,210,.22);
+  backdrop-filter:blur(22px) saturate(1.3);-webkit-backdrop-filter:blur(22px) saturate(1.3);
+  box-shadow:inset 0 1px 0 rgba(255,240,228,.18),0 40px 80px -30px rgba(0,0,0,.8)}
+.badge{display:grid;place-items:center;width:60px;height:60px;border-radius:18px;background:rgba(15,11,10,.55);border:1px solid rgba(237,162,127,.45);color:var(--gold-soft);margin:0 auto 18px}
+.badge svg{width:26px;height:26px}
+h2{font-family:var(--f-display);font-weight:700;font-size:1.9rem;text-align:center;margin:0}
+.sub{margin:8px 0 26px;text-align:center;color:var(--text2);font-size:.98rem}
+.notice{display:none;margin:0 0 18px;padding:12px 14px;border-radius:14px;background:rgba(160,40,30,.28);border:1px solid rgba(255,160,140,.45);color:#FFE3DC;font-size:.94rem}
+.notice.show{display:block}
+label{display:block;margin:0 0 8px;font-weight:600;font-size:.95rem;color:var(--text)}
+.field{position:relative;margin-bottom:20px}
+.field>svg{position:absolute;left:16px;top:50%;width:20px;height:20px;transform:translateY(-50%);color:var(--peach);pointer-events:none}
+input{width:100%;min-height:54px;padding:0 16px 0 48px;border-radius:16px;background:rgba(15,11,10,.5);border:1px solid var(--line);color:var(--text);font:inherit;font-size:1rem;outline:none;transition:border-color .15s,background .15s}
+input::placeholder{color:#B9A89B}
+input:hover{border-color:rgba(255,230,210,.3)}
+input:focus-visible{border-color:var(--peach);background:rgba(15,11,10,.65);box-shadow:0 0 0 3px rgba(237,162,127,.35)}
+.pw input{padding-right:84px}
+.show{position:absolute;right:6px;top:50%;transform:translateY(-50%);min-height:44px;min-width:60px;padding:0 12px;border:0;border-radius:12px;background:transparent;color:var(--peach);font:inherit;font-weight:600;font-size:.95rem;cursor:pointer}
+.show:hover{background:rgba(237,162,127,.14);color:#fff}
+.show:focus-visible{outline:3px solid var(--peach);outline-offset:1px}
+.go{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:56px;border:0;border-radius:16px;background:var(--gold);color:#1F130C;font:inherit;font-weight:700;font-size:1.05rem;cursor:pointer;box-shadow:0 14px 30px -14px rgba(201,151,63,.7);transition:background .15s,transform .1s}
+.go:hover{background:#D8A64E}
+.go:active{transform:translateY(1px);background:#BC8B36}
+.go:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.go svg{width:20px;height:20px}
+.back{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;margin:14px auto 0;width:max-content;max-width:100%;padding:0 14px;color:var(--text2);font-size:.95rem;text-decoration:none;border-radius:12px}
+.back:hover{color:#fff;text-decoration:underline;text-underline-offset:4px}
+.back:focus-visible{outline:3px solid var(--peach);outline-offset:2px}
+.back svg{width:16px;height:16px}
+
+@media (max-width:1100px){
+  .tiles{grid-template-columns:1fr}
+  .tile{display:grid;grid-template-columns:40px 1fr;column-gap:16px;align-items:center;padding:16px 18px}
+  .tile i{margin:0;grid-row:span 2}
+  .tile span{margin-top:2px}
+}
+@media (max-width:860px){
+  .page{grid-template-columns:minmax(0,1fr);align-content:center;max-width:520px;padding-top:24px;padding-bottom:24px}
+  .intro{display:none}
+}
+@media (max-width:480px){
+  .card{border-radius:24px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.keep{display:flex;align-items:flex-start;gap:12px;margin:-4px 0 22px;cursor:pointer;min-height:44px}
+.keep input{position:absolute;opacity:0;width:44px;height:44px;margin:0;min-height:0;padding:0;cursor:pointer}
+.keep .box{flex:none;width:24px;height:24px;margin:10px 0 0 10px;border-radius:8px;border:1.5px solid rgba(255,230,210,.45);background:rgba(15,11,10,.5);display:grid;place-items:center;transition:background .15s,border-color .15s}
+.keep .box svg{width:14px;height:14px;color:#1F130C;opacity:0}
+.keep input:checked+.box{background:var(--gold);border-color:var(--gold)}
+.keep input:checked+.box svg{opacity:1}
+.keep input:focus-visible+.box{outline:3px solid var(--peach);outline-offset:3px}
+.keep .t{padding:9px 0 0 0;font-size:.95rem;color:var(--text);font-weight:600;line-height:1.3}
+.keep .t small{display:block;margin-top:3px;font-weight:400;color:var(--text2);font-size:.85rem;line-height:1.45}
+.keep{position:relative}
+.keep .box{margin-left:10px}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"></div>
+<main class="page">
+  <section class="intro" aria-label="About the admin area">
+    <p class="brand">LP <em>Admin</em></p>
+    <h1>Manage your business, all in one place.</h1>
+    <p class="lead">Orders, inventory, customers, and payments — everything you need to run LP Furniture, in a single dashboard.</p>
+    <ul class="tiles">
+      <li class="tile"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></i><b>Track every order</b><span>From request to delivery, in one list.</span></li>
+      <li class="tile"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.2 7.6-8 9-4.8-1.4-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></i><b>Verify customers</b><span>Check identities securely.</span></li>
+      <li class="tile"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/></svg></i><b>Manage products</b><span>Prices, photos and availability.</span></li>
+    </ul>
+    <p class="copy">© 2026 LP Furniture. Handcrafted with care in San Juan, Batangas.</p>
+  </section>
+
+  <section class="card" aria-labelledby="t">
+    <div class="badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></div>
+    <h2 id="t">Admin Sign In</h2>
+    <p class="sub">Enter your credentials to access the dashboard.</p>
+    <p class="notice" id="err" role="alert">Enter your email and password to sign in.</p>
+    <form id="f" novalidate>
+      <div class="field">
+        <label for="em">Admin email</label>
+        <div style="position:relative">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position:absolute;left:16px;top:50%;width:20px;height:20px;transform:translateY(-50%);color:var(--peach)"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7.5l8.5 6 8.5-6"/></svg>
+          <input id="em" type="email" autocomplete="username" placeholder="admin@lpfurniture.com">
+        </div>
+      </div>
+      <div class="field pw">
+        <label for="pw">Password</label>
+        <div style="position:relative">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position:absolute;left:16px;top:50%;width:20px;height:20px;transform:translateY(-50%);color:var(--peach)"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>
+          <input id="pw" type="password" autocomplete="current-password" placeholder="Enter your password">
+          <button class="show" type="button" id="sh" aria-pressed="false" aria-label="Show password">Show</button>
+        </div>
+      </div>
+      <label class="keep" for="kp">
+        <input id="kp" type="checkbox" name="remember">
+        <span class="box" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+        <span class="t">Keep me signed in on this device<small>Only this browser stays signed in. Your password is never saved or shown. Don't use this on a shared computer.</small></span>
+      </label>
+      <button class="go" type="submit">Sign in <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </form>
+    <a class="back" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Back to main site</a>
+  </section>
+</main>
+<script>
+(function(){
+  var pw=document.getElementById('pw'),sh=document.getElementById('sh');
+  sh.addEventListener('click',function(){var on=pw.type==='password';pw.type=on?'text':'password';sh.textContent=on?'Hide':'Show';sh.setAttribute('aria-pressed',on);sh.setAttribute('aria-label',on?'Hide password':'Show password')});
+  document.getElementById('f').addEventListener('submit',function(e){e.preventDefault();var ok=document.getElementById('em').value&&pw.value;document.getElementById('err').classList.toggle('show',!ok)});
+})();
+</script>
+</body>
+</html>

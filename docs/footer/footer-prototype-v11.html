@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LP Furniture Footer Ember Glass v11</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&display=swap">
+<style>
+:root{
+  --paper:#FFFEFB;--ink:#2B1A12;--mute:#6B5748;
+  --night:#0F0B0A;--ember-deep:#4A1E0E;--ember:#A9552B;--ember-hot:#D9793F;--peach:#EDA27F;
+  --text:#F4EAE3;--text2:#BFAEA3;--line:rgba(255,230,210,.14);
+  --f-display:'Playfair Display',Georgia,serif;--f-body:'DM Sans','Segoe UI',system-ui,sans-serif;
+  --page:clamp(20px,5vw,72px);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;overflow-x:clip}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:3px solid var(--peach);outline-offset:3px;border-radius:10px}
+.page{flex:1;padding:120px var(--page) 80px;max-width:1100px;margin:0 auto;width:100%}
+.page h1{font-family:var(--f-display);font-size:clamp(2rem,4vw,3rem);margin:0 0 8px}
+.page p{color:var(--mute);max-width:56ch;line-height:1.6;margin:0}
+.ph{margin-top:28px;height:160px;border:1.5px dashed #CDBB9C;border-radius:18px;display:grid;place-items:center;color:var(--mute);font-size:.92rem}
+
+/* ================= FOOTER: attached to the bottom, near-black with an ember glow, frosted glass over the big wordmark ================= */
+.ft{position:relative;isolation:isolate;overflow:hidden;background:var(--night);color:var(--text)}
+.glow{position:absolute;inset:0;z-index:-2;pointer-events:none;
+  background:
+   radial-gradient(ellipse 62% 100% at 104% 118%,#F1A98A 0%,var(--ember-hot) 26%,var(--ember) 44%,var(--ember-deep) 66%,transparent 84%),
+   radial-gradient(ellipse 46% 80% at -4% 128%,rgba(120,50,22,.85) 0%,transparent 72%)}
+
+.top{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:clamp(40px,5vw,68px) var(--page) 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,1.15fr) minmax(0,1fr);gap:clamp(28px,4vw,64px);align-items:start}
+h2.mark{font-size:1.5rem;color:#F1D391;letter-spacing:-.005em}h2.mark em{font-style:italic;color:#fff}
+h2{margin:0 0 14px;font-family:var(--f-display);font-weight:600;font-size:1.2rem;color:var(--peach)}
+.brand p{margin:0;max-width:32ch;color:var(--text2);line-height:1.65;font-size:1rem}
+.soc{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.sbtn{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 20px;border-radius:999px;font-weight:600;font-size:.95rem;color:var(--text);background:rgba(255,235,220,.06);border:1px solid rgba(255,230,210,.28);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:background .2s,color .2s,border-color .2s}
+.sbtn:hover{background:var(--peach);color:#1b0f0a;border-color:var(--peach)}
+.sbtn svg{width:16px;height:16px}
+
+.contact{display:grid;gap:10px}
+.row{display:flex;align-items:center;gap:14px;min-height:60px;padding:8px 16px 8px 10px;border-radius:16px;background:rgba(255,235,220,.05);border:1px solid var(--line);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:background .2s,border-color .2s}
+.row:hover{background:rgba(255,235,220,.11);border-color:rgba(237,162,127,.55)}
+.row i{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(237,162,127,.55);color:var(--peach);background:rgba(237,162,127,.08)}
+.row svg{width:19px;height:19px}
+.row b{display:block;font-size:clamp(.92rem,1.1vw + .5rem,1.06rem);font-weight:600;color:#fff;line-height:1.25;word-break:keep-all}
+.row small{display:block;color:var(--text2);font-size:.82rem;margin-top:1px}
+
+.pay{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.pay li img{display:block;max-width:82%;max-height:34px;width:auto;height:auto;object-fit:contain}
+.pay li span{display:none}.pay li.nologo img{display:none}.pay li.nologo span,.pay li.more span{display:block}
+.pay li{height:62px;border-radius:14px;background:rgba(255,255,255,.94);display:grid;place-items:center;padding:6px;box-shadow:0 14px 24px -16px rgba(0,0,0,.8)}
+.pay li span{font-weight:700;font-size:.92rem;color:#3A2E26;text-align:center;line-height:1.1}
+.pay li.more{grid-column:1/-1;height:46px;background:rgba(255,235,220,.05);box-shadow:none;border:1.5px dashed rgba(237,162,127,.5)}
+.pay li.more span{color:var(--peach);font-size:1.1rem}
+.paynote{margin:12px 0 0;color:var(--text2);font-size:.84rem;line-height:1.5}.paynote b{color:var(--text)}
+
+.legal{position:relative;z-index:2;max-width:1280px;margin:clamp(28px,3.5vw,48px) auto 0;padding:0 var(--page)}
+.legal>div{padding:14px 0 20px;border-top:1px solid var(--line);display:flex;flex-direction:column-reverse;gap:2px;align-items:flex-start;color:var(--text2);font-size:.9rem}
+.legal>div>span{display:inline-flex;align-items:center;min-height:44px}
+.pol{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:flex-start;gap:0 26px}
+.legal a{display:inline-flex;align-items:center;min-height:44px;color:var(--text);font-weight:600;text-decoration:underline;text-underline-offset:4px;text-decoration-color:rgba(237,162,127,.6)}
+.legal a:hover{color:var(--peach)}
+@media (max-width:760px){.pol{gap:0 20px}}
+
+/* the big wordmark: the logo, emphasized. It fades from dark on the left to ember on the right, and the glass frosts its lower half */
+.word{position:relative;z-index:1;margin-top:-.04em;text-align:center;white-space:nowrap;line-height:.84;overflow:hidden;
+  font-family:var(--f-display);font-weight:700;font-size:clamp(3.2rem,13.2vw,15rem);letter-spacing:-.02em;padding:0 2vw}
+.word span{display:inline-block;padding-bottom:.12em;color:rgba(241,211,145,.82)}
+.word em{font-style:italic;color:rgba(255,255,255,.8)}
+.frost{position:absolute;top:0;bottom:0;width:20%;z-index:2;pointer-events:none;backdrop-filter:blur(14px) saturate(1.15);-webkit-backdrop-filter:blur(14px) saturate(1.15)}
+.frost.b{top:auto;left:0;right:0;width:auto;height:70%;backdrop-filter:blur(1.5px);-webkit-backdrop-filter:blur(1.5px);background:linear-gradient(to bottom,rgba(15,11,10,0),rgba(15,11,10,.12));-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 85%);mask-image:linear-gradient(to bottom,transparent 0%,#000 85%)}
+.frost.l{left:0;-webkit-mask-image:linear-gradient(to right,#000 0%,rgba(0,0,0,.75) 35%,transparent 100%);mask-image:linear-gradient(to right,#000 0%,rgba(0,0,0,.75) 35%,transparent 100%)}
+.frost.r{right:0;-webkit-mask-image:linear-gradient(to left,#000 0%,rgba(0,0,0,.75) 35%,transparent 100%);mask-image:linear-gradient(to left,#000 0%,rgba(0,0,0,.75) 35%,transparent 100%)}
+.wordwrap{position:relative}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+@media (max-width:1100px){.top{grid-template-columns:1fr 1fr}.brand{grid-column:1/-1}}
+@media (max-width:620px){.top{grid-template-columns:1fr}.pay{grid-template-columns:repeat(2,minmax(0,1fr))}.word{font-size:13.4vw}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.contact+.soc{margin-top:14px}
+.visit{margin-top:26px}
+.map{border-radius:16px;overflow:hidden;border:1px solid var(--line);height:150px;background:#1a1311}
+.map iframe{width:100%;height:100%;border:0;display:block;filter:grayscale(.55) contrast(.92) brightness(.92)}
+.visit address{font-style:normal;margin-top:12px;color:var(--text);font-weight:600;line-height:1.45}
+.near{margin:6px 0 10px;color:var(--text2);font-size:.88rem;line-height:1.5;max-width:36ch}.near b{color:var(--text);font-weight:600}
+.lp-link-ft{color:var(--peach);font-weight:600;font-size:.92rem;text-decoration:underline;text-underline-offset:4px;display:inline-flex;min-height:44px;align-items:center}
+.lp-link-ft:hover{color:#fff}
+.sochead{margin-top:26px}
+.soc{flex-direction:column;align-items:flex-start;margin-top:0}
+.visit{margin-top:0}
+.pay li.more{grid-column:1/-1;height:auto;background:none;border:0;box-shadow:none;justify-content:flex-start;padding:2px 4px 0}
+.pay li.more span{font-size:.95rem;font-weight:600;color:var(--text2);letter-spacing:.02em}
+</style>
+</head>
+<body>
+<main class="page">
+  <h1>Page content</h1>
+  <p>Everything above is the normal page. The footer below is attached to the very bottom edge: full width, no margin, no floating card.</p>
+  <div class="ph">Sample page content</div>
+</main>
+
+<footer class="ft" data-nav="dark">
+  <div class="glow" aria-hidden="true"></div>
+
+  <div class="top">
+    <section class="brand" aria-label="About LP Furniture">
+
+      <div class="visit">
+        <h2>Visit our shop</h2>
+        <div class="map"><iframe title="Map showing LP Furniture shop location" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=Sitio%20Pulo%20Ilaya%2C%20Calit-calit%2C%20San%20Juan%2C%20Batangas&amp;z=16&amp;output=embed"></iframe></div>
+        <address>Sitio Pulo Ilaya, Calit-calit,<br>San Juan, Batangas</address>
+        <p class="near"><b>Nearby:</b> San Juan Doctors Hospital, Calit-calit Elementary School, Calit-calit Barangay Hall</p>
+        <a class="lp-link-ft" href="https://www.google.com/maps/search/?api=1&amp;query=Sitio%20Pulo%20Ilaya%2C%20Calit-calit%2C%20San%20Juan%2C%20Batangas" target="_blank" rel="noopener noreferrer">Open in Google Maps</a>
+      </div>
+    </section>
+
+    <section aria-label="Contact">
+      <h2>Contact us</h2>
+      <div class="contact">
+        <a class="row" href="tel:+639912394770"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></i><span><b>0991 239 4770</b><small>Call or text</small></span></a>
+        <a class="row" href="mailto:johncedricklumanglas@gmail.com"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7.5l8.5 6 8.5-6"/></svg></i><span><b>johncedricklumanglas@gmail.com</b><small>Email</small></span></a>
+      </div>
+      <h2 class="sochead">Social media</h2>
+      <div class="soc" aria-label="Social media">
+        <a class="sbtn" href="https://www.facebook.com/lpfurnituresj" target="_blank" rel="noopener noreferrer" aria-label="Facebook (opens in a new tab)">Facebook <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+        <a class="sbtn" href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok (opens in a new tab)">TikTok <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+      </div>
+    </section>
+
+    <section aria-label="Payment methods">
+      <h2>Ways to pay</h2>
+      <ul class="pay">
+        <li><img src="payments/gcash.svg" alt="GCash" onerror="this.parentNode.classList.add('nologo')" loading="lazy"><span>GCash</span></li>
+        <li><img src="payments/maya.svg" alt="Maya" onerror="this.parentNode.classList.add('nologo')" loading="lazy"><span>Maya</span></li>
+        <li><img src="payments/unionbank.svg" alt="UnionBank" onerror="this.parentNode.classList.add('nologo')" loading="lazy"><span>UnionBank</span></li>
+        <li><img src="payments/maribank.svg" alt="MariBank" onerror="this.parentNode.classList.add('nologo')" loading="lazy"><span>MariBank</span></li>
+        <li><img src="payments/visa.svg" alt="Visa" onerror="this.parentNode.classList.add('nologo')" loading="lazy"><span>Visa</span></li>
+        <li><img src="payments/mastercard.svg" alt="Mastercard" onerror="this.parentNode.classList.add('nologo')" loading="lazy"><span>Mastercard</span></li>
+        <li class="more" aria-label="and more payment options"><span>+ more ways to pay</span></li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="legal"><div><span>© 2026 LP Furniture. All rights reserved.</span><ul class="pol" aria-label="Policies"><li><a href="#">Terms and Conditions</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">Refund and Cancellation</a></li><li><a href="#">Payment Terms</a></li><li><a href="#">Delivery and Installation</a></li><li><a href="#">Warranty and Care</a></li><li><a href="#">Other Services Terms</a></li><li><a href="#">Custom Design Guide</a></li></ul></div></div>
+
+  <div class="wordwrap">
+    <div class="word" aria-hidden="true"><span>LP <em>Furniture</em></span></div>
+    <div class="frost b" aria-hidden="true"></div>
+  </div>
+</footer>
+</body>
+</html>

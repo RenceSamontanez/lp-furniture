@@ -1,0 +1,282 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customize studio prototype v4</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"><style>
+:root{--bg:#f1e6d3;--ink:#2a1812;--mut:#5c4a3d;--line:rgba(255,255,255,.6);--choc:#2a1812;--gold:#c99a3e;--gold-d:#7a5210;--cream:#f6ead8;--w1:#d9b27a;--w2:#8a5a3a;--glow:rgba(217,178,122,.55)}
+*{box-sizing:border-box;margin:0}html,body{height:100%}
+body{font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);position:relative;overflow:hidden}
+.bgx{position:fixed;inset:0;z-index:0;background:radial-gradient(900px 600px at 10% 6%,var(--w1),transparent 62%),radial-gradient(800px 700px at 94% 96%,var(--w2),transparent 60%),radial-gradient(600px 500px at 50% 45%,#f6dfb0,transparent 65%),#f2e6d3;transition:background .8s}
+.bgx::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(100deg,transparent 0 22px,rgba(90,50,20,.035) 23px 24px,rgba(255,255,255,.05) 25px 27px)}
+button{font:inherit;color:inherit;cursor:pointer}:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.wrap{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column;gap:12px;padding:12px clamp(14px,2vw,32px) 16px;max-width:1800px;margin:0 auto}
+.glass{background:rgba(255,250,242,.52);border:1px solid var(--line);backdrop-filter:blur(24px) saturate(170%);-webkit-backdrop-filter:blur(24px) saturate(170%);box-shadow:0 16px 40px rgba(70,40,15,.16),inset 0 1px 0 rgba(255,255,255,.8)}
+.nav{height:54px;flex:none;border-radius:18px;display:flex;align-items:center;justify-content:space-between;padding:0 22px}.nav b{font-family:'Playfair Display',Georgia,serif;font-size:22px}.nav span{font-weight:600;color:var(--mut);font-size:14.5px}
+.pill{white-space:nowrap;border:1px solid rgba(255,255,255,.75);background:rgba(255,255,255,.65);border-radius:13px;padding:8px 14px;font-weight:700;font-size:14px;display:inline-flex;gap:7px;align-items:center}
+.studio{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:16px}
+.panel{border-radius:28px;padding:18px 24px 18px;display:flex;flex-direction:column;min-height:0}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex:none}
+.ph .l{display:flex;flex-direction:column;gap:6px}
+h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(26px,2.3vw,34px);line-height:1.08}.sub{color:var(--mut);font-size:14.5px}
+.steps{display:flex;gap:6px;margin:14px 0 12px;flex:none}
+.st{flex:1;border:0;background:none;text-align:left;padding:0}.st i{display:block;height:5px;border-radius:5px;background:rgba(120,90,60,.22);overflow:hidden;position:relative}
+.st i::after{content:"";position:absolute;inset:0;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .45s}.st.done i::after,.st.on i::after{transform:scaleX(1)}
+.st span{display:block;margin-top:6px;font-size:13px;font-weight:700;color:var(--mut)}.st.on span{color:var(--ink)}
+.body{flex:1;min-height:0;position:relative;display:flex;flex-direction:column}
+.step{display:none;flex:1;min-height:0;flex-direction:column;animation:in .35s ease both}.step.on{display:flex}
+@keyframes in{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+.q{font-size:19px;font-weight:700;margin-bottom:2px;flex:none}.hint{color:var(--mut);font-size:14px;margin-bottom:10px;flex:none}
+.tiles{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,minmax(0,1fr));gap:10px}
+.tile{min-height:0;border:1.5px solid rgba(255,255,255,.75);background:rgba(255,255,255,.55);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-weight:700;font-size:14.5px;transition:transform .2s,box-shadow .2s,background .2s}
+.tile svg{width:clamp(30px,5.2vh,50px);height:clamp(30px,5.2vh,50px);fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tile:hover{transform:translateY(-3px);background:rgba(255,255,255,.88);box-shadow:0 10px 24px rgba(60,35,20,.15)}
+.tile[aria-pressed=true]{background:#fff;box-shadow:0 0 0 2px var(--choc) inset,0 10px 24px rgba(60,35,20,.17)}.tile[aria-pressed=true] svg{stroke:var(--gold-d)}
+.wide{flex:none;width:100%;margin-top:10px;border:1.5px dashed rgba(120,90,60,.5);background:rgba(255,255,255,.55);border-radius:16px;padding:9px 16px;display:flex;align-items:center;gap:12px;font-weight:700;text-align:left}
+.wide svg{width:28px;height:28px;fill:none;stroke:var(--gold-d);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}.wide small{display:block;color:var(--mut);font-weight:500;font-size:12.5px}
+.wide[aria-pressed=true]{border-style:solid;border-color:var(--choc);background:#fff;box-shadow:0 0 0 2px var(--choc) inset}
+.other{display:none;flex:none;margin-top:8px;animation:in .3s both}.other.on{display:block}
+.other label{display:block;font-weight:700;font-size:14px;margin-bottom:5px}
+.fld,.other input{width:100%;font:inherit;font-size:16px;padding:10px 14px;border-radius:14px;border:1.5px solid rgba(120,90,60,.3);background:rgba(255,255,255,.92);color:var(--ink)}
+.fld:focus,.other input:focus{outline:3px solid var(--gold);outline-offset:1px;border-color:transparent}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid rgba(255,255,255,.8);background:rgba(255,255,255,.6);border-radius:999px;padding:6px 13px;font-weight:700;font-size:13.5px;transition:all .2s}
+.chip:hover{transform:translateY(-1px);background:#fff}.chip.add{border-style:dashed;font-weight:600}.chip[aria-pressed=true]{background:var(--choc);color:#fff;border-color:var(--choc)}
+.other .chips{margin-top:7px}.other .chip{padding:4px 11px;font-size:12.5px}
+.woods{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-height:300px}
+.wood{min-height:0;border:1.5px solid rgba(255,255,255,.75);background:rgba(255,255,255,.55);border-radius:20px;padding:0;overflow:hidden;text-align:left;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s}
+.wood:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(60,35,20,.15)}
+.wood .sw{flex:1;min-height:34px;position:relative}.wood .sw::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(98deg,transparent 0 7px,rgba(0,0,0,.1) 8px 9px,rgba(255,255,255,.07) 10px 12px)}
+.wood .tx{padding:9px 12px 11px;flex:none}.wood b{display:block;font-size:15.5px}.wood small{color:var(--mut);font-size:12.5px;line-height:1.3;display:block}
+.wood.oth .sw{background:repeating-linear-gradient(45deg,#efe3d0 0 8px,#e2d0b3 8px 16px);display:grid;place-items:center;font-size:30px;color:var(--gold-d)}.wood.oth .sw::after{display:none}
+.wood[aria-pressed=true]{background:#fff;box-shadow:0 0 0 2px var(--choc) inset,0 10px 24px rgba(60,35,20,.16)}
+.wreq{display:none;flex:none;margin-top:10px;animation:in .3s both}.wreq.on{display:block}
+.wreq label.l{display:block;font-weight:700;font-size:14px;margin-bottom:5px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.opt{border:1.5px solid rgba(255,255,255,.8);background:rgba(255,255,255,.6);border-radius:16px;padding:9px 13px;text-align:left}.opt[aria-pressed=true]{border-color:var(--choc);background:#fff;box-shadow:0 0 0 2px var(--choc) inset}
+.opt b{display:block;font-size:14.5px;margin:2px 0 3px}.opt ul{margin:0;padding-left:16px;font-size:12.5px;color:var(--mut);line-height:1.4}
+.badge{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.04em;border-radius:999px;padding:2px 8px}.badge.lo{background:#dff1e6;color:#1d6b45}.badge.hi{background:#f6e7c6;color:#7a5210}
+.note{margin-top:8px;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.65);border:1px solid rgba(120,90,60,.2);font-size:13px;line-height:1.4}.note b{display:block}.note.kb{border-left:4px solid #1d6b45}.note.nw{border-left:4px solid var(--gold)}
+.sgrid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,minmax(0,1fr));gap:10px}
+.sc{min-height:0;border:1.5px solid rgba(255,255,255,.75);background:rgba(255,255,255,.55);border-radius:18px;padding:0;overflow:hidden;display:flex;flex-direction:column;text-align:left;transition:transform .2s,box-shadow .2s}
+.sc:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(60,35,20,.15)}
+.sc .ph2{flex:1;min-height:0;position:relative}.sc .ph2 span{position:absolute;left:8px;bottom:6px;font-size:10px;font-weight:800;background:rgba(42,24,18,.78);color:#fff;border-radius:999px;padding:2px 8px}
+.sc .tx{padding:7px 11px 9px;flex:none}.sc b{display:block;font-size:14.5px}.sc small{display:block;color:var(--mut);font-size:12px;line-height:1.25;margin-top:1px}
+.sc[aria-pressed=true]{background:#fff;box-shadow:0 0 0 2px var(--choc) inset,0 10px 24px rgba(60,35,20,.16)}
+.sc.up{border-style:dashed;align-items:center;justify-content:center;gap:6px;text-align:center;padding:8px;font-weight:700;font-size:13.5px;position:relative}
+.sc.up svg{width:32px;height:32px;fill:none;stroke:var(--gold-d);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sc.up img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.sc.up .lab{position:relative;background:rgba(255,255,255,.92);border-radius:10px;padding:4px 10px;font-size:12.5px}
+.err{color:#a1262b;font-weight:600;font-size:12.5px;flex:none;margin-top:6px}
+.guide{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px;flex:none}
+.gc{border-radius:14px;padding:8px 12px;font-size:13px;line-height:1.4;border:1px solid rgba(120,90,60,.2)}.gc i{font-style:normal;display:block;font-weight:800;font-size:11px;letter-spacing:.06em;margin-bottom:2px}
+.gc.bad{background:#fbe9e9}.gc.bad i{color:#a1262b}.gc.good{background:#e4f3ea}.gc.good i{color:#1d6b45}
+textarea{flex:1;min-height:70px;width:100%;resize:none;font:inherit;font-size:15.5px;line-height:1.5;border-radius:16px;border:1.5px solid rgba(255,255,255,.85);background:rgba(255,255,255,.85);padding:11px 14px;color:var(--ink)}
+textarea:focus{outline:3px solid var(--gold);outline-offset:1px;border-color:transparent}
+.meter{display:flex;align-items:center;gap:10px;margin:8px 0 6px;font-size:13px;font-weight:700;flex:none}.meter .bar{flex:1;height:6px;border-radius:6px;background:rgba(120,90,60,.22);overflow:hidden}.meter .bar i{display:block;height:100%;width:0;background:#c0392b;transition:width .3s,background .3s}.meter .need{color:var(--mut);font-weight:500;font-size:12px}
+.cl{display:flex;flex-wrap:wrap;gap:5px;flex:none}.cl span{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.75);background:rgba(255,255,255,.5);color:var(--mut)}.cl span.y{background:#dff1e6;color:#1d6b45;border-color:transparent}
+.sug{flex:none}.sug .cap{font-size:11px;letter-spacing:.09em;font-weight:700;color:var(--mut);margin:8px 0 5px}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(120,90,60,.2);flex:none}
+.btn{border:1px solid rgba(255,255,255,.8);background:rgba(255,255,255,.75);border-radius:999px;padding:12px 24px;font-weight:700;font-size:15.5px;display:inline-flex;gap:8px;align-items:center;justify-content:center;transition:transform .15s,box-shadow .2s}
+.btn.p{background:var(--choc);color:#fff;border-color:var(--choc)}.btn.p:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 22px rgba(42,24,18,.3)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.need{color:var(--mut);font-size:13.5px}
+.stage{border-radius:28px;background:linear-gradient(165deg,rgba(58,37,27,.84),rgba(26,16,11,.9));color:var(--cream);padding:20px 24px;display:flex;flex-direction:column;min-height:0;position:relative;overflow:hidden;border:1px solid rgba(255,235,205,.28);box-shadow:0 24px 60px rgba(42,24,18,.4),inset 0 1px 0 rgba(255,235,205,.25);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+.stage::before{content:"";position:absolute;inset:-30%;background:radial-gradient(closest-side,var(--glow),transparent 70%);opacity:.55;transition:background .8s;pointer-events:none}.stage>*{position:relative}
+.sh{display:flex;justify-content:space-between;align-items:center;font-size:12px;letter-spacing:.12em;font-weight:700;color:#e3b24f;flex:none}
+.live{display:inline-flex;gap:7px;align-items:center}.live::before{content:"";width:8px;height:8px;border-radius:50%;background:#e3b24f;animation:pulse 2s infinite}@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(227,178,79,.6)}70%{box-shadow:0 0 0 9px rgba(227,178,79,0)}}
+.brief{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:clamp(8px,2vh,20px)}
+.ring{width:clamp(130px,30vh,260px);height:clamp(130px,30vh,260px);border-radius:50%;display:grid;place-items:center;position:relative;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.2),rgba(255,255,255,.04));border:1px solid rgba(255,235,205,.28);box-shadow:0 0 70px var(--glow);transition:transform .5s}
+.ring::before{content:"";position:absolute;inset:14px;border-radius:50%;background:linear-gradient(135deg,var(--w1),var(--w2));transition:background .6s}
+.ring::after{content:"";position:absolute;inset:14px;border-radius:50%;background:repeating-linear-gradient(98deg,transparent 0 9px,rgba(0,0,0,.1) 10px 11px,rgba(255,255,255,.08) 12px 14px)}
+.ring svg{position:relative;z-index:2;width:50%;height:50%;fill:none;stroke:#fff8ec;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 4px 8px rgba(0,0,0,.35))}
+.ring.pop{animation:pop .5s}@keyframes pop{40%{transform:scale(1.08) rotate(2deg)}}
+.bt{font-family:'Playfair Display',Georgia,serif;font-size:clamp(26px,2.8vw,40px);line-height:1.12}.bt em{color:#e3b24f}
+.tags{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.tag{border:1px solid rgba(255,235,205,.35);background:rgba(255,255,255,.1);border-radius:999px;padding:6px 14px;font-weight:600;font-size:14px}.tag.empty{border-style:dashed;color:#cdb99f;background:none}
+.desc{max-width:48ch;color:#ecdcc3;line-height:1.55;font-size:15px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.desc.empty{color:#b9a58d}
+.gen,.res{display:none;flex:1;min-height:0;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center}
+.stage.s-gen .brief,.stage.s-res .brief{display:none}.stage.s-gen .gen{display:flex}.stage.s-res .res{display:flex}
+.canvas{height:min(48vh,380px);aspect-ratio:1;border-radius:22px;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--w2),var(--w1));box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.canvas::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(98deg,transparent 0 9px,rgba(0,0,0,.1) 10px 11px,rgba(255,255,255,.08) 12px 14px)}
+.canvas .scan{position:absolute;left:0;right:0;height:46%;background:linear-gradient(transparent,rgba(255,255,255,.4),transparent);animation:scan 1.8s ease-in-out infinite}@keyframes scan{from{top:-46%}to{top:100%}}
+.res .canvas{animation:rev .7s cubic-bezier(.2,.8,.2,1)}@keyframes rev{from{filter:blur(18px);transform:scale(.92);opacity:.4}}
+.msgs b{display:block;font-size:19px}.msgs span{color:#d9c7ae;font-size:14.5px}.bar2{width:60%;height:6px;border-radius:6px;background:rgba(255,255,255,.14);overflow:hidden}.bar2 i{display:block;height:100%;width:0;background:#e3b24f;transition:width .5s}
+.rbtn{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}.rbtn .btn{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,235,205,.3)}.rbtn .btn.g{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.save[aria-pressed=true]{background:#fff!important;color:var(--ink)!important}.save svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}.save[aria-pressed=true] svg{fill:var(--gold);stroke:var(--gold)}
+.film{display:flex;gap:10px;margin-top:12px;align-items:center;flex:none}.film .cap{font-size:11.5px;letter-spacing:.1em;font-weight:700;color:#cdb99f;margin-right:4px}
+.film .f{width:52px;height:52px;border-radius:13px;border:2px solid rgba(255,235,205,.25);position:relative;overflow:hidden;padding:0}.film .f:hover{border-color:#e3b24f}.film .f::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(98deg,transparent 0 6px,rgba(0,0,0,.12) 7px 8px)}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--choc);color:#fff;padding:12px 20px;border-radius:999px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;z-index:60}.toast.on{opacity:1}
+.pswitch{position:fixed;z-index:70;bottom:10px;left:10px;display:flex;gap:4px;padding:4px;background:var(--choc);border-radius:999px;opacity:.92}.pswitch button{border:0;background:none;color:#e9dccb;padding:6px 12px;border-radius:999px;font-weight:700;font-size:12px}.pswitch button[aria-pressed=true]{background:var(--gold);color:var(--ink)}
+.v{display:none}.v.on{display:block}.wrap.v.on{display:flex}
+#va.on{position:relative;z-index:2;padding:30px 20px;max-width:1040px;margin:0 auto;height:100vh;overflow:auto}
+#va h1{margin-bottom:6px}.atabs{display:flex;gap:8px;margin:16px 0}.at{border:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.6);border-radius:999px;padding:9px 16px;font-weight:700}.at[aria-pressed=true]{background:var(--choc);color:#fff}
+.arow{display:grid;grid-template-columns:130px 1fr 90px auto;gap:14px;align-items:center;border-radius:18px;padding:14px 18px;margin-bottom:10px}
+.kind{font-size:12px;font-weight:800;letter-spacing:.05em;border-radius:999px;padding:4px 10px;background:#f6e7c6;color:#7a5210;text-align:center}.arow .t b{font-size:16.5px}.arow .t small{display:block;color:var(--mut);margin-top:2px;font-size:13.5px}
+.ans{grid-column:1/-1;display:none;gap:10px}.ans.on{display:flex}.ans textarea{min-height:70px;flex:1;font-size:15px}.arow .btn{padding:9px 16px;font-size:14px}.arow .btn.p{background:var(--choc);color:#fff}
+@media (max-width:1000px),(max-height:560px){body{overflow:auto}.wrap{height:auto}.studio{grid-template-columns:1fr}.stage{order:-1;min-height:380px}.panel{min-height:0}.tiles{grid-template-columns:repeat(3,1fr);grid-auto-rows:92px;grid-template-rows:none}.woods{grid-template-columns:1fr 1fr;max-height:none;grid-auto-rows:130px}.sgrid{grid-template-rows:none;grid-auto-rows:120px}textarea{min-height:120px}.arow{grid-template-columns:1fr}.nav span{display:none}}
+@media (max-width:560px){.opts,.guide{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.pill.sm{padding:6px 11px;font-size:12.5px}
+.ph .l{gap:3px}
+@media (max-height:830px){
+ .hint{display:none}.steps{margin:10px 0 8px}.panel{padding:14px 20px}.q{font-size:17px;margin-bottom:8px}
+ .tiles{min-height:130px}.wide small{display:none}.wide{padding:7px 14px;margin-top:8px}
+ .other .chips .chip:nth-child(n+5){display:none}.note{font-size:12.5px;padding:6px 10px}
+ .wood small{display:none}.wood .tx{padding:6px 10px 8px}.woods{min-height:96px}
+ .opt ul li:nth-child(2){display:none}.opt{padding:7px 12px}
+ .sc small{display:none}.guide{margin-bottom:6px}.gc{font-size:12.5px;padding:6px 10px}
+ .ph .sub{display:none}.foot{margin-top:8px;padding-top:8px}.btn{padding:10px 22px}
+}
+@media (max-width:1180px){.ph .sub{display:none}.pill.sm{padding:5px 9px}}
+</style></head><body>
+<div class="bgx"></div>
+<div class="pswitch" role="group" aria-label="Prototype view"><button data-pv="c" aria-pressed="true">Customer</button><button data-pv="a" aria-pressed="false">Admin: ideas to review</button></div>
+<div class="wrap v on" id="vc">
+ <header class="nav glass"><b>LP<i>Furniture</i></b><span>Home &nbsp; Catalog &nbsp; <u>Customize</u> &nbsp; Cart &nbsp; My Account</span></header>
+ <main class="studio">
+  <section class="panel glass" aria-label="Design steps">
+   <div class="ph"><div class="l"><h1>Customize your furniture</h1><p class="sub">Tell us what you want. We draw it, you send it to our team.</p></div><div style="display:flex;gap:6px;align-items:center"><button class="pill sm">← Back</button><button class="pill sm">🕘 My Designs</button><button class="pill sm">? How it works</button></div></div>
+   <div class="steps" id="steps" role="tablist"></div>
+   <div class="body">
+    <div class="step on" data-s="0"><div class="q">What do you want built?</div><div class="hint">Pick the piece of furniture. The picture will be this type.</div><div class="tiles" id="tiles"></div>
+     <button class="wide" id="otherBtn" data-k="other" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true" id="oi"></svg><span>Something else<small>Not on the list? Tell us what you want built.</small></span></button>
+     <div class="other" id="otherBox"><label for="otherIn">What is it?</label><input id="otherIn" maxlength="60" placeholder="e.g. Staircase railing, altar, TV wall panel" autocomplete="off"><div class="chips" id="otherEx"></div><div id="typeNote"></div></div></div>
+    <div class="step" data-s="1"><div class="q">Choose your wood</div><div class="hint">We build with these three woods. Want another wood? Pick "Other wood".</div><div class="woods" id="woods"></div>
+     <div class="wreq" id="wreq"><label class="l" for="woodIn">Which wood do you want?</label><input class="fld" id="woodIn" maxlength="40" placeholder="e.g. Narra, Teak, Molave" autocomplete="off"><div id="woodNote"></div>
+      <div class="opts"><button class="opt" aria-pressed="false" data-src="own"><span class="badge lo">LOWER COST</span><b>I provide the wood</b><ul><li>Our team calls you to agree how much wood is needed</li><li>Production starts once the wood arrives</li></ul></button><button class="opt" aria-pressed="false" data-src="buy"><span class="badge hi">LONGER AND COSTS MORE</span><b>LP Furniture buys the wood</b><ul><li>We search for the wood first, which takes time</li><li>The wood cost is added to your quote</li></ul></button></div></div></div>
+    <div class="step" data-s="2"><div class="q">Pick a style</div><div class="hint">Look at the photos. Not sure, or want something different? Upload your own reference photo.</div><div class="sgrid" id="sgrid"></div><input type="file" id="upIn" accept="image/*" hidden><div class="err" id="uperr" role="alert"></div></div>
+    <div class="step" data-s="3"><div class="q">Describe it in your own words <span style="color:#a1262b">*</span></div><div class="hint">Our AI draws only what you describe, so the more detail, the closer the picture.</div>
+     <div class="guide"><div class="gc bad"><i>WEAK</i>"A table" has no size, shape or finish, so the picture is a guess.</div><div class="gc good"><i>GOOD</i>"Six-seater dining table, rectangular, thick rounded edges, natural matte finish."</div></div>
+     <textarea id="desc" maxlength="1000" placeholder="Write what you want to see" aria-label="Description (required)"></textarea>
+     <div class="meter"><span id="mlabel">Add more detail</span><div class="bar"><i id="mbar"></i></div><span class="need" id="cnt">0 / 1000</span></div><div class="cl" id="cl"></div>
+     <div class="sug"><div class="cap" id="icap">QUICK IDEAS: TAP TO ADD</div><div class="chips" id="ideas"></div></div></div>
+   </div>
+   <div class="foot"><button class="btn" id="prev">← Back</button><span class="need" id="need"></span><button class="btn p" id="next">Next →</button></div>
+  </section>
+  <section class="stage" id="stage" aria-live="polite">
+   <div class="sh"><span class="live" id="stlabel">YOUR DESIGN BRIEF</span><span id="stcount"></span></div>
+   <div class="brief"><div class="ring" id="ring"></div><div class="bt" id="bt">Your piece will appear here</div><div class="tags" id="tags"></div><p class="desc empty" id="bd">Start by choosing a furniture type on the left. Everything you pick shows up here.</p></div>
+   <div class="gen"><div class="canvas"><div class="scan"></div></div><div class="msgs"><b id="gm">Sketching your design</b><span id="gs">This takes about a minute.</span></div><div class="bar2"><i id="gb"></i></div></div>
+   <div class="res"><div class="canvas"></div><div class="rbtn"><button class="btn save" id="save" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg><span>Save</span></button><button class="btn" id="again">Try another</button><button class="btn g" id="send">Send to our team</button></div></div>
+   <div class="film"><span class="cap">RECENT</span><button class="f" style="background:linear-gradient(135deg,#7a4a2a,#d6b48c)" aria-label="Recent design 1"></button><button class="f" style="background:linear-gradient(135deg,#5a3a26,#b58a5d)" aria-label="Recent design 2"></button><button class="f" style="background:linear-gradient(135deg,#8c6a48,#e9d6b8)" aria-label="Recent design 3"></button></div>
+  </section>
+ </main>
+</div>
+<div class="v" id="va"><h1 style="font-family:'Playfair Display',Georgia,serif">Ideas to review</h1><p style="color:var(--mut)">Things customers asked for that we have no answer for yet. Write an answer once, and the Customize page uses it the next time someone asks the same thing.</p>
+ <div class="atabs"><button class="at" data-at="new" aria-pressed="true">Unanswered <span id="an"></span></button><button class="at" data-at="done" aria-pressed="false">Answered <span id="ad"></span></button></div><div id="alist"></div></div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+const I={
+sofa:'<path d="M10 30v-8a6 6 0 0 1 6-6h32a6 6 0 0 1 6 6v8"/><path d="M6 32a4 4 0 0 1 8 0v8h36v-8a4 4 0 0 1 8 0v14H6z"/><path d="M14 46v6M50 46v6"/>',
+bed:'<path d="M6 14v38M58 36v16"/><path d="M6 40h52v-4a6 6 0 0 0-6-6H22a4 4 0 0 0-4 4z"/><path d="M6 52h52"/><circle cx="14" cy="32" r="4"/>',
+table:'<path d="M6 20h52v6H6z"/><path d="M12 26v26M52 26v26M32 26v8"/>',
+chair:'<path d="M20 8h24v22H20z"/><path d="M16 30h32v8H16z"/><path d="M20 38v16M44 38v16"/>',
+cabinet:'<rect x="10" y="8" width="44" height="46" rx="3"/><path d="M32 8v46M10 30h44"/><path d="M27 20v4M37 20v4M27 42v4M37 42v4M16 54v4M48 54v4"/>',
+door:'<rect x="16" y="6" width="32" height="52" rx="2"/><rect x="21" y="12" width="9" height="16" rx="1"/><rect x="21" y="34" width="22" height="18" rx="1"/><circle cx="42" cy="32" r="1.8"/>',
+shelf:'<path d="M12 6v52M52 6v52M12 6h40M12 24h40M12 42h40M12 58h40"/><path d="M20 24V14h8v10M36 42V30h10v12"/>',
+desk:'<path d="M6 20h52v5H6z"/><path d="M10 25v28M54 25v28"/><rect x="34" y="25" width="20" height="16" rx="1"/><path d="M44 31v4"/>',
+other:'<path d="M32 8l5 15 15 5-15 5-5 15-5-15-15-5 15-5z"/><path d="M50 44v10M45 49h10"/>'};
+const T=[['sofa','Sofa'],['bed','Bed'],['table','Table'],['chair','Chair'],['cabinet','Cabinet'],['door','Door'],['shelf','Shelf'],['desk','Desk']];
+const OX=['Staircase railing','Altar','TV wall panel','Headboard','Kitchen counter','Gazebo'];
+const W=[['Gmelina','Light and smooth','#e6c999','#b98a58'],['Mahogany','Deep red-brown','#a8563a','#5a2a1c'],['Acacia','Golden, bold grain','#d9a85f','#8a5a2a']];
+const S=[['Modern','Clean lines, simple shapes','linear-gradient(135deg,#d8d2c8,#8d8478)'],['Rustic','Natural grain, a worn look','linear-gradient(135deg,#a77a4e,#5b3d24)'],['Classic','Carved details, rich tone','linear-gradient(135deg,#8a4b2f,#3f2216)'],['Minimalist','Very plain, light and open','linear-gradient(135deg,#efe9df,#cfc6b8)'],['Contemporary','Mixed shapes, soft curves','linear-gradient(135deg,#c9a77c,#7c5a3a)']];
+const TI={sofa:['soft rounded cushions','solid wood legs','seats three people'],bed:['tall headboard','under-bed storage','queen size'],table:['seats six','rounded edges','extendable top'],chair:['curved backrest','padded seat','armrests'],cabinet:['sliding doors','adjustable shelves','soft-close drawers'],door:['frosted glass panels','brushed-metal handle','vertical panels'],shelf:['open back','five shelves','floor to ceiling'],desk:['cable hole','two drawers','fits a laptop and monitor']};
+const SI={Modern:['clean straight legs','matte natural finish','thin edges'],Rustic:['visible wood grain','distressed finish','thick chunky legs'],Classic:['carved details','glossy dark finish','turned legs'],Minimalist:['no handles','plain light finish','simple shape'],Contemporary:['soft curved edges','two-tone finish','mixed wood and metal']};
+const GEN=['rounded edges','natural finish','warm golden-brown tone','with storage','for a small space'];
+const labels=['Type','Wood','Style','Describe'];
+const KB={wood:{narra:'Narra is hard to get. Most customers provide their own Narra. We can also quote a purchase, but it takes longer.'},type:{'staircase railing':'We build railings with solid wood posts. Our team will confirm the length and height by phone.'}};
+const ADM=[{k:'Furniture type',t:'Gazebo',n:4,when:'Oct 22',a:null},{k:'Wood',t:'Teak',n:6,when:'Oct 20',a:null},{k:'Furniture type',t:'Pergola',n:2,when:'Oct 24',a:null},{k:'Wood',t:'Narra',n:9,when:'Oct 9',a:KB.wood.narra},{k:'Furniture type',t:'Staircase railing',n:3,when:'Oct 12',a:KB.type['staircase railing']}];
+const st={step:0,type:null,other:'',wood:null,otherWood:'',src:null,style:null,photo:null,saved:false};
+const $=s=>document.querySelector(s);const svg=k=>`<svg viewBox="0 0 64 64" aria-hidden="true">${I[k]}</svg>`;
+$('#oi').innerHTML=I.other;
+$('#tiles').innerHTML=T.map(t=>`<button class="tile" aria-pressed="false" data-k="${t[0]}">${svg(t[0])}<span>${t[1]}</span></button>`).join('');
+$('#otherEx').innerHTML=OX.map(x=>`<button class="chip" data-ox="${x}" aria-pressed="false">${x}</button>`).join('');
+$('#woods').innerHTML=W.map(w=>`<button class="wood" aria-pressed="false" data-w="${w[0]}"><div class="sw" style="background:linear-gradient(135deg,${w[2]},${w[3]})"></div><div class="tx"><b>${w[0]}</b><small>${w[1]}</small></div></button>`).join('')+`<button class="wood oth" aria-pressed="false" data-w="__other"><div class="sw">+</div><div class="tx"><b>Other wood</b><small>Ask for a different wood</small></div></button>`;
+$('#sgrid').innerHTML=S.map(s=>`<button class="sc" aria-pressed="false" data-st="${s[0]}"><div class="ph2" style="background:${s[2]}"><span>PHOTO</span></div><div class="tx"><b>${s[0]}</b><small>${s[1]}</small></div></button>`).join('')+`<button class="sc up" id="upBtn"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span class="lab" id="upL">Upload your own photo</span></button>`;
+$('#steps').innerHTML=labels.map((l,i)=>`<button class="st" role="tab" data-i="${i}"><i></i><span>${i+1}. ${l}</span></button>`).join('');
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2600)}
+const typeName=()=>st.type==='other'?st.other.trim():(T.find(x=>x[0]===st.type)||[,''])[1];
+const woodName=()=>st.wood==='__other'?st.otherWood.trim():st.wood;
+const words=s=>s.trim().split(/\s+/).filter(Boolean);
+function dscore(d){const l=d.toLowerCase();const c={Size:/\b(\d|six|four|two|three|seat|small|large|big|tall|wide|king|queen|cm|inch|feet|ft|meter)/.test(l),Shape:/(round|square|rect|curve|straight|edge|leg|panel|shape|oval)/.test(l),Finish:/(finish|matte|glossy|polish|stain|varnish|color|colour|tone|dark|light|natural|brown)/.test(l),Place:/(living|bed|dining|kitchen|office|room|outdoor|space|wall|entrance|bath|garden)/.test(l)};
+ const n=Object.values(c).filter(Boolean).length;const wc=words(d).length;return{c,n,wc,score:Math.min(100,Math.round(n*20+Math.min(wc,20)*1.0))}}
+function ideasFor(){const a=[...(TI[st.type]||[]),...(st.style&&SI[st.style]?SI[st.style]:[])];return (a.length?a:GEN).slice(0,7)}
+function ok(i){if(i===0)return !!st.type&&(st.type!=='other'||st.other.trim().length>=2);
+ if(i===1)return !!st.wood&&(st.wood!=='__other'||(st.otherWood.trim().length>=2&&!!st.src));return i===2?true:true}
+function descOk(){const d=$('#desc').value;return d.trim().length>=20&&words(d).length>=4}
+function note(kind,txt,cls){return `<div class="note ${cls}"><b>${kind}</b>${txt}</div>`}
+function render(){
+ document.querySelectorAll('.step').forEach(e=>e.classList.toggle('on',+e.dataset.s===st.step));
+ document.querySelectorAll('.st').forEach(e=>{const i=+e.dataset.i;e.classList.toggle('on',i===st.step);e.classList.toggle('done',i<st.step&&ok(i));e.setAttribute('aria-selected',i===st.step)});
+ document.querySelectorAll('.tile').forEach(e=>e.setAttribute('aria-pressed',e.dataset.k===st.type));
+ $('#otherBtn').setAttribute('aria-pressed',st.type==='other');$('#otherBox').classList.toggle('on',st.type==='other');
+ document.querySelectorAll('.wood').forEach(e=>e.setAttribute('aria-pressed',e.dataset.w===st.wood));
+ $('#wreq').classList.toggle('on',st.wood==='__other');
+ document.querySelectorAll('.opt').forEach(e=>e.setAttribute('aria-pressed',e.dataset.src===st.src));
+ document.querySelectorAll('.sc').forEach(e=>e.setAttribute('aria-pressed',e.dataset.st===st.style));
+ const last=st.step===3;const n=$('#next');n.textContent=last?'✦ Create my design':'Next →';
+ const can=last?(ok(0)&&ok(1)&&descOk()):ok(st.step);n.disabled=!can;$('#prev').style.visibility=st.step?'visible':'hidden';
+ let msg='';if(!can){if(st.step===0)msg=st.type==='other'?'Type what you want built to continue':'Pick a furniture type to continue';else if(st.step===1)msg=st.wood==='__other'?(st.otherWood.trim().length<2?'Type the wood you want':'Choose who gets the wood'):'Pick a wood to continue';else if(st.step===3)msg='Add a bit more detail to continue'}
+ $('#need').textContent=msg;
+ // adaptive ideas
+ $('#icap').textContent=(st.type&&st.style?`IDEAS FOR A ${st.style.toUpperCase()} ${typeName().toUpperCase()}`:st.type?`IDEAS FOR YOUR ${typeName().toUpperCase()}`:'QUICK IDEAS')+': TAP TO ADD';
+ $('#ideas').innerHTML=ideasFor().map(s=>`<button class="chip add" data-i="${s}">+ ${s}</button>`).join('');
+ // stage
+ const r=document.documentElement.style;const w=W.find(x=>x[0]===st.wood);r.setProperty('--w1',w?w[2]:'#d9b27a');r.setProperty('--w2',w?w[3]:'#8a5a3a');r.setProperty('--glow',w?w[2]+'73':'rgba(217,178,122,.45)');
+ const tn=typeName();$('#ring').innerHTML=st.type?svg(st.type):svg('table');$('#ring').style.opacity=st.type?1:.55;
+ const wn=woodName();const tt=tn?tn.toLowerCase():'';
+ $('#bt').innerHTML=st.type?(wn?`${wn} <em>${tt}</em>`:`Your <em>${tt}</em>`):'Your piece will appear here';
+ const tags=[tn||null,wn||null,st.wood==='__other'&&st.src?(st.src==='own'?'You provide the wood':'We buy the wood'):null,st.style,st.photo?'Reference photo':null].filter(Boolean);
+ $('#tags').innerHTML=tags.map(x=>`<span class="tag">${x}</span>`).join('')||'<span class="tag empty">Nothing picked yet</span>';
+ const d=$('#desc').value.trim();const bd=$('#bd');bd.textContent=d||(st.type?'Add a few words about size, shape and finish on the last step.':'Start by choosing a furniture type on the left. Everything you pick shows up here.');bd.classList.toggle('empty',!d);
+ $('#stcount').textContent=[ok(0),ok(1)].filter(Boolean).length+' of 2 required picked';
+ // notes
+ let tn2='';if(st.type==='other'&&st.other.trim().length>=2){const a=KB.type[st.other.trim().toLowerCase()];tn2=a?note('We have built this before',a,'kb'):note('New to us','We have not built this often. We save your request so our team can prepare an answer, and they will confirm details by phone.','nw')}
+ $('#typeNote').innerHTML=tn2;
+ let wn2='';if(st.wood==='__other'&&st.otherWood.trim().length>=2){const a=KB.wood[st.otherWood.trim().toLowerCase()];wn2=a?note('About '+st.otherWood.trim(),a,'kb'):note('We will check this wood','We usually build with Gmelina, Mahogany and Acacia. Our team will call you to confirm if we can get this wood.','nw')}
+ $('#woodNote').innerHTML=wn2;
+ // description meter
+ const sc=dscore($('#desc').value);$('#mbar').style.width=sc.score+'%';$('#mbar').style.background=sc.score<40?'#c0392b':sc.score<70?'#d99a1f':'#1d6b45';
+ $('#mlabel').textContent=sc.wc===0?'Describe what you want':sc.score<40?'Too short. Add detail':sc.score<70?'Getting there':'Good description';
+ $('#cl').innerHTML=Object.entries(sc.c).map(([k,v])=>`<span class="${v?'y':''}">${v?'✓':'+'} ${k}</span>`).join('');
+ $('#cnt').textContent=$('#desc').value.length+' / 1000';
+}
+document.addEventListener('click',e=>{
+ const pv=e.target.closest('[data-pv]');if(pv){document.querySelectorAll('[data-pv]').forEach(x=>x.setAttribute('aria-pressed',x===pv));$('#vc').classList.toggle('on',pv.dataset.pv==='c');$('#va').classList.toggle('on',pv.dataset.pv==='a');if(pv.dataset.pv==='a')renderAdm();return}
+ const at=e.target.closest('[data-at]');if(at){admTab=at.dataset.at;renderAdm();return}
+ const ad=e.target.closest('[data-ad]');if(ad){const row=ADM[+ad.dataset.id];const a=ad.dataset.ad;if(a==='open')document.getElementById('ans'+ad.dataset.id).classList.toggle('on');else if(a==='save'){const v=document.getElementById('at'+ad.dataset.id).value.trim();if(v){row.a=v;toast('Saved. The next customer who asks gets this answer.');renderAdm()}}else if(a==='opt'){row.a='Added as an official option.';toast('Added as an option');renderAdm()}return}
+ const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.k){st.type=b.dataset.k;const r=$('#ring');r.classList.remove('pop');void r.offsetWidth;r.classList.add('pop');if(st.type==='other')setTimeout(()=>$('#otherIn').focus(),50);render()}
+ else if(b.dataset.ox){st.type='other';st.other=b.dataset.ox;$('#otherIn').value=b.dataset.ox;render()}
+ else if(b.dataset.w){st.wood=b.dataset.w;if(st.wood==='__other')setTimeout(()=>$('#woodIn').focus(),50);render()}
+ else if(b.dataset.src){st.src=b.dataset.src;render()}
+ else if(b.dataset.st){st.style=st.style===b.dataset.st?null:b.dataset.st;render()}
+ else if(b.dataset.i){const d=$('#desc');d.value=(d.value.trim()?d.value.trim().replace(/[.,]$/,'')+', ':'')+b.dataset.i;render();d.focus()}
+ else if(b.classList.contains('st')){const i=+b.dataset.i;if(i<=st.step||ok(st.step)){st.step=i;render()}}
+ else if(b.id==='prev'){st.step--;render()}
+ else if(b.id==='next'){if(st.step<3){leave(st.step);st.step++;render()}else{leave(3);generate()}}
+ else if(b.id==='upBtn')$('#upIn').click();
+ else if(b.id==='again'){$('#stage').className='stage';$('#stlabel').textContent='YOUR DESIGN BRIEF';st.step=3;render()}
+ else if(b.id==='save'){st.saved=!st.saved;b.setAttribute('aria-pressed',st.saved);b.querySelector('span').textContent=st.saved?'Saved':'Save';toast(st.saved?'Saved to Favorites':'Removed from Favorites')}
+ else if(b.id==='send')toast('Opens the Send to our team form');
+ else if(b.classList.contains('f'))toast('Opens that recent design')});
+function leave(i){const log=(k,t,known)=>{if(known)return;let r=ADM.find(x=>x.k===k&&x.t.toLowerCase()===t.toLowerCase());if(r){r.n++}else{ADM.unshift({k,t,n:1,when:'Today',a:null})}toast('Noted. We will prepare an answer for next time.')};
+ if(i===0&&st.type==='other')log('Furniture type',st.other.trim(),!!KB.type[st.other.trim().toLowerCase()]);
+ if(i===1&&st.wood==='__other')log('Wood',st.otherWood.trim(),!!KB.wood[st.otherWood.trim().toLowerCase()])}
+$('#otherIn').addEventListener('input',e=>{st.other=e.target.value;render()});
+$('#woodIn').addEventListener('input',e=>{st.otherWood=e.target.value;render()});
+$('#desc').addEventListener('input',render);
+// photo upload with compression
+$('#upIn').addEventListener('change',async e=>{const f=e.target.files[0];const er=$('#uperr');er.textContent='';if(!f)return;
+ if(!f.type.startsWith('image/')){er.textContent='That file is not a photo. Choose a JPG, PNG or WebP.';e.target.value='';return}
+ if(f.size>30*1024*1024){er.textContent='That photo is over 30 MB. Choose a smaller one.';e.target.value='';return}
+ try{const bmp=await createImageBitmap(f);const sc=Math.min(1,2000/Math.max(bmp.width,bmp.height));const c=document.createElement('canvas');c.width=Math.round(bmp.width*sc);c.height=Math.round(bmp.height*sc);c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
+  let q=.88,blob;do{blob=await new Promise(r=>c.toBlob(r,'image/jpeg',q));q-=.1}while(blob.size>5*1024*1024&&q>.3);
+  if(blob.size>5*1024*1024){er.textContent='We could not shrink that photo enough. Try another.';return}
+  st.photo=blob;const mb=x=>(x/1048576).toFixed(1)+' MB';const b=$('#upBtn');b.querySelector('img')?.remove();const im=document.createElement('img');im.src=URL.createObjectURL(blob);im.alt='Your reference photo';b.prepend(im);$('#upL').textContent=f.size>blob.size?`${mb(f.size)} → ${mb(blob.size)}`:mb(blob.size);render()}
+ catch(x){er.textContent='We could not read that photo. Try another.'}});
+const M=[['Sketching your design','Drawing the shape and proportions.'],['Choosing the grain','Matching the wood you picked.'],['Adding the finish','Polishing the details.'],['Almost ready','Putting the final touches.']];
+function generate(){const s=$('#stage');s.className='stage s-gen';$('#stlabel').textContent='CREATING YOUR DESIGN';let k=0;const gm=$('#gm'),gs=$('#gs'),gb=$('#gb');gb.style.width='6%';gm.textContent=M[0][0];gs.textContent=M[0][1];
+ const tm=setInterval(()=>{k++;if(k>=M.length){clearInterval(tm);s.className='stage s-res';$('#stlabel').textContent='YOUR DESIGN IS READY';$('#stcount').textContent='';st.saved=false;const sv=$('#save');sv.setAttribute('aria-pressed','false');sv.querySelector('span').textContent='Save';return}gm.textContent=M[k][0];gs.textContent=M[k][1];gb.style.width=(k+1)*25+'%'},1100)}
+// admin
+let admTab='new';
+function renderAdm(){const nw=ADM.filter(x=>!x.a),dn=ADM.filter(x=>x.a);$('#an').textContent='('+nw.length+')';$('#ad').textContent='('+dn.length+')';
+ document.querySelectorAll('.at').forEach(x=>x.setAttribute('aria-pressed',x.dataset.at===admTab));
+ const rows=admTab==='new'?nw:dn;
+ $('#alist').innerHTML=rows.length?rows.map(r=>{const i=ADM.indexOf(r);return `<div class="arow glass"><span class="kind">${r.k.toUpperCase()}</span><div class="t"><b>${r.t}</b><small>${r.a?r.a:'First asked '+r.when}</small></div><span><b>${r.n}×</b> asked</span><div style="display:flex;gap:8px">${r.a?'':`<button class="btn" data-ad="open" data-id="${i}" style="padding:9px 16px;font-size:14px">Write answer</button>`}${!r.a&&r.k==='Furniture type'?`<button class="btn p" data-ad="opt" data-id="${i}" style="padding:9px 16px;font-size:14px">Add as option</button>`:''}</div><div class="ans" id="ans${i}"><textarea id="at${i}" class="fld" placeholder="What should the customer be told?"></textarea><button class="btn p" data-ad="save" data-id="${i}">Save answer</button></div></div>`}).join(''):'<div class="note">Nothing here.</div>'}
+render();
+</script></body></html>

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LP Furniture hero: equal panels</title>
+<style>
+:root{--bg:#1a110c;--panel:rgba(48,32,24,.62);--card:#2a1c14;--line:rgba(255,235,205,.14);--cream:#f6ead8;--mut:#d9c7ae;--gold:#e3b24f;--ink:#1a110c;--gap:18px;--card-img:168px}
+*{box-sizing:border-box;margin:0}
+body{font-family:'DM Sans',system-ui,sans-serif;color:var(--cream);background:radial-gradient(1200px 700px at 20% 30%,#3a281c,#1a110c);min-height:100vh}
+nav{margin:16px 48px 0;height:80px;border:1px solid var(--line);border-radius:22px;background:var(--panel);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:space-between;padding:0 32px}
+nav b{font-family:Georgia,serif;font-size:26px}
+nav .l{display:flex;gap:28px;align-items:center;font-weight:600}
+.btn{border:1px solid var(--line);border-radius:14px;padding:12px 22px;font-weight:700;color:var(--cream);background:rgba(0,0,0,.35)}
+.btn.p{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.hero{display:grid;grid-template-columns:minmax(380px,1fr) minmax(0,1.75fr);gap:36px;padding:28px 48px 40px;align-items:center;min-height:calc(100vh - 112px)}
+.copy .eyebrow{font-size:13px;letter-spacing:.14em;font-weight:700;color:var(--gold);margin-bottom:18px}
+h1{font-family:Georgia,serif;font-size:clamp(40px,4.4vw,74px);line-height:1.04;margin-bottom:22px}
+h1 em{color:var(--gold)}
+.copy p{font-size:18px;line-height:1.65;color:var(--mut);max-width:540px;margin-bottom:28px}
+.copy .row{display:flex;gap:14px;flex-wrap:wrap}
+/* three equal panels */
+.panels{display:grid;grid-template-columns:minmax(0,2.3fr) minmax(0,1fr) minmax(0,1fr);gap:var(--gap);height:min(820px,calc(100vh - 150px));min-height:560px}
+.panel{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:26px;background:var(--panel);backdrop-filter:blur(14px);overflow:hidden;min-height:0}
+.ph{padding:18px 18px 12px;height:112px;flex:none}
+.ph .t{font-size:13px;letter-spacing:.12em;font-weight:700;color:var(--gold)}
+.ph .s{font-size:14.5px;color:var(--mut);margin-top:6px;line-height:1.35}
+.ph .h{font-family:Georgia,serif;font-size:clamp(17px,1.25vw,22px);white-space:nowrap;font-weight:700;margin-top:4px}
+.view{flex:1;min-height:0;overflow:hidden;padding:0 14px;-webkit-mask-image:linear-gradient(#000 88%,transparent);mask-image:linear-gradient(#000 88%,transparent)}
+.track{display:flex;flex-direction:column;gap:var(--gap);animation:up 38s linear infinite}
+.panel:hover .track{animation-play-state:paused}
+@keyframes up{to{transform:translateY(calc(-50% - var(--gap)/2))}}
+.card{flex:none;border:1px solid var(--line);border-radius:18px;background:var(--card);overflow:hidden}
+.img{height:var(--card-img);position:relative}
+.cap{padding:11px 14px 13px;height:66px}
+.cap b{display:block;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cap span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700;color:var(--gold);font-size:15px}
+.tag{position:absolute;left:10px;bottom:10px;font-size:11.5px;font-weight:800;letter-spacing:.06em;padding:5px 10px;border-radius:999px;background:rgba(26,17,12,.82);color:var(--cream)}
+.tag.g{background:var(--gold);color:var(--ink);top:10px;bottom:auto}
+.ai{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px;padding:0 18px 14px}
+.ai .sh{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);min-height:0}
+.pf{white-space:nowrap;gap:8px;padding:12px 18px 16px;flex:none;display:flex;justify-content:space-between;font-size:14px;color:var(--mut);border-top:1px solid var(--line)}
+.pf a{color:var(--gold);font-weight:700}
+/* stand-in photos: swap for the real images */
+.i1{background:linear-gradient(135deg,#8a5a3a,#d9bd9a)}.i2{background:linear-gradient(135deg,#c9b79c,#6b4a30)}
+.i3{background:linear-gradient(135deg,#5c3a24,#b88b5f)}.i4{background:linear-gradient(135deg,#7a4a2a,#e2c9a6)}
+.i5{background:linear-gradient(135deg,#3d2a1d,#9b7048)}.i6{background:linear-gradient(135deg,#a47b53,#efe0c8)}
+@media (max-width:1280px){.hero{grid-template-columns:minmax(300px,.8fr) 1.6fr;gap:24px;padding:24px 28px}.panels{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,1fr);gap:12px}}
+@media (max-width:1500px){.pf .x{display:none}.pf{justify-content:flex-end}.pf:has(.x)~x{}}
+@media (max-width:1100px){.hero{grid-template-columns:1fr}.copy{max-width:640px}.panels{height:640px}}
+@media (max-width:860px){nav{margin:10px 14px 0;padding:0 12px;height:64px}nav b{font-size:21px}nav .l{gap:8px}.btn{padding:9px 14px;font-size:14px}body{overflow-x:hidden}.nav-l a{display:none}.hero{padding:22px 16px 32px}
+ .panels{grid-template-columns:1fr;height:auto}.panel{height:auto}.ai{grid-template-rows:none;grid-auto-rows:150px}.view{overflow:visible;mask:none;-webkit-mask:none;padding-bottom:6px}
+ .track{animation:none;flex-direction:row;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px}
+ .track .card{width:70%;scroll-snap-align:start}.track .dup{display:none}.ph{height:auto}}
+@media (prefers-reduced-motion:reduce){.track{animation:none}.view{overflow-y:auto}}
+</style></head><body>
+<nav><b>LP<i>Furniture</i></b><div class="l nav-l"><a>Home</a><a>Catalog</a><a>Assistant</a><span class="btn">Login</span><span class="btn p">Register</span></div></nav>
+<main class="hero">
+ <div class="copy"><div class="eyebrow">HANDCRAFTED SINCE 2020 · SAN JUAN, BATANGAS</div>
+  <h1>Crafting Comfort and <em>Elegance</em> for Every Home</h1>
+  <p>Premium custom wood furniture, handcrafted by skilled artisans. From your living room to your office, built to last, made for you.</p>
+  <div class="row"><span class="btn p">Shop Now</span><span class="btn">Customize Furniture</span><span class="btn">Contact Us</span></div></div>
+ <div class="panels">
+  <section class="panel" aria-label="AI design samples"><div class="ph"><div class="t">AI SHOWCASE</div><div class="h">Imagine it. We build it.</div><div class="s">Describe a piece and our AI shows it to you.</div></div>
+   <div class="ai"><div class="sh i1"><span class="tag">AI SAMPLE</span></div><div class="sh i2"><span class="tag">AI SAMPLE</span></div><div class="sh i3"><span class="tag">AI SAMPLE</span></div><div class="sh i4"><span class="tag">AI SAMPLE</span></div></div>
+   <div class="pf"><span>Made with AI</span><a>Design yours</a></div></section>
+  <section class="panel" aria-label="Best sellers"><div class="ph"><div class="t">BEST SELLERS</div><div class="s">What customers order most</div></div>
+   <div class="view"><div class="track" id="t2"></div></div>
+   <div class="pf"><span class="x">Updated weekly</span><a>See catalog</a></div></section>
+  <section class="panel" aria-label="New arrivals"><div class="ph"><div class="t">HOT · NEW</div><div class="s">Fresh from the workshop</div></div>
+   <div class="view"><div class="track" id="t3"></div></div>
+   <div class="pf"><span class="x">Newest first</span><a>See catalog</a></div></section>
+ </div>
+</main>
+<script>
+const D={t1:[],tt:[['Walnut lounge chair','AI SAMPLE','i1'],['Root-slab side table','AI SAMPLE','i2'],['Carved bedroom set','AI SAMPLE','i3'],['Arched main door','AI SAMPLE','i4']],
+t2:[['King Bed Frame','₱28,000.00','i5','BEST SELLER'],['TV Console Cabinet','₱13,500.00','i3','BEST SELLER'],['Sala Set 5-piece','₱42,000.00','i6','BEST SELLER'],['Dining Set','₱36,000.00','i1','BEST SELLER']],
+t3:[['Study Table with Shelves','₱11,000.00','i2','NEW'],['3-Seater Sofa Frame','₱15,500.00','i4','NEW'],['King Bed Frame','₱28,000.00','i5','NEW'],['Lounge Bench','₱9,800.00','i6','NEW']]};
+for(const k in D){const el=document.getElementById(k);if(!el)continue;const html=D[k].map((c,i)=>`<article class="card"><div class="img ${c[2]}">${k=='t1'?`<span class="tag">AI SAMPLE</span>`:`<span class="tag g">${c[3]}</span>`}</div><div class="cap"><b>${c[0]}</b>${k=='t1'?'<span style="color:var(--mut);font-weight:500;font-size:13.5px">Start a design like this</span>':`<span>${c[1]}</span>`}</div></article>`).join('');
+el.innerHTML=html+html.replace(/class="card"/g,'class="card dup"');}
+</script></body></html>

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Designs prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f0e8;--card:#fdfaf5;--ink:#2a1812;--mut:#6e5a4c;--line:#e6dccd;--choc:#2a1812;--gold:#b9801f;--goldbg:#f6e7c6;--ok:#1d6b45;--okbg:#dff1e6;--bad:#a1262b;--badbg:#fbdede;--busy:#7a5a12;--busybg:#f6ecc9}
+*{box-sizing:border-box;margin:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:28px clamp(16px,5vw,80px) 60px}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.back{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);background:var(--card);border-radius:14px;padding:12px 18px;font-weight:700}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin:22px 0 22px}
+h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(30px,3.4vw,44px)}
+.sub{color:var(--mut);margin-top:6px}
+.cta{background:var(--choc);color:#fff;border:0;border-radius:999px;padding:13px 22px;font-weight:700}
+.tabs{display:flex;gap:6px;padding:5px;background:rgba(255,255,255,.55);border:1px solid var(--line);border-radius:999px;width:max-content;max-width:100%;backdrop-filter:blur(8px);overflow-x:auto}
+.tab{border:0;background:none;border-radius:999px;padding:11px 20px;font-weight:700;display:flex;gap:9px;align-items:center;white-space:nowrap;color:var(--mut)}
+.tab .n{font-size:12.5px;background:var(--line);border-radius:999px;padding:2px 8px;color:var(--ink)}
+.tab[aria-selected=true]{background:var(--choc);color:#fff}
+.tab[aria-selected=true] .n{background:rgba(255,255,255,.2);color:#fff}
+.help{margin:16px 0 20px;color:var(--mut);max-width:70ch}
+.filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 15px;font-weight:600;font-size:14px;color:var(--mut)}
+.chip[aria-pressed=true]{border-color:var(--choc);color:var(--ink);background:#fff;box-shadow:inset 0 0 0 1px var(--choc)}
+.day{font-size:13px;letter-spacing:.08em;font-weight:700;color:var(--mut);margin:24px 0 10px}
+/* history rows */
+.row{display:grid;grid-template-columns:96px 1fr auto;gap:18px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;margin-bottom:10px}
+.th{width:96px;height:96px;border-radius:14px;overflow:hidden;position:relative;display:grid;place-items:center}
+.th.f{background:var(--badbg);color:var(--bad)}.th.b{background:var(--busybg);color:var(--busy)}
+.pr{font-weight:700;font-size:16.5px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.meta{color:var(--mut);font-size:14px;margin-top:6px;display:flex;gap:6px 14px;flex-wrap:wrap}
+.why{color:var(--bad);font-size:14px;margin-top:6px}
+.side{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.st{display:inline-flex;gap:6px;align-items:center;font-size:13px;font-weight:700;border-radius:999px;padding:5px 12px}
+.st.ok{background:var(--okbg);color:var(--ok)}.st.bad{background:var(--badbg);color:var(--bad)}.st.busy{background:var(--busybg);color:var(--busy)}
+.btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-weight:700;font-size:14px}
+.btn.p{background:var(--choc);color:#fff;border-color:var(--choc)}
+.btn.g{border-color:var(--gold);color:#7a5210;background:var(--goldbg)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+/* image grids */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.g-card{background:var(--card);border:1px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column}
+.g-img{aspect-ratio:1/1;position:relative}
+.g-img .ai{position:absolute;left:10px;bottom:10px;font-size:11.5px;font-weight:800;letter-spacing:.05em;padding:4px 10px;border-radius:999px;background:rgba(42,24,18,.82);color:#fff}
+.fav{position:absolute;right:10px;top:10px;width:42px;height:42px;border-radius:50%;border:0;background:rgba(253,250,245,.92);display:grid;place-items:center;box-shadow:0 2px 10px rgba(42,24,18,.2)}
+.fav svg{width:20px;height:20px;fill:none;stroke:var(--ink);stroke-width:2}
+.fav[aria-pressed=true] svg{fill:var(--gold);stroke:var(--gold)}
+.g-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:10px;flex:1}
+.g-body .pr{font-size:15px}
+.g-body .meta{margin:0}
+.g-body .acts{justify-content:flex-start;margin-top:auto}
+.empty{text-align:center;padding:60px 20px;border:1px dashed var(--line);border-radius:22px;background:rgba(255,255,255,.45)}
+.empty h2{font-family:'Playfair Display',Georgia,serif;margin-bottom:8px}
+.empty p{color:var(--mut);margin-bottom:18px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--choc);color:#fff;padding:12px 20px;border-radius:999px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+.c1{background:linear-gradient(135deg,#7a4a2a,#d6b48c)}.c2{background:linear-gradient(135deg,#5a3a26,#b58a5d)}.c3{background:linear-gradient(135deg,#8c6a48,#e9d6b8)}.c4{background:linear-gradient(135deg,#3c2a1f,#8d6a49)}.c5{background:linear-gradient(135deg,#a47b53,#efe0c8)}.c6{background:linear-gradient(135deg,#6b4a30,#c9a87a)}
+@media (max-width:640px){.row{grid-template-columns:72px 1fr;gap:12px}.th{width:72px;height:72px}.side{grid-column:1/-1;align-items:stretch;gap:10px}.side .st{align-self:flex-start}.side .acts{justify-content:stretch}.side .acts .btn{flex:1}.grid{grid-template-columns:1fr 1fr;gap:12px}.g-body{padding:10px}.g-body .acts .btn{padding:8px 12px;font-size:13px}.cta{width:100%}}
+@media (max-width:420px){.grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<button class="back"><span aria-hidden="true">←</span> Back</button>
+<div class="top"><div><h1>My Designs</h1><p class="sub">Everything you have asked our AI to design.</p></div><button class="cta">Design something new</button></div>
+<div class="tabs" role="tablist" id="tabs"></div>
+<p class="help" id="help"></p>
+<div id="view"></div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+const bm='<svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg>';
+let items=[
+ {id:1,p:'A modern minimalist bookshelf in walnut, floor-to-ceiling, open-back shelving.',s:'No preference',when:'Today, 9:41 AM',day:'Today',st:'busy'},
+ {id:2,p:'Create a modern entertainment center made from premium solid Narra wood with a sophisticated and luxurious appearance.',s:'Modern',when:'Today, 8:15 AM',day:'Today',st:'ok',c:'c1',fav:true},
+ {id:3,p:'A rustic oak dining table with turned legs and a distressed finish, seats six.',s:'Rustic',when:'Yesterday',day:'This week',st:'ok',c:'c2'},
+ {id:4,p:'A modern minimalist bookshelf in walnut, floor-to-ceiling, open-back shelving.',s:'No preference',when:'3 days ago',day:'This week',st:'bad',why:'Took too long to generate'},
+ {id:5,p:'Solid wood front door with two narrow glass panels and a brass handle.',s:'Contemporary',when:'5 days ago',day:'This week',st:'ok',c:'c4',fav:true},
+ {id:6,p:'A rustic oak dining table with turned legs and a distressed finish, seats six.',s:'Rustic',when:'2 months ago',day:'Earlier',st:'bad',why:'Took too long to generate'},
+ {id:7,p:'Queen bed frame with a tall carved headboard in mahogany.',s:'Classic',when:'2 months ago',day:'Earlier',st:'ok',c:'c3'},
+ {id:8,p:'A modern minimalist bookshelf in walnut, floor-to-ceiling, open-back shelving.',s:'No preference',when:'2 months ago',day:'Earlier',st:'bad',why:'Took too long to generate'},
+ {id:9,p:'Round coffee table with a live-edge top and tapered legs.',s:'Natural',when:'3 months ago',day:'Earlier',st:'ok',c:'c5'},
+ {id:10,p:'Walk-in wardrobe with sliding doors and a built-in vanity.',s:'No preference',when:'3 months ago',day:'Earlier',st:'ok',c:'c6'}];
+let tab='history',filt='all';
+const $=s=>document.querySelector(s);
+const ready=()=>items.filter(i=>i.st==='ok'),favs=()=>ready().filter(i=>i.fav);
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2200)}
+const stChip=i=>i.st==='ok'?'<span class="st ok">✓ Ready</span>':i.st==='bad'?'<span class="st bad">✕ Failed</span>':'<span class="st busy">● Making your design</span>';
+function tabs(){const t=[['history','History',items.length],['gallery','Gallery',ready().length],['favorites','Favorites',favs().length]];
+ $('#tabs').innerHTML=t.map(x=>`<button class="tab" role="tab" aria-selected="${tab===x[0]}" data-t="${x[0]}">${x[1]}<span class="n">${x[2]}</span></button>`).join('');
+ $('#help').textContent={history:'Every design request you made, including the ones that did not work.',gallery:'All your finished designs in one place.',favorites:'Finished designs you saved with the bookmark.'}[tab]}
+const thumb=i=>i.st==='ok'?`<div class="th ${i.c}"></div>`:i.st==='bad'?'<div class="th f" aria-hidden="true"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg></div>':'<div class="th b" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18"/></svg></div>';
+function actions(i){if(i.st==='ok')return `<button class="btn p" data-a="use" data-id="${i.id}">Use for custom order</button><button class="btn" data-a="open" data-id="${i.id}">View</button>`;
+ if(i.st==='bad')return `<button class="btn g" data-a="retry" data-id="${i.id}">Try again</button>`;return '<button class="btn" disabled>Please wait</button>'}
+function history(){const f=items.filter(i=>filt==='all'||(filt==='ok'&&i.st==='ok')||(filt==='bad'&&i.st==='bad'));
+ let h=`<div class="filters" role="group" aria-label="Filter">${[['all','All'],['ok','Ready'],['bad','Failed']].map(x=>`<button class="chip" aria-pressed="${filt===x[0]}" data-f="${x[0]}">${x[1]}</button>`).join('')}</div>`;
+ if(!f.length)return h+empty('Nothing here','No designs match this filter.');
+ let last='';for(const i of f){if(i.day!==last){h+=`<div class="day">${i.day.toUpperCase()}</div>`;last=i.day}
+  h+=`<article class="row">${thumb(i)}<div><div class="pr">${i.p}</div><div class="meta"><span>${i.s}</span><span>${i.when}</span></div>${i.why?`<div class="why">${i.why}. Try again, or change the description.</div>`:''}</div><div class="side">${stChip(i)}<div class="acts">${actions(i)}</div></div></article>`}return h}
+const card=i=>`<article class="g-card"><div class="g-img ${i.c}"><span class="ai">AI DESIGN</span><button class="fav" aria-pressed="${!!i.fav}" aria-label="${i.fav?'Remove from favorites':'Save to favorites'}" data-a="fav" data-id="${i.id}">${bm}</button></div><div class="g-body"><div class="pr">${i.p}</div><div class="meta"><span>${i.s}</span><span>${i.when}</span></div><div class="acts"><button class="btn p" data-a="use" data-id="${i.id}">Use for custom order</button><button class="btn" data-a="open" data-id="${i.id}">View</button></div></div></article>`;
+function empty(t,p,b){return `<div class="empty"><h2>${t}</h2><p>${p}</p>${b?`<button class="cta" data-a="new">${b}</button>`:''}</div>`}
+function gallery(){const r=ready();return r.length?`<div class="grid">${r.map(card).join('')}</div>`:empty('No finished designs yet','Designs that finish successfully show up here.','Design something new')}
+function favorites(){const r=favs();return r.length?`<div class="grid">${r.map(card).join('')}</div>`:empty('No favorites yet','Tap the bookmark on any finished design in your Gallery to keep it here.','Open Gallery')}
+function render(){tabs();$('#view').innerHTML={history,gallery,favorites}[tab]()}
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.t){tab=b.dataset.t;render()}
+ else if(b.dataset.f){filt=b.dataset.f;render()}
+ else if(b.dataset.a){const i=items.find(x=>x.id==b.dataset.id),a=b.dataset.a;
+  if(a==='fav'){i.fav=!i.fav;render();toast(i.fav?'Saved to Favorites':'Removed from Favorites')}
+  else if(a==='retry'){i.st='busy';delete i.why;render();toast('Trying again with the same description')}
+  else if(a==='use')toast('Opens the custom order form with this design')
+  else if(a==='open')toast('Opens the design in a larger view')
+  else if(a==='new')toast('Opens the AI design box')}
+ if(b.dataset.a==='new'&&tab==='favorites'){tab='gallery';render()}});
+$('#tabs').addEventListener('keydown',e=>{const o=['history','gallery','favorites'],k=o.indexOf(tab);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){tab=o[(k+(e.key==='ArrowRight'?1:2))%3];render();document.querySelector('.tab[aria-selected=true]').focus()}});
+render();
+</script></body></html>
