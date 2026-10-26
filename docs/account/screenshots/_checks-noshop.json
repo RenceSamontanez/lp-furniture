@@ -1,0 +1,97 @@
+{
+  "sizes": [
+    "1920x1080",
+    "1440x900",
+    "1366x768",
+    "820x1180",
+    "390x844"
+  ],
+  "pages": [
+    {
+      "page": "order/pickup-no-shop-location",
+      "size": "1920x1080",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "false",
+        "false"
+      ],
+      "msg": "Everything we need is here.",
+      "cardShown": true,
+      "addressFormHidden": true,
+      "hasMap": false,
+      "mapInsideViewportWidth": null,
+      "mapHeight": null,
+      "soon": true,
+      "directions": false
+    },
+    {
+      "page": "order/pickup-no-shop-location",
+      "size": "1440x900",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "false",
+        "false"
+      ],
+      "msg": "Everything we need is here.",
+      "cardShown": true,
+      "addressFormHidden": true,
+      "hasMap": false,
+      "mapInsideViewportWidth": null,
+      "mapHeight": null,
+      "soon": true,
+      "directions": false
+    },
+    {
+      "page": "order/pickup-no-shop-location",
+      "size": "1366x768",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "false",
+        "false"
+      ],
+      "msg": "Everything we need is here.",
+      "cardShown": true,
+      "addressFormHidden": true,
+      "hasMap": false,
+      "mapInsideViewportWidth": null,
+      "mapHeight": null,
+      "soon": true,
+      "directions": false
+    },
+    {
+      "page": "order/pickup-no-shop-location",
+      "size": "820x1180",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "false",
+        "false"
+      ],
+      "msg": "Everything we need is here.",
+      "cardShown": true,
+      "addressFormHidden": true,
+      "hasMap": false,
+      "mapInsideViewportWidth": null,
+      "mapHeight": null,
+      "soon": true,
+      "directions": false
+    },
+    {
+      "page": "order/pickup-no-shop-location",
+      "size": "390x844",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "false",
+        "false"
+      ],
+      "msg": "Everything we need is here.",
+      "cardShown": true,
+      "addressFormHidden": true,
+      "hasMap": false,
+      "mapInsideViewportWidth": null,
+      "mapHeight": null,
+      "soon": true,
+      "directions": false
+    }
+  ],
+  "notes": []
+}

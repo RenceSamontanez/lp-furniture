@@ -36,28 +36,6 @@
       }
     },
     {
-      "page": "account/fresh/verify",
-      "size": "1920x1080",
-      "horizontalScroll": false,
-      "maBottom": 1080,
-      "viewportH": 1080,
-      "maFitsViewport": true,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
-    },
-    {
-      "page": "account/fresh/account",
-      "size": "1920x1080",
-      "horizontalScroll": false,
-      "maBottom": 1080,
-      "viewportH": 1080,
-      "maFitsViewport": true,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
-    },
-    {
       "page": "account/saved/personal",
       "size": "1920x1080",
       "horizontalScroll": false,
@@ -97,28 +75,6 @@
       "footerBar": null
     },
     {
-      "page": "account/google/verify",
-      "size": "1920x1080",
-      "horizontalScroll": false,
-      "maBottom": 1080,
-      "viewportH": 1080,
-      "maFitsViewport": true,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
-    },
-    {
-      "page": "account/google/account",
-      "size": "1920x1080",
-      "horizontalScroll": false,
-      "maBottom": 1080,
-      "viewportH": 1080,
-      "maFitsViewport": true,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
-    },
-    {
       "page": "account/pending/personal",
       "size": "1920x1080",
       "horizontalScroll": false,
@@ -131,17 +87,6 @@
         "bottom": 1061,
         "visible": true
       }
-    },
-    {
-      "page": "account/pending/verify",
-      "size": "1920x1080",
-      "horizontalScroll": false,
-      "maBottom": 1080,
-      "viewportH": 1080,
-      "maFitsViewport": true,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
     },
     {
       "page": "combobox",
@@ -191,6 +136,23 @@
       "msg": "To continue, add: Province, City or municipality, Barangay, House no. and street, Postal code."
     },
     {
+      "page": "order/pickup-with-shop-location",
+      "size": "1920x1080",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "false",
+        "false"
+      ],
+      "msg": "Everything we need is here.",
+      "cardShown": true,
+      "addressFormHidden": true,
+      "hasMap": true,
+      "mapInsideViewportWidth": true,
+      "mapHeight": 188,
+      "soon": false,
+      "directions": true
+    },
+    {
       "page": "account/fresh/personal",
       "size": "1440x900",
       "horizontalScroll": false,
@@ -217,28 +179,6 @@
         "bottom": 881,
         "visible": true
       }
-    },
-    {
-      "page": "account/fresh/verify",
-      "size": "1440x900",
-      "horizontalScroll": false,
-      "maBottom": 900,
-      "viewportH": 900,
-      "maFitsViewport": true,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
-    },
-    {
-      "page": "account/fresh/account",
-      "size": "1440x900",
-      "horizontalScroll": false,
-      "maBottom": 900,
-      "viewportH": 900,
-      "maFitsViewport": true,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
     },
     {
       "page": "account/saved/personal",
@@ -270,28 +210,6 @@
     },
     {
       "page": "account/google/security",
-      "size": "1440x900",
-      "horizontalScroll": false,
-      "maBottom": 900,
-      "viewportH": 900,
-      "maFitsViewport": true,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
-    },
-    {
-      "page": "account/google/verify",
-      "size": "1440x900",
-      "horizontalScroll": false,
-      "maBottom": 900,
-      "viewportH": 900,
-      "maFitsViewport": true,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
-    },
-    {
-      "page": "account/google/account",
       "size": "1440x900",
       "horizontalScroll": false,
       "maBottom": 900,
@@ -316,17 +234,6 @@
       }
     },
     {
-      "page": "account/pending/verify",
-      "size": "1440x900",
-      "horizontalScroll": false,
-      "maBottom": 900,
-      "viewportH": 900,
-      "maFitsViewport": true,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
-    },
-    {
       "page": "combobox",
       "size": "1440x900",
       "listOpen": true,
@@ -374,6 +281,23 @@
       "msg": "To continue, add: Province, City or municipality, Barangay, House no. and street, Postal code."
     },
     {
+      "page": "order/pickup-with-shop-location",
+      "size": "1440x900",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "false",
+        "false"
+      ],
+      "msg": "Everything we need is here.",
+      "cardShown": true,
+      "addressFormHidden": true,
+      "hasMap": true,
+      "mapInsideViewportWidth": true,
+      "mapHeight": 188,
+      "soon": false,
+      "directions": true
+    },
+    {
       "page": "account/fresh/personal",
       "size": "1366x768",
       "horizontalScroll": false,
@@ -400,28 +324,6 @@
         "bottom": 755,
         "visible": true
       }
-    },
-    {
-      "page": "account/fresh/verify",
-      "size": "1366x768",
-      "horizontalScroll": false,
-      "maBottom": 768,
-      "viewportH": 768,
-      "maFitsViewport": true,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
-    },
-    {
-      "page": "account/fresh/account",
-      "size": "1366x768",
-      "horizontalScroll": false,
-      "maBottom": 768,
-      "viewportH": 768,
-      "maFitsViewport": true,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
     },
     {
       "page": "account/saved/personal",
@@ -463,28 +365,6 @@
       "footerBar": null
     },
     {
-      "page": "account/google/verify",
-      "size": "1366x768",
-      "horizontalScroll": false,
-      "maBottom": 768,
-      "viewportH": 768,
-      "maFitsViewport": true,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
-    },
-    {
-      "page": "account/google/account",
-      "size": "1366x768",
-      "horizontalScroll": false,
-      "maBottom": 768,
-      "viewportH": 768,
-      "maFitsViewport": true,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
-    },
-    {
       "page": "account/pending/personal",
       "size": "1366x768",
       "horizontalScroll": false,
@@ -497,17 +377,6 @@
         "bottom": 755,
         "visible": true
       }
-    },
-    {
-      "page": "account/pending/verify",
-      "size": "1366x768",
-      "horizontalScroll": false,
-      "maBottom": 768,
-      "viewportH": 768,
-      "maFitsViewport": true,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
     },
     {
       "page": "combobox",
@@ -555,6 +424,23 @@
       "defaultKeep": "no",
       "continueDisabled": "true",
       "msg": "To continue, add: Province, City or municipality, Barangay, House no. and street, Postal code."
+    },
+    {
+      "page": "order/pickup-with-shop-location",
+      "size": "1366x768",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "false",
+        "false"
+      ],
+      "msg": "Everything we need is here.",
+      "cardShown": true,
+      "addressFormHidden": true,
+      "hasMap": true,
+      "mapInsideViewportWidth": true,
+      "mapHeight": 188,
+      "soon": false,
+      "directions": true
     },
     {
       "page": "account/fresh/personal",
@@ -583,28 +469,6 @@
         "bottom": 1093,
         "visible": true
       }
-    },
-    {
-      "page": "account/fresh/verify",
-      "size": "820x1180",
-      "horizontalScroll": false,
-      "maBottom": 1525,
-      "viewportH": 1180,
-      "maFitsViewport": false,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
-    },
-    {
-      "page": "account/fresh/account",
-      "size": "820x1180",
-      "horizontalScroll": false,
-      "maBottom": 1362,
-      "viewportH": 1180,
-      "maFitsViewport": false,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
     },
     {
       "page": "account/saved/personal",
@@ -646,28 +510,6 @@
       "footerBar": null
     },
     {
-      "page": "account/google/verify",
-      "size": "820x1180",
-      "horizontalScroll": false,
-      "maBottom": 1607,
-      "viewportH": 1180,
-      "maFitsViewport": false,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
-    },
-    {
-      "page": "account/google/account",
-      "size": "820x1180",
-      "horizontalScroll": false,
-      "maBottom": 1362,
-      "viewportH": 1180,
-      "maFitsViewport": false,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
-    },
-    {
       "page": "account/pending/personal",
       "size": "820x1180",
       "horizontalScroll": false,
@@ -680,17 +522,6 @@
         "bottom": 1537,
         "visible": false
       }
-    },
-    {
-      "page": "account/pending/verify",
-      "size": "820x1180",
-      "horizontalScroll": false,
-      "maBottom": 1641,
-      "viewportH": 1180,
-      "maFitsViewport": false,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
     },
     {
       "page": "combobox",
@@ -740,6 +571,23 @@
       "msg": "To continue, add: Province, City or municipality, Barangay, House no. and street, Postal code."
     },
     {
+      "page": "order/pickup-with-shop-location",
+      "size": "820x1180",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "false",
+        "false"
+      ],
+      "msg": "Everything we need is here.",
+      "cardShown": true,
+      "addressFormHidden": true,
+      "hasMap": true,
+      "mapInsideViewportWidth": true,
+      "mapHeight": 188,
+      "soon": false,
+      "directions": true
+    },
+    {
       "page": "account/fresh/personal",
       "size": "390x844",
       "horizontalScroll": false,
@@ -766,28 +614,6 @@
         "bottom": 1250,
         "visible": false
       }
-    },
-    {
-      "page": "account/fresh/verify",
-      "size": "390x844",
-      "horizontalScroll": false,
-      "maBottom": 1719,
-      "viewportH": 844,
-      "maFitsViewport": false,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
-    },
-    {
-      "page": "account/fresh/account",
-      "size": "390x844",
-      "horizontalScroll": false,
-      "maBottom": 1362,
-      "viewportH": 844,
-      "maFitsViewport": false,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
     },
     {
       "page": "account/saved/personal",
@@ -829,28 +655,6 @@
       "footerBar": null
     },
     {
-      "page": "account/google/verify",
-      "size": "390x844",
-      "horizontalScroll": false,
-      "maBottom": 1819,
-      "viewportH": 844,
-      "maFitsViewport": false,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
-    },
-    {
-      "page": "account/google/account",
-      "size": "390x844",
-      "horizontalScroll": false,
-      "maBottom": 1362,
-      "viewportH": 844,
-      "maFitsViewport": false,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
-    },
-    {
       "page": "account/pending/personal",
       "size": "390x844",
       "horizontalScroll": false,
@@ -863,17 +667,6 @@
         "bottom": 1676,
         "visible": false
       }
-    },
-    {
-      "page": "account/pending/verify",
-      "size": "390x844",
-      "horizontalScroll": false,
-      "maBottom": 1735,
-      "viewportH": 844,
-      "maFitsViewport": false,
-      "paneScrolls": false,
-      "paneOverflowPx": 0,
-      "footerBar": null
     },
     {
       "page": "combobox",
@@ -923,6 +716,23 @@
       "msg": "To continue, add: Province, City or municipality, Barangay, House no. and street, Postal code."
     },
     {
+      "page": "order/pickup-with-shop-location",
+      "size": "390x844",
+      "horizontalScroll": false,
+      "continueDisabled": [
+        "false",
+        "false"
+      ],
+      "msg": "Everything we need is here.",
+      "cardShown": true,
+      "addressFormHidden": true,
+      "hasMap": true,
+      "mapInsideViewportWidth": true,
+      "mapHeight": 188,
+      "soon": false,
+      "directions": true
+    },
+    {
       "page": "contrast/personal",
       "buttons": 14,
       "failing": 0,
@@ -931,12 +741,6 @@
     {
       "page": "contrast/security",
       "buttons": 13,
-      "failing": 0,
-      "failures": []
-    },
-    {
-      "page": "contrast/verify",
-      "buttons": 10,
       "failing": 0,
       "failures": []
     }
