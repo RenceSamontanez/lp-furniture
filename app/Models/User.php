@@ -68,7 +68,9 @@ class User extends Authenticatable implements MustVerifyEmail
     public function chatbotLogs()  { return $this->hasMany(ChatbotLog::class); }
     public function designRequests(){ return $this->hasMany(CustomDesignRequest::class); }
     public function payments()     { return $this->hasMany(Payment::class); }
-    public function validation()   { return $this->hasOne(UserValidation::class); }
+    /** The customer's latest identity attempt. */
+    public function validation()   { return $this->hasOne(UserValidation::class)->latestOfMany('attempt_number'); }
+    public function validations()  { return $this->hasMany(UserValidation::class)->orderBy('attempt_number'); }
 
     /* ── PHONE ── */
 

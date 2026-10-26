@@ -1,44 +1,64 @@
 @extends('layouts.admin')
 
 @section('title', 'Identity Validations — Admin')
-@section('page-title', 'Identity Validations')
+@section('page-title', 'Identity Validation')
+
+@push('styles')
+  <link rel="stylesheet" href="{{ asset('assets/css/identity-review.css') }}?v={{ @filemtime(public_path('assets/css/identity-review.css')) }}"/>
+@endpush
 
 @section('content')
+@php
+  $tabs = ['pending' => 'Pending', 'approved' => 'Approved', 'rejected' => 'Rejected'];
+  $empty = $search !== ''
+      ? 'No ' . $status . ' customers match “' . $search . '”.'
+      : ($status === 'pending' ? 'New identity submissions will show up here.' : 'Nothing ' . $status . ' yet.');
+@endphp
+<div class="idr">
 
-<div class="admin-filter-tabs">
-  <a href="{{ route('admin.validations.index', ['status'=>'pending']) }}" class="admin-filter-tab {{ $status==='pending'?'active':'' }}">Pending</a>
-  <a href="{{ route('admin.validations.index', ['status'=>'approved']) }}" class="admin-filter-tab {{ $status==='approved'?'active':'' }}">Approved</a>
-  <a href="{{ route('admin.validations.index', ['status'=>'rejected']) }}" class="admin-filter-tab {{ $status==='rejected'?'active':'' }}">Rejected</a>
-  <a href="{{ route('admin.validations.index', ['status'=>'all']) }}" class="admin-filter-tab {{ $status==='all'?'active':'' }}">All</a>
-</div>
-
-<div class="admin-panel">
-  <div class="admin-panel-body" style="padding:0;">
-    @if($validations->isEmpty())
-      <div class="admin-empty">
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 6L9 17l-5-5"/></svg>
-        <p>No {{ $status !== 'all' ? $status : '' }} validations found.</p>
-      </div>
-    @else
-      <table class="admin-table">
-        <thead><tr><th>Customer</th><th>Email</th><th>Phone</th><th>Status</th><th>Submitted</th><th></th></tr></thead>
-        <tbody>
-          @foreach($validations as $v)
-            <tr>
-              <td data-label="Customer">{{ $v->user->first_name }} {{ $v->user->last_name }}</td>
-              <td data-label="Email">{{ $v->user->email }}</td>
-              <td data-label="Phone">{{ $v->user->phone_number }}</td>
-              <td data-label="Status"><span class="admin-pill {{ $v->status }}">{{ $v->status }}</span></td>
-              <td data-label="Submitted">{{ $v->submitted_at ? $v->submitted_at->format('M d, Y') : '—' }}</td>
-              <td data-label=""><a href="{{ route('admin.validations.show', $v->id) }}" class="admin-btn admin-btn-gold">Review</a></td>
-            </tr>
-          @endforeach
-        </tbody>
-      </table>
-    @endif
+  <div class="idr-qhead">
+    <nav class="idr-tabs" aria-label="Status">
+      @foreach($tabs as $key => $label)
+        <a href="{{ route('admin.validations.index', array_filter(['status' => $key, 'q' => $search])) }}"
+           class="idr-tab" @if($status === $key) aria-current="page" @endif>
+          {{ $label }} <span>{{ $counts[$key] }}</span>
+        </a>
+      @endforeach
+    </nav>
+    <form method="GET" action="{{ route('admin.validations.index') }}" class="idr-search" role="search">
+      <input type="hidden" name="status" value="{{ $status }}">
+      <label class="idr-sr" for="idr-q">Search name or email</label>
+      <input id="idr-q" class="idr-input" type="search" name="q" value="{{ $search }}" maxlength="80" placeholder="Search name or email">
+      <button type="submit" class="lp-btn lp-btn--secondary">Search</button>
+      @if($search !== '')<a class="lp-link lp-link--tap" href="{{ route('admin.validations.index', ['status' => $status]) }}">Clear</a>@endif
+    </form>
   </div>
+
+  <div class="idr-glass idr-list">
+    <div class="idr-row idr-row--head" aria-hidden="true">
+      <span></span><span>Customer</span><span>Submitted</span><span>Attempt</span><span>Status</span><span></span>
+    </div>
+    @forelse($validations as $v)
+      @php
+        $u = $v->user;
+        $name = trim($u->first_name . ' ' . $u->last_name);
+        $initials = strtoupper(mb_substr($u->first_name, 0, 1) . mb_substr($u->last_name, 0, 1));
+      @endphp
+      <div class="idr-row">
+        <div class="idr-av" aria-hidden="true">{{ $initials }}</div>
+        <div class="idr-who"><b>{{ $name }}</b><small>{{ $u->email }}</small></div>
+        <span class="idr-date">{{ $v->submitted_at ? $v->submitted_at->format('M j, Y') : '—' }}</span>
+        <span class="idr-att {{ $v->attempt_number > 1 ? 'is-re' : '' }}">Attempt {{ $v->attempt_number }}</span>
+        <span class="idr-pill is-{{ $v->status }}">{{ ucfirst($v->status) }}</span>
+        <a class="lp-btn {{ $v->status === 'pending' ? 'lp-btn--primary' : 'lp-btn--secondary' }} idr-open"
+           href="{{ route('admin.validations.show', $v->id) }}"
+           aria-label="{{ $v->status === 'pending' ? 'Review' : 'View' }} {{ $name }}, attempt {{ $v->attempt_number }}">{{ $v->status === 'pending' ? 'Review' : 'View' }}</a>
+      </div>
+    @empty
+      <p class="idr-empty"><b>Nothing here</b>{{ $empty }}</p>
+    @endforelse
+  </div>
+
+  <div class="idr-pager">{{ $validations->links() }}</div>
 </div>
-
-<div style="margin-top:16px;">{{ $validations->links() }}</div>
-
 @endsection

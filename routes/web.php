@@ -9,6 +9,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ValidationController;
+use App\Http\Controllers\Admin\IdentityValidationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CustomDesignController;
 use App\Http\Controllers\CustomAgreementController;
@@ -108,6 +109,9 @@ Route::middleware('auth')->group(function () {
          ->name('validation.show');
     Route::post('/validate-account', [ValidationController::class, 'submit'])
          ->name('validation.submit');
+    Route::get('/validate-account/photo/{id}/{type}', [ValidationController::class, 'photo'])
+         ->name('validation.photo') // the customer's own ID or selfie, owner only, no-store
+         ->where(['id' => '[0-9]+', 'type' => 'id|selfie']);
 
     Route::get('/cart', [CartController::class, 'index'])
          ->name('cart.index');
@@ -254,12 +258,13 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     // ────────────────
     // Identity Validations (KYC)
     // ────────────────
-    Route::get('/validations',                [AdminController::class, 'validationsIndex'])->name('validations.index'); // List all validation requests
-    Route::get('/validations/{id}',            [AdminController::class, 'validationShow'])->name('validations.show'); // Show a specific validation
-    Route::post('/validations/{id}/approve',    [AdminController::class, 'validationApprove'])->name('validations.approve'); // Approve a validation
-    Route::post('/validations/{id}/reject',     [AdminController::class, 'validationReject'])->name('validations.reject'); // Reject a validation
-    Route::get('/validations/{id}/document/{type}', [AdminController::class, 'showDocument'])
-         ->name('validations.document') // Show uploaded ID or selfie document
+    Route::get('/validations',                  [IdentityValidationController::class, 'index'])->name('validations.index');
+    Route::get('/validations/{id}',             [IdentityValidationController::class, 'show'])->name('validations.show');
+    Route::post('/validations/{id}/approve',    [IdentityValidationController::class, 'approve'])->name('validations.approve');
+    Route::post('/validations/{id}/reject',     [IdentityValidationController::class, 'reject'])->name('validations.reject');
+    Route::post('/validations/{id}/follow-up',  [IdentityValidationController::class, 'requestNewSubmission'])->name('validations.follow-up');
+    Route::get('/validations/{id}/document/{type}', [IdentityValidationController::class, 'document'])
+         ->name('validations.document') // ID or selfie, admin only, no-store
          ->where('type', 'id|selfie');
 
     // ────────────────

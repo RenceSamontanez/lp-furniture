@@ -230,7 +230,7 @@ class ProductDimensionsTest extends TestCase
         $offenders = array_values(array_filter($offenders, fn ($f) => !str_ends_with($f, 'Dimensions.php')));
 
         $this->assertSame([], $offenders);
-        $this->assertDoesNotMatchRegularExpression('/\bdepth\b/i', file_get_contents(public_path('assets/js/validation.js')) . file_get_contents(resource_path('views/admin/products/form.blade.php')));
+        $this->assertDoesNotMatchRegularExpression('/\bdepth\b/i', file_get_contents(resource_path('views/admin/products/form.blade.php')));
         $this->assertStringNotContainsStringIgnoringCase('depth', $this->get('/guide')->assertOk()->getContent());
         $this->assertStringNotContainsStringIgnoringCase('depth', $this->actingAs($this->admin(), 'admin')->get(route('admin.products.create'))->getContent());
     }

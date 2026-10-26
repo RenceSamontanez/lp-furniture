@@ -1,0 +1,62 @@
+/* Customer "Verify your identity" page (focus layout). Plain CSS, scoped to .vfy.
+   Buttons and notices are the shared .lp-btn and .lp-notice. */
+.vfy {
+  --v-text: #2A1A10; --v-text2: #5C4A3E; --v-line: rgba(90, 55, 30, .2); --v-line2: rgba(90, 55, 30, .45); --v-focus: #8A3F17;
+  color: var(--v-text); width: 100%; padding: 8px 16px 40px;
+}
+.vfy *, .vfy *::before, .vfy *::after { box-sizing: border-box; }
+.vfy [hidden] { display: none !important; }
+.vfy-wrap { max-width: 1060px; margin: 0 auto; display: grid; gap: 14px; }
+.vfy :is(a, button, input, label):focus-visible { outline: 3px solid var(--v-focus); outline-offset: 2px; }
+.vfy-title { margin: 0; font-family: var(--font-display, Georgia, serif); font-size: clamp(26px, 3vw, 34px); line-height: 1.15; }
+.vfy-sub { margin: -6px 0 0; color: var(--v-text2); max-width: 62ch; }
+.vfy-glass { border-radius: 18px; background: linear-gradient(145deg, rgba(255, 255, 255, .85), rgba(255, 255, 255, .6)); border: 1px solid rgba(255, 255, 255, .9); box-shadow: 0 18px 40px -28px rgba(90, 55, 30, .5); }
+.vfy-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+.vfy-up { padding: 16px 18px; display: grid; gap: 14px; }
+.vfy-attempt { margin: 0; font-weight: 700; color: #7A3A19; }
+.vfy-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.vfy-slot { display: grid; gap: 8px; align-content: start; min-width: 0; }
+.vfy-slot h2 { margin: 0; font-size: 16px; color: #7A3A19; }
+.vfy-drop { position: relative; display: grid; place-items: center; text-align: center; min-height: 190px; border-radius: 16px; border: 2px dashed var(--v-line2); background: rgba(255, 255, 255, .7); padding: 10px; cursor: pointer; overflow: hidden; }
+.vfy-drop:hover, .vfy-drop:focus-within { border-color: var(--v-focus); background: #fff; }
+.vfy-drop:focus-within { outline: 3px solid var(--v-focus); outline-offset: 2px; }
+.vfy-drop input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.vfy-drop img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.vfy-drop__hint b { display: block; }
+.vfy-drop__hint small { display: block; color: var(--v-text2); margin-top: 2px; }
+.vfy-drop.has-photo .vfy-drop__hint { display: none; }
+.vfy-drop.is-bad { border-color: #B3321F; background: #FBEDEA; }
+.vfy-msg { color: #8E2616; font-size: 14px; font-weight: 600; }
+.vfy-confirm { display: flex; gap: 10px; align-items: flex-start; min-height: 44px; padding: 10px 12px; border: 1.5px solid var(--v-line2); border-radius: 10px; background: #FFFCF6; cursor: pointer; font-size: 15px; }
+.vfy-confirm input { flex: none; width: 22px; height: 22px; margin: 1px 0 0; accent-color: #2C1810; }
+.vfy-hint { margin: -6px 0 0; text-align: center; color: var(--v-text2); font-size: 14px; }
+
+.vfy-crit { padding: 16px 18px; display: grid; gap: 12px; }
+.vfy-crit h2 { margin: 0; font-size: 17px; color: #7A3A19; }
+.vfy-crit ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.vfy-crit li { display: flex; gap: 10px; align-items: flex-start; }
+.vfy-crit li i { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 8px; background: #DDEEE3; border: 1px solid rgba(31, 107, 67, .5); color: #185738; margin-top: 1px; }
+.vfy-crit li i.is-x { background: #F8E3DE; border-color: rgba(179, 50, 31, .5); color: #8E2616; }
+.vfy-crit li i svg { width: 14px; height: 14px; }
+.vfy-crit li span { min-width: 0; }
+.vfy-crit li small { display: block; color: var(--v-text2); font-size: 14px; }
+.vfy-small-h { font-size: 15px; }
+.vfy-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.vfy-tags span { padding: 4px 10px; border-radius: 999px; background: #fff; border: 1px solid var(--v-line2); font-size: 14px; font-weight: 600; }
+.vfy-two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.vfy-note { margin: 0; padding: 10px 12px; border-radius: 12px; background: #F6E6C4; border: 1px solid rgba(143, 100, 32, .45); color: #3F2A0E; font-size: 14.5px; }
+.vfy-errors { margin: 0; padding-left: 18px; }
+
+.vfy-mine { padding: 16px 18px; display: grid; gap: 12px; }
+.vfy-mine h2 { margin: 0; font-size: 17px; color: #7A3A19; }
+.vfy-mine__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.vfy-mine figure { margin: 0; display: grid; gap: 6px; min-width: 0; }
+.vfy-mine img { width: 100%; height: 190px; object-fit: cover; border-radius: 12px; border: 1px solid var(--v-line); background: #251810; }
+.vfy-mine figcaption { color: var(--v-text2); font-size: 14px; font-weight: 600; }
+
+@media (max-width: 900px) { .vfy-grid { grid-template-columns: 1fr; } }
+@media (max-width: 560px) {
+  .vfy { padding: 4px 14px 32px; }
+  .vfy-slots, .vfy-two, .vfy-mine__grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { .vfy * { transition: none !important; animation: none !important; } }
