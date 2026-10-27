@@ -386,17 +386,7 @@
             <p style="font-size:13px;margin:0;">This order is {{ str_replace('_',' ',$order->order_status) }}; no further changes.</p>
           @endif
         @else
-        <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}">
-          @csrf
-          <select name="order_status" class="form-input" style="margin-bottom:12px;">
-            @foreach(['pending','confirmed','in_production','ready','out_for_delivery','completed','cancelled'] as $s)
-              <option value="{{ $s }}" {{ $order->order_status === $s ? 'selected' : '' }}>{{ ucfirst(str_replace('_',' ',$s)) }}</option>
-            @endforeach
-          </select>
-          <button type="submit" class="admin-btn admin-btn-gold" style="width:100%;justify-content:center;padding:11px;">
-            Update Status
-          </button>
-        </form>
+          <p style="font-size:13px;margin:0;">Catalog orders are updated from their Update progress card.</p>
         @endif
       </div>
     </div>

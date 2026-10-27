@@ -52,6 +52,7 @@ class ReleaseAbandonedOrders extends Command
                 }
 
                 $order->update(['order_status' => 'cancelled']);
+                app(\App\Support\OrderTracking::class)->systemCancel($order, 'Payment was not completed in time.');
                 $order->payment()->update(['payment_status' => 'failed']);
 
                 $expired = \App\Support\NotificationTemplates::render('payment_expired', ['order_number' => $order->order_number]);

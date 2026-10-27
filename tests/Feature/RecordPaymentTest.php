@@ -264,8 +264,10 @@ class RecordPaymentTest extends TestCase
 
         $this->pay($admin, $order, ['amount' => '1000'])->assertSessionHasNoErrors();
 
-        $n = Notification::where('user_id', $order->user_id)->sole();
+        // the payment notice, plus the separate "order confirmed" stage notice the order tracking adds
+        $n = Notification::where('user_id', $order->user_id)->where('type', 'payment_confirmed')->sole();
         $this->assertSame('payment_confirmed', $n->type);
+        $this->assertSame(1, Notification::where('user_id', $order->user_id)->where('type', 'order_update')->count());
         $this->assertStringContainsString("We received your payment of ₱1,000.00 for order {$order->order_number}", $n->message);
         $this->assertSame(route('orders.show', $order->id), $n->url);
     }

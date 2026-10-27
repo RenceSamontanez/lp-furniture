@@ -119,13 +119,14 @@ class Stage12FixesTest extends TestCase
         $this->assertSame('completed', $order->fresh()->order_status);
     }
 
-    public function test_catalog_orders_can_still_complete_without_payment(): void
+    public function test_catalog_orders_can_no_longer_jump_to_completed_through_the_old_route(): void
     {
         $admin = $this->flowAdmin();
         $order = $this->catalogOrder();
 
-        $this->adminSetStatus($admin, $order, 'completed')->assertSessionHasNoErrors();
-        $this->assertSame('completed', $order->fresh()->order_status);
+        // catalog orders move only through the Update progress card (OrderTrackingTest)
+        $this->adminSetStatus($admin, $order, 'completed')->assertSessionHasErrors('status');
+        $this->assertNotSame('completed', $order->fresh()->order_status);
     }
 
     private function openSession(Order $order): string
@@ -230,7 +231,7 @@ class Stage12FixesTest extends TestCase
         $html = $this->asAdmin($admin)->get(route('admin.orders.show', $order->id))->assertOk()->getContent();
         $this->assertStringContainsString('Chair', $html);
         $this->assertStringNotContainsString('Partially paid', $html);
-        $this->assertMatchesRegularExpression('/Method<\/span>\s*<span[^>]*>\s*stripe\s*</i', $html);
+        $this->assertMatchesRegularExpression('/Payment method<\/dt>\s*<dd>\s*Stripe/i', $html);
     }
 
     /* ═════════ 5. "Order confirmed" event ═════════ */

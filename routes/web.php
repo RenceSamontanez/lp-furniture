@@ -281,6 +281,11 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     Route::get('/orders',              [AdminController::class, 'ordersIndex'])->name('orders.index'); // List all orders
     Route::get('/orders/{id}',          [AdminController::class, 'orderShow'])->name('orders.show'); // Show a specific order
     Route::post('/orders/{id}/status',  [AdminController::class, 'orderUpdateStatus'])->name('orders.updateStatus'); // Update order status
+    // Update progress card (catalog orders): one step forward, progress update, correction, cancel. All rules: App\Support\OrderTracking.
+    Route::post('/orders/{id}/stage/advance', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'advance'])->name('orders.stage.advance')->whereNumber('id');
+    Route::post('/orders/{id}/stage/update',  [\App\Http\Controllers\Admin\OrderTrackingController::class, 'update'])->name('orders.stage.update')->whereNumber('id');
+    Route::post('/orders/{id}/stage/correct', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'correct'])->name('orders.stage.correct')->whereNumber('id');
+    Route::post('/orders/{id}/stage/cancel',  [\App\Http\Controllers\Admin\OrderTrackingController::class, 'cancel'])->name('orders.stage.cancel')->whereNumber('id');
     Route::post('/orders/{id}/payments', [\App\Http\Controllers\Admin\PaymentRecordController::class, 'store'])->name('orders.payments.store')->whereNumber('id'); // Record Payment (ledger)
     Route::post('/orders/{id}/review',   [\App\Http\Controllers\Admin\PaymentRecordController::class, 'markReviewed'])->name('orders.review')->whereNumber('id'); // Clear needs_review
 

@@ -1,0 +1,227 @@
+{
+  "checks": [
+    {
+      "name": "no horizontal scroll admin paid 1440",
+      "ok": true
+    },
+    {
+      "name": "contrast admin paid 1440: 5 buttons, none below 4.5:1",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no horizontal scroll admin unpaid-locked 1440",
+      "ok": true
+    },
+    {
+      "name": "contrast admin unpaid-locked 1440: 3 buttons, none below 4.5:1",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no horizontal scroll admin partly-paid-correction 1440",
+      "ok": true
+    },
+    {
+      "name": "contrast admin partly-paid-correction 1440: 6 buttons, none below 4.5:1",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no horizontal scroll admin cancelled 1440",
+      "ok": true
+    },
+    {
+      "name": "contrast admin cancelled 1440: 1 buttons, none below 4.5:1",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "admin 1440: unpaid order shows the Waiting for payment box and no Next-step button",
+      "ok": true
+    },
+    {
+      "name": "admin 1440: the correction is listed as Internal only",
+      "ok": true
+    },
+    {
+      "name": "admin: pickup order has no Out for delivery stage",
+      "ok": true
+    },
+    {
+      "name": "dialog is centred",
+      "ok": true,
+      "detail": {
+        "cx": 720,
+        "cy": 450,
+        "vw": 1440,
+        "vh": 900,
+        "yes": true,
+        "q": "Has the customer collected the furniture?"
+      }
+    },
+    {
+      "name": "dialog question is the prototype wording",
+      "ok": true,
+      "detail": "Has the customer collected the furniture?"
+    },
+    {
+      "name": "confirm button is disabled until the box is ticked",
+      "ok": true
+    },
+    {
+      "name": "confirm button is enabled after the tick",
+      "ok": true
+    },
+    {
+      "name": "order moved to Completed with a success toast",
+      "ok": true
+    },
+    {
+      "name": "no horizontal scroll customer in-production-update 1440",
+      "ok": true
+    },
+    {
+      "name": "contrast customer in-production-update 1440: 5 buttons, none below 4.5:1",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no horizontal scroll customer unpaid 1440",
+      "ok": true
+    },
+    {
+      "name": "contrast customer unpaid 1440: 7 buttons, none below 4.5:1",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no horizontal scroll customer partly-paid 1440",
+      "ok": true
+    },
+    {
+      "name": "contrast customer partly-paid 1440: 5 buttons, none below 4.5:1",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no horizontal scroll customer cancelled 1440",
+      "ok": true
+    },
+    {
+      "name": "contrast customer cancelled 1440: 5 buttons, none below 4.5:1",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "customer 1440: never sees a correction",
+      "ok": true
+    },
+    {
+      "name": "customer 1440: sees the admin's message and photo",
+      "ok": true
+    },
+    {
+      "name": "customer 1440: cannot open the admin order page",
+      "ok": true
+    },
+    {
+      "name": "no horizontal scroll admin paid 390",
+      "ok": true
+    },
+    {
+      "name": "contrast admin paid 390: 7 buttons, none below 4.5:1",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no horizontal scroll admin unpaid-locked 390",
+      "ok": true
+    },
+    {
+      "name": "contrast admin unpaid-locked 390: 5 buttons, none below 4.5:1",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no horizontal scroll admin partly-paid-correction 390",
+      "ok": true
+    },
+    {
+      "name": "contrast admin partly-paid-correction 390: 8 buttons, none below 4.5:1",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no horizontal scroll admin cancelled 390",
+      "ok": true
+    },
+    {
+      "name": "contrast admin cancelled 390: 3 buttons, none below 4.5:1",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "admin 390: unpaid order shows the Waiting for payment box and no Next-step button",
+      "ok": true
+    },
+    {
+      "name": "admin 390: the correction is listed as Internal only",
+      "ok": true
+    },
+    {
+      "name": "admin 390: the Update progress card comes before the history",
+      "ok": true
+    },
+    {
+      "name": "no horizontal scroll customer in-production-update 390",
+      "ok": true
+    },
+    {
+      "name": "contrast customer in-production-update 390: 5 buttons, none below 4.5:1",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no horizontal scroll customer unpaid 390",
+      "ok": true
+    },
+    {
+      "name": "contrast customer unpaid 390: 7 buttons, none below 4.5:1",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no horizontal scroll customer partly-paid 390",
+      "ok": true
+    },
+    {
+      "name": "contrast customer partly-paid 390: 5 buttons, none below 4.5:1",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no horizontal scroll customer cancelled 390",
+      "ok": true
+    },
+    {
+      "name": "contrast customer cancelled 390: 5 buttons, none below 4.5:1",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "customer 390: never sees a correction",
+      "ok": true
+    },
+    {
+      "name": "customer 390: sees the admin's message and photo",
+      "ok": true
+    },
+    {
+      "name": "customer 390: cannot open the admin order page",
+      "ok": true
+    }
+  ],
+  "pass": 49,
+  "fail": 0
+}

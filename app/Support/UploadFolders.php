@@ -25,6 +25,7 @@ final class UploadFolders
         'receipts'          => ['private', 'receipts', 'Old payment receipts (private, legacy)'],
         'legacy-references' => ['public_disk', 'design-references', 'Old public reference photos (storage/app/public)'],
         'ai-designs'        => ['public', 'images/ai-designs', 'AI design concepts (public/images/ai-designs)'],
+        'order-update-photos' => ['public_disk', 'order-update-photos', 'Order progress photos (storage/app/public)'],
     ];
 
     /** Temporary files: removed by storage:cleanup once old, never counted as "orphans". */
@@ -106,6 +107,7 @@ final class UploadFolders
             'agreements'     => DB::table('design_agreements')->where('terms_snapshot', 'like', '%' . self::like($name) . '%')->exists(),
             'receipts'       => DB::table('payments')->where('receipt_image_path', 'like', '%' . self::like($name) . '%')->exists(),
             'ai-designs'     => DB::table('ai_design_suggestions')->where('image_path', 'like', '%' . self::like($name) . '%')->exists(),
+            'order-update-photos' => DB::table('order_status_events')->where('photo_path', $rel)->exists(),
             default          => true,   // unknown folder: treat as referenced, never delete
         };
     }

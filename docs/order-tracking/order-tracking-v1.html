@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order tracking and status - prototype v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#2a1d10; --muted:#5f4d39; --gold:#c8963c; --gold-d:#9a6f1f; --cream:#f6f0e6;
+  --glass:rgba(255,252,247,.60); --glass-b:rgba(255,255,255,.78); --line:rgba(90,66,30,.18);
+  --ok:#1b6238; --ok-bg:#d6efdf; --warn:#74460a; --warn-bg:#fae6bd; --bad:#971b1b; --bad-bg:#fadcdc;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);background:var(--cream);min-height:100vh;line-height:1.5;font-size:15px}
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden;background:var(--cream)}
+.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.8}
+.b1{width:480px;height:480px;background:#e9bf6e;top:-140px;left:-100px}
+.b2{width:540px;height:540px;background:#c7a387;right:-160px;top:140px}
+.b3{width:440px;height:440px;background:#b6c8a6;left:28%;bottom:-180px}
+h1,h2,h3{font-family:'Playfair Display',Georgia,serif;margin:0;line-height:1.2}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid #1f4fbf;outline-offset:2px}
+
+/* prototype bar */
+.proto{margin:12px auto 0;max-width:1180px;padding:10px 14px;border:1.5px dashed rgba(90,66,30,.45);border-radius:14px;background:rgba(255,255,255,.55);display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font-size:13px}
+.proto b{font-weight:700}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:#fff}
+.seg button{border:0;background:transparent;padding:6px 12px;cursor:pointer;font-size:13px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.proto .reset{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;font-size:13px}
+
+.wrap{max-width:1180px;margin:0 auto;padding:16px 16px 56px}
+.top{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;margin:8px 0 18px}
+.back{color:var(--muted);text-decoration:none;font-size:14px}
+.back:hover{text-decoration:underline}
+
+.glass{background:var(--glass);-webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%);border:1px solid var(--glass-b);border-radius:20px;box-shadow:0 10px 30px rgba(80,55,20,.10),inset 0 1px 0 rgba(255,255,255,.85)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.glass{background:rgba(255,252,247,.94)}}
+.card{padding:20px;margin-bottom:18px}
+.card h2{font-size:20px;margin-bottom:4px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 14px}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:20px;align-items:start}
+.side{position:sticky;top:14px}
+@media(max-width:980px){.cols{grid-template-columns:1fr}.side{position:static;order:-1}}
+
+.head{display:flex;flex-wrap:wrap;gap:12px 20px;justify-content:space-between;align-items:flex-start}
+.head h1{font-size:28px}
+.meta{color:var(--muted);font-size:14px;margin-top:4px}
+.badges{display:flex;flex-wrap:wrap;gap:8px}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-weight:700;font-size:13px}
+.b-ok{background:var(--ok-bg);color:var(--ok)}
+.b-warn{background:var(--warn-bg);color:var(--warn)}
+.b-bad{background:var(--bad-bg);color:var(--bad)}
+.b-stage{background:#f1e2c2;color:#5a3d08}
+
+/* stepper */
+.steps{list-style:none;margin:6px 0 0;padding:0;display:flex}
+.steps li{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;font-size:13px;color:var(--muted);padding:0 4px}
+.steps li::before{content:"";position:absolute;top:17px;right:50%;width:100%;height:3px;background:var(--line);z-index:0}
+.steps li:first-child::before{display:none}
+.steps li.done::before,.steps li.current::before{background:var(--gold)}
+.dot{position:relative;z-index:1;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#fff;border:2px solid var(--line);font-weight:700;color:var(--muted)}
+.steps li.done .dot{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.steps li.current .dot{background:var(--ink);border-color:var(--ink);color:#fff;box-shadow:0 0 0 5px rgba(200,150,60,.35)}
+.steps li.current{color:var(--ink);font-weight:700}
+.steps li.done{color:var(--ink)}
+@media(max-width:640px){
+  .steps{flex-direction:column}
+  .steps li{flex-direction:row;text-align:left;padding:8px 0;gap:12px}
+  .steps li::before{top:auto;bottom:50%;right:auto;left:17px;width:3px;height:100%}
+}
+
+/* forms */
+label{display:block;font-weight:500;font-size:14px;margin-bottom:6px}
+textarea,input[type=number],select,input[type=text]{width:100%;border:1px solid rgba(90,66,30,.35);background:rgba(255,255,255,.85);border-radius:12px;padding:10px 12px}
+textarea{min-height:84px;resize:vertical}
+.hint{font-size:13px;color:var(--muted);margin:6px 0 0}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{border:0;border-radius:12px;padding:12px 18px;font-weight:700;cursor:pointer;background:var(--gold);color:var(--ink);min-height:44px}
+.btn:hover{background:#d4a24a}
+.btn:disabled{background:#e6dccb;color:#6f5f4b;cursor:not-allowed}
+.btn.full{width:100%}
+.btn.ghost{background:rgba(255,255,255,.8);border:1px solid rgba(90,66,30,.35)}
+.btn.ghost:hover{background:#fff}
+.btn.danger{background:var(--bad);color:#fff}
+.link{background:none;border:0;padding:8px 2px;color:var(--ink);text-decoration:underline;cursor:pointer;font-size:14px;min-height:40px}
+.link.danger{color:var(--bad)}
+.link:disabled{color:#7a6a55;text-decoration:none;cursor:not-allowed}
+.field{margin-bottom:14px}
+.count{float:right;font-size:12px;color:var(--muted)}
+.err{color:var(--bad);font-size:13px;margin-top:6px}
+.photo{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.photo img{width:72px;height:72px;object-fit:cover;border-radius:12px;border:1px solid var(--line)}
+
+.next{background:rgba(255,255,255,.65);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:0 0 14px}
+.next small{display:block;color:var(--muted);font-size:12px}
+.next strong{font-size:17px}
+.preview{background:rgba(250,240,215,.75);border:1px solid rgba(154,111,31,.35);border-radius:14px;padding:12px 14px;margin:0 0 14px;font-size:14px}
+.preview small{display:block;color:var(--muted);margin-bottom:4px}
+.lock{background:var(--warn-bg);color:var(--warn);border-radius:14px;padding:12px 14px;margin-bottom:14px;font-size:14px}
+.done-box{background:var(--ok-bg);color:var(--ok);border-radius:14px;padding:12px 14px;margin-bottom:14px;font-size:14px;font-weight:500}
+.cancelled-box{background:var(--bad-bg);color:var(--bad);border-radius:14px;padding:12px 14px;margin-bottom:14px;font-size:14px;font-weight:500}
+
+dl{margin:0}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:7px 0;font-size:14px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-weight:500;text-align:right}
+.total{border-top:2px solid var(--ink);margin-top:8px;padding-top:10px;font-weight:700;font-size:17px}
+.addr{background:rgba(255,255,255,.6);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--muted);margin:6px 0}
+
+/* history */
+.hist{list-style:none;margin:0;padding:0}
+.hist li{display:grid;grid-template-columns:14px 1fr;gap:12px;padding-bottom:16px;position:relative}
+.hist li::before{content:"";position:absolute;left:6px;top:16px;bottom:0;width:2px;background:var(--line)}
+.hist li:last-child::before{display:none}
+.hist .pin{width:14px;height:14px;border-radius:50%;background:var(--gold);margin-top:4px}
+.hist .pin.sys{background:#a99880}
+.hist .pin.fix{background:var(--bad)}
+.hist h3{font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700}
+.hist .when{font-size:12.5px;color:var(--muted)}
+.hist .note{margin:6px 0 0;font-size:14px;background:rgba(255,255,255,.6);padding:8px 12px;border-radius:12px}
+.hist img{margin-top:8px;width:140px;height:100px;object-fit:cover;border-radius:12px;border:1px solid var(--line)}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;vertical-align:middle}
+.t-sent{background:var(--ok-bg);color:var(--ok)}
+.t-int{background:#eadfce;color:#5a4a36}
+
+/* customer view */
+.now{display:grid;grid-template-columns:1fr;gap:6px}
+.now h2{font-size:26px}
+.now p{margin:4px 0;font-size:16px}
+.assure{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.assure div{background:rgba(255,255,255,.6);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:13.5px}
+@media(max-width:640px){.assure{grid-template-columns:1fr}}
+
+/* dialog */
+dialog{border:1px solid var(--glass-b);border-radius:22px;padding:0;max-width:480px;width:calc(100% - 32px);background:rgba(255,252,247,.82);-webkit-backdrop-filter:blur(22px) saturate(140%);backdrop-filter:blur(22px) saturate(140%);box-shadow:0 24px 70px rgba(40,25,5,.35);color:var(--ink)}
+dialog::backdrop{background:rgba(40,28,12,.45);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.dlg{padding:22px}
+.dlg h3{font-size:22px;margin-bottom:8px}
+.dlg .q{font-size:16px;margin:0 0 12px}
+.chk{display:flex;gap:10px;align-items:flex-start;margin:14px 0;font-size:15px}
+.chk input{width:22px;height:22px;margin-top:1px;accent-color:#7a5210}
+.dlg .row{justify-content:flex-end;margin-top:6px}
+.toast{position:fixed;right:16px;top:16px;z-index:20;max-width:360px;padding:12px 16px;border-radius:14px;background:var(--ink);color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.3);font-size:14px;opacity:0;transform:translateY(-8px);transition:opacity .2s,transform .2s;pointer-events:none}
+.toast.show{opacity:1;transform:none}
+.sr{position:absolute;left:-9999px}
+@media(prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<div class="proto" role="group" aria-label="Prototype controls">
+  <b>Prototype controls (not part of the real page)</b>
+  <span>View
+    <span class="seg" id="segView"><button data-v="admin" aria-pressed="true">Admin</button><button data-v="customer" aria-pressed="false">Customer</button></span>
+  </span>
+  <span>Order type
+    <span class="seg" id="segMode"><button data-v="delivery" aria-pressed="true">Delivery</button><button data-v="pickup" aria-pressed="false">Pickup</button></span>
+  </span>
+  <span>Payment
+    <span class="seg" id="segPaid"><button data-v="paid" aria-pressed="true">Paid</button><button data-v="unpaid" aria-pressed="false">Unpaid</button></span>
+  </span>
+  <button class="reset" id="btnReset" type="button">Reset order</button>
+</div>
+
+<main class="wrap">
+  <div id="adminView"></div>
+  <div id="custView" hidden></div>
+</main>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <form method="dialog" class="dlg" id="dlgForm">
+    <h3 id="dlgTitle"></h3>
+    <p class="q" id="dlgQ"></p>
+    <div id="dlgReasonWrap" hidden>
+      <label for="dlgReason">Reason (required, saved in the order history)</label>
+      <textarea id="dlgReason" maxlength="300"></textarea>
+      <div class="err" id="dlgReasonErr" hidden>Write at least 8 characters so the team knows why.</div>
+    </div>
+    <div class="preview" id="dlgPrev" hidden></div>
+    <label class="chk" id="dlgChkWrap"><input type="checkbox" id="dlgChk"><span id="dlgChkText"></span></label>
+    <div class="row">
+      <button type="button" class="btn ghost" id="dlgNo">Go back</button>
+      <button type="button" class="btn" id="dlgYes" disabled>Confirm</button>
+    </div>
+  </form>
+</dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+var TOTAL=14000;
+var LABEL={pending:'Pending',confirmed:'Confirmed',production:'In production',ready:'Ready',delivery:'Out for delivery',completed:'Completed'};
+var S={};
+var draftMsg='', draftPhoto=null, photoErr='';
+
+function peso(n){return '₱'+n.toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function now(){return new Date().toLocaleString('en-PH',{timeZone:'Asia/Manila',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});}
+function stages(){return S.mode==='delivery'?['pending','confirmed','production','ready','delivery','completed']:['pending','confirmed','production','ready','completed'];}
+function label(k){return (k==='ready'&&S.mode==='pickup')?'Ready for pickup':LABEL[k];}
+function cur(){return stages()[S.idx];}
+function nextKey(){return stages()[S.idx+1];}
+
+var BTN={confirmed:'Confirm order',production:'Start production',ready:'Mark as ready',delivery:'Send out for delivery',completed:'Mark as completed'};
+function btnLabel(k){ if(k==='ready'&&S.mode==='pickup')return 'Mark ready for pickup'; return BTN[k]; }
+function ask(k){
+  if(k==='production')return 'Are the materials ready and are the craftsmen starting this piece?';
+  if(k==='ready')return S.mode==='pickup'?'Is the furniture finished, checked and ready to be collected?':'Is the furniture finished, checked and packed?';
+  if(k==='delivery')return 'Has the furniture left the shop with the delivery team?';
+  if(k==='completed')return S.mode==='pickup'?'Has the customer collected the furniture?':'Has the customer received the furniture?';
+  return 'Confirm this step?';
+}
+function custCopy(k){
+  if(k==='pending')return 'We are waiting for your payment. Your order starts as soon as it is received.';
+  if(k==='confirmed')return 'We received your payment and confirmed your order. Our craftsmen will start building soon.';
+  if(k==='production')return 'Our craftsmen have started building your furniture piece.';
+  if(k==='ready')return S.mode==='pickup'?'Your furniture is finished and ready. You can pick it up at our shop in San Juan, Batangas.':'Your furniture is finished and checked. We are arranging its delivery.';
+  if(k==='delivery')return 'Your furniture is on its way to your address.';
+  if(k==='completed')return S.mode==='pickup'?'Order complete. Thank you for collecting your furniture!':'Order complete. Thank you! We hope you enjoy your new furniture.';
+  return '';
+}
+
+function reset(){
+  S.paid=S.paid===undefined?TOTAL:S.paid;
+  S.idx=S.paid>=TOTAL?1:0;
+  S.cancelled=false;
+  S.cancelReason='';
+  S.hist=[];
+  addHist({title:'Order placed',sys:true,notified:true,when:'Oct 28, 3:10 PM'});
+  if(S.paid>=TOTAL){
+    addHist({title:'Payment received: '+peso(TOTAL)+' (Stripe, full payment)',sys:true,notified:true,when:'Oct 28, 3:12 PM'});
+    addHist({title:'Order confirmed automatically',sys:true,notified:true,when:'Oct 28, 3:12 PM'});
+  }
+  draftMsg='';draftPhoto=null;photoErr='';
+}
+function addHist(h){ if(!h.when)h.when=now(); S.hist.unshift(h); }
+S.mode='delivery';S.paid=TOTAL;S.view='admin';reset();
+
+/* ---------- admin view ---------- */
+function stepper(){
+  var st=stages(),h='<ol class="steps" aria-label="Order progress">';
+  for(var i=0;i<st.length;i++){
+    var c=i<S.idx?'done':(i===S.idx?'current':'');
+    var d=i<S.idx?'&#10003;':(i+1);
+    h+='<li class="'+c+'"'+(i===S.idx?' aria-current="step"':'')+'><span class="dot">'+d+'</span><span>'+esc(label(st[i]))+'</span></li>';
+  }
+  return h+'</ol>';
+}
+function payBadge(){
+  if(S.paid>=TOTAL)return '<span class="badge b-ok">Paid in full</span>';
+  if(S.paid>0)return '<span class="badge b-warn">Partly paid</span>';
+  return '<span class="badge b-warn">Awaiting payment</span>';
+}
+function stageBadge(){
+  if(S.cancelled)return '<span class="badge b-bad">Cancelled</span>';
+  return '<span class="badge b-stage">'+esc(label(cur()))+'</span>';
+}
+function histHtml(forCustomer){
+  var h='<ul class="hist">',n=0;
+  S.hist.forEach(function(e){
+    if(forCustomer&&(!e.notified))return;
+    n++;
+    h+='<li><span class="pin '+(e.fix?'fix':(e.sys?'sys':''))+'"></span><div><h3>'+esc(e.title)+
+      (!forCustomer?(e.notified?'<span class="tag t-sent">Customer notified</span>':'<span class="tag t-int">Internal only</span>'):'')+
+      '</h3><div class="when">'+esc(e.when)+(e.sys?'':' &middot; '+(forCustomer?'LP Furniture':'Admin'))+'</div>'+
+      (e.note?'<p class="note">'+esc(e.note)+'</p>':'')+
+      (e.photo?'<img src="'+e.photo+'" alt="Progress photo sent to the customer">':'')+'</div></li>';
+  });
+  if(!n)h+='<li><span class="pin sys"></span><div><h3>No updates yet</h3></div></li>';
+  return h+'</ul>';
+}
+function actionCard(){
+  var h='<section class="glass card" aria-labelledby="upT"><h2 id="upT">Update progress</h2>'+
+    '<p class="sub">This is how you keep the customer informed. Each update reaches their Notifications and email.</p>';
+  if(S.cancelled){
+    return h+'<div class="cancelled-box">This order was cancelled. Reason: '+esc(S.cancelReason)+'</div></section>';
+  }
+  var locked=S.paid<TOTAL;
+  var nk=nextKey();
+  h+='<div class="next"><small>Now</small><strong>'+esc(label(cur()))+'</strong></div>';
+  if(locked){
+    h+='<div class="lock"><b>Waiting for payment.</b> The next step unlocks when the customer pays, or when you record a payment below.</div>';
+  } else if(!nk){
+    h+='<div class="done-box">This order is completed. The customer has been notified.</div>';
+  } else {
+    h+='<div class="next"><small>Next step</small><strong>'+esc(label(nk))+'</strong></div>';
+  }
+  if(!locked){
+    h+='<div class="field"><label for="msg">Message to the customer <span style="font-weight:400">(optional)</span><span class="count" id="cnt">'+draftMsg.length+'/300</span></label>'+
+      '<textarea id="msg" maxlength="300" placeholder="Example: The frame is assembled. Sanding and staining are next.">'+esc(draftMsg)+'</textarea>'+
+      '<p class="hint">Shown on their tracking page and in the email.</p></div>'+
+      '<div class="field"><label for="pf">Progress photo <span style="font-weight:400">(optional)</span></label><div class="photo">'+
+      (draftPhoto?'<img src="'+draftPhoto.url+'" alt="Photo to send"><button type="button" class="btn ghost" id="rmPhoto">Remove photo</button>':
+      '<button type="button" class="btn ghost" id="addPhoto">Add a photo</button>')+
+      '<input type="file" id="pf" accept="image/jpeg,image/png" hidden></div>'+
+      '<p class="hint">JPG or PNG, up to 5 MB.</p>'+(photoErr?'<div class="err" role="alert">'+esc(photoErr)+'</div>':'')+'</div>';
+    if(nk){
+      h+='<div class="preview"><small>The customer will read</small>'+esc(custCopy(nk))+'<span id="pvMsg">'+(draftMsg?'<br><em>&ldquo;'+esc(draftMsg)+'&rdquo;</em>':'')+'</span></div>'+
+        '<button class="btn full" id="go" type="button">'+esc(btnLabel(nk))+'</button>';
+    }
+    h+='<div class="row" style="margin-top:6px;justify-content:space-between">'+
+      '<button class="link" id="sendOnly" type="button"'+((draftMsg||draftPhoto)?'':' disabled')+'>Send update only (stage stays)</button>'+
+      '<button class="link" id="fix" type="button"'+(S.idx<=1?' disabled title="The first stage can\'t be undone"':'')+'>Correct last step</button></div>';
+  }
+  if(S.idx<=1||locked){
+    h+='<div class="row" style="justify-content:flex-end"><button class="link danger" id="cancelOrder" type="button">Cancel order</button></div>';
+  }
+  return h+'</section>';
+}
+function paymentRec(){
+  var rem=TOTAL-S.paid;
+  var h='<section class="glass card" aria-labelledby="payT"><h2 id="payT">Payments received</h2>';
+  if(S.paid>0){h+='<p class="sub">'+(S.paid>=TOTAL?'Payment confirmed by Stripe.':'Payments so far are listed below.')+'</p>';}
+  else{h+='<p class="sub">No payments are recorded for this order yet.</p>';}
+  h+='<dl><div class="kv"><dt>Total</dt><dd>'+peso(TOTAL)+'</dd></div><div class="kv"><dt>Paid</dt><dd>'+peso(S.paid)+'</dd></div><div class="kv"><dt>Remaining</dt><dd>'+peso(rem)+'</dd></div></dl>';
+  if(rem>0&&!S.cancelled){
+    h+='<hr style="border:0;border-top:1px solid var(--line);margin:12px 0"><h3 style="font-size:17px;margin-bottom:10px">Record a payment</h3>'+
+      '<div class="row"><div style="flex:1;min-width:130px"><label for="amt">Amount (&#8369;)</label><input type="number" id="amt" min="1" max="'+rem+'" value="'+rem+'"></div>'+
+      '<div style="flex:1;min-width:130px"><label for="mth">Method</label><select id="mth"><option>Cash</option><option>GCash (manual)</option><option>Bank transfer</option></select></div></div>'+
+      '<div class="row" style="margin-top:12px"><button class="btn" id="recPay" type="button">Record payment</button></div>'+
+      '<p class="hint">Refunds are not handled in the system. Handle them outside it and write what was done in the order note.</p>';
+  }
+  return h+'</section>';
+}
+function adminHtml(){
+  var del=S.mode==='delivery';
+  var head='<div class="top"><a class="back" href="#" onclick="return false">&larr; Back to orders</a></div>'+
+  '<section class="glass card"><div class="head"><div><h1>Order LP-2026-00003</h1><div class="meta">Rence Samontanez &middot; Placed Oct 28, 2026 &middot; '+(del?'Delivery':'Pickup')+'</div></div>'+
+  '<div class="badges">'+payBadge()+stageBadge()+'</div></div>'+
+  '<div style="margin-top:22px">'+stepper()+'</div></section>';
+  var left='<section class="glass card"><h2>Order history</h2><p class="sub">Everything that happened to this order. Corrections stay here and are never shown to the customer.</p>'+histHtml(false)+'</section>'+paymentRec();
+  var summary='<section class="glass card" aria-labelledby="sumT"><h2 id="sumT">Summary</h2><dl>'+
+    '<div class="kv"><dt>Delivery option</dt><dd>'+(del?'Delivery':'Pickup')+'</dd></div>'+
+    (del?'<div class="addr">157, Brgy. Banaybanay I, San Jose, Batangas 4227</div><div class="kv"><dt>Delivery fee</dt><dd>'+peso(500)+'</dd></div>':'<div class="addr">Pickup at the shop in San Juan, Batangas</div>')+
+    '<div class="kv"><dt>Payment method</dt><dd>Stripe &middot; Full payment</dd></div>'+
+    '<div class="kv total"><dt style="color:var(--ink)">Total</dt><dd>'+peso(TOTAL)+'</dd></div></dl></section>';
+  return head+'<div class="cols"><div>'+left+'</div><div class="side">'+actionCard()+summary+'</div></div>';
+}
+
+/* ---------- customer view ---------- */
+function custHtml(){
+  var k=cur(), latest=null;
+  S.hist.forEach(function(e){ if(!latest&&e.notified&&!e.sys&&(e.note||e.photo))latest=e; });
+  var h='<div class="top"><a class="back" href="#" onclick="return false">&larr; My orders</a><span class="badge b-stage">What your customer sees</span></div>'+
+  '<section class="glass card"><div class="head"><div><h1>Order LP-2026-00003</h1><div class="meta">Placed Oct 28, 2026 &middot; '+(S.mode==='delivery'?'Delivery to San Jose, Batangas':'Pickup at our shop in San Juan, Batangas')+'</div></div><div class="badges">'+payBadge()+'</div></div>'+
+  '<div style="margin-top:22px">'+(S.cancelled?'<div class="cancelled-box">This order was cancelled.</div>':stepper())+'</div></section>';
+  var now_='<section class="glass card now" aria-labelledby="nowT"><p class="sub" style="margin:0">Where your furniture is right now</p><h2 id="nowT">'+esc(S.cancelled?'Cancelled':label(k))+'</h2>'+
+    '<p>'+esc(S.cancelled?'This order was cancelled. If you have questions, please contact us.':custCopy(k))+'</p>'+
+    (latest?'<div class="preview" style="margin-top:10px"><small>Latest message from our team &middot; '+esc(latest.when)+'</small>'+(latest.note?esc(latest.note):'')+(latest.photo?'<br><img src="'+latest.photo+'" alt="Progress photo from our team" style="margin-top:8px;width:100%;max-width:320px;border-radius:12px;border:1px solid var(--line)">':'')+'</div>':'')+
+    '<div class="assure"><div><b>Your payment is safe</b><br>'+(S.paid>=TOTAL?'Paid in full: '+peso(S.paid):'Paid '+peso(S.paid)+' of '+peso(TOTAL))+'</div>'+
+    '<div><b>You will be told every step</b><br>Notifications and email, each time we update your order.</div>'+
+    '<div><b>Questions?</b><br>Message us from the Assistant or the Contact page.</div></div></section>';
+  var feed='<section class="glass card"><h2>Updates</h2><p class="sub">Newest first</p>'+histHtml(true)+'</section>';
+  return h+'<div class="cols"><div>'+now_+feed+'</div><div class="side"><section class="glass card"><h2>Order summary</h2><dl>'+
+    '<div class="kv"><dt>Payment</dt><dd>Stripe &middot; Full payment</dd></div>'+
+    '<div class="kv"><dt>Delivery fee</dt><dd>'+(S.mode==='delivery'?peso(500):'None (pickup)')+'</dd></div>'+
+    '<div class="kv total"><dt style="color:var(--ink)">Total</dt><dd>'+peso(TOTAL)+'</dd></div></dl></section></div></div>';
+}
+
+/* ---------- dialog ---------- */
+var dlg=document.getElementById('dlg'),yes=document.getElementById('dlgYes'),chk=document.getElementById('dlgChk'),reasonEl=document.getElementById('dlgReason');
+var dlgCfg=null;
+function openDlg(cfg){
+  dlgCfg=cfg;
+  document.getElementById('dlgTitle').textContent=cfg.title;
+  document.getElementById('dlgQ').textContent=cfg.question;
+  var rw=document.getElementById('dlgReasonWrap');rw.hidden=!cfg.reason;reasonEl.value='';document.getElementById('dlgReasonErr').hidden=true;
+  var pv=document.getElementById('dlgPrev');pv.hidden=!cfg.preview;pv.innerHTML=cfg.preview||'';
+  document.getElementById('dlgChkText').textContent=cfg.check;
+  chk.checked=false;
+  yes.textContent=cfg.yes;yes.className='btn'+(cfg.danger?' danger':'');yes.disabled=true;
+  if(dlg.showModal)dlg.showModal();else dlg.setAttribute('open','');
+}
+chk.addEventListener('change',function(){yes.disabled=!chk.checked;});
+document.getElementById('dlgNo').addEventListener('click',function(){dlg.close();});
+yes.addEventListener('click',function(){
+  if(!dlgCfg)return;
+  var r=reasonEl.value.trim();
+  if(dlgCfg.reason&&r.length<8){document.getElementById('dlgReasonErr').hidden=false;reasonEl.focus();return;}
+  var cfg=dlgCfg;dlgCfg=null;dlg.close();cfg.onYes(r);
+});
+function toast(t){var el=document.getElementById('toast');el.textContent=t;el.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(function(){el.classList.remove('show');},3200);}
+
+/* ---------- actions ---------- */
+function advance(){
+  var nk=nextKey();
+  var pv=esc(custCopy(nk))+(draftMsg?'<br><em>&ldquo;'+esc(draftMsg)+'&rdquo;</em>':'')+(draftPhoto?'<br>+ 1 progress photo':'');
+  openDlg({title:btnLabel(nk)+'?',question:ask(nk),check:'Yes, this is correct. Notify the customer.',yes:'Yes, '+btnLabel(nk).charAt(0).toLowerCase()+btnLabel(nk).slice(1),
+    preview:'<small>The customer will receive (Notifications + email)</small>'+pv,
+    onYes:function(){
+      S.idx++;
+      addHist({title:label(nk),note:draftMsg||'',photo:draftPhoto?draftPhoto.url:'',notified:true});
+      draftMsg='';draftPhoto=null;photoErr='';
+      render();toast('Order moved to '+label(nk)+'. Customer notified.');
+    }});
+}
+function sendOnly(){
+  addHist({title:'Progress update',note:draftMsg,photo:draftPhoto?draftPhoto.url:'',notified:true});
+  draftMsg='';draftPhoto=null;photoErr='';render();toast('Update sent. The stage did not change.');
+}
+function fixLast(){
+  var prev=stages()[S.idx-1];
+  openDlg({title:'Correct last step?',question:'This moves the order back from '+label(cur())+' to '+label(prev)+'.',reason:true,
+    check:'I understand the customer is not notified and this is saved in the history.',yes:'Correct last step',danger:true,
+    onYes:function(r){
+      var was=label(cur());S.idx--;
+      addHist({title:'Corrected: '+was+' back to '+label(prev),note:r,fix:true,notified:false});
+      render();toast('Order moved back to '+label(prev)+'. Customer was not notified.');
+    }});
+}
+function cancelOrder(){
+  openDlg({title:'Cancel this order?',question:'The order will be closed and the customer is told it was cancelled.',reason:true,
+    check:'Yes, cancel this order. Refunds are handled outside the system.',yes:'Cancel order',danger:true,
+    onYes:function(r){S.cancelled=true;S.cancelReason=r;addHist({title:'Order cancelled',note:r,notified:true});render();toast('Order cancelled. Customer notified.');}});
+}
+function recordPay(){
+  var a=Number(document.getElementById('amt').value),m=document.getElementById('mth').value,rem=TOTAL-S.paid;
+  if(!(a>0)||a>rem){toast('Enter an amount between 1 and '+rem+'.');return;}
+  S.paid+=a;
+  addHist({title:'Payment recorded: '+peso(a)+' ('+m+')',notified:true});
+  if(S.paid>=TOTAL&&S.idx===0){S.idx=1;addHist({title:'Order confirmed automatically',sys:true,notified:true});toast('Paid in full. Order confirmed automatically.');}
+  else toast('Payment recorded.');
+  render();
+}
+function bind(){
+  var q=function(id){return document.getElementById(id);};
+  if(q('go'))q('go').onclick=advance;
+  if(q('sendOnly'))q('sendOnly').onclick=sendOnly;
+  if(q('fix'))q('fix').onclick=fixLast;
+  if(q('cancelOrder'))q('cancelOrder').onclick=cancelOrder;
+  if(q('recPay'))q('recPay').onclick=recordPay;
+  if(q('msg'))q('msg').oninput=function(e){draftMsg=e.target.value;q('cnt').textContent=draftMsg.length+'/300';
+    var so=q('sendOnly');if(so)so.disabled=!(draftMsg||draftPhoto);
+    var pm=q('pvMsg');if(pm)pm.innerHTML=draftMsg?'<br><em>&ldquo;'+esc(draftMsg)+'&rdquo;</em>':'';
+  };
+  if(q('addPhoto'))q('addPhoto').onclick=function(){q('pf').click();};
+  if(q('rmPhoto'))q('rmPhoto').onclick=function(){draftPhoto=null;photoErr='';render();};
+  if(q('pf'))q('pf').onchange=function(e){
+    var f=e.target.files[0];if(!f)return;
+    if(['image/jpeg','image/png'].indexOf(f.type)<0){photoErr='Photo must be a JPG or PNG.';render();return;}
+    if(f.size>5*1024*1024){photoErr='Photo must be 5 MB or smaller.';render();return;}
+    photoErr='';draftPhoto={url:URL.createObjectURL(f)};render();
+  };
+}
+function render(){
+  document.getElementById('adminView').hidden=S.view!=='admin';
+  document.getElementById('custView').hidden=S.view!=='customer';
+  document.getElementById('adminView').innerHTML=adminHtml();
+  document.getElementById('custView').innerHTML=custHtml();
+  bind();
+}
+function seg(id,fn){
+  var el=document.getElementById(id);
+  el.addEventListener('click',function(e){
+    var b=e.target.closest('button');if(!b)return;
+    fn(b.getAttribute('data-v'));
+    Array.prototype.forEach.call(el.querySelectorAll('button'),function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+  });
+}
+seg('segView',function(v){S.view=v;render();});
+seg('segMode',function(v){S.mode=v;reset();render();});
+seg('segPaid',function(v){S.paid=v==='paid'?TOTAL:0;reset();render();});
+document.getElementById('btnReset').addEventListener('click',function(){reset();render();});
+render();
+})();
+</script>
+</body>
+</html>

@@ -8,7 +8,10 @@ use App\Models\Notification;
 use App\Models\StripeWebhookEvent;
 use App\Models\User;
 use App\Support\AgreementCheckout;
+use App\Models\PaymentRecord;
+use App\Support\OrderTracking;
 use App\Support\PaymentLedger;
+use App\Support\RecordPayment;
 use App\Support\StripeCheckoutParams;
 use App\Support\StripeErrors;
 use Illuminate\Database\QueryException;
@@ -128,7 +131,7 @@ class PaymentController extends Controller
         // Idempotent: a repeat visit to this URL (back button, refresh,
         // retry) for an order already marked paid is a harmless no-op —
         // don't re-verify with Stripe and don't send a second notification.
-        if ($order->payment->payment_status === 'paid') {
+        if ($order->payment->payment_status === 'paid' && $this->ledgerHasRows($order->id)) {
             return redirect()->route('payment.confirmed', $order->id)
                 ->with('success', 'Payment successful! Your order is confirmed.');
         }
@@ -205,6 +208,14 @@ class PaymentController extends Controller
         // arrive for the same payment — the second one is a no-op,
         // not a second confirmation or a second notification.
         if ($order->payment->payment_status === 'paid') {
+            // Marked paid but never written to the ledger (the admin page then shows "No payments are recorded"):
+            // a verified, matching capture repairs it. Anything else is a repeat or a second capture.
+            if ($session->payment_status === 'paid'
+                && (int) $session->amount_total === (int) round((float) $order->payment->amount * 100)
+                && $this->healMissingLedger($order->id, 'stripe', (string) ($session->payment_intent ?: $session->id))) {
+                return self::PAID_CONFIRMED;
+            }
+
             return $this->recordDuplicateCapture(
                 $order,
                 'stripe',
@@ -331,7 +342,7 @@ class PaymentController extends Controller
             // orders.amount_paid equal to the ledger sum. This happens
             // for every outcome below, including a cancelled order.
             $payment = Payment::where('order_id', $orderId)->first();
-            PaymentLedger::insert($order, $payment, [
+            $ledgerRow = PaymentLedger::insert($order, $payment, [
                 'amount'            => $payment->amount,
                 'method'            => $ledgerMethod,
                 'gateway_reference' => $gatewayReference !== null ? substr($gatewayReference, 0, 191) : null,
@@ -340,6 +351,9 @@ class PaymentController extends Controller
                 'note'              => null,
             ]);
             PaymentLedger::refreshAmountPaid($order);
+            if ($ledgerRow) {
+                OrderTracking::recordPaymentEvent($order, (float) $payment->amount, RecordPayment::METHOD_LABELS[$ledgerMethod] ?? $ledgerMethod);
+            }
 
             if ($order->order_status === 'cancelled') {
                 PaymentLedger::flagForReview($order, 'payment received for a cancelled order, check for refund');
@@ -370,7 +384,11 @@ class PaymentController extends Controller
                 return self::PAID_ORDER_ADVANCED;
             }
 
-            $order->update(['order_status' => 'confirmed']);
+            if (OrderTracking::handles($order)) {
+                app(OrderTracking::class)->autoConfirm($order);
+            } else {
+                $order->update(['order_status' => 'confirmed']);
+            }
 
             if ($order->design_request_id) {
                 \App\Models\CustomOrderEvent::create([
@@ -401,6 +419,51 @@ class PaymentController extends Controller
             ]);
 
             return self::PAID_CONFIRMED;
+        });
+    }
+
+    private function ledgerHasRows(int $orderId): bool
+    {
+        return PaymentRecord::where('order_id', $orderId)->exists();
+    }
+
+    /**
+     * A gateway payment that is marked paid on the payments row but has no ledger row at all. Called only after the
+     * gateway itself confirmed the capture (signed webhook or an API lookup). Writes the ledger row (UNIQUE method +
+     * reference makes it idempotent), refreshes amount_paid and, for a pending catalog order, confirms it.
+     */
+    private function healMissingLedger(int $orderId, string $method, string $reference): bool
+    {
+        return DB::transaction(function () use ($orderId, $method, $reference) {
+            $order = Order::lockForUpdate()->find($orderId);
+            $payment = Payment::where('order_id', $orderId)->first();
+
+            if (!$order || !$payment || $payment->payment_status !== 'paid' || PaymentRecord::where('order_id', $orderId)->exists()) {
+                return false;
+            }
+
+            $row = PaymentLedger::insert($order, $payment, [
+                'amount'            => $payment->amount,
+                'method'            => $method,
+                'gateway_reference' => substr($reference, 0, 191),
+                'paid_on'           => now()->toDateString(),
+                'recorded_by'       => null,
+                'note'              => 'Recorded afterwards: the payment was marked paid but had no ledger entry',
+            ]);
+            PaymentLedger::refreshAmountPaid($order);
+
+            if ($row === null) {
+                return false;
+            }
+
+            \Log::warning("Order {$order->id} ({$order->order_number}): a paid {$method} payment had no ledger entry; it was recorded now.");
+            OrderTracking::recordPaymentEvent($order, (float) $payment->amount, RecordPayment::METHOD_LABELS[$method] ?? $method);
+
+            if ($order->order_status === 'pending' && $order->design_agreement_id === null && !$order->needs_review) {
+                app(OrderTracking::class)->autoConfirm($order);
+            }
+
+            return true;
         });
     }
 
@@ -578,7 +641,7 @@ class PaymentController extends Controller
         // markGcashPaymentPaid() below already guards this too (shared
         // with the webhook path), but skipping the API call entirely
         // here avoids a pointless external request on every repeat hit.
-        if ($order->payment->payment_status === 'paid') {
+        if ($order->payment->payment_status === 'paid' && $this->ledgerHasRows($order->id)) {
             return redirect()->route('payment.confirmed', $order->id)
                 ->with('success', 'Payment successful! Your order is confirmed.');
         }
@@ -643,7 +706,8 @@ class PaymentController extends Controller
     private function markGcashPaymentPaid(Order $order, string $intentId): string
     {
         if ($order->payment->payment_status === 'paid') {
-            return self::PAID_ALREADY;
+            // Same repair as for Stripe: paid but never ledgered.
+            return $this->healMissingLedger($order->id, 'gcash_paymongo', $intentId) ? self::PAID_CONFIRMED : self::PAID_ALREADY;
         }
 
         return $this->recordPaymentArrived(
@@ -727,26 +791,40 @@ class PaymentController extends Controller
             return response()->json(['status' => 'received']);
         }
 
-        if (in_array($event->type, ['checkout.session.completed', 'checkout.session.async_payment_succeeded'])) {
+        // The endpoint may be subscribed to the Checkout Session events or only to payment_intent.succeeded:
+        // either one names the same payment, and the recording below is idempotent, so all three are handled.
+        $session = null;
+        if (in_array($event->type, ['checkout.session.completed', 'checkout.session.async_payment_succeeded'], true)) {
             $session = $event->data->object;
+        } elseif ($event->type === 'payment_intent.succeeded') {
+            $session = $this->sessionForIntent((string) ($event->data->object->id ?? ''));
+            if ($session === null) {
+                \Log::warning("Stripe webhook {$event->id}: payment intent " . ($event->data->object->id ?? '?') . ' has no Checkout Session we can look up; nothing recorded.');
+            }
+        }
 
+        if ($session !== null) {
             // A paid session that no longer belongs to an order's current
             // Stripe payment (unknown order, or the customer has since
             // switched to another method) is never confirmed or ledgered
             // here: admins are told to refund or match it by hand.
             $why = $this->stripeSessionMismatch($session);
+            $paid = ($session->payment_status ?? null) === 'paid';
+            $reference = (string) ($session->payment_intent ?: $session->id);
+            $amount = ((int) ($session->amount_total ?? 0)) / 100;
 
             if ($why !== null) {
-                if (($session->payment_status ?? null) === 'paid') {
-                    $this->alertUnmatchedPayment(
-                        'Stripe',
-                        ((int) ($session->amount_total ?? 0)) / 100,
-                        (string) ($session->payment_intent ?: $session->id),
-                        $why
-                    );
+                if ($paid) {
+                    $this->alertUnmatchedPayment('Stripe', $amount, $reference, $why);
                 }
             } else {
-                $this->confirmStripeSession($session);
+                $outcome = $this->confirmStripeSession($session);
+                \Log::info("Stripe webhook {$event->id}: session {$session->id}, order " . ($session->metadata->order_id ?? '?') . ', outcome ' . ($outcome ?? 'not applied'));
+
+                // A paid session that was NOT applied must never be a silent 200: tell the admins, once.
+                if ($outcome === null && $paid) {
+                    $this->alertUnmatchedPayment('Stripe', $amount, $reference, 'it could not be applied to the order (missing order reference, amount mismatch or unknown order; see the server log)');
+                }
             }
         }
 
@@ -755,6 +833,24 @@ class PaymentController extends Controller
         $record?->markProcessed();
 
         return response()->json(['status' => 'received']);
+    }
+
+    // The Checkout Session a payment intent belongs to (payment_intent.succeeded carries no session).
+    private function sessionForIntent(string $intentId): ?object
+    {
+        if ($intentId === '') {
+            return null;
+        }
+
+        try {
+            $list = (new StripeClient(config('services.stripe.secret')))->checkout->sessions->all(['payment_intent' => $intentId, 'limit' => 1]);
+
+            return $list->data[0] ?? null;
+        } catch (\Throwable $e) {
+            \Log::warning("Stripe: could not look up the Checkout Session for payment intent {$intentId}: " . $e->getMessage());
+
+            return null;
+        }
     }
 
     // Why a verified Stripe session cannot be matched to an order's current

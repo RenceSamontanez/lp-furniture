@@ -80,6 +80,12 @@ class Order extends Model
         return $this->hasOne(Feedback::class);
     }
 
+    // Order history (placed, payments, stages, updates, corrections, cancel)
+    public function events()
+    {
+        return $this->hasMany(OrderStatusEvent::class)->orderByDesc('id');
+    }
+
     // Has many installment schedules
     public function installments()
     {

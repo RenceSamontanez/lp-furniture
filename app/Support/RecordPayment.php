@@ -121,6 +121,7 @@ class RecordPayment
 
             $paid = PaymentLedger::refreshAmountPaid($order);
             $total = round((float) $order->total_amount, 2);
+            OrderTracking::recordPaymentEvent($order, (float) $amountStr, self::METHOD_LABELS[$method] ?? $method, $admin);
 
             // payments.payment_status follows the ledger (refunded is left alone).
             if ($payment->payment_status !== 'refunded') {
@@ -141,7 +142,10 @@ class RecordPayment
             // pending -> confirmed once the first required amount is in:
             // the downpayment / deposit / full price, i.e. payments.amount.
             $confirmed = false;
-            if ($order->order_status === 'pending' && $paid + 0.001 >= (float) $payment->amount) {
+            if (OrderTracking::handles($order)) {
+                // Catalog orders: one rule for every payment path (history entry, notification and email included).
+                $confirmed = app(OrderTracking::class)->autoConfirm($order, $admin);
+            } elseif ($order->order_status === 'pending' && $paid + 0.001 >= (float) $payment->amount) {
                 $order->forceFill([
                     'order_status'      => 'confirmed',
                     'status_updated_by' => $admin->id,

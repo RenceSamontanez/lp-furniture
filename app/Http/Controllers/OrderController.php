@@ -152,6 +152,7 @@ class OrderController extends Controller
                     'production_status'   => 'pending',
                     'order_status'        => 'pending',
                 ]);
+                \App\Support\OrderTracking::recordPlaced($order);
 
                 // Create order items from cart, and decrement stock
                 // for each one now that we've confirmed it's available
@@ -310,6 +311,16 @@ class OrderController extends Controller
             ->where('user_id', Auth::id())
             ->where('id', $id)
             ->firstOrFail();
+
+        // Catalog orders get the Track My Order page; customized orders keep their own (agreement + timeline).
+        if (\App\Support\OrderTracking::handles($order)) {
+            return view('orders.track', [
+                'order'  => $order,
+                'pay'    => \App\Support\OrderTracking::payment($order),
+                // Only what the customer was told; corrections are never notified and never listed.
+                'events' => $order->events()->forCustomer()->get(),
+            ]);
+        }
 
         $timeline = [];
         if ($order->design_request_id) {

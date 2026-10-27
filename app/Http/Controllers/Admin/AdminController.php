@@ -171,6 +171,20 @@ class AdminController extends Controller
         $tokens[] = $token;
         session([\App\Http\Controllers\Admin\PaymentRecordController::TOKEN_SESSION_KEY => $tokens]);
 
+        if (\App\Support\OrderTracking::handles($order)) {
+            $order->load('events.admin');
+
+            return view('admin.orders.track', [
+                'order'        => $order,
+                'ledger'       => $ledger,
+                'pay'          => \App\Support\OrderTracking::payment($order),
+                'formToken'    => $token,
+                'unpaidRows'   => $order->installments()->where('status', '!=', 'paid')->orderBy('installment_no')->get(),
+                'reviewedBy'   => $order->reviewed_by ? \App\Models\User::find($order->reviewed_by) : null,
+                'methodLabels' => \App\Support\RecordPayment::METHOD_LABELS,
+            ]);
+        }
+
         return view('admin.orders.show', [
             'hideGlobalErrorToast' => true, // payment and status errors are shown inline
             'order'        => $order,
@@ -193,54 +207,29 @@ class AdminController extends Controller
 
         $order = Order::findOrFail($id);
 
-        // Customized orders: forward-only map, cancel rules, ledger-aware.
-        // Catalog orders keep the free-form behaviour below, unchanged.
-        if ($order->design_agreement_id !== null) {
-            $request->validate([
-                'cancel_reason'   => 'nullable|string|max:1000',
-                'override_reason' => 'nullable|string|max:1000',
-            ]);
-
-            try {
-                app(\App\Support\CustomOrderStatus::class)->change(
-                    $order->id,
-                    Auth::guard('admin')->user(),
-                    $request->order_status,
-                    $request->order_status === 'completed'
-                        ? $request->input('override_reason')
-                        : $request->input('cancel_reason')
-                );
-            } catch (\App\Support\OrderStatusException $e) {
-                return back()->withErrors(['status' => $e->getMessage()]);
-            }
-
-            return back()->with('success', 'Order status updated.');
+        // Catalog orders no longer have a free status picker: they move one step at a time through the
+        // Update progress card (Admin\OrderTrackingController). Only customized orders use this route.
+        if ($order->design_agreement_id === null) {
+            return back()->withErrors(['status' => 'Use the Update progress card on the order page to change this order.']);
         }
 
-        $order->update([
-            'order_status'      => $request->order_status,
-            'status_updated_by' => Auth::guard('admin')->id(),
-            'status_updated_at' => now(),
+        // Customized orders: forward-only map, cancel rules, ledger-aware.
+        $request->validate([
+            'cancel_reason'   => 'nullable|string|max:1000',
+            'override_reason' => 'nullable|string|max:1000',
         ]);
 
-        $statusLabels = [
-            'confirmed'        => 'Your order has been confirmed and will begin production soon.',
-            'in_production'    => 'Your order is now in production.',
-            'ready'            => 'Your order is ready for pickup!',
-            'out_for_delivery' => 'Your order is out for delivery!',
-            'completed'        => 'Your order has been completed. Thank you for choosing LP Furniture!',
-            'cancelled'        => 'Your order has been cancelled.',
-        ];
-
-        if (isset($statusLabels[$request->order_status])) {
-            Notification::create([
-                'user_id' => $order->user_id,
-                'title'   => 'Order Update — ' . $order->order_number,
-                'message' => $statusLabels[$request->order_status],
-                'type'    => 'order_update',
-                'url'     => route('orders.show', $order->id),
-                'is_read' => false,
-            ]);
+        try {
+            app(\App\Support\CustomOrderStatus::class)->change(
+                $order->id,
+                Auth::guard('admin')->user(),
+                $request->order_status,
+                $request->order_status === 'completed'
+                    ? $request->input('override_reason')
+                    : $request->input('cancel_reason')
+            );
+        } catch (\App\Support\OrderStatusException $e) {
+            return back()->withErrors(['status' => $e->getMessage()]);
         }
 
         return back()->with('success', 'Order status updated.');

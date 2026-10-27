@@ -17,6 +17,7 @@
 /public/hot
 /public/storage
 /storage/app/public/product-photos
+/storage/app/public/order-update-photos
 /storage/*.key
 /storage/pail
 /vendor

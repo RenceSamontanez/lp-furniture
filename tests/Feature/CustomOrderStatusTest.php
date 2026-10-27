@@ -274,24 +274,19 @@ class CustomOrderStatusTest extends TestCase
 
     /* ───────────── catalog orders are unchanged ───────────── */
 
-    public function test_catalog_orders_keep_the_free_form_dropdown_and_behaviour(): void
+    public function test_catalog_orders_have_no_free_form_status_picker_any_more(): void
     {
         $admin = $this->admin();
         $order = $this->catalog('pending');
 
         $page = $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))->assertOk();
-        foreach (self::STATUSES as $s) {
-            $page->assertSee('value="' . $s . '"', false);
-        }
-        $page->assertDontSee('Customized Order')->assertDontSee('only move forward');
+        $page->assertDontSee('name="order_status"', false)->assertSee('Update progress')->assertDontSee('Customized Order');
 
-        // any jump is still accepted, including backwards
-        $this->setStatus($admin, $order, 'completed')->assertSessionHasNoErrors();
-        $this->assertSame('completed', $order->fresh()->order_status);
-        $this->setStatus($admin, $order, 'pending')->assertSessionHasNoErrors();
-        $this->assertSame('pending', $order->fresh()->order_status);
-        $this->setStatus($admin, $order, 'cancelled')->assertSessionHasNoErrors();
-        $this->assertSame('cancelled', $order->fresh()->order_status);
+        // the old route refuses a catalog order whatever status is posted
+        foreach (['completed', 'cancelled', 'confirmed'] as $s) {
+            $this->setStatus($admin, $order, $s)->assertSessionHasErrors('status');
+            $this->assertSame('pending', $order->fresh()->order_status);
+        }
         $this->assertSame(0, CustomOrderEvent::count());
     }
 

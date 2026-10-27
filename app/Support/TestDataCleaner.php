@@ -42,6 +42,7 @@ final class TestDataCleaner
         'delivery'                     => null,
         'feedback'                     => null,
         'order_items'                  => null,
+        'order_status_events'          => null,
         'payments'                     => null,
         'orders'                       => null,
         // AI designs (history, gallery, favourites)
