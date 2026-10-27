@@ -172,7 +172,7 @@ class CatalogPageTest extends TestCase
         $j = $this->getJson("/product/{$p->id}/quick-view")->assertOk()->json();
 
         $this->assertSame(
-            [asset('images/products/main.jpg'), asset('images/products/extra-one.jpg'), asset('images/products/extra-two.jpg')],
+            [asset('storage/main.jpg'), asset('storage/extra-one.jpg'), asset('storage/extra-two.jpg')],
             $j['gallery_images']
         );
         $this->assertArrayNotHasKey('images', $j);
@@ -193,7 +193,7 @@ class CatalogPageTest extends TestCase
         ProductImage::create(['product_id' => $p->id, 'image_path' => 'only.jpg', 'sort_order' => 0, 'is_primary' => true]);
 
         $this->getJson("/product/{$p->id}/quick-view")->assertOk()
-            ->assertJsonPath('gallery_images', [asset('images/products/only.jpg')]);
+            ->assertJsonPath('gallery_images', [asset('storage/only.jpg')]);
     }
 
     public function test_quick_view_omits_empty_details_and_uses_the_placeholder_for_no_photo(): void

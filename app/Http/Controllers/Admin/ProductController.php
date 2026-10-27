@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Rules\NoInappropriateTerms;
 use App\Rules\NoLinks;
 use App\Support\DimensionsFormatter;
+use App\Support\ProductPhotos;
 use Blaspsoft\Blasp\Rules\Profanity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -23,7 +24,7 @@ class ProductController extends Controller
         $category = $request->get('category', 'all');
 
         $products = Product::query()
-            ->withCount('orderItems')
+            ->with('primaryImage')->withCount('orderItems')
             ->when($search, fn($q) => $q->where('product_name', 'like', "%{$search}%"))
             ->when($category !== 'all', fn($q) => $q->where('category', $category))
             ->latest()
@@ -53,30 +54,16 @@ class ProductController extends Controller
         $validated = $this->validateProduct($request);
         $validated['is_customizable'] = $request->boolean('is_customizable');
         $validated['is_featured']     = $request->boolean('is_featured');
-    
+
         $product = Product::create($validated);
-    
+
         if ($request->hasFile('product_image')) {
-            $filename = $this->storeImage($request);
-    
-            // Keep the plain column in sync too, as a fallback
-            $product->update(['product_image' => $filename]);
-    
-            // Create the primary gallery image — this is what image_url()
-            // actually checks first
-            ProductImage::create([
-                'product_id'  => $product->id,
-                'image_path'  => $filename,
-                'label'       => 'Main',
-                'sort_order'  => 1,
-                'is_primary'  => true,
-            ]);
+            $this->setMainPhoto($product, ProductPhotos::store($request->file('product_image')));
         }
-    
+
         return redirect()->route('admin.products.index')
             ->with('success', 'Product created successfully.');
     }
-
     /* ════════════════════════════════
        SHOW EDIT FORM
     ════════════════════════════════ */
@@ -93,59 +80,50 @@ class ProductController extends Controller
        UPDATE PRODUCT
     ════════════════════════════════ */
     public function update(Request $request, $id)
-{
-    $product = Product::findOrFail($id);
-    $validated = $this->validateProduct($request);
-    $this->assertRoomForExtras($request, $product);
-    $validated['is_customizable'] = $request->boolean('is_customizable');
-    $validated['is_featured']     = $request->boolean('is_featured');
+    {
+        $product = Product::findOrFail($id);
+        $validated = $this->validateProduct($request);
+        $this->assertRoomForExtras($request, $product);
+        $validated['is_customizable'] = $request->boolean('is_customizable');
+        $validated['is_featured']     = $request->boolean('is_featured');
 
-    if ($request->hasFile('product_image')) {
-        $filename = $this->storeImage($request);
+        $product->update($validated);
 
-        // Find the existing primary gallery image, if any
-        $primaryImage = $product->images()->where('is_primary', true)->first();
-
-        // Delete the OLD physical file before replacing the reference
-        $oldFilename = $primaryImage->image_path ?? $product->product_image;
-        if ($oldFilename) {
-            $oldPath = public_path('images/products/' . $oldFilename);
-            if (file_exists($oldPath)) {
-                @unlink($oldPath);
-            }
+        if ($request->hasFile('product_image')) {
+            $this->setMainPhoto($product, ProductPhotos::store($request->file('product_image')));
         }
 
-        if ($primaryImage) {
-            // Update the existing primary gallery row
-            $primaryImage->update(['image_path' => $filename]);
-        } else {
-            // No gallery image existed yet — create one
-            ProductImage::create([
-                'product_id'  => $product->id,
-                'image_path'  => $filename,
-                'label'       => 'Main',
-                'sort_order'  => 1,
-                'is_primary'  => true,
-            ]);
-        }
+        $added = $this->storeExtraImages($request, $product);
 
-        // Keep the plain column in sync too, as a fallback
-        $validated['product_image'] = $filename;
+        return redirect()->route('admin.products.index')
+            ->with('success', 'Product updated successfully.' . ($added ? " {$added} extra photo" . ($added > 1 ? 's' : '') . ' added.' : ''));
     }
 
-    $product->update($validated);
+    /** Makes $path the main photo (replacing the old main row's file when nothing else uses it) and mirrors it in products.product_image. */
+    private function setMainPhoto(Product $product, string $path): void
+    {
+        $main = $product->images()->where('is_primary', true)->first();
+        $old  = $main?->image_path;
 
-    $added = $this->storeExtraImages($request, $product);
+        if ($main) {
+            $main->update(['image_path' => $path]);
+        } else {
+            ProductImage::create([
+                'product_id' => $product->id, 'image_path' => $path,
+                'label' => 'Main', 'sort_order' => 1, 'is_primary' => true,
+            ]);
+        }
+        $product->update(['product_image' => $path]);
 
-    return redirect()->route('admin.products.index')
-        ->with('success', 'Product updated successfully.' . ($added ? " {$added} extra photo" . ($added > 1 ? 's' : '') . ' added.' : ''));
-}
-
+        if ($old && $old !== $path) {
+            ProductPhotos::deleteIfUnused($old);
+        }
+    }
     /* ════════════════════════════════
        REMOVE ONE EXTRA PHOTO
        Only extras (is_primary = false) can be removed here; the main photo is
        replaced through the normal upload. Same disk pattern as destroy(): the file
-       in public/images/products goes too, unless another row still uses that name.
+       in the product-photos folder goes too, unless another row still uses that name.
     ════════════════════════════════ */
     public function destroyImage($id, $imageId)
     {
@@ -154,16 +132,7 @@ class ProductController extends Controller
 
         $filename = $image->image_path;
         $image->delete();
-
-        $stillUsed = ProductImage::where('image_path', $filename)->exists()
-            || Product::where('product_image', $filename)->exists();
-        if (!$stillUsed) {
-            $path = public_path('images/products/' . $filename);
-            if (is_file($path)) {
-                @unlink($path);
-            }
-        }
-
+        ProductPhotos::deleteIfUnused($filename);
         return redirect()->route('admin.products.edit', $product->id)
             ->with('success', 'Photo removed.');
     }
@@ -175,27 +144,18 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
     
-        // Delete all gallery image files, not just the main one
+        // Delete the files in the product-photos folder (the old public/images/products backup is never touched)
+        $paths = $product->images->pluck('image_path')->push($product->product_image)->filter()->unique();
         foreach ($product->images as $image) {
-            $path = public_path('images/products/' . $image->image_path);
-            if (file_exists($path)) {
-                @unlink($path);
-            }
             $image->delete();
         }
-    
-        if ($product->product_image) {
-            $mainPath = public_path('images/products/' . $product->product_image);
-            if (file_exists($mainPath)) {
-                @unlink($mainPath);
-            }
-        }
-    
         $product->delete();
-    
+        foreach ($paths as $path) {
+            ProductPhotos::deleteIfUnused($path);
+        }
+
         return back()->with('success', 'Product deleted.');
     }
-
     /* ════════════════════════════════
        QUICK STOCK UPDATE
     ════════════════════════════════ */
@@ -211,32 +171,9 @@ class ProductController extends Controller
         return back()->with('success', 'Stock updated.');
     }
 
-    /* ════════════════════════════════
-       IMAGE STORAGE
-       Saves directly into public/images/products so it matches
-       the existing storefront's asset('images/products/...') paths
-       — no Laravel storage disk / symlink involved, intentionally,
-       to stay consistent with how product images already work.
-    ════════════════════════════════ */
-    private function storeImage(Request $request): string
-    {
-        $file     = $request->file('product_image');
-        $filename = Str::random(20) . '.' . \App\Support\UploadedImage::extensionOf($file);
-        \App\Support\UploadedImage::optimize($file);
-
-        $destination = public_path('images/products');
-        if (!file_exists($destination)) {
-            mkdir($destination, 0755, true);
-        }
-
-        $file->move($destination, $filename);
-
-        return $filename;
-    }
-
     /**
      * Extra photos from the edit form, saved next to the main image with the same method
-     * (public/images/products, random name; the extension comes from the real file type).
+     * (product-photos folder, random name; the extension comes from the real file type).
      * At most Product::MAX_EXTRA_IMAGES per product including the ones already there.
      * Returns how many were added.
      */
@@ -259,31 +196,14 @@ class ProductController extends Controller
             return 0;
         }
 
-        // A product whose only photo is in the old product_image column gets a main row for it
-        // (same file, nothing copied), so the extras always come after the main photo.
-        if ($product->product_image && !$product->images()->where('is_primary', true)->exists()) {
-            ProductImage::create([
-                'product_id' => $product->id, 'image_path' => $product->product_image,
-                'label' => 'Main', 'sort_order' => 1, 'is_primary' => true,
-            ]);
-        }
-
-        $destination = public_path('images/products');
-        if (!file_exists($destination)) {
-            mkdir($destination, 0755, true);
-        }
-
         $order = max(1, (int) $product->images()->max('sort_order'));
         foreach ($files as $file) {
-            $filename = Str::random(20) . '.' . \App\Support\UploadedImage::extensionOf($file);
-            \App\Support\UploadedImage::optimize($file);
-            $file->move($destination, $filename);
+            $path = ProductPhotos::store($file);
             ProductImage::create([
-                'product_id' => $product->id, 'image_path' => $filename,
+                'product_id' => $product->id, 'image_path' => $path,
                 'label' => null, 'sort_order' => ++$order, 'is_primary' => false,
             ]);
         }
-
         return count($files);
     }
 

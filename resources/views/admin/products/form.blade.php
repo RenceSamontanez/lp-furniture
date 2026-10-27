@@ -207,7 +207,7 @@
 
           <div class="admin-product-image-preview">
            <img id="image-preview"
-                 src="{{ $product->exists ? $product->image_url : asset('images/products/placeholder.jpg') }}"
+                 src="{{ $product->exists ? $product->image_url : \App\Support\ProductPhotos::placeholderUrl() }}"
                  alt="Preview"
                  onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
           </div>

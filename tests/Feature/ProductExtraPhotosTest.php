@@ -6,34 +6,24 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\Concerns\BuildsCustomOrderFixtures;
 use Tests\TestCase;
 
 /**
  * Product extra photos (admin edit page), the gallery_images / size_cm / size_inches helpers,
  * and the product detail page when optional fields are missing.
- * Uploads land in public/images/products like the main image; the files these tests create are removed afterwards.
+ * Uploads land in the product-photos folder of the public disk (faked here).
  */
 class ProductExtraPhotosTest extends TestCase
 {
     use RefreshDatabase;
     use BuildsCustomOrderFixtures;
 
-    /** @var list<string> */
-    private array $madeFiles = [];
-
-    protected function tearDown(): void
+    protected function setUp(): void
     {
-        foreach (ProductImage::pluck('image_path') as $name) {
-            $this->madeFiles[] = $name;
-        }
-        foreach (array_unique($this->madeFiles) as $name) {
-            $path = public_path('images/products/' . $name);
-            if (str_starts_with($name, 'tst_') || preg_match('/^[A-Za-z0-9]{20}\.[a-z]+$/', $name)) {
-                @unlink($path);
-            }
-        }
-        parent::tearDown();
+        parent::setUp();
+        Storage::fake('public');   // photos go to the product-photos folder of the public disk; nothing real is written
     }
 
     private function admin()
@@ -65,7 +55,6 @@ class ProductExtraPhotosTest extends TestCase
     private function extra(Product $p, int $order, string $name = null): ProductImage
     {
         $name ??= 'tst_' . uniqid() . '.jpg';
-        $this->madeFiles[] = $name;
 
         return ProductImage::create(['product_id' => $p->id, 'image_path' => $name, 'sort_order' => $order, 'is_primary' => false]);
     }
@@ -96,7 +85,8 @@ class ProductExtraPhotosTest extends TestCase
         $this->assertSame([2, 3], $rows->pluck('sort_order')->all());
         $this->assertFalse($rows[0]->is_primary);
         foreach ($rows as $r) {
-            $this->assertFileExists(public_path('images/products/' . $r->image_path));
+            $this->assertStringStartsWith('product-photos/', $r->image_path);
+            Storage::disk('public')->assertExists($r->image_path);
         }
     }
 
@@ -160,18 +150,30 @@ class ProductExtraPhotosTest extends TestCase
         $this->assertSame(5, $p->extraImages()->count());
     }
 
-    public function test_a_product_with_only_the_old_image_column_keeps_that_photo_first(): void
+    public function test_the_old_image_column_alone_shows_no_photo(): void
     {
         $p = $this->product(['product_image' => 'legacy-main.jpg']);
 
-        $this->update($p, ['extra_images' => $this->photos(1)])->assertSessionHasNoErrors();
-
-        $gallery = $p->fresh()->gallery_images;
-        $this->assertCount(2, $gallery);
-        $this->assertStringEndsWith('legacy-main.jpg', $gallery[0]);
-        $this->assertSame(1, $p->images()->where('is_primary', true)->count());
+        $this->assertSame([], $p->fresh()->gallery_images);
+        $this->assertSame(asset('images/products/placeholder.jpg'), $p->fresh()->image_url);
     }
 
+    public function test_a_new_main_photo_goes_to_product_photos_and_replaces_the_old_one(): void
+    {
+        $p = $this->product();
+        $this->update($p, ['product_image' => $this->photos(1)[0]])->assertSessionHasNoErrors();
+        $first = $p->fresh()->mainPhoto()->image_path;
+        $this->assertStringStartsWith('product-photos/', $first);
+        $this->assertSame($first, $p->fresh()->product_image);
+        Storage::disk('public')->assertExists($first);
+
+        $this->update($p, ['product_image' => $this->photos(1)[0]])->assertSessionHasNoErrors();
+        $second = $p->fresh()->mainPhoto()->image_path;
+        $this->assertNotSame($first, $second);
+        Storage::disk('public')->assertMissing($first);
+        Storage::disk('public')->assertExists($second);
+        $this->assertSame(1, $p->images()->where('is_primary', true)->count());
+    }
     /* ───────────── removing ───────────── */
 
     public function test_removing_an_extra_photo_deletes_the_row_and_its_file(): void
@@ -179,28 +181,28 @@ class ProductExtraPhotosTest extends TestCase
         $p = $this->product();
         $this->update($p, ['extra_images' => $this->photos(2)]);
         $row = $p->extraImages()->first();
-        $file = public_path('images/products/' . $row->image_path);
-        $this->assertFileExists($file);
+        $file = $row->image_path;
+        Storage::disk('public')->assertExists($file);
 
         $this->actingAs($this->admin(), 'admin')
             ->delete(route('admin.products.images.destroy', [$p->id, $row->id]))
             ->assertRedirect(route('admin.products.edit', $p->id));
 
         $this->assertDatabaseMissing('product_images', ['id' => $row->id]);
-        $this->assertFileDoesNotExist($file);
+        Storage::disk('public')->assertMissing($file);
         $this->assertSame(1, $p->extraImages()->count());
     }
 
     public function test_the_file_stays_when_something_else_still_uses_it(): void
     {
         $p = $this->product();
-        $a = $this->extra($p, 2, 'tst_shared.jpg');
-        $this->extra($p, 3, 'tst_shared.jpg');
-        file_put_contents(public_path('images/products/tst_shared.jpg'), 'x');
+        $a = $this->extra($p, 2, 'product-photos/tst_shared.jpg');
+        $this->extra($p, 3, 'product-photos/tst_shared.jpg');
+        Storage::disk('public')->put('product-photos/tst_shared.jpg', 'x');
 
         $this->actingAs($this->admin(), 'admin')->delete(route('admin.products.images.destroy', [$p->id, $a->id]));
 
-        $this->assertFileExists(public_path('images/products/tst_shared.jpg'));
+        Storage::disk('public')->assertExists('product-photos/tst_shared.jpg');
     }
 
     public function test_the_main_photo_and_other_products_photos_cannot_be_removed_here(): void

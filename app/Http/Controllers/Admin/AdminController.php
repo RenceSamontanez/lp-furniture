@@ -339,6 +339,8 @@ class AdminController extends Controller
             ->orderByDesc('total_sold')
             ->take(5)
             ->get();
+        $bestPhotos = \App\Models\Product::with('primaryImage')->whereIn('id', $bestSellers->pluck('id'))->get()->keyBy('id');
+        $bestSellers->each(fn ($b) => $b->photo_url = optional($bestPhotos->get($b->id))->image_url ?? \App\Support\ProductPhotos::placeholderUrl());
 
         // ── Customer insights ──
         $totalCustomers = User::where('role', 'customer')->count();

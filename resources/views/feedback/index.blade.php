@@ -49,7 +49,7 @@
           <div class="review-prompt-order">
             @if($order->items->first()?->product)
               <div class="review-prompt-thumb">
-                <img src="{{ $order->items->first()->product->image_url ?? asset('images/products/placeholder.jpg') }}"
+                <img src="{{ $order->items->first()->image_url }}"
                      alt="Product" onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
               </div>
             @endif
@@ -118,7 +118,7 @@
             <div class="review-product-strip">
               @foreach($review->order->items->take(3) as $item)
                 <div class="review-product-thumb">
-                  <img src="{{ $item->product->image_url ?? asset('images/products/placeholder.jpg') }}"
+                  <img src="{{ $item->image_url }}"
                        alt="{{ $item->product->product_name ?? 'Product' }}"
                        onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
                 </div>

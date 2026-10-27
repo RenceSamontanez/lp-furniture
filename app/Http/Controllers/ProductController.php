@@ -195,7 +195,7 @@ class ProductController extends Controller
         // Main photo first, then the extras in sort_order. A product with no photo at all shows the site's neutral placeholder.
         $gallery = $product->gallery_images;
         if (!$gallery) {
-            $gallery = [asset('images/products/placeholder.jpg')];
+            $gallery = [\App\Support\ProductPhotos::placeholderUrl()];
         }
 
         $price = $product->on_sale ? $product->formatted_sale_price : $product->formatted_price;

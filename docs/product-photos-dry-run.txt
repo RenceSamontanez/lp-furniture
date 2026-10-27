@@ -1,0 +1,35 @@
+DRY RUN (nothing is changed; add --force to apply)  database: furniture_db
+From: C:\xampp_new\htdocs\lp-furniture\public\images/products   To: C:\xampp_new\htdocs\lp-furniture\storage\app/public\product-photos
+
+#1 Narra Dining Table
+    MAIN  repoint  narra-dining-table-front.jpg  ->  product-photos/<new random name>
+    extra repoint  narra-dining-table-back.jpg  ->  product-photos/<new random name>
+    extra add      U3dh6Dzh0m6llNJzAifX.jpg  ->  product-photos/<new random name>
+    products.product_image  ->  the main photo's new path
+#2 Executive Office Chair
+    MAIN  repoint  executive-office-chair.jpg  ->  product-photos/<new random name>
+    products.product_image  ->  the main photo's new path
+#3 4-Door Wardrobe Cabinet
+    MAIN  repoint  wardrobe-cabinet.jpg  ->  product-photos/<new random name>
+    products.product_image  ->  the main photo's new path
+#4 King Bed Frame
+    MAIN  repoint  king-bed-frame.jpg  ->  product-photos/<new random name>
+    products.product_image  ->  the main photo's new path
+#5 3-Seater Sofa Frame
+    MAIN  repoint  sofa-frame.jpg  ->  product-photos/<new random name>
+    products.product_image  ->  the main photo's new path
+#6 Study Table with Shelves
+    MAIN  repoint  study-table.jpg  ->  product-photos/<new random name>
+    products.product_image  ->  the main photo's new path
+#7 Rocking Chair
+    MAIN  repoint  rocking-chair.jpg  ->  product-photos/<new random name>
+    products.product_image  ->  the main photo's new path
+#8 TV Console Cabinet
+    MAIN  repoint  tv-console-cabinet.jpg  ->  product-photos/<new random name>
+    products.product_image  ->  the main photo's new path
+#10 Sala Set 5-piece
+    MAIN  repoint  sala-set-piece.jpg  ->  product-photos/<new random name>
+    products.product_image  ->  the main photo's new path
+
+9 product(s) would be imported, 11 file(s) to copy, 0 untouched, 0 problem(s).
+The originals in public/images/products are left exactly as they are.

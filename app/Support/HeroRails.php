@@ -52,9 +52,7 @@ class HeroRails
             'id'    => $p->id,
             'name'  => $p->product_name,
             'price' => $p->on_sale ? $p->formatted_sale_price : $p->formatted_price,
-            'image' => $p->primaryImage
-                ? $p->primaryImage->url
-                : ($p->product_image ? asset('images/products/' . $p->product_image) : null),
+            'image' => $p->image_url,
             'url'   => route('product.show', $p->id),
             'tag'   => $tag,
         ])->values();

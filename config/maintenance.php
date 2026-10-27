@@ -15,6 +15,9 @@ return [
         'public' => public_path(),
     ],
 
+    // The old git-tracked product photos. Only products:import-builtin-photos reads it (and old order snapshots); never deleted from.
+    'legacy_product_photos' => public_path('images/products'),
+
     // A file with no database row is only removed once it is older than this (an upload in progress has no row yet).
     'orphan_age_hours' => 24,
 

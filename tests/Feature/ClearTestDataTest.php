@@ -285,6 +285,33 @@ class ClearTestDataTest extends TestCase
         $this->assertFileExists($this->tmp . '/state.json');
     }
 
+    public function test_cleanup_and_clear_never_touch_product_photos_or_the_old_backup(): void
+    {
+        $p = Product::create(['product_name' => 'Chair', 'category' => 'Chairs', 'price' => 1000, 'stock_quantity' => 1, 'product_status' => 'available']);
+        ProductImage::create(['product_id' => $p->id, 'image_path' => 'product-photos/main.jpg', 'sort_order' => 1, 'is_primary' => true]);
+        ProductImage::create(['product_id' => $p->id, 'image_path' => 'product-photos/extra.jpg', 'sort_order' => 2, 'is_primary' => false]);
+        $p->update(['product_image' => 'product-photos/main.jpg']);
+
+        $referenced = $this->makeFile('public_disk/product-photos/main.jpg', 'x', 5000);
+        $extra = $this->makeFile('public_disk/product-photos/extra.jpg', 'x', 5000);
+        $unreferenced = $this->makeFile('public_disk/product-photos/uploaded-just-now-by-admin.jpg', 'x', 5000);   // even without a row: never an "orphan"
+        $backup = $this->makeFile('public/images/products/king-bed-frame.jpg', 'x', 5000);
+        $orphan = $this->makeFile('private/service-photos/orphan.png', 'x', 30);
+
+        $this->artisan('storage:cleanup', ['--force' => true])->assertSuccessful();
+        $this->assertFileDoesNotExist($orphan);
+
+        $this->artisan('data:clear-test', ['--force' => true, '--confirm' => 'CLEAR', '--backup-taken' => true])->assertSuccessful();
+
+        foreach ([$referenced, $extra, $unreferenced, $backup] as $f) {
+            $this->assertFileExists($f);
+        }
+        $this->assertSame(2, ProductImage::count());
+        $this->assertSame('product-photos/main.jpg', $p->fresh()->product_image);
+        $this->assertFalse(UploadFolders::delete($referenced), 'the delete helper refuses product photos outright');
+        $this->assertFileExists($referenced);
+    }
+
     public function test_cleanup_optional_items_only_when_asked(): void
     {
         $u = $this->makeUser('customer');

@@ -68,8 +68,7 @@
     <div class="cx-floor">
       @forelse($products as $i => $product)
         @php
-          $img = $product->primaryImage ? $product->primaryImage->url
-               : ($product->product_image ? asset('images/products/' . $product->product_image) : $placeholder);
+          $img = $product->image_url;
           $badge = $badges[$product->id] ?? null;
         @endphp
         <article class="cx-card {{ $shapes[$i % 3] }}">

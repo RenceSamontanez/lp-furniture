@@ -172,7 +172,7 @@
                 {{ $index + 1 }}
               </div>
               <div class="admin-product-thumb" style="width:40px;height:40px;">
-                <img src="{{ $product->product_image ? asset('images/products/'.$product->product_image) : asset('images/products/placeholder.jpg') }}"
+                <img src="{{ $product->photo_url }}"
                      onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';" alt="{{ $product->product_name }}"/>
               </div>
               <div style="flex:1;min-width:0;">

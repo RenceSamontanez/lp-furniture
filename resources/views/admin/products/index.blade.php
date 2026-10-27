@@ -42,7 +42,7 @@
             <tr>
               <td data-label="Image">
                 <div class="admin-product-thumb">
-                  <img src="{{ $product->product_image ? asset('images/products/'.$product->product_image) : asset('images/products/placeholder.jpg') }}"
+                  <img src="{{ $product->image_url }}"
                        alt="{{ $product->product_name }}"
                        onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
                 </div>

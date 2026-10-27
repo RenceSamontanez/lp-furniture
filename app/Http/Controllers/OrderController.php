@@ -160,7 +160,7 @@ class OrderController extends Controller
                         'order_id'      => $order->id,
                         'product_id'    => $item->product_id,
                         'product_name'  => $item->product->product_name,
-                        'product_image' => $item->product->product_image,
+                        'product_image' => $item->product->mainPhoto()?->image_path,
                         'quantity'      => $item->quantity,
                         'unit_price'    => $item->product->price,
                         'subtotal'      => $item->product->price * $item->quantity,

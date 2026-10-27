@@ -91,8 +91,8 @@ class Product extends Model
     }
 
     /**
-     * Ordered photo URLs: the main photo first (the primary gallery row, else the legacy
-     * product_image column), then the extras. Empty when the product has no photo at all.
+     * Ordered photo URLs: the main photo first (the primary gallery row; no legacy-column fallback),
+     * then the extras. Empty when the product has no photo at all.
      *
      * @return list<string>
      */
@@ -104,8 +104,6 @@ class Product extends Model
         $primary = $rows->firstWhere('is_primary', true);
         if ($primary) {
             $urls[] = $primary->url;
-        } elseif ($this->product_image) {
-            $urls[] = asset('images/products/' . $this->product_image);
         }
 
         foreach ($rows->where('is_primary', false)->sortBy([['sort_order', 'asc'], ['id', 'asc']]) as $row) {
@@ -163,21 +161,28 @@ class Product extends Model
         return (int) round((($this->price - $this->sale_price) / $this->price) * 100);
     }
 
+    /** The main photo row (the admin's photo), or null. Uses a loaded relation when there is one. */
+    public function mainPhoto(): ?ProductImage
+    {
+        if ($this->relationLoaded('primaryImage')) {
+            return $this->primaryImage;
+        }
+        if ($this->relationLoaded('images')) {
+            return $this->images->firstWhere('is_primary', true);
+        }
+
+        return $this->primaryImage()->first();
+    }
+
+    public function getHasPhotoAttribute(): bool
+    {
+        return $this->mainPhoto() !== null;
+    }
+
+    /** The one source for a product's picture in every view: the admin's main photo, else the "Image coming soon" placeholder. */
     public function getImageUrlAttribute(): string
     {
-        // Prefer the gallery's primary image if one exists
-        $primary = $this->images()->where('is_primary', true)->first();
-        if ($primary) {
-            return $primary->url;
-        }
-    
-        // Fallback to legacy single-image column
-        if ($this->product_image) {
-            return asset('images/products/' . $this->product_image);
-        }
-    
-        // Final fallback
-        return asset('images/products/placeholder.jpg');
+        return $this->mainPhoto()?->url ?? \App\Support\ProductPhotos::placeholderUrl();
     }
 
     public function images()

@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\DB;
  *
  * This is the single list `data:clear-test`, `storage:cleanup` and the System health page work from. Nothing outside
  * these folders is ever deleted, and none of them holds product or admin assets:
- *   - product photos are in public/images/products (not listed here)
+ *   - product photos are in storage/app/public/product-photos (not listed here; delete() and orphans() also refuse them
+ *     explicitly), the old backup in public/images/products is not listed either
  *   - page art (hero, gallery, payments logos, icons, luma) is in the other public/images/* folders (not listed)
  *   - public/images/ai-designs holds only customer AI concepts (its .gitignore keeps them out of the repository)
  */
@@ -34,7 +35,8 @@ final class UploadFolders
 
     /** Folders that look like uploads but are NOT cleared, shown on the dry run so it is clear they are kept. */
     public const KEPT_FOLDERS = [
-        'public/images/products' => 'Product photos (main and extra)',
+        'storage/app/public/product-photos' => 'Product photos (main and extra, managed by the admin)',
+        'public/images/products' => 'Old product photo backup (never deleted)',
         'public/images/hero, hero-ai, gallery, about, icons, payments, luma, customize' => 'Page art, logos and style photos',
     ];
 
@@ -108,6 +110,14 @@ final class UploadFolders
         };
     }
 
+    /** True for anything inside a product-photos folder or the old public/images/products backup. These are never deleted by the tools. */
+    public static function isProductPhoto(string $path): bool
+    {
+        $p = self::norm($path);
+
+        return str_contains($p, '/product-photos/') || str_contains($p, '/images/products/');
+    }
+
     private static function like(string $s): string
     {
         return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $s);
@@ -126,7 +136,7 @@ final class UploadFolders
 
         foreach (array_keys(self::folders()) as $key) {
             foreach (self::files($key) as $file) {
-                if ((int) @filemtime($file) <= $cutoff && !self::isReferenced($key, $file)) {
+                if ((int) @filemtime($file) <= $cutoff && !self::isProductPhoto($file) && !self::isReferenced($key, $file)) {
                     $out[$key][] = $file;
                 }
             }
@@ -159,6 +169,9 @@ final class UploadFolders
             return false;
         }
         $real = self::norm($real);
+        if (self::isProductPhoto($real)) {
+            return false;
+        }
 
         foreach (self::folders(true) as $f) {
             $base = realpath($f['path']);

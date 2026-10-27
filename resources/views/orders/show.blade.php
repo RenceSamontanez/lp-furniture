@@ -120,7 +120,7 @@
             <div class="order-item-row">
             <div class="order-item-img">
                 <img
-                  src="{{ ($order->design_agreement_id && !$item->product_id && $item->product_image) ? route('design.agreement.image', $order->design_agreement_id) : ($item->product->image_url ?? ($item->product_image ? asset('images/products/'.$item->product_image) : asset('images/products/placeholder.jpg'))) }}"
+                  src="{{ ($order->design_agreement_id && !$item->product_id && $item->product_image) ? route('design.agreement.image', $order->design_agreement_id) : $item->image_url }}"
                   alt="{{ $item->product->product_name ?? $item->product_name ?? 'Product' }}"
                   onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"
                 />

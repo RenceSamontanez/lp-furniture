@@ -24,6 +24,6 @@ class ProductImage extends Model
 
     public function getUrlAttribute(): string
     {
-        return asset('images/products/' . $this->image_path);
+        return \App\Support\ProductPhotos::url($this->image_path);
     }
 }
