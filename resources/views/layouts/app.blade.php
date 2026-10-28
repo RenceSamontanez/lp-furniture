@@ -61,7 +61,7 @@
       {{-- Cart --}}
       <a href="{{ route('cart.index') }}" class="sn-link sn-icon" @if($navIs('cart.*')) aria-current="page" @endif>
         @php $cartCount = Auth::user()->cartItems()->sum('quantity'); @endphp
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <svg viewBox="0 0.4 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M3 4h2l2.2 11h10.5l2-8H6.2"/><circle cx="9" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/>
         </svg>
         <span class="sn-label">Cart</span>@if($cartCount > 0) <span class="sn-sr">({{ $cartCount }} {{ $cartCount == 1 ? 'item' : 'items' }})</span>@endif
@@ -75,7 +75,7 @@
       <a href="{{ route('notifications.index') }}" class="sn-link sn-icon" id="sn-bell" aria-haspopup="dialog" aria-expanded="false" aria-controls="notif-dd"
          @if($navIs('notifications.*')) aria-current="page" @endif>
         @php $unreadCount = Auth::user()->notifications()->where('is_read', false)->count(); @endphp
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <svg viewBox="0 1.8 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M6 17h12l-1.6-2.4V10a4.4 4.4 0 0 0-8.8 0v4.6z"/><path d="M10 20a2 2 0 0 0 4 0"/>
         </svg>
         <span class="sn-label">Notifications</span><span class="sn-sr" id="sn-bell-sr" @if($unreadCount < 1) hidden @endif> (unread)</span>
