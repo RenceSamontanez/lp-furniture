@@ -166,7 +166,7 @@
         By signing up you agree to our <a href="{{ route('terms') }}" class="auth-link" target="_blank" rel="noopener">Terms</a> and <a href="#" class="auth-link">Privacy Policy</a>.
       </p>
 
-      <button type="submit" class="btn-auth-submit" style="margin-top:0;">Create Account →</button>
+      <button type="submit" class="btn-auth-submit" style="margin-top:0;">Create Account</button>
     </form>
 
   </div>

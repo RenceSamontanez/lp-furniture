@@ -49,14 +49,14 @@
   @if($odSaved)
     <div class="saved" data-od-saved style="margin-top:14px" @if($odMode !== 'saved' || $odPickup) hidden @endif>
       <span class="ico ok">{!! $odPin !!}</span>
-      <div class="t"><span class="tag">Saved address</span><b>{{ $odSaved['street'] }}</b>
+      <div class="t"><span class="tag">Saved Address</span><b>{{ $odSaved['street'] }}</b>
         <small>Brgy. {{ preg_replace('/^Brgy\.?\s+/i', '', $odSaved['names']['barangay']) }}, {{ $odSaved['names']['city'] }}, {{ $odSaved['names']['province'] }} <span class="mx-num">{{ $odSaved['postal_code'] }}</span>@if($odSaved['landmark']) · {{ $odSaved['landmark'] }}@endif</small></div>
-      <button type="button" class="lp-btn lp-btn--secondary" data-od-diff>Use a different address</button>
+      <button type="button" class="lp-btn lp-btn--secondary" data-od-diff>Use a Different Address</button>
     </div>
   @endif
 
   <div data-od-form style="margin-top:14px" @if($odPickup || ($odSaved && $odMode === 'saved')) hidden @endif>
-    <div class="ash"><h2>Delivery address</h2><span><span class="rq">*</span> required</span></div>
+    <div class="ash"><h2>Delivery Address</h2><span><span class="rq">*</span> required</span></div>
     @if($odLegacy)
       <p class="prevnote">{!! $odPin !!}<span><b>Previous address (read only):</b> {{ $odLegacy }}<br>Please choose the province, city and barangay below before you order.</span></p>
     @endif

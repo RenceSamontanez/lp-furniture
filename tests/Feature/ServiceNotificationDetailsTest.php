@@ -133,7 +133,7 @@ class ServiceNotificationDetailsTest extends TestCase
             $this->assertSame($kind, ServiceNotificationDetails::kind($notif), $kind);
             $this->assertFalse((bool) $notif->fresh()->is_read);
             $html = $this->as($this->owner)->get(route('notifications.show', $notif->id))->assertOk()
-                ->assertSee('What happened')->assertSee('What happens next')->assertSee('How to track this')->assertSee('Back to notifications')->getContent();
+                ->assertSee('What Happened')->assertSee('What Happens Next')->assertSee('How to Track This')->assertSee('Back')->getContent();
             $this->assertTrue((bool) $notif->fresh()->is_read, "$kind marked read");
             $this->assertStringContainsString('My service requests', $html, $kind);
 
@@ -210,17 +210,17 @@ class ServiceNotificationDetailsTest extends TestCase
         $all['request_received']->forceFill(['created_at' => now()->addMinute()])->save();
         $this->as($this->owner)->get(route('notifications.index'))->assertOk()
             ->assertSee(route('notifications.show', $all['request_received']->id), false)
-            ->assertSee('View details');
+            ->assertSee('View Details');
     }
 
     public function test_the_ask_luma_button_is_on_by_default_and_the_flag_can_hide_it(): void
     {
         $n = $this->allKinds()['approved'];
         $this->assertTrue(config('luma.notification_ask_button'), 'on since Luma can look up a reference number (Stage 21i)');
-        $this->as($this->owner)->get(route('notifications.show', $n->id))->assertOk()->assertSee('Ask Luma about this')->assertSee('data-ref="REF-', false);
+        $this->as($this->owner)->get(route('notifications.show', $n->id))->assertOk()->assertSee('Ask Luma About This')->assertSee('data-ref="REF-', false);
 
         config(['luma.notification_ask_button' => false]);
-        $this->get(route('notifications.show', $n->id))->assertOk()->assertDontSee('Ask Luma about this')->assertDontSee('id="nd-ask-luma"', false);
+        $this->get(route('notifications.show', $n->id))->assertOk()->assertDontSee('Ask Luma About This')->assertDontSee('id="nd-ask-luma"', false);
     }
 
     public function test_old_notifications_without_any_stored_snapshot_work(): void

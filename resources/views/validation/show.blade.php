@@ -34,9 +34,9 @@
         {{ $forService ? 'Your account is fully verified. You can now send your service request.' : 'Your account is fully verified. You can browse and place orders.' }}
         <x-slot:actions>
           @if($forService)
-            <a href="{{ route('services.request') }}" class="lp-btn lp-btn--primary">Continue to your service request</a>
+            <a href="{{ route('services.request') }}" class="lp-btn lp-btn--primary">Continue to Your Service Request</a>
           @else
-            <a href="{{ route('catalog') }}" class="lp-btn lp-btn--primary">Start shopping</a>
+            <a href="{{ route('catalog') }}" class="lp-btn lp-btn--primary">Start Shopping</a>
           @endif
         </x-slot:actions>
       </x-notice>
@@ -66,7 +66,7 @@
       @elseif($forService)
         <x-notice variant="info" title="Important">
           We need to check your ID before you can send a service request. This is a one-time check, and it is not an order.
-          <x-slot:actions><a href="#vfy-form" class="lp-btn lp-btn--primary">Continue ID check</a></x-slot:actions>
+          <x-slot:actions><a href="#vfy-form" class="lp-btn lp-btn--primary">Continue ID Check</a></x-slot:actions>
         </x-notice>
       @endif
 
@@ -97,7 +97,7 @@
             <input type="checkbox" name="confirm" value="1" id="vfy-confirm" {{ old('confirm') ? 'checked' : '' }}>
             <span>I confirm these photos are genuine, belong to me, and may be used by LP Furniture to verify my identity.</span>
           </label>
-          <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" id="vfy-submit" disabled>Submit for review</button>
+          <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" id="vfy-submit" disabled>Submit for Review</button>
           <p class="vfy-hint" id="vfy-hint">Add both photos and tick the box to continue.</p>
         </form>
 

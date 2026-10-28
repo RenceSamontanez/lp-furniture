@@ -144,7 +144,7 @@
         This will open PayMongo's secure payment page to complete your ₱{{ number_format($order->payment->amount, 2) }} GCash payment. Once you finish there, you'll be brought back here automatically.
       </p>
       <div class="gcash-redirect-actions">
-        <button type="button" class="btn-submit-gcash" id="gcash-continue-btn">Continue to GCash →</button>
+        <button type="button" class="btn-submit-gcash" id="gcash-continue-btn">Continue to GCash</button>
         <x-back-link :href="route('orders.show', $order->id)" label="My Order" />
       </div>
     </div>

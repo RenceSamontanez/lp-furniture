@@ -20,7 +20,7 @@
     @endif
 
     <section class="nd-section" aria-labelledby="nd-what">
-      <h2 class="nd-h2" id="nd-what">What happened</h2>
+      <h2 class="nd-h2" id="nd-what">What Happened</h2>
       <p class="nd-text">{{ $d['happened'] }}</p>
       @if($d['current'])
         <p class="nd-current">{{ $d['current'] }}</p>
@@ -36,7 +36,7 @@
 
     @if(count($d['facts']) || count($d['refs']))
       <section class="nd-section" aria-labelledby="nd-affected">
-        <h2 class="nd-h2" id="nd-affected">What this is about</h2>
+        <h2 class="nd-h2" id="nd-affected">What This Is About</h2>
         <dl class="nd-facts">
           @foreach($d['facts'] as $label => $value)
             <div><dt>{{ $label }}</dt><dd>{{ $value }}</dd></div>
@@ -53,12 +53,12 @@
     @endif
 
     <section class="nd-section" aria-labelledby="nd-next">
-      <h2 class="nd-h2" id="nd-next">What happens next</h2>
+      <h2 class="nd-h2" id="nd-next">What Happens Next</h2>
       <p class="nd-text">{{ $d['next'] ?? 'You can follow this under My service requests.' }}</p>
     </section>
 
     <section class="nd-section" aria-labelledby="nd-track">
-      <h2 class="nd-h2" id="nd-track">How to track this</h2>
+      <h2 class="nd-h2" id="nd-track">How to Track This</h2>
       <p class="nd-text">
         See it any time under <a href="{{ $d['list_url'] }}" class="lp-link">My service requests</a>@if($d['item_url']), or <a href="{{ $d['item_url'] }}" class="lp-link">open it directly</a>@endif.
         @if(count($d['refs'])) You can also ask Luma about it with the reference number.@endif
@@ -68,7 +68,7 @@
     <div class="nd-actions">
       <x-back-link :href="route('notifications.index')" label="notifications" />
       @if(config('luma.notification_ask_button') && $d['ask_ref'])
-        <button type="button" class="lp-btn lp-btn--primary" id="nd-ask-luma" data-ref="{{ $d['ask_ref'] }}">Ask Luma about this</button>
+        <button type="button" class="lp-btn lp-btn--primary" id="nd-ask-luma" data-ref="{{ $d['ask_ref'] }}">Ask Luma About This</button>
       @endif
     </div>
   </article>

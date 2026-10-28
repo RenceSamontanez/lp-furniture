@@ -37,7 +37,7 @@
                   @endif
                 </p>
                 <a href="{{ route($order->payment->payment_method === 'stripe' ? 'payment.stripe' : 'payment.gcash.paymongo', $order->id) }}" class="btn btn-gold" style="display:block;text-align:center;padding:11px;" data-loading="Opening payment..." data-loading-overlay="payment">
-                  Finish Payment →
+                  Finish Payment
                 </a>
               </div>
             @endif

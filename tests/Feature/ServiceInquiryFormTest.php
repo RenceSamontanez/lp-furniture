@@ -75,7 +75,7 @@ class ServiceInquiryFormTest extends TestCase
     public function test_the_placeholder_is_gone_and_the_real_form_loads(): void
     {
         $this->get('/services/request')->assertOk()
-            ->assertSee('Other services request')
+            ->assertSee('Other Services Request')
             ->assertSee('Monday to Friday, 8:00 AM to 5:00 PM')
             ->assertSee('Terms and Conditions')
             ->assertDontSee('Coming soon');
@@ -191,7 +191,7 @@ class ServiceInquiryFormTest extends TestCase
             'email' => 'return@example.com', 'password' => 'Passw0rd!x', 'g-recaptcha-response' => 'token',
         ])->assertRedirect(url('/services/request'));
 
-        $this->get('/services/request')->assertOk()->assertSee('Other services request');
+        $this->get('/services/request')->assertOk()->assertSee('Other Services Request');
     }
 
     public function test_after_registration_the_customer_returns_to_the_request_form(): void

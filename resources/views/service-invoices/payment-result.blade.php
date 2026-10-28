@@ -26,7 +26,7 @@
       <p class="sx-lead">{{ $copy[1] }}</p>
       <div class="ip-links">
         <x-back-link :href="route('services.invoice', $invoice->id)" label="my invoice" />
-        <a href="{{ route('services.request') }}" class="lp-btn lp-btn--secondary">My service requests</a>
+        <a href="{{ route('services.request') }}" class="lp-btn lp-btn--secondary">My Service Requests</a>
       </div>
     </div>
     <div class="si-side">

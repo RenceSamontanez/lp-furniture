@@ -76,7 +76,7 @@
     {{-- Actions --}}
     <div class="confirmed-actions">
       <a href="{{ route('orders.show', $order->id) }}" class="btn btn-gold">
-        Track My Order →
+        Track My Order
       </a>
       <a href="{{ route('catalog') }}" class="btn btn-outline">
         Continue Shopping

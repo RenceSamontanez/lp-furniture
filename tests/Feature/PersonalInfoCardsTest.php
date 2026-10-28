@@ -66,7 +66,7 @@ class PersonalInfoCardsTest extends TestCase
     public function test_the_page_shows_three_read_only_cards_and_the_past_orders_line(): void
     {
         $page = $this->actingAs($this->bare())->get(route('profile'))->assertOk();
-        foreach (['data-section="name"', 'data-section="phone"', 'data-section="address"', 'Save name', 'Save number', 'Save address', 'Add address', 'No delivery address yet',
+        foreach (['data-section="name"', 'data-section="phone"', 'data-section="address"', 'Save Name', 'Save Number', 'Save Address', 'Add address', 'No delivery address yet',
                   'Changes here apply to your next orders. Past orders keep the address they were placed with.'] as $s) {
             $page->assertSee($s, false);
         }

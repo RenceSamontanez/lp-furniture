@@ -38,7 +38,7 @@
         @endif
       </dl>
 
-      <h2 class="sx-h2">What this invoice covers</h2>
+      <h2 class="sx-h2">What This Invoice Covers</h2>
       <table class="ip-lines">
         <tbody>
           @foreach($i->lines as $line)
@@ -78,7 +78,7 @@
               </form>
               <form method="POST" action="{{ route('services.invoice.pay', [$i->id, 'stripe']) }}" class="ip-form">
                 @csrf
-                <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" data-pay @disabled($online)>Pay with card</button>
+                <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" data-pay @disabled($online)>Pay with Card</button>
               </form>
             </div>
             <p class="ip-hint">You can also pay in cash in person. Our team will record it on your invoice.</p>
@@ -93,7 +93,7 @@
         @endif
 
         @if($paidRows->isNotEmpty())
-          <h3 class="ip-sub">Payments received</h3>
+          <h3 class="ip-sub">Payments Received</h3>
           <ul class="ip-payments">
             @foreach($paidRows as $p)
               <li><span>{{ $p->paid_at?->timezone('Asia/Manila')->format('M j, Y') }} · {{ $p->methodLabel() }}@if($i->isHalfHalf()) · {{ $p->installment === 1 ? 'first half' : 'remaining balance' }}@endif</span> <strong>{{ $peso($p->amount) }}</strong></li>

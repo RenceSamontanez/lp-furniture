@@ -58,7 +58,7 @@
             <p class="rq-error" id="rq-reason-err" @if(!$errors->has('reason_code')) hidden @endif>{{ $errors->first('reason_code') ?: 'Choose a reason.' }}</p>
           </div>
           <div class="rq-field">
-            <label class="form-label" for="rq-details">Details (optional)</label>
+            <label class="form-label" for="rq-details">Details (Optional)</label>
             <textarea name="reason_text" id="rq-details" class="form-input" rows="3" maxlength="1000">{{ old('reason_text') }}</textarea>
           </div>
         </fieldset>
@@ -67,7 +67,7 @@
           <legend class="rq-legend"><span class="rq-step-no">2</span> How can we reach you?</legend>
           <div class="rq-two">
             <div class="rq-field">
-              <label class="form-label" for="rq-phone">Mobile number</label>
+              <label class="form-label" for="rq-phone">Mobile Number</label>
               <input type="tel" name="contact_phone" id="rq-phone" class="form-input" required autocomplete="tel" inputmode="tel" value="{{ old('contact_phone', $defaults['phone']) }}" aria-describedby="rq-phone-err"/>
               <p class="rq-error" id="rq-phone-err" @if(!$errors->has('contact_phone')) hidden @endif>{{ $errors->first('contact_phone') ?: 'Enter your mobile number.' }}</p>
             </div>
@@ -92,7 +92,7 @@
 
           <div class="rq-gcash" id="rq-gcash" @if($method !== 'gcash') hidden @endif>
             <div class="rq-field" style="margin-top:14px;">
-              <label class="form-label" for="rq-gnum">GCash number</label>
+              <label class="form-label" for="rq-gnum">GCash Number</label>
               <input type="tel" name="gcash_number" id="rq-gnum" class="form-input" inputmode="tel" autocomplete="off" placeholder="09171234567" value="{{ old('gcash_number') }}" aria-describedby="rq-gnum-hint rq-gnum-err"/>
               <p class="rq-hint" id="rq-gnum-hint">The mobile number of your GCash account, for example 09171234567.</p>
               <p class="rq-error" id="rq-gnum-err" @if(!$errors->has('gcash_number')) hidden @endif>{{ $errors->first('gcash_number') ?: 'Enter a GCash number like 09171234567.' }}</p>
@@ -154,8 +154,8 @@
     <label class="lp-modal__check" for="rq-checked"><input type="checkbox" id="rq-checked" data-lp-reset/> <span>I checked these details</span></label>
   @endif
   <x-slot:footer>
-    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back and edit</button>
-    <button type="button" class="lp-btn lp-btn--primary" data-lp-gate-submit="rq-form" @unless($instant) data-lp-requires="rq-checked" @endunless data-lp-confirm>{{ $instant ? 'Cancel this service request' : 'Confirm and send request' }}</button>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back and Edit</button>
+    <button type="button" class="lp-btn lp-btn--primary" data-lp-gate-submit="rq-form" @unless($instant) data-lp-requires="rq-checked" @endunless data-lp-confirm>{{ $instant ? 'Cancel This Service Request' : 'Confirm and Send Request' }}</button>
   </x-slot:footer>
 </x-modal>
 

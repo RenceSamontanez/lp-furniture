@@ -28,7 +28,7 @@
       <h1 class="md-title">My Designs</h1>
       <p class="md-sub">Everything you have asked our AI to design.</p>
     </div>
-    <a href="{{ route('design.index') }}" class="lp-btn lp-btn--primary md-new">Design something new</a>
+    <a href="{{ route('design.index') }}" class="lp-btn lp-btn--primary md-new">Design Something New</a>
   </div>
 
   <div class="md-tabs" role="tablist" aria-label="My Designs">
@@ -55,11 +55,11 @@
     @if($grouped->isEmpty())
       <div class="md-empty">
         @if($counts['history'] === 0)
-          <h2>No designs yet</h2>
+          <h2>No Designs Yet</h2>
           <p>Your design requests will appear here.</p>
-          <a href="{{ route('design.index') }}" class="lp-btn lp-btn--primary">Design something new</a>
+          <a href="{{ route('design.index') }}" class="lp-btn lp-btn--primary">Design Something New</a>
         @else
-          <h2>Nothing here</h2>
+          <h2>Nothing Here</h2>
           <p>No designs match this filter.</p>
           <a href="{{ route('design.gallery', ['tab' => 'history']) }}" class="lp-btn lp-btn--secondary">Show all</a>
         @endif
@@ -121,11 +121,11 @@
     @if($galleryItems->isEmpty())
       <div class="md-empty">
         @if($tab === 'gallery')
-          <h2>No finished designs yet</h2>
+          <h2>No Finished Designs Yet</h2>
           <p>Designs that finish successfully show up here.</p>
-          <a href="{{ route('design.index') }}" class="lp-btn lp-btn--primary">Design something new</a>
+          <a href="{{ route('design.index') }}" class="lp-btn lp-btn--primary">Design Something New</a>
         @else
-          <h2>No favorites yet</h2>
+          <h2>No Favorites Yet</h2>
           <p>Tap the bookmark on any finished design in your Gallery to keep it here.</p>
           <a href="{{ route('design.gallery', ['tab' => 'gallery']) }}" class="lp-btn lp-btn--primary">Open Gallery</a>
         @endif

@@ -148,12 +148,12 @@ class NotificationsNavTest extends TestCase
         $u = $this->makeUser();
         $this->note($u, ['title' => 'Old read', 'is_read' => true, 'created_at' => '2026-01-10 10:00:00']);
         $this->note($u, ['title' => 'Old unread', 'created_at' => '2026-01-20 10:00:00']);
-        $this->note($u, ['title' => 'Feb unread', 'created_at' => '2026-02-28 23:30:00']);
+        $this->note($u, ['title' => 'Feb Unread', 'created_at' => '2026-02-28 23:30:00']);
         $this->note($u, ['title' => 'Mar read', 'is_read' => true, 'created_at' => '2026-03-02 08:00:00']);
         $titles = fn (string $q) => array_column($this->actingAs($u)->getJson(route('notifications.feed') . $q)->assertOk()->json('items'), 'title');
 
-        $this->assertEqualsCanonicalizing(['Old unread', 'Feb unread'], $titles('?unread=1'));
-        $this->assertEqualsCanonicalizing(['Old unread', 'Feb unread'], $titles('?from=2026-01-15&to=2026-02-28'));
+        $this->assertEqualsCanonicalizing(['Old unread', 'Feb Unread'], $titles('?unread=1'));
+        $this->assertEqualsCanonicalizing(['Old unread', 'Feb Unread'], $titles('?from=2026-01-15&to=2026-02-28'));
         $this->assertSame(['Old read'], $titles('?to=2026-01-10'));
         $this->assertEqualsCanonicalizing(['Mar read'], $titles('?from=2026-03-01'));
         $this->assertSame(['Old unread'], $titles('?unread=1&from=2026-01-15&to=2026-01-31'));
@@ -248,7 +248,7 @@ class NotificationsNavTest extends TestCase
         $html = $this->actingAs($u)->get(route('notifications.index'))->assertOk()->getContent();
 
         $this->assertStringNotContainsString('Order History', $html);
-        $this->assertStringContainsString('Mark all as read', $html);
+        $this->assertStringContainsString('Mark All as Read', $html);
         $this->assertStringContainsString('Only show unread', $html);
         $this->assertStringContainsString('>Dates<', $html);
         $this->assertStringNotContainsString('notif-action-arrow', $html);
@@ -261,18 +261,18 @@ class NotificationsNavTest extends TestCase
     public function test_page_filters_by_query_string_and_keeps_them_in_the_pager(): void
     {
         $u = $this->makeUser();
-        $this->note($u, ['title' => 'Jan read', 'is_read' => true, 'created_at' => '2026-01-10 10:00:00']);
-        $this->note($u, ['title' => 'Feb unread', 'created_at' => '2026-02-10 10:00:00']);
-        $this->note($u, ['title' => 'Mar unread', 'created_at' => '2026-03-10 10:00:00']);
+        $this->note($u, ['title' => 'Jan Read', 'is_read' => true, 'created_at' => '2026-01-10 10:00:00']);
+        $this->note($u, ['title' => 'Feb Unread', 'created_at' => '2026-02-10 10:00:00']);
+        $this->note($u, ['title' => 'Mar Unread', 'created_at' => '2026-03-10 10:00:00']);
 
         $html = $this->actingAs($u)->get('/notifications?unread=1&from=2026-01-01&to=2026-02-28')->assertOk()->getContent();
-        $this->assertStringContainsString('Feb unread', $html);
-        $this->assertStringNotContainsString('Jan read', $html);
-        $this->assertStringNotContainsString('Mar unread', $html);
+        $this->assertStringContainsString('Feb Unread', $html);
+        $this->assertStringNotContainsString('Jan Read', $html);
+        $this->assertStringNotContainsString('Mar Unread', $html);
         $this->assertMatchesRegularExpression('/name="unread"[^>]*checked/', $html);
         $this->assertStringContainsString('value="2026-01-01"', $html);
 
-        $this->actingAs($u)->get('/notifications?from=junk&to=2026-13-01')->assertOk()->assertSee('Mar unread', false);
+        $this->actingAs($u)->get('/notifications?from=junk&to=2026-13-01')->assertOk()->assertSee('Mar Unread', false);
     }
 
     public function test_page_empty_state_when_filters_match_nothing(): void
@@ -281,7 +281,7 @@ class NotificationsNavTest extends TestCase
         $this->note($u, ['created_at' => '2026-01-10 10:00:00']);
         $html = $this->actingAs($u)->get('/notifications?from=2030-01-01')->assertOk()->getContent();
         $this->assertStringContainsString('No notifications match.', $html);
-        $this->assertStringContainsString('Clear filters', $html);
+        $this->assertStringContainsString('Clear Filters', $html);
         $this->assertStringContainsString('id="nf-filter"', $html, 'controls stay so the filter can be cleared');
     }
 
@@ -292,7 +292,7 @@ class NotificationsNavTest extends TestCase
         $this->note($u, ['title' => 'Order <b>LP-1</b>', 'url' => route('orders.show', 3), 'message' => '<script>x</script>']);
 
         $html = $this->actingAs($u)->get(route('notifications.index'))->assertOk()->getContent();
-        $this->assertSame(1, substr_count($html, 'View details'));
+        $this->assertSame(1, substr_count($html, 'View Details'));
         $this->assertStringContainsString('href="/orders/3"', $html);
         $this->assertStringNotContainsString('<script>x</script>', $html);
         $this->assertStringContainsString('Order &lt;b&gt;LP-1&lt;/b&gt;', $html);
@@ -300,8 +300,8 @@ class NotificationsNavTest extends TestCase
         // the Identity Verified row has Mark read and no View details
         preg_match('/<article[^>]*>(?:(?!<\/article>).)*Identity Verified(?:(?!<\/article>).)*<\/article>/s', $html, $m);
         $this->assertNotEmpty($m);
-        $this->assertStringNotContainsString('View details', $m[0]);
-        $this->assertStringContainsString('Mark read', $m[0]);
+        $this->assertStringNotContainsString('View Details', $m[0]);
+        $this->assertStringContainsString('Mark Read', $m[0]);
     }
 
     public function test_read_notification_has_no_mark_read_and_page_needs_login(): void
@@ -309,8 +309,8 @@ class NotificationsNavTest extends TestCase
         $u = $this->makeUser();
         $this->note($u, ['is_read' => true, 'url' => null, 'type' => 'general']);
         $html = $this->actingAs($u)->get(route('notifications.index'))->getContent();
-        $this->assertStringNotContainsString('Mark read', $html);
-        $this->assertStringNotContainsString('View details', $html);
+        $this->assertStringNotContainsString('Mark Read', $html);
+        $this->assertStringNotContainsString('View Details', $html);
 
         auth()->logout();
         $this->get(route('notifications.index'))->assertRedirect();

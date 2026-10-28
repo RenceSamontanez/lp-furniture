@@ -39,7 +39,7 @@
     </p>
 
     <a href="{{ route('catalog') }}" class="btn btn-gold" style="font-size:15px;padding:14px 32px;">
-      Browse Our Furniture →
+      Browse Our Furniture
     </a>
 
     {{-- Featured categories --}}
@@ -97,9 +97,9 @@
 
               {{-- Details --}}
               <div class="cart-item-details">
-                <div class="cart-item-category">{{ $item->product->category }}</div>
+                <div class="cart-item-category">{{ title_case($item->product->category) }}</div>
                 <a href="{{ route('product.show', $item->product->id) }}" class="cart-item-name">
-                  {{ $item->product->product_name }}
+                  {{ title_case($item->product->product_name) }}
                 </a>
 
                 @if($item->note)
@@ -184,16 +184,16 @@
           {{-- Checkout button --}}
           @if(Auth::user()->is_validated)
             <a href="{{ route('checkout') }}" class="btn-checkout" data-loading="Opening checkout...">
-              Proceed to Checkout →
+              Proceed to Checkout
             </a>
           @else
             <a href="{{ route('validation.show') }}" class="btn-checkout">
-              Verify Identity to Checkout →
+              Verify Identity to Checkout
             </a>
           @endif
 
           <a href="{{ route('catalog') }}" class="cart-continue">
-            ← Continue Shopping
+            Continue Shopping
           </a>
 
           {{-- Clear cart --}}

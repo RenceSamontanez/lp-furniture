@@ -617,7 +617,7 @@ class ServiceInvoicePaymentsTest extends TestCase
     {
         $this->assertStringContainsString('can pay it online', ServiceInvoice::SEND_CONFIRMATION);
         $i = $this->invoice('4000');
-        $this->asOwner()->get(route('services.invoice', $i->id))->assertOk()->assertSee('Pay with GCash')->assertSee('Pay with card');
+        $this->asOwner()->get(route('services.invoice', $i->id))->assertOk()->assertSee('Pay with GCash')->assertSee('Pay with Card');
         $n = Notification::where('user_id', $this->owner->id)->where('title', 'Your Invoice Is Ready')->sole();
         $this->assertStringContainsString('pay it online', $n->message);
     }

@@ -114,7 +114,7 @@ class CustomOrderTimelineTest extends TestCase
         $html = html_entity_decode($this->actingAs($customer)->get(route('design.show', $r->id))->assertOk()->getContent(), ENT_QUOTES);
 
         foreach ([
-            'What has happened so far',
+            'What Has Happened So Far',
             'You sent your request to our team',
             "We tried to call you but couldn't get through",
             "We couldn't reach you by phone",
@@ -138,7 +138,7 @@ class CustomOrderTimelineTest extends TestCase
 
         // order page carries it too
         $o = $this->actingAs($customer)->get(route('orders.show', $order->id))->assertOk()->getContent();
-        $this->assertStringContainsString('What has happened so far', $o);
+        $this->assertStringContainsString('What Has Happened So Far', $o);
         $this->assertStringContainsString('Payment of ₱20,000.00 received', $o);
         $this->assertStringNotContainsString(self::SECRET_NOTE, $o);
         $this->assertStringNotContainsString('INTERNAL-LEDGER-NOTE', $o);

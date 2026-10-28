@@ -79,7 +79,7 @@ class LumaServicesTest extends TestCase
             $this->assertSame(route('services.request', [], false), $button['url']);
 
             $this->get($button['url'])->assertOk()
-                ->assertSee('Other services request')
+                ->assertSee('Other Services Request')
                 ->assertSee('name="service_type"', false)
                 ->assertSee('value="labor_only_own_wood"', false)
                 ->assertSee(route('services.request.submit'), false)
@@ -123,7 +123,7 @@ class LumaServicesTest extends TestCase
         $this->actingAs($this->makeUser());
         $this->get('/services/request')->assertOk()
             ->assertDontSee('Coming soon')
-            ->assertSee('Other services request')
+            ->assertSee('Other Services Request')
             ->assertSee('0917 222 3333');
     }
 

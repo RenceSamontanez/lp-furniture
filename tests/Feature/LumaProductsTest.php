@@ -273,7 +273,7 @@ class LumaProductsTest extends TestCase
         $widget = file_get_contents(public_path('assets/main.js'));
         $this->assertStringContainsString('chatEsc(c.name)', $widget);
         $this->assertStringContainsString('chatEsc(chatSafeUrl(c.url))', $widget);
-        $this->assertStringContainsString('chatEsc(b.label)', $widget);
+        $this->assertStringContainsString('chatEsc(lpTitleCase(b.label))', $widget);
         $this->assertStringNotContainsString('${c.name}', $widget);
     }
 

@@ -96,27 +96,27 @@
             <textarea name="body" id="rq-body" class="form-input" rows="4" maxlength="1000" required>{{ old('body') }}</textarea>
             @error('body')<p class="rq-error">{{ $message }}</p>@enderror
           </div>
-          <div class="rq-actions"><button type="submit" class="lp-btn lp-btn--primary">Send reply</button></div>
+          <div class="rq-actions"><button type="submit" class="lp-btn lp-btn--primary">Send Reply</button></div>
         </form>
       @elseif($r->status === 'refund_problem')
         <form method="POST" action="{{ route('services.refund.reply', $r->reference) }}" id="rq-reply">
           @csrf
           @if($r->refund_method === 'gcash')
             <div class="rq-field">
-              <label class="form-label" for="rq-gnum">Correct GCash number</label>
+              <label class="form-label" for="rq-gnum">Correct GCash Number</label>
               <input type="tel" name="gcash_number" id="rq-gnum" class="form-input" inputmode="tel" autocomplete="off" placeholder="09171234567" value="{{ old('gcash_number') }}" required/>
               @error('gcash_number')<p class="rq-error">{{ $message }}</p>@enderror
             </div>
             <div class="rq-field">
-              <label class="form-label" for="rq-gname">Name on the GCash account</label>
+              <label class="form-label" for="rq-gname">Name on the GCash Account</label>
               <input type="text" name="gcash_account_name" id="rq-gname" class="form-input" autocomplete="off" value="{{ old('gcash_account_name') }}" required/>
             </div>
           @endif
           <div class="rq-field">
-            <label class="form-label" for="rq-body">Message (optional)</label>
+            <label class="form-label" for="rq-body">Message (Optional)</label>
             <textarea name="body" id="rq-body" class="form-input" rows="2" maxlength="1000">{{ old('body') }}</textarea>
           </div>
-          <div class="rq-actions"><button type="submit" class="lp-btn lp-btn--primary">Send corrected details</button></div>
+          <div class="rq-actions"><button type="submit" class="lp-btn lp-btn--primary">Send Corrected Details</button></div>
         </form>
       @endif
 

@@ -12,9 +12,9 @@
 @endphp
 <div class="nf-ctl" role="group" aria-label="Notification filters">
   @if($isPage)
-    <button type="submit" form="nf-markall" class="lp-btn lp-btn--secondary nf-btn">Mark all as read</button>
+    <button type="submit" form="nf-markall" class="lp-btn lp-btn--secondary nf-btn">Mark All as Read</button>
   @else
-    <button type="button" class="lp-btn lp-btn--secondary nf-btn" data-nf-act="markall">Mark all as read</button>
+    <button type="button" class="lp-btn lp-btn--secondary nf-btn" data-nf-act="markall">Mark All as Read</button>
   @endif
 
   @include('partials.switch', ['id' => $pfx . '-unread', 'name' => 'unread', 'checked' => $f['unread'], 'label' => 'Only show unread'])

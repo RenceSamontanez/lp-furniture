@@ -10,18 +10,18 @@
 <div class="terms-page">
   <article class="terms-card">
     <header class="terms-head">
-      <h1 class="terms-title">Other Services terms</h1>
+      <h1 class="terms-title">Other Services Terms</h1>
       <p class="terms-meta">These terms cover Other Services only: labor when you bring your own wood, repairs, and other work we price by phone. Furniture orders and custom furniture orders have their own <a href="{{ route('terms') }}" class="lp-link">Terms and Conditions</a>.</p>
     </header>
 
     <div class="terms-body">
       <section class="pt-section">
-        <h2 class="pt-heading">How Other Services work</h2>
+        <h2 class="pt-heading">How Other Services Work</h2>
         <p class="pt-p">You send a service request. Our team calls you, agrees the work and the price with you, and then sends you an invoice. You can pay the invoice online (GCash or card) or in cash. For larger jobs we may offer to split the payment in two halves: the first half to start, and the second half after the service is done.</p>
       </section>
 
       <section class="pt-section" id="cancellation-and-refunds">
-        <h2 class="pt-heading">Cancellation and refunds</h2>
+        <h2 class="pt-heading">Cancellation and Refunds</h2>
         <ul class="pt-list">
           <li>A refund is possible only if the service has not started. Once our laborer starts the work, the work is non-refundable.</li>
           <li>We mark a service as started when our team records that work has begun. You can see this on your service request.</li>

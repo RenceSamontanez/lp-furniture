@@ -104,7 +104,7 @@
         <div class="order-panel-header">
           <div class="order-panel-title">Order Items</div>
           <span class="order-status-pill {{ $order->order_status }}">
-            {{ str_replace('_', ' ', $order->order_status) }}
+            {{ title_case(str_replace('_', ' ', $order->order_status)) }}
           </span>
         </div>
         <div class="order-panel-body">
@@ -118,7 +118,7 @@
                 />
               </div>
               <div class="order-item-info">
-                <div class="order-item-name">{{ $item->product->product_name ?? $item->product_name ?? 'Product Unavailable' }}</div>
+                <div class="order-item-name">{{ title_case($item->product->product_name ?? $item->product_name ?? 'Product Unavailable') }}</div>
                 @php $itemType = $order->design_agreement_id && $order->agreement ? ($order->agreement->terms_snapshot['design']['furniture_type'] ?? null) : null; @endphp
                 @if($itemType)<div class="order-item-qty">Furniture type: {{ $itemType }}</div>@endif
                 @php $itemWood = $order->design_agreement_id && $order->agreement ? ($order->agreement->terms_snapshot['design']['wood']['label'] ?? null) : null; @endphp
@@ -149,7 +149,7 @@
 
       @if(!empty($timeline))
         <div class="order-panel">
-          <div class="order-panel-header"><div class="order-panel-title">What has happened so far</div></div>
+          <div class="order-panel-header"><div class="order-panel-title">What Has Happened So Far</div></div>
           <div class="order-panel-body">@include('agreements._timeline', ['entries' => $timeline])</div>
         </div>
       @endif

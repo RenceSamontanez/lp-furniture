@@ -84,7 +84,7 @@
 
         <div class="co-grid" id="co-contact-fields">
           <div class="co-field">
-            <label class="form-label" for="contact_phone">Mobile number</label>
+            <label class="form-label" for="contact_phone">Mobile Number</label>
             <input type="tel" id="contact_phone" name="contact_phone" class="form-input {{ $lockContact ? 'is-locked' : '' }}" required maxlength="16"
                    value="{{ old('contact_phone', $defaultPhone) }}" placeholder="09171234567"
                    data-saved="{{ $savedPhone }}" @readonly($lockContact)/>

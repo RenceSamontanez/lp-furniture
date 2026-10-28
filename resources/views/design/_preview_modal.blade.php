@@ -33,9 +33,9 @@
         <form method="POST" action="" id="md-modal-order" class="md-act-form">
           @csrf
           <input type="hidden" name="suggestion_id" id="md-modal-suggestion" value=""/>
-          <button type="submit" class="lp-btn lp-btn--primary md-act-primary">Order this design</button>
+          <button type="submit" class="lp-btn lp-btn--primary md-act-primary">Order This Design</button>
         </form>
-        <a href="#" id="md-modal-concept" class="lp-btn lp-btn--primary md-act-primary" hidden>View concept</a>
+        <a href="#" id="md-modal-concept" class="lp-btn lp-btn--primary md-act-primary" hidden>View Concept</a>
 
         <button type="button" class="lp-btn lp-btn--secondary md-save js-save-heart" id="md-modal-save" aria-pressed="false">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="md-modal-save-icon"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>

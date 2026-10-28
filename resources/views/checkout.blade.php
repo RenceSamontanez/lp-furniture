@@ -94,7 +94,7 @@
           <p class="ckn-preparing-subtext">Just a moment while we get everything ready for you.</p>
 
           <button type="button" class="ckn-preparing-next" onclick="startCheckoutTransition()">
-            Next →
+            Next
           </button>
         </div>
 
@@ -102,7 +102,7 @@
              ROW 1 — REVIEW YOUR ORDER (new)
         ═══════════════════════════════════ --}}
         <div class="checkout-screen" id="screen-review" data-desktop-title="1. Review Your Order">
-          <div class="checkout-screen-backrow"><x-back-link type="button" label="cart" onclick="window.location.href='{{ route('cart.index') }}'" /></div>
+          <div class="checkout-screen-backrow"><x-back-link type="button" named label="Cart" onclick="window.location.href='{{ route('cart.index') }}'" /></div>
           <div class="checkout-screen-header">
             <span class="checkout-screen-title">Review Your Order</span>
             <span class="checkout-screen-step-count">Step 1 of 5</span>
@@ -132,14 +132,14 @@
                            onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
                     </div>
                     <div class="ckn-product-details">
-                      <div class="ckn-product-name">{{ $item->product->product_name }}</div>
+                      <div class="ckn-product-name">{{ title_case($item->product->product_name) }}</div>
 
                       <div class="ckn-product-meta-row">
                         @if($item->product->material)
-                          <span>{{ $item->product->material }}</span>
+                          <span>{{ title_case($item->product->material) }}</span>
                         @endif
                         @if($item->product->finish)
-                          <span>{{ $item->product->finish }} Finish</span>
+                          <span>{{ title_case($item->product->finish) }} Finish</span>
                         @endif
                         @if($item->product->dimensions)
                           <span>{{ $item->product->dimensions_label }}</span>
@@ -193,14 +193,17 @@
                 </div>
 
                 <div class="ckn-continue-wrap">
-                  <button type="button" class="ckn-continue-btn" onclick="goNext('review')">Continue to Delivery →</button>
+                  <div class="ckn-actions">
+                    <x-back-link named type="button" label="Cart" class="ckn-back-btn" onclick="window.location.href='{{ route('cart.index') }}'" />
+                    <button type="button" class="ckn-continue-btn" onclick="goNext('review')">Continue to Delivery</button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="checkout-screen-footer">
-            <button type="button" class="checkout-screen-continue" onclick="pushToScreen('review','delivery')">Next: Delivery Option →</button>
+            <button type="button" class="checkout-screen-continue" onclick="pushToScreen('review','delivery')">Next: Delivery Option</button>
           </div>
         </div>
 
@@ -208,7 +211,7 @@
              ROW 2 — DELIVERY
         ═══════════════════════════════════ --}}
         <div class="checkout-screen" id="screen-delivery" data-desktop-title="2. Delivery Option">
-          <div class="checkout-screen-backrow"><x-back-link type="button" label="review" onclick="pushBackToScreen('delivery', 'review')" /></div>
+          <div class="checkout-screen-backrow"><x-back-link type="button" named label="Review" onclick="pushBackToScreen('delivery', 'review')" /></div>
           <div class="checkout-screen-header">
             <span class="checkout-screen-title">Delivery Option</span>
             <span class="checkout-screen-step-count">Step 2 of 5</span>
@@ -260,14 +263,17 @@
                 @include('partials.order-details', ['continue' => '[data-od-continue]'])
 
                 <div class="ckn-continue-wrap">
-                  <button type="button" class="ckn-continue-btn" data-od-continue onclick="goNext('delivery')">Continue to Payment Type →</button>
+                  <div class="ckn-actions">
+                    <x-back-link named type="button" label="Review" class="ckn-back-btn" onclick="goBackTo('review')" />
+                    <button type="button" class="ckn-continue-btn" data-od-continue onclick="goNext('delivery')">Continue to Payment Type</button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="checkout-screen-footer">
-            <button type="button" class="checkout-screen-continue" data-od-continue onclick="pushToScreen('delivery','paytype')">Next: Payment Type →</button>
+            <button type="button" class="checkout-screen-continue" data-od-continue onclick="pushToScreen('delivery','paytype')">Next: Payment Type</button>
           </div>
         </div>
 
@@ -275,7 +281,7 @@
              ROW 3 — PAYMENT TYPE
         ═══════════════════════════════════ --}}
         <div class="checkout-screen" id="screen-paytype" data-desktop-title="3. Payment Type">
-          <div class="checkout-screen-backrow"><x-back-link type="button" label="delivery option" onclick="pushBackToScreen('paytype','delivery')" /></div>
+          <div class="checkout-screen-backrow"><x-back-link type="button" named label="Delivery Option" onclick="pushBackToScreen('paytype','delivery')" /></div>
           <div class="checkout-screen-header">
             <span class="checkout-screen-title">Payment Type</span>
             <span class="checkout-screen-step-count">Step 3 of 5</span>
@@ -340,14 +346,17 @@
                 </div>
 
                 <div class="ckn-continue-wrap">
-                  <button type="button" class="ckn-continue-btn" onclick="goNext('paytype')">Continue to Payment Method →</button>
+                  <div class="ckn-actions">
+                    <x-back-link named type="button" label="Delivery Option" class="ckn-back-btn" onclick="goBackTo('delivery')" />
+                    <button type="button" class="ckn-continue-btn" onclick="goNext('paytype')">Continue to Payment Method</button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="checkout-screen-footer">
-            <button type="button" class="checkout-screen-continue" onclick="pushToScreen('paytype','paymethod')"">Next: Payment Method →</button>
+            <button type="button" class="checkout-screen-continue" onclick="pushToScreen('paytype','paymethod')">Next: Payment Method</button>
           </div>
         </div>
 
@@ -355,7 +364,7 @@
              ROW 4 — PAYMENT METHOD
         ═══════════════════════════════════ --}}
         <div class="checkout-screen" id="screen-paymethod" data-desktop-title="4. Payment Method">
-          <div class="checkout-screen-backrow"><x-back-link type="button" label="payment type" onclick="pushBackToScreen('paymethod','paytype')" /></div>
+          <div class="checkout-screen-backrow"><x-back-link type="button" named label="Payment Type" onclick="pushBackToScreen('paymethod','paytype')" /></div>
           <div class="checkout-screen-header">
             <span class="checkout-screen-title">Payment Method</span>
             <span class="checkout-screen-step-count">Step 4 of 5</span>
@@ -413,14 +422,17 @@
                 </div>
 
                 <div class="ckn-continue-wrap">
-                  <button type="button" class="ckn-continue-btn" onclick="goNext('paymethod')">Continue to Instructions →</button>
+                  <div class="ckn-actions">
+                    <x-back-link named type="button" label="Payment Type" class="ckn-back-btn" onclick="goBackTo('paytype')" />
+                    <button type="button" class="ckn-continue-btn" onclick="goNext('paymethod')">Continue to Special Instructions</button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="checkout-screen-footer">
-            <button type="button" class="checkout-screen-continue" onclick="pushToScreen('paymethod','notes')">Next: Instructions →</button>
+            <button type="button" class="checkout-screen-continue" onclick="pushToScreen('paymethod','notes')">Next: Instructions</button>
           </div>
         </div>
 
@@ -428,7 +440,7 @@
              ROW 5 — SPECIAL INSTRUCTIONS
         ═══════════════════════════════════ --}}
         <div class="checkout-screen" id="screen-notes" data-desktop-title="5. Special Instructions">
-          <div class="checkout-screen-backrow"><x-back-link type="button" label="payment method" onclick="pushBackToScreen('notes','paymethod')" /></div>
+          <div class="checkout-screen-backrow"><x-back-link type="button" named label="Payment Method" onclick="pushBackToScreen('notes','paymethod')" /></div>
           <div class="checkout-screen-header">
             <span class="checkout-screen-title">Special Instructions</span>
             <span class="checkout-screen-step-count">Step 5 of 5</span>
@@ -457,18 +469,25 @@
                   placeholder="Any special requests for your order? Size modifications, wood type preference, finish color, delivery instructions, etc."
                   oninput="updateSectionSummaries()"
                 >{{ old('customization_note') }}</textarea>
+
+                <div class="ckn-continue-wrap">
+                  <div class="ckn-actions">
+                    <x-back-link named type="button" label="Payment Method" class="ckn-back-btn" onclick="goBackTo('paymethod')" />
+                    <button type="button" class="ckn-continue-btn" id="continue-to-place" onclick="readyToPlace()">Continue to Place Order</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           <div class="checkout-screen-footer">
-            <button type="button" class="checkout-screen-continue" onclick="goToReview()">Review Order →</button>
+            <button type="button" class="checkout-screen-continue" onclick="goToReview()">Review Order</button>
           </div>
         </div>
 
         {{-- SCREEN 6: Final Review — mobile only --}}
         <div class="checkout-screen checkout-review-screen" id="screen-finalreview" data-desktop-title="">
-          <div class="checkout-screen-backrow"><x-back-link type="button" label="special instructions" onclick="pushBackToScreen('finalreview','notes')" /></div>
+          <div class="checkout-screen-backrow"><x-back-link type="button" named label="Special Instructions" onclick="pushBackToScreen('finalreview','notes')" /></div>
           <div class="checkout-screen-header">
             <span class="checkout-screen-title">Confirm Your Order</span>
             <span class="checkout-screen-spacer"></span>
@@ -480,7 +499,7 @@
               <div class="review-block-header"><span>Items</span></div>
               @foreach($cartItems as $item)
                 <div class="review-item-row">
-                  <span class="review-item-name">{{ $item->product->product_name }} ×{{ $item->quantity }}</span>
+                  <span class="review-item-name">{{ title_case($item->product->product_name) }} ×{{ $item->quantity }}</span>
                   <span class="review-item-price">₱{{ number_format($item->product->price * $item->quantity, 2) }}</span>
                 </div>
               @endforeach
@@ -538,7 +557,7 @@
           </div>
 
           <div class="checkout-screen-footer">
-            <button type="submit" class="checkout-screen-continue checkout-place-order-btn">Place Order →</button>
+            <button type="submit" class="checkout-screen-continue checkout-place-order-btn">Place Order</button>
           </div>
         </div>
 
@@ -568,7 +587,7 @@
           <span>Total <strong id="mini-total">₱{{ number_format($subtotal, 2) }}</strong></span>
         </div>
 
-        <div class="checkout-summary">
+        <div class="checkout-summary" id="checkout-summary">
           <div class="checkout-summary-title">Your Order</div>
 
           <div class="summary-items">
@@ -579,9 +598,9 @@
                        onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
                 </div>
                 <div class="summary-item-info">
-                  <div class="summary-item-name">{{ $item->product->product_name }}</div>
-                  @if($item->product->material)<div class="summary-item-qty">{{ $item->product->material }}</div>@endif
-                  @if($item->product->finish)<div class="summary-item-qty">{{ $item->product->finish }}</div>@endif
+                  <div class="summary-item-name">{{ title_case($item->product->product_name) }}</div>
+                  @if($item->product->material)<div class="summary-item-qty">{{ title_case($item->product->material) }}</div>@endif
+                  @if($item->product->finish)<div class="summary-item-qty">{{ title_case($item->product->finish) }}</div>@endif
                   <div class="summary-item-qty">Qty: {{ $item->quantity }}</div>
                 </div>
                 <div class="summary-item-price">₱{{ number_format($item->product->price * $item->quantity, 0) }}</div>
@@ -633,12 +652,12 @@
             </div>
           </div>
 
+          <p class="ckn-ready-tag" id="ckn-ready-tag" role="status"></p>
           <button type="submit" class="btn-place-order" id="place-order-btn">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
             <span id="place-order-btn-label">Place Order</span>
           </button>
           <p class="ckn-charge-note">You won't be charged yet.</p>
-          <x-back-link :href="route('cart.index')" label="Cart" />
         </div>
       </div>
 
@@ -651,6 +670,7 @@
 
 @push('scripts')
 <script src="{{ asset('assets/js/checkout-preparing.js') }}"></script>
+<script src="{{ asset('assets/js/checkout-guard.js') }}?v={{ @filemtime(public_path('assets/js/checkout-guard.js')) }}"></script>
 <script>
 const SUBTOTAL = {{ $subtotal }};
 const DELIVERY_FEE = 500;

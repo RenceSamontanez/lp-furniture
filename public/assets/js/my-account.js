@@ -473,6 +473,16 @@
     window.addEventListener('pageshow', function (ev) { if (ev.persisted) { conts.forEach(function (b) { if (isBusy(b)) { clearBusy(b); } }); } });
     window.MAOrder = {
       ready: function () { return missing().length === 0; },
+      // what is still missing, by field group (the checkout page names them in its own "can't place your order yet" notice)
+      problems: function () {
+        var out = [];
+        if (!nameOk()) { out.push({ key: 'name' }); }
+        if (!phone.valid()) { out.push({ key: 'phone' }); }
+        if (!isPickup() && !(hasSaved && mode.value === 'saved') && addr.missing().length) { out.push({ key: 'address' }); }
+        return out;
+      },
+      showErrors: showErrors,
+      focusFirst: focusFirstMissing,
       summary: function () {
         if (isPickup()) { return nameIn.value.trim() + ' · ' + phone.number.value.trim() + ' · Pick up at our shop'; }
         var line = (hasSaved && mode.value === 'saved') ? $('[data-od-saved] b', box).textContent + ', ' + $('[data-od-saved] small', box).textContent.trim() : addr.line();

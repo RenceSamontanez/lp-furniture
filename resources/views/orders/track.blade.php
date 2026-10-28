@@ -90,27 +90,27 @@
             <li>
               <span class="pin {{ in_array($e->type, ['placed', 'payment'], true) ? 'sys' : '' }}"></span>
               <div>
-                <h3>{{ $e->title ?: ucfirst($e->type) }}</h3>
+                <h3>{{ title_case($e->title ?: ucfirst($e->type)) }}</h3>
                 <div class="when">{{ $e->created_at->timezone('Asia/Manila')->format('M j, g:i A') }}@if(!in_array($e->type, ['placed', 'payment'], true) && $e->admin_user_id) &middot; LP Furniture @endif</div>
                 @if($e->note)<p class="note">{{ $e->note }}</p>@endif
                 @if($e->photo_path)<img src="{{ $e->photoUrl() }}" alt="Progress photo from our team">@endif
               </div>
             </li>
           @empty
-            <li><span class="pin sys"></span><div><h3>No updates yet</h3></div></li>
+            <li><span class="pin sys"></span><div><h3>No Updates Yet</h3></div></li>
           @endforelse
         </ul>
       </section>
 
       <section class="glass card" aria-labelledby="ot-items-t">
-        <h2 id="ot-items-t">Order items</h2>
+        <h2 id="ot-items-t">Order Items</h2>
         @foreach($order->items as $item)
           <div class="order-item-row">
             <div class="order-item-img">
               <img src="{{ $item->image_url }}" alt="{{ $item->product->product_name ?? $item->product_name ?? 'Product' }}" onerror="this.src='{{ asset('images/products/placeholder.jpg') }}';"/>
             </div>
             <div class="order-item-info">
-              <div class="order-item-name">{{ $item->product->product_name ?? $item->product_name ?? 'Product Unavailable' }}</div>
+              <div class="order-item-name">{{ title_case($item->product->product_name ?? $item->product_name ?? 'Product Unavailable') }}</div>
               <div class="order-item-qty">Qty: {{ $item->quantity }} × ₱{{ number_format($item->unit_price, 2) }}</div>
             </div>
             <div class="order-item-subtotal">₱{{ number_format($item->subtotal, 2) }}</div>

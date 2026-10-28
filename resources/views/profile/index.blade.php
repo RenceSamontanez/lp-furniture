@@ -132,10 +132,10 @@
                   @if($user->is_validated)
                     <div class="vnote" data-name-notice hidden role="alert" tabindex="-1">
                       <p><b>Your name must match your ID.</b> If it changes, we may ask you to verify again.</p>
-                      <div class="acts"><button class="lp-btn lp-btn--secondary" type="button" data-keep>Keep editing</button><button class="lp-btn lp-btn--primary" type="button" data-anyway>Save anyway</button></div>
+                      <div class="acts"><button class="lp-btn lp-btn--secondary" type="button" data-keep>Keep Editing</button><button class="lp-btn lp-btn--primary" type="button" data-anyway>Save Anyway</button></div>
                     </div>
                   @endif
-                  <div class="acts" data-acts><button class="lp-btn lp-btn--secondary" type="button" data-cancel>Cancel</button><button class="lp-btn lp-btn--primary" type="submit" data-save data-busy-text="Saving…">Save name</button></div>
+                  <div class="acts" data-acts><button class="lp-btn lp-btn--secondary" type="button" data-cancel>Cancel</button><button class="lp-btn lp-btn--primary" type="submit" data-save data-busy-text="Saving…">Save Name</button></div>
                 </div>
               </form>
             </section>
@@ -156,7 +156,7 @@
                       @include('partials.phone-field', ['idp' => 'p', 'numName' => 'phone_number', 'ccName' => 'phone_country', 'country' => $phoneCountry, 'national' => $phoneNational])
                     </div>
                   </fieldset>
-                  <div class="acts"><button class="lp-btn lp-btn--secondary" type="button" data-cancel>Cancel</button><button class="lp-btn lp-btn--primary" type="submit" data-save data-busy-text="Saving…">Save number</button></div>
+                  <div class="acts"><button class="lp-btn lp-btn--secondary" type="button" data-cancel>Cancel</button><button class="lp-btn lp-btn--primary" type="submit" data-save data-busy-text="Saving…">Save Number</button></div>
                 </div>
               </form>
             </section>
@@ -167,7 +167,7 @@
             <form method="POST" action="{{ $sectionAction }}" data-section="address" novalidate>
               @csrf @method('PUT')
               <input type="hidden" name="section" value="address">
-              <header><h3 id="hAddr">Delivery address</h3><div class="hr">{!! $savedTag !!}<button class="lp-btn lp-btn--secondary lpe" type="button" data-edit aria-label="{{ $addr ? 'Change delivery address' : 'Add delivery address' }}">{!! $editIcon !!}<span data-edit-text>{{ $addr ? 'Change address' : 'Add address' }}</span></button></div></header>
+              <header><h3 id="hAddr">Delivery Address</h3><div class="hr">{!! $savedTag !!}<button class="lp-btn lp-btn--secondary lpe" type="button" data-edit aria-label="{{ $addr ? 'Change delivery address' : 'Add delivery address' }}">{!! $editIcon !!}<span data-edit-text>{{ $addr ? 'Change address' : 'Add address' }}</span></button></div></header>
               <div class="rd" data-rd>
                 <div data-addr-read>
                   @if($addr)
@@ -187,7 +187,7 @@
                 <fieldset class="edf">
                   @include('partials.address-fields', ['p' => '', 'idp' => 'p', 'v' => $addr ?: []])
                 </fieldset>
-                <div class="acts"><button class="lp-btn lp-btn--secondary" type="button" data-cancel>Cancel</button><button class="lp-btn lp-btn--primary" type="submit" data-save data-busy-text="Saving…">Save address</button></div>
+                <div class="acts"><button class="lp-btn lp-btn--secondary" type="button" data-cancel>Cancel</button><button class="lp-btn lp-btn--primary" type="submit" data-save data-busy-text="Saving…">Save Address</button></div>
               </div>
             </form>
           </section>
@@ -224,10 +224,10 @@
             @endif
             <form class="two" id="f-password" method="POST" action="{{ route('profile.password') }}" novalidate>
               @csrf @method('PUT')
-              <div class="glass card"><h3>Change password</h3>
-                <div class="fld"><label for="p0">Current password</label><div class="input-password-wrap"><input class="inp{{ $errors->has('current_password') ? ' bad' : '' }}" id="p0" name="current_password" type="password" autocomplete="current-password" @disabled($locked)><x-password-toggle for="p0"/></div><p class="err{{ $errors->has('current_password') ? ' show' : '' }}">{{ $errors->first('current_password') }}</p></div>
-                <div class="fld"><label for="p1">New password</label><div class="input-password-wrap"><input class="inp{{ $errors->has('password') ? ' bad' : '' }}" id="p1" name="password" type="password" autocomplete="new-password" @disabled($locked)><x-password-toggle for="p1"/></div><p class="err{{ $errors->has('password') ? ' show' : '' }}">{{ $errors->first('password') }}</p></div>
-                <div class="fld"><label for="p2">Confirm new password</label><div class="input-password-wrap"><input class="inp" id="p2" name="password_confirmation" type="password" autocomplete="new-password" @disabled($locked)><x-password-toggle for="p2"/></div></div>
+              <div class="glass card"><h3>Change Password</h3>
+                <div class="fld"><label for="p0">Current Password</label><div class="input-password-wrap"><input class="inp{{ $errors->has('current_password') ? ' bad' : '' }}" id="p0" name="current_password" type="password" autocomplete="current-password" @disabled($locked)><x-password-toggle for="p0"/></div><p class="err{{ $errors->has('current_password') ? ' show' : '' }}">{{ $errors->first('current_password') }}</p></div>
+                <div class="fld"><label for="p1">New Password</label><div class="input-password-wrap"><input class="inp{{ $errors->has('password') ? ' bad' : '' }}" id="p1" name="password" type="password" autocomplete="new-password" @disabled($locked)><x-password-toggle for="p1"/></div><p class="err{{ $errors->has('password') ? ' show' : '' }}">{{ $errors->first('password') }}</p></div>
+                <div class="fld"><label for="p2">Confirm New Password</label><div class="input-password-wrap"><input class="inp" id="p2" name="password_confirmation" type="password" autocomplete="new-password" @disabled($locked)><x-password-toggle for="p2"/></div></div>
               </div>
               <div class="glass card"><h3>Your new password needs</h3>
                 <ul class="rules" id="rules"><li data-r="len">At least 8 characters</li><li data-r="case">Upper and lower case letters</li><li data-r="num">A number</li><li data-r="diff">Different from your current password</li><li data-r="same">Both new passwords match</li></ul>
@@ -281,7 +281,7 @@
                     @endforeach
                   </div>
                   <label class="chkrow"><input type="checkbox" name="confirm" value="1" id="gen"><span>These photos are genuine and show me.</span></label>
-                  <button class="lp-btn lp-btn--primary" type="submit" id="vSub" aria-disabled="true">Submit for review</button>
+                  <button class="lp-btn lp-btn--primary" type="submit" id="vSub" aria-disabled="true">Submit for Review</button>
                 </form>
               @endif
             </div>
@@ -310,9 +310,9 @@
             <div class="glass tile"><span class="k">{!! $sym('mail') !!}Email</span><span class="v {{ $user->email_verified_at ? 'ok' : 'warn' }}">{{ $user->email_verified_at ? 'Verified' : 'Not verified' }}</span></div>
             <div class="glass tile"><span class="k">{!! $sym('pulse') !!}Account status</span><span class="v {{ $user->account_status === 'active' ? 'ok' : 'bad' }}">{{ ucfirst($user->account_status ?: 'active') }}</span></div>
             <div class="glass tile"><span class="k">{!! $sym('key') !!}Sign-in method</span><span class="v">{{ $googleOnly ? 'Google' : 'Email and password' }}</span></div>
-            <div class="glass tile"><span class="k">{!! $sym('badge') !!}Identity</span><span class="v {{ $idCls }}">{{ $idText }}</span>@if(!in_array($vs, ['approved', 'pending'], true))<a href="#v-verify" class="lp-link" data-go="verify">Verify now</a>@endif</div>
+            <div class="glass tile"><span class="k">{!! $sym('badge') !!}Identity</span><span class="v {{ $idCls }}">{{ $idText }}</span>@if(!in_array($vs, ['approved', 'pending'], true))<a href="#v-verify" class="lp-link" data-go="verify">Verify Now</a>@endif</div>
           </div>
-          <div class="jump"><h2>Go to</h2><div class="jl">
+          <div class="jump"><h2>Go To</h2><div class="jl">
             <a class="glass" href="{{ route('orders.index') }}">{!! $sym('file') !!}My orders</a>
             <a class="glass" href="{{ route('design.gallery') }}">{!! $sym('spark') !!}My designs</a>
             <a class="glass" href="{{ route('notifications.index') }}">{!! $sym('bell') !!}Notifications</a>
@@ -323,7 +323,7 @@
 
       <div class="foot" id="foot">
         <span class="msg" id="fMsg" aria-live="polite"></span>
-        <button class="lp-btn lp-btn--primary" type="submit" id="fSave" form="f-password" aria-disabled="true" data-busy-text="Updating…">Update password</button>
+        <button class="lp-btn lp-btn--primary" type="submit" id="fSave" form="f-password" aria-disabled="true" data-busy-text="Updating…">Update Password</button>
       </div>
     </section>
   </div>
@@ -333,7 +333,7 @@
 <x-modal id="ma-leave" title="Save your changes?">
   <p id="ma-leave-text">You changed something but did not save it.</p>
   <x-slot:footer>
-    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close data-ma-leave="keep">Keep editing</button>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close data-ma-leave="keep">Keep Editing</button>
     <button type="button" class="lp-btn lp-btn--secondary" data-ma-leave="discard">Discard</button>
     <button type="button" class="lp-btn lp-btn--primary" data-ma-leave="save">Save</button>
   </x-slot:footer>

@@ -163,7 +163,7 @@ class ConceptPageTest extends TestCase
             ->assertSee('tel:+639171112222', false)
             ->assertSee('shop@lpfurniture.test')
             ->assertSee('mailto:shop@lpfurniture.test', false)
-            ->assertSee('Message us on Facebook')
+            ->assertSee('Message Us on Facebook')
             ->assertSee('m.me/lpfurniture', false)
             ->getContent();
 
@@ -179,7 +179,7 @@ class ConceptPageTest extends TestCase
         config(['shop.fallback' => ['phone' => '09170001111', 'email' => 'fallback@lpfurniture.test', 'facebook_url' => null]]);
 
         $c = $this->makeUser();
-        $this->page($c, $this->sent($c, 'submitted'))->assertSee('0917 000 1111')->assertSee('fallback@lpfurniture.test')->assertDontSee('Message us on Facebook');
+        $this->page($c, $this->sent($c, 'submitted'))->assertSee('0917 000 1111')->assertSee('fallback@lpfurniture.test')->assertDontSee('Message Us on Facebook');
 
         config(['shop.fallback' => ['phone' => null, 'email' => null, 'facebook_url' => null]]);
         $this->page($c, $this->sent($c, 'submitted'))->assertSee('Reach our team')->assertDontSee('tel:', false)->assertDontSee('mailto:', false)->assertDontSee('example.com');

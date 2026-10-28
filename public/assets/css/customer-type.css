@@ -47,10 +47,7 @@
 .lp-type .lp-btn--chip { font-family: var(--font-body); font-weight: 600; text-transform: none; letter-spacing: 0; }
 
 /* The one back button: ghost look = .lp-btn--secondary, about 45px tall (component: <x-back-link>). */
-.lp-type .lp-btn--back { min-height: 45px; padding: 10px 18px; gap: 8px; text-decoration: none; width: auto; max-width: 100%; justify-content: flex-start; }
-.lp-type .lp-btn--back .lp-btn-arrow-left { flex: none; font-size: 16px; line-height: 1; transition: transform .15s; }
-.lp-type .lp-btn--back:hover .lp-btn-arrow-left { transform: translateX(-2px); }
-@media (prefers-reduced-motion: reduce) { .lp-type .lp-btn--back:hover .lp-btn-arrow-left { transform: none; } }
+.lp-type .lp-btn--back { min-height: 45px; padding: 10px 18px; gap: 8px; text-decoration: none; width: auto; max-width: 100%; justify-content: center; }
 
 /* Navigation: logo in Cormorant, links Montserrat 500 (current page 600), 14px. */
 .lp-type nav.site-nav .sn-link, .lp-type nav.site-nav .sn-link:visited { font-family: var(--font-body); font-size: 14px; font-weight: 500; }

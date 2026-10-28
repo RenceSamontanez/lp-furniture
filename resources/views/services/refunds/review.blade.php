@@ -64,7 +64,7 @@
 
         <div class="rq-actions">
           <button type="submit" class="lp-btn lp-btn--primary" id="rq-send">{{ $instant ? 'Cancel this service request' : 'Send my request' }}</button>
-          <button type="button" class="lp-btn lp-btn--secondary" onclick="history.back()">Change my answers</button>
+          <button type="button" class="lp-btn lp-btn--secondary" onclick="history.back()">Change My Answers</button>
         </div>
       </form>
     </div>

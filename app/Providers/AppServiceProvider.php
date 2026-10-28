@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -12,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        require_once app_path('helpers.php');
     }
 
     /**
@@ -22,5 +23,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::defaultView('pagination::lp');
         Paginator::defaultSimpleView('pagination::lp-simple');
+
+        // @titlecase($text): escaped Title Case display text (App\Support\TitleCase)
+        Blade::directive('titlecase', fn ($expr) => "<?php echo e(\App\Support\TitleCase::apply({$expr})); ?>");
     }
 }

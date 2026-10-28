@@ -119,7 +119,7 @@
     var body = el('div', 'nf-body');
     var h = el('h3', 'nf-item-title');
     if (!n.read) { var ud = el('span', 'nf-ud'); ud.setAttribute('role', 'img'); ud.setAttribute('aria-label', 'Unread'); h.appendChild(ud); }
-    h.appendChild(document.createTextNode(n.title));
+    h.appendChild(document.createTextNode(window.LpTitleCase ? window.LpTitleCase.apply(n.title) : n.title));
     body.appendChild(h);
     body.appendChild(el('p', 'nf-text', n.message));
     var meta = el('div', 'nf-meta');

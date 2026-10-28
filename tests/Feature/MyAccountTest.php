@@ -548,11 +548,11 @@ class MyAccountTest extends TestCase
         $this->cart($u);
         $first = $this->actingAs($u)->get(route('checkout'))->assertOk();
         $first->assertSee('Use this as my permanent delivery address?')->assertSee('Yes, save it')->assertSee('No, only for this order')
-              ->assertSee('name="addr_province_id"', false)->assertDontSee('Use a different address');
+              ->assertSee('name="addr_province_id"', false)->assertDontSee('Use a Different Address');
 
         $this->giveDeliveryDetails($u);
         $saved = $this->actingAs($u->fresh())->get(route('checkout'))->assertOk();
-        $saved->assertSee('Saved address')->assertSee('Use a different address')->assertSee('Replace your saved delivery address with this one?')
+        $saved->assertSee('Saved Address')->assertSee('Use a Different Address')->assertSee('Replace your saved delivery address with this one?')
               ->assertSee('Yes, replace my saved address');
     }
 

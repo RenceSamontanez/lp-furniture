@@ -105,7 +105,7 @@
   @if($feedbacks->isEmpty())
     <div class="reviews-empty">
       <div class="reviews-empty-icon">💬</div>
-      <h3>No reviews yet</h3>
+      <h3>No Reviews Yet</h3>
       <p>Be the first to share your experience with LP Furniture!</p>
     </div>
   @else
@@ -135,7 +135,7 @@
             </div>
 
             <div class="review-order-meta">
-              <span class="admin-pill approved" style="font-size:10px;">{{ str_replace('_',' ', $review->order->order_status) }}</span>
+              <span class="admin-pill approved" style="font-size:10px;">{{ title_case(str_replace('_',' ', $review->order->order_status)) }}</span>
               <span class="review-order-ref">{{ $review->order->order_number }}</span>
             </div>
           @endif

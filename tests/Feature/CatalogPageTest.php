@@ -115,7 +115,7 @@ class CatalogPageTest extends TestCase
         $this->seedMix();
 
         $this->get('/catalog?search=zzzz')->assertOk()
-            ->assertSee('Nothing matches these filters')->assertSee('Clear filters');
+            ->assertSee('Nothing matches these filters')->assertSee('Clear Filters');
     }
 
     public function test_filter_links_keep_the_other_filters(): void

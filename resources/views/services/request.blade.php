@@ -20,7 +20,7 @@
 
     <div class="co-card si-form-card">
       <div class="co-head">
-        <h1 class="co-title">Other services request</h1>
+        <h1 class="co-title">Other Services Request</h1>
         <p class="co-lead">
           For work we price by phone, such as labor only when you bring your own wood, or a repair.
           This is a request, not an order. No payment is due. Our team will call you to discuss it.
@@ -54,7 +54,7 @@
             @endforeach
           </div>
           <div class="co-field" style="margin-top:14px;">
-            <label class="form-label" for="furniture_type">Furniture type (optional)</label>
+            <label class="form-label" for="furniture_type">Furniture Type (Optional)</label>
             <select id="furniture_type" name="furniture_type" class="form-input">
               <option value="">Not sure or not listed</option>
               @foreach(\App\Support\FurnitureTypes::LIST as $t)
@@ -63,7 +63,7 @@
             </select>
           </div>
           <div class="co-field" style="margin-top:14px;">
-            <label class="form-label" for="concern">Tell us about it</label>
+            <label class="form-label" for="concern">Tell Us About It</label>
             <textarea id="concern" name="concern" class="form-textarea" rows="5" minlength="10" maxlength="2000" required aria-describedby="concern-help"
                       placeholder="e.g. The right front leg of my dining table is cracked near the joint. It is narra, about 75 cm high. It started 2 weeks ago.">{{ old('concern') }}</textarea>
             <p class="co-hint" id="concern-help">Please tell us <strong>what is wrong</strong>, <strong>where</strong> on the furniture, its <strong>size</strong>, what it is <strong>made of</strong> and <strong>since when</strong>. Write at least 40 characters, or add a photo below. A clear description helps us give you the right price.</p>
@@ -95,7 +95,7 @@
               <input type="text" id="name" name="name" class="form-input" required maxlength="120" value="{{ old('name', $defaults['name']) }}" autocomplete="name"/>
             </div>
             <div class="co-field">
-              <label class="form-label" for="phone">Mobile number</label>
+              <label class="form-label" for="phone">Mobile Number</label>
               <input type="tel" id="phone" name="phone" class="form-input" required maxlength="16" value="{{ old('phone', $defaults['phone']) }}" placeholder="09171234567" autocomplete="tel"/>
               <p class="co-hint">Philippine mobile number, for example 09171234567.</p>
             </div>
@@ -122,7 +122,7 @@
             @endforeach
           </div>
           <div class="co-field" style="margin-top:14px;">
-            <label class="form-label" for="preferred_call_date">Preferred date (optional)</label>
+            <label class="form-label" for="preferred_call_date">Preferred Date (Optional)</label>
             <input type="date" id="preferred_call_date" name="preferred_call_date" class="form-input"
                    min="{{ $today->toDateString() }}" max="{{ $maxDay->toDateString() }}" value="{{ old('preferred_call_date') }}"/>
             <p class="co-hint">Weekdays only.</p>
@@ -132,13 +132,13 @@
         <div class="co-field" style="margin-bottom:14px;">
           <label class="co-option" for="si-terms">
             <input type="checkbox" name="terms" id="si-terms" value="1" required @checked(old('terms'))/>
-            <span>I have read and agree to the <a href="{{ route('services.terms') }}" class="lp-link" target="_blank" rel="noopener" data-no-loading>Other Services terms</a>.</span>
+            <span>I have read and agree to the <a href="{{ route('services.terms') }}" class="lp-link" target="_blank" rel="noopener" data-no-loading>Other Services Terms</a>.</span>
           </label>
         </div>
 
         <div class="co-actions">
           <a href="{{ route('home') }}" class="lp-btn lp-btn--secondary">Cancel</a>
-          <button type="submit" class="lp-btn lp-btn--primary" id="si-submit" data-loading="Sending...">Send request</button>
+          <button type="submit" class="lp-btn lp-btn--primary" id="si-submit" data-loading="Sending...">Send Request</button>
         </div>
       </form>
     </div>
@@ -184,7 +184,7 @@
                     @endif
                     @if($t->isCancelled())
                       @php $why = $lastReq && !$earlier->count() ? route('services.refund.show', $lastReq->reference) : ($earlier->first() ? route('services.invoice', $earlier->first()->id) : null); @endphp
-                      @if($why)<a href="{{ $why }}" class="lp-link lp-link--tap">See what happened</a>@endif
+                      @if($why)<a href="{{ $why }}" class="lp-link lp-link--tap">See What Happened</a>@endif
                     @endif
                   </div>
 

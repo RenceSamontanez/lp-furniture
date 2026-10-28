@@ -46,7 +46,7 @@
       <div class="cx-actions">
         <button type="submit" class="lp-btn lp-btn--primary">Apply</button>
         @if($filtered || $sort !== 'newest')
-          <a href="{{ route('catalog') }}" class="lp-link">Clear filters</a>
+          <a href="{{ route('catalog') }}" class="lp-link">Clear Filters</a>
         @endif
       </div>
     </form>
@@ -81,8 +81,8 @@
                     aria-label="Quick view: {{ $product->product_name }}">Quick view</button>
           </div>
           <div class="cx-cap">
-            <h3><a href="{{ route('product.show', $product->id) }}">{{ $product->product_name }}</a></h3>
-            <p class="cx-k">{{ $product->category }}@if($product->on_sale)<span class="cx-was">{{ $product->formatted_price }}</span>@endif</p>
+            <h3><a href="{{ route('product.show', $product->id) }}">{{ title_case($product->product_name) }}</a></h3>
+            <p class="cx-k">{{ title_case($product->category) }}@if($product->on_sale)<span class="cx-was">{{ $product->formatted_price }}</span>@endif</p>
             @if(filled($product->description))<p class="cx-d">{{ $product->description }}</p>@endif
             <a href="{{ route('product.show', $product->id) }}" class="lp-btn lp-btn--secondary cx-vd">View details</a>
           </div>
@@ -92,7 +92,7 @@
           @if($filtered)
             <b>Nothing matches these filters</b>
             No pieces fit this category, search or price. Clear the filters to see everything we have.<br>
-            <a href="{{ route('catalog') }}" class="lp-btn lp-btn--primary">Clear filters</a>
+            <a href="{{ route('catalog') }}" class="lp-btn lp-btn--primary">Clear Filters</a>
           @else
             <b>No pieces listed yet</b>
             Please check back soon, or ask us to build one to your size.

@@ -22,7 +22,7 @@
     <div><dt>Wood you chose</dt><dd>{{ $quote->request->wood_label }}</dd></div>
     <div><dt>Description</dt><dd style="white-space:pre-line;">{{ $quote->final_description }}</dd></div>
     <div><dt>Size (length x width x height)</dt><dd>{{ \App\Support\Dimensions::triplet($quote->width_cm, $quote->depth_cm, $quote->height_cm, $quote->request->dimension_unit) }}</dd></div>
-    <div><dt>Material</dt><dd>{{ $quote->material }}@if($quote->finish), {{ $quote->finish }}@endif</dd></div>
+    <div><dt>Material</dt><dd>{{ title_case($quote->material) }}@if($quote->finish), {{ $quote->finish }}@endif</dd></div>
     @if($quote->modifications)<div><dt>Modifications</dt><dd style="white-space:pre-line;">{{ $quote->modifications }}</dd></div>@endif
     <div><dt>Production time</dt><dd>{{ $quote->production_days }} working days</dd></div>
     <div><dt>{{ $quote->delivery_option === 'delivery' ? 'Delivery to' : 'Pickup' }}</dt><dd>{{ $quote->delivery_option === 'delivery' ? $quote->delivery_address : 'Pick up at our shop' }}</dd></div>

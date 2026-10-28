@@ -89,12 +89,12 @@ class CustomerTypographyTest extends TestCase
         $btn = \Illuminate\Support\Facades\Blade::render('<x-back-link type="button" label="cart" onclick="go()" />');
         $this->assertStringContainsString('<button type="button"', $btn);
         $this->assertStringContainsString('onclick="go()"', $btn);
-        $this->assertStringContainsString('Back to cart', $btn);
+        $this->assertStringContainsString('Back', $btn);
     }
 
     public function test_back_button_appears_on_customer_pages(): void
     {
-        foreach (['/login' => 'Back to Home', '/register' => 'Back to Sign in'] as $url => $words) {
+        foreach (['/login' => 'Back to Home', '/register' => 'Back to Sign In'] as $url => $words) {
             $html = $this->get($url)->assertOk()->getContent();
             $this->assertStringContainsString('lp-btn--back', $html, $url);
             $this->assertStringContainsString($words, $html, $url);

@@ -21,7 +21,7 @@ class ServiceIdCheckWordingTest extends TestCase
         $page = $this->actingAs($u)->get(route('validation.show'));
         $page->assertOk()
             ->assertSee('before you send a service request')
-            ->assertSee('Continue ID check')
+            ->assertSee('Continue ID Check')
             ->assertDontSee('place orders')
             ->assertDontSee('before your first order');
     }
@@ -32,7 +32,7 @@ class ServiceIdCheckWordingTest extends TestCase
         $u->forceFill(['is_validated' => false])->save();
 
         $this->actingAs($u)->get(route('validation.show'))
-            ->assertOk()->assertSee('before your first order')->assertDontSee('Continue ID check');
+            ->assertOk()->assertSee('before your first order')->assertDontSee('Continue ID Check');
         $this->actingAs($u)->get(route('checkout'))
             ->assertRedirect(route('validation.show'))->assertSessionHas('warning');
     }
@@ -45,6 +45,6 @@ class ServiceIdCheckWordingTest extends TestCase
         $u->forceFill(['is_validated' => true])->save();
 
         $this->actingAs($u)->get(route('validation.show'))
-            ->assertSee('Continue to your service request')->assertSee(route('services.request'));
+            ->assertSee('Continue to Your Service Request')->assertSee(route('services.request'));
     }
 }

@@ -63,7 +63,7 @@
 
       @if(!empty($timeline))
         <section class="cc-card cc-glass cc-timeline" aria-labelledby="cc-tl-title">
-          <h2 class="cc-cap" id="cc-tl-title">What has happened so far</h2>
+          <h2 class="cc-cap" id="cc-tl-title">What Has Happened So Far</h2>
           <ol class="cc-tl">
             @foreach($timeline as $e)
               @php $at = $e['at']->timezone('Asia/Manila'); @endphp
@@ -130,7 +130,7 @@
       @endif
     </div>
     @if($messenger)
-      <a href="{{ $messenger }}" class="lp-btn lp-btn--secondary cc-contact-fb" target="_blank" rel="noopener noreferrer">Message us on Facebook</a>
+      <a href="{{ $messenger }}" class="lp-btn lp-btn--secondary cc-contact-fb" target="_blank" rel="noopener noreferrer">Message Us on Facebook</a>
     @endif
   </section>
 </div>

@@ -26,7 +26,7 @@
       @include('services._contact-card')
 
       <div class="co-actions si-sent-actions">
-        <a href="{{ route('services.request') }}" class="lp-btn lp-btn--secondary">View my requests</a>
+        <a href="{{ route('services.request') }}" class="lp-btn lp-btn--secondary">View My Requests</a>
         <x-back-link :href="route('home')" label="the shop" />
       </div>
     </div>

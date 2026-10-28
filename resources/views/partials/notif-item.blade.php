@@ -9,19 +9,19 @@
   <div class="nf-body">
     <h3 class="nf-item-title">
       @unless($notif->is_read)<span class="nf-ud" role="img" aria-label="Unread"></span>@endunless
-      {{ $notif->title }}
+      {{ title_case($notif->title) }}
     </h3>
     <p class="nf-text">{{ $notif->message }}</p>
     <div class="nf-meta">
       <time class="nf-when" datetime="{{ $notif->created_at->toIso8601String() }}" title="{{ $notif->created_at->format('M j, Y g:i A') }}">{{ $notif->timeLabel() }}</time>
       @if($details)
-        <a href="{{ $details }}" class="lp-btn lp-btn--primary lp-btn--chip nf-view">View details</a>
+        <a href="{{ $details }}" class="lp-btn lp-btn--primary lp-btn--chip nf-view">View Details</a>
       @endif
       @unless($notif->is_read)
         <form method="POST" action="{{ route('notifications.read', $notif->id) }}">
           @csrf
           @method('PATCH')
-          <button type="submit" class="lp-link lp-link--tap">Mark read</button>
+          <button type="submit" class="lp-link lp-link--tap">Mark Read</button>
         </form>
       @endunless
     </div>

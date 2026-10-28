@@ -20,7 +20,7 @@
 
     <div class="si-card sx-main">
       <span class="sx-badge" role="status">{{ $i->statusLabel() }}</span>
-      <h1 class="sx-title">This invoice was cancelled</h1>
+      <h1 class="sx-title">This Invoice Was Cancelled</h1>
 
       @if($refund)
         <p class="sx-lead">You asked us to cancel this service, and your refund was sent. The details are below.</p>
@@ -42,14 +42,14 @@
         <div><dt>Amount that was on this invoice</dt><dd class="sx-muted">₱{{ number_format((float) $i->total, 2) }}</dd></div>
       </dl>
 
-      <h2 class="sx-h2">Why it was cancelled</h2>
+      <h2 class="sx-h2">Why It Was Cancelled</h2>
       @if($reason !== '')
         <p class="sx-reason">{{ $reason }}</p>
       @else
         <p class="sx-reason">Our team cancelled this invoice. If you are not sure why, please contact us and we will explain.</p>
       @endif
 
-      <h2 class="sx-h2">What happens next</h2>
+      <h2 class="sx-h2">What Happens Next</h2>
       <p class="sx-next">If a corrected invoice is needed, we will send you a new one and let you know.</p>
 
       <x-back-link :href="route('services.request')" label="my service request" />

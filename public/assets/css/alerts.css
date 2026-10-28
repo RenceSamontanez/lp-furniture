@@ -113,3 +113,7 @@
   .lp-toast.is-leaving { opacity: 0; animation: none; }
   .lp-toast-bar { animation: none; transform: scaleX(.5); }
 }
+
+/* optional title above the message (LpToast.show(type, message, title)) */
+.lp-toast-title { display: block; font-weight: 700; }
+.lp-toast-title + .lp-toast-line { display: block; margin-top: 2px; font-weight: 500; }

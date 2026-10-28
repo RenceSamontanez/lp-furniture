@@ -140,7 +140,7 @@ class MyDesignsTabsTest extends TestCase
 
         $this->actingAs($me)->get(route('design.gallery', ['tab' => 'favorites']))
             ->assertOk()
-            ->assertSee('No favorites yet')
+            ->assertSee('No Favorites Yet')
             ->assertSee('Tap the bookmark');
     }
 
@@ -165,7 +165,7 @@ class MyDesignsTabsTest extends TestCase
 
         // Not sent: a form posting to the existing select route.
         $this->assertStringContainsString('action="' . route('design.select', $open->id) . '"', $html);
-        $this->assertStringContainsString('Order this design', $html);
+        $this->assertStringContainsString('Order This Design', $html);
         $this->assertStringNotContainsString('action="' . route('design.select', $sent->id) . '"', $html);
 
         // Sent: a link to the existing concept page.

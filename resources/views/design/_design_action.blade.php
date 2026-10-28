@@ -7,6 +7,6 @@
   <form method="POST" action="{{ route('design.select', $req->id) }}" class="md-act-form">
     @csrf
     <input type="hidden" name="suggestion_id" value="{{ $suggestion->id }}"/>
-    <button type="submit" class="lp-btn lp-btn--primary md-act-primary">Order this design</button>
+    <button type="submit" class="lp-btn lp-btn--primary md-act-primary">Order This Design</button>
   </form>
 @endif

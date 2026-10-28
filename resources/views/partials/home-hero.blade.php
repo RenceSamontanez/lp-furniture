@@ -86,7 +86,7 @@
             @endif
           @endforeach
         </div>
-        <div class="lp-ai__foot"><span>Samples made with AI</span><a class="lp-ai__link" href="{{ $customizeUrl }}">Design yours <svg aria-hidden="true"><use href="#h-ar"/></svg></a></div>
+        <div class="lp-ai__foot"><span>Samples made with AI</span><a class="lp-ai__link" href="{{ $customizeUrl }}">Design Yours</a></div>
       </aside>
 
       @if($railBest->isNotEmpty() || $railFresh->isNotEmpty())

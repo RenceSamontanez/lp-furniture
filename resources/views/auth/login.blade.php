@@ -78,14 +78,14 @@
       </div>
 
       <button type="submit" class="btn-auth-submit" style="margin-top:22px;">
-        Sign In →
+        Sign In
       </button>
     </form>
 
     {{-- Prominent "No account?" call to action --}}
     <div class="auth-no-account">
       No account yet?
-      <a href="{{ route('register') }}" class="auth-no-account-link">Create one — it's free →</a>
+      <a href="{{ route('register') }}" class="auth-no-account-link">Create one — it's free</a>
     </div>
 
   </div>
@@ -128,7 +128,7 @@
             console.error('reCAPTCHA error:', err);
             if (submitBtn) {
               submitBtn.disabled = false;
-              submitBtn.textContent = 'Sign In →';
+              submitBtn.textContent = 'Sign In';
             }
             alert('Security check failed. Please refresh the page and try again.');
           });

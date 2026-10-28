@@ -16,10 +16,10 @@
     <a href="{{ route('catalog') }}">Catalog</a>
     <span>›</span>
     @if($product->category)
-      <a href="{{ route('catalog', ['category' => $product->category]) }}">{{ $product->category }}</a>
+      <a href="{{ route('catalog', ['category' => $product->category]) }}">{{ title_case($product->category) }}</a>
       <span>›</span>
     @endif
-    <strong>{{ $product->product_name }}</strong>
+    <strong>{{ title_case($product->product_name) }}</strong>
   </div>
 
   {{-- Main Layout --}}
@@ -74,8 +74,8 @@
     {{-- RIGHT: Product Info --}}
     <div class="detail-info">
 
-      <div class="detail-category">{{ $product->category }}</div>
-      <h1 class="detail-name">{{ $product->product_name }}</h1>
+      <div class="detail-category">{{ title_case($product->category) }}</div>
+      <h1 class="detail-name">{{ title_case($product->product_name) }}</h1>
 
       {{-- Price --}}
       <div class="detail-price-block">
@@ -105,13 +105,13 @@
           @if($product->material)
             <div class="detail-spec-row">
               <span class="detail-spec-label">Material</span>
-              <span class="detail-spec-value">{{ $product->material }}</span>
+              <span class="detail-spec-value">{{ title_case($product->material) }}</span>
             </div>
           @endif
           @if($product->finish)
             <div class="detail-spec-row">
               <span class="detail-spec-label">Finish</span>
-              <span class="detail-spec-value">{{ $product->finish }}</span>
+              <span class="detail-spec-value">{{ title_case($product->finish) }}</span>
             </div>
           @endif
           @if($product->dimensions)
@@ -197,7 +197,7 @@
       {{-- Customization note --}}
       @if($product->is_customizable)
         <div class="detail-customize">
-          <label class="detail-customize-label">Customization Note (optional)</label>
+          <label class="detail-customize-label">Customization Note (Optional)</label>
           <textarea
             id="customization-note"
             placeholder="Any special requests? Size modifications, wood type preference, color stain, etc."
@@ -234,7 +234,7 @@
               <input type="hidden" name="quantity" id="order-qty" value="1"/>
               <input type="hidden" name="note" id="order-note" value=""/>
               <button type="button" class="btn-order-now" onclick="orderNowFromDetail()" style="width:100%;border:none;cursor:pointer;">
-                Order Now →
+                Order Now
               </button>
             </form>
 
@@ -290,7 +290,7 @@
   {{-- Related Products --}}
   @if($relatedProducts->count() > 0)
     <div class="detail-related">
-      <h2 class="detail-related-title">More <span>{{ $product->category }}</span> Pieces</h2>
+      <h2 class="detail-related-title">More <span>{{ title_case($product->category) }}</span> Pieces</h2>
       <div class="product-grid">
         @foreach($relatedProducts as $related)
           <div class="product-card-v2">
@@ -307,9 +307,9 @@
               </button>
             </div>
             <div class="product-card-v2-info">
-              <div class="product-cat">{{ $related->category }}</div>
+              <div class="product-cat">{{ title_case($related->category) }}</div>
               <a href="{{ route('product.show', $related->id) }}" class="product-name-link">
-                <div class="product-name">{{ $related->product_name }}</div>
+                <div class="product-name">{{ title_case($related->product_name) }}</div>
               </a>
               <div class="product-footer" style="margin-top:10px;">
                 <div class="product-price">

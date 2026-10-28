@@ -551,9 +551,8 @@ function addBotMessage(msg, suggestions, products, extra) {
     const btnEl = document.createElement('div');
     btnEl.className = 'chat-buttons';
     // First button is the main action, the rest are secondary; three at most
-    const arrow = '<svg class="chat-btn-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     btnEl.innerHTML = extra.buttons.slice(0, 3).map((b, i) =>
-      `<a class="chat-btn lp-btn ${i === 0 ? 'chat-btn--primary lp-btn--primary' : 'chat-btn--secondary lp-btn--secondary'}" href="${chatEsc(chatSafeUrl(b.url))}"><span>${chatEsc(b.label)}</span>${arrow}</a>`).join('');
+      `<a class="chat-btn lp-btn ${i === 0 ? 'chat-btn--primary lp-btn--primary' : 'chat-btn--secondary lp-btn--secondary'}" href="${chatEsc(chatSafeUrl(b.url))}"><span>${chatEsc(lpTitleCase(b.label))}</span></a>`).join('');
     body.appendChild(btnEl);
   }
 
@@ -589,11 +588,14 @@ function addUserMessage(msg) {
   document.getElementById('chatbot-window').classList.add('is-compact');   // the stage shrinks once the conversation has started
 }
 
+/* Title Case for text the page shows (the chip keeps its original wording in data-sugg) */
+function lpTitleCase(t) { return (window.LpTitleCase && window.LpTitleCase.apply) ? window.LpTitleCase.apply(t) : t; }
+
 /* Render the quick-reply suggestion chips */
 function setSuggestions(list) {
   const el = document.getElementById('chat-suggestions');
   el.innerHTML = list
-    .map(s => `<button type="button" class="chat-chip lp-btn lp-btn--secondary lp-btn--chip" data-sugg="${chatEsc(s)}" onclick="handleSugg(this.dataset.sugg)">${chatEsc(s)}</button>`)
+    .map(s => `<button type="button" class="chat-chip lp-btn lp-btn--secondary lp-btn--chip" data-sugg="${chatEsc(s)}" onclick="handleSugg(this.dataset.sugg)">${chatEsc(lpTitleCase(s))}</button>`)
     .join('');
 }
 

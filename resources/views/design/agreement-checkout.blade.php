@@ -56,7 +56,7 @@
       <label class="co-agree"><input type="radio" name="payment_method" value="stripe" required {{ old('payment_method', 'stripe') === 'stripe' ? 'checked' : '' }}/> <span>Card (Stripe)</span></label>
       <label class="co-agree"><input type="radio" name="payment_method" value="gcash" required {{ old('payment_method') === 'gcash' ? 'checked' : '' }}/> <span>GCash</span></label>
       @include('partials.terms-reminder')
-      <button type="submit" class="ai-action-btn ai-action-primary" id="co-pay-btn">Continue to payment</button>
+      <button type="submit" class="ai-action-btn ai-action-primary" id="co-pay-btn">Continue to Payment</button>
     </form>
   </div>
   </div>

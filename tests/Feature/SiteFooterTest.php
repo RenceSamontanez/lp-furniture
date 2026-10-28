@@ -54,8 +54,8 @@ class SiteFooterTest extends TestCase
             $this->assertStringContainsString('<footer class="sf" id="footer-section" data-nav="dark">', $html);
             $this->assertStringContainsString('assets/css/site-footer.css', $html);
             $this->assertStringNotContainsString('class="lp-footer"', $html);
-            $this->assertStringContainsString('Visit our shop', $html);
-            $this->assertStringContainsString('Ways to pay', $html);
+            $this->assertStringContainsString('Visit Our Shop', $html);
+            $this->assertStringContainsString('Ways to Pay', $html);
             $this->assertStringContainsString('+ more ways to pay', $html);
             $this->assertStringContainsString('&copy; ' . now()->year . ' LP Furniture. All rights reserved.', str_replace('©', '&copy;', $html));
             // the giant wordmark is decoration only
@@ -70,7 +70,7 @@ class SiteFooterTest extends TestCase
     {
         $this->settings(['phone' => '0917 123 4567', 'email' => 'hello@lpfurniture.test', 'facebook_url' => 'https://facebook.com/lp', 'tiktok_url' => 'https://www.tiktok.com/@lp']);
         $html = $this->home();
-        $order = array_map(fn ($s) => strpos($html, $s), ['Visit our shop', 'Contact us', 'Social media', 'Ways to pay', 'sf__pol', 'sf__word"']);
+        $order = array_map(fn ($s) => strpos($html, $s), ['<h2>Visit Our Shop', '<h2>Contact Us', 'Social Media</h2>', '<h2>Ways to Pay', 'sf__pol', 'sf__word"']);
         $sorted = $order;
         sort($sorted);
         $this->assertSame($sorted, $order);
@@ -126,20 +126,20 @@ class SiteFooterTest extends TestCase
         $html = $this->home();
         $this->assertStringNotContainsString('href="tel:', $html);
         $this->assertStringContainsString('mailto:hello@lpfurniture.test', $html);
-        $this->assertStringNotContainsString('Social media', $html);
+        $this->assertStringNotContainsString('Social Media', $html);
 
         $this->settings([]);
         $html = $this->home();
-        $this->assertStringNotContainsString('Contact us', $html);
+        $this->assertStringNotContainsString('<h2>Contact Us</h2>', $html);
         $this->assertStringNotContainsString('aria-label="Contact"', $html);
-        $this->assertStringContainsString('Ways to pay', $html);
+        $this->assertStringContainsString('Ways to Pay', $html);
     }
 
     public function test_tiktok_is_hidden_when_empty_and_shown_with_target_and_rel_when_set(): void
     {
         $this->settings(['facebook_url' => 'https://facebook.com/lpfurniture']);
         $html = $this->home();
-        $this->assertStringContainsString('Social media', $html);
+        $this->assertStringContainsString('Social Media', $html);
         $this->assertStringContainsString('target="_blank" rel="noopener noreferrer" aria-label="Facebook (opens in a new tab)"', $html);
         $this->assertStringNotContainsString('TikTok', $html);
         $this->assertStringNotContainsString('href="#"', $html);
@@ -157,7 +157,7 @@ class SiteFooterTest extends TestCase
         $this->settings(['facebook_url' => 'javascript:alert(1)', 'tiktok_url' => 'http://tiktok.com/@x']);
         $html = $this->home();
         $this->assertStringNotContainsString('javascript:', $html);
-        $this->assertStringNotContainsString('Social media', $html);
+        $this->assertStringNotContainsString('Social Media', $html);
     }
 
     public function test_policy_links_show_only_for_routes_that_exist(): void
@@ -283,7 +283,7 @@ class SiteFooterTest extends TestCase
         $this->noFallbacks();
         $this->settings([]);
         $html = $this->home();
-        $this->assertStringNotContainsString('Visit our shop', $html);
+        $this->assertStringNotContainsString('Visit Our Shop', $html);
         $this->assertStringNotContainsString('<iframe', $html);
     }
 

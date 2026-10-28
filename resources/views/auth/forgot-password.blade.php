@@ -41,7 +41,7 @@
       </div>
 
       <button type="submit" class="btn-auth-submit" style="margin-top:20px;">
-        Send Reset Link →
+        Send Reset Link
       </button>
     </form>
 

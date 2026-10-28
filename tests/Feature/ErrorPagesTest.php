@@ -40,7 +40,7 @@ class ErrorPagesTest extends TestCase
         $res->assertNotFound()
             ->assertSee('We could not find that page')
             ->assertSee('The link may be old or the page may have moved.')
-            ->assertSee('Go to home')->assertSee('Browse catalog')
+            ->assertSee('Go to Home')->assertSee('Browse Catalog')
             ->assertSee('Prefer to talk first?');
         $this->assertStringContainsString(route('catalog'), $res->getContent());
         $this->assertStringContainsString('<meta name="robots" content="noindex"', $res->getContent());
@@ -50,7 +50,7 @@ class ErrorPagesTest extends TestCase
     public function test_403_is_branded_and_leaks_nothing(): void
     {
         $res = $this->get('/_t/forbidden');
-        $res->assertForbidden()->assertSee('You do not have access to this page')->assertSee('Go to home');
+        $res->assertForbidden()->assertSee('You do not have access to this page')->assertSee('Go to Home');
         $this->assertClean($res->getContent());
     }
 
@@ -60,7 +60,7 @@ class ErrorPagesTest extends TestCase
         // so the branded view is the fallback that is used if that handler is ever removed. Render it directly.
         $html = view('errors.419', ['exception' => new \Symfony\Component\HttpKernel\Exception\HttpException(419)])->render();
         $this->assertStringContainsString('Your session expired, please refresh and try again', $html);
-        $this->assertStringContainsString('Go to home', $html);
+        $this->assertStringContainsString('Go to Home', $html);
         $this->assertClean($html);
     }
 
@@ -74,7 +74,7 @@ class ErrorPagesTest extends TestCase
     public function test_500_is_static_and_never_touches_the_database(): void
     {
         $res = $this->get('/_t/boom');
-        $res->assertStatus(500)->assertSee('Something went wrong on our side')->assertSee('Go to home');
+        $res->assertStatus(500)->assertSee('Something went wrong on our side')->assertSee('Go to Home');
         $this->assertClean($res->getContent());
 
         $source = file_get_contents(resource_path('views/errors/500.blade.php'));

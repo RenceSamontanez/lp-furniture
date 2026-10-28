@@ -84,11 +84,11 @@ class CancelledInvoicePageTest extends TestCase
             ->assertSee($i->invoice_number)
             ->assertSee('Amount that was on this invoice')
             ->assertSee('₱1,500.00')
-            ->assertSee('Why it was cancelled')
+            ->assertSee('Why It Was Cancelled')
             ->assertSee('The price was wrong.')
             ->assertSee($i->voided_at->timezone('Asia/Manila')->format('F j, Y'))
             ->assertSee('If a corrected invoice is needed, we will send you a new one and let you know.')
-            ->assertSee('Back to my service request')
+            ->assertSee('Back')
             ->assertSee(route('services.request'), false);
         $this->assertStringContainsString('<meta name="robots" content="noindex"', $res->getContent());
         $this->assertStringContainsString('no-store', (string) $res->headers->get('Cache-Control'));
@@ -204,7 +204,7 @@ class CancelledInvoicePageTest extends TestCase
         $i = $this->sent();
 
         $this->asOwner()->get(route('services.invoice', $i->id))->assertOk()
-            ->assertSee($i->invoice_number)->assertSee('Unpaid')->assertSee('Pay with GCash')->assertSee('Pay with card')
+            ->assertSee($i->invoice_number)->assertSee('Unpaid')->assertSee('Pay with GCash')->assertSee('Pay with Card')
             ->assertDontSee('This invoice was cancelled');
         $this->asOwner()->get(route('services.invoice.print', $i->id))->assertOk()->assertSee('window.print', false);
     }

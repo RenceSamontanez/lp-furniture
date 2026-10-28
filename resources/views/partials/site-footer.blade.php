@@ -6,8 +6,8 @@
 
   <div class="sf__top">
     @if($f['visit'])
-      <section class="sf__visit" aria-label="Visit our shop">
-        <h2>Visit our shop</h2>
+      <section class="sf__visit" aria-label="Visit Our Shop">
+        <h2>Visit Our Shop</h2>
         <div class="sf__map"><iframe title="Map showing LP Furniture shop location" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="{{ $f['visit']['embed'] }}"></iframe></div>
         @if($f['visit']['address'])<address>{{ $f['visit']['address'] }}</address>@endif
         @if($f['visit']['landmarks'])<p class="sf__near"><b>Nearby:</b> {{ $f['visit']['landmarks'] }}</p>@endif
@@ -18,7 +18,7 @@
     @if($f['phone'] || $f['email'] || $f['facebook'] || $f['tiktok'])
       <section class="sf__contact" aria-label="Contact">
         @if($f['phone'] || $f['email'])
-          <h2>Contact us</h2>
+          <h2>Contact Us</h2>
           <div class="sf__rows">
             @if($f['phone'])
               <a class="sf__row" href="{{ $f['phone']['href'] }}"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></i><span><b>{{ $f['phone']['display'] }}</b><small>Call or text</small></span></a>
@@ -29,7 +29,7 @@
           </div>
         @endif
         @if($f['facebook'] || $f['tiktok'])
-          <h2 class="sf__sochead">Social media</h2>
+          <h2 class="sf__sochead">Social Media</h2>
           <div class="sf__soc">
             @if($f['facebook'])
               <a class="sf__btn" href="{{ $f['facebook'] }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook (opens in a new tab)">Facebook <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
@@ -43,7 +43,7 @@
     @endif
 
     <section class="sf__paycol" aria-label="Payment methods">
-      <h2>Ways to pay</h2>
+      <h2>Ways to Pay</h2>
       <ul class="sf__pay">
         @foreach($f['payments'] as $p)
           <li{!! $p['logo'] ? ' class="sf__pay--logo sf__pay--' . e($p['key']) . '"' : '' !!}>@if($p['logo'])<img src="{{ $p['logo'] }}" alt="{{ $p['label'] }}" loading="lazy">@else<span>{{ $p['label'] }}</span>@endif</li>

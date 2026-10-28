@@ -9,7 +9,7 @@
 </head>
 <body class="ag-body">
   <main class="ag-sheet ag-blocked">
-    <h1>This agreement can't be shown right now</h1>
+    <h1>This Agreement Can't Be Shown Right Now</h1>
     @if(!empty($admin))
       <p>Its recorded SHA-256 no longer matches its contents. It has been blocked and every admin was notified. Do not rely on it until it has been investigated.</p>
     @else

@@ -42,8 +42,8 @@ class GuidePagesTest extends TestCase
 
         $this->assertSame('/guide', route('guide', [], false));
         foreach ([
-            'How to request a custom design', 'Choose the furniture type', 'Describe it', 'Add the size and the wood', 'Generate',
-            'Review', 'Send it to our team', 'Wait for our call', 'Accept the quote', 'Pay', 'How to measure',
+            'How to Request a Custom Design', 'Choose the Furniture Type', 'Describe It', 'Add the Size and the Wood', 'Generate',
+            'Review', 'Send it to our team', 'Wait for our call', 'Accept the Quote', 'Pay', 'How to Measure',
         ] as $text) {
             $this->assertStringContainsString($text, $html, $text);
         }

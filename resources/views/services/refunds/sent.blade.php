@@ -42,7 +42,7 @@
       @endif
 
       <p class="rq-track">
-        Track it any time in <a href="{{ route('services.request') }}" class="lp-link">My service requests</a>, or ask Luma with this reference number.
+        Track it any time in <a href="{{ route('services.request') }}" class="lp-link">My Service Requests</a>, or ask Luma with this reference number.
       </p>
 
       <div class="rq-actions">

@@ -20,7 +20,7 @@
   <div class="box">
     <h1>Something went wrong on our side</h1>
     <p>We are sorry. Please try again in a few minutes. Nothing you did caused this.</p>
-    <a href="/">Go to home</a>
+    <a href="/">Go to Home</a>
   </div>
 </body>
 </html>

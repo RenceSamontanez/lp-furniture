@@ -171,6 +171,8 @@
   };
 </script>
 
+<script>window.LP_TITLECASE = @json(config('titlecase'));</script>
+<script src="{{ $lpVer('assets/js/title-case.js') }}"></script>
 <script src="{{ $lpVer('assets/main.js') }}"></script>
 <script src="{{ $lpVer('assets/js/site-nav.js') }}" defer></script>
 <script src="{{ asset('assets/js/lp-modal.js') }}"></script>

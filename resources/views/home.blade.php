@@ -13,7 +13,7 @@
       <h2 class="section-title">Featured <span>Collection</span></h2>
       <p class="section-sub">Our most loved pieces, handpicked for quality and design.</p>
     </div>
-    <a href="{{ route('catalog') }}" class="section-link">View all →</a>
+    <a href="{{ route('catalog') }}" class="section-link">View All</a>
   </div>
 
   <!-- Category filter pills -->
@@ -48,9 +48,9 @@
         </div>
 
         <div class="product-card-v2-info">
-          <div class="product-cat">{{ $product->category }}</div>
+          <div class="product-cat">{{ title_case($product->category) }}</div>
           <a href="{{ route('product.show', $product->id) }}" class="product-name-link">
-            <div class="product-name">{{ $product->product_name }}</div>
+            <div class="product-name">{{ title_case($product->product_name) }}</div>
           </a>
           <div class="product-desc">{{ Str::limit($product->description, 65) }}</div>
 
@@ -70,7 +70,7 @@
     @empty
       <div class="empty-state">
         <div class="emoji">🪑</div>
-        <h3>No featured products yet</h3>
+        <h3>No Featured Products Yet</h3>
         <p>Check back soon!</p>
       </div>
     @endforelse
@@ -84,7 +84,7 @@
       <h2 class="section-title">Trending <span>This Month</span></h2>
       <p class="section-sub">Our most ordered pieces — trusted by hundreds of happy customers.</p>
     </div>
-    <a href="{{ route('catalog') }}" class="section-link">Shop all →</a>
+    <a href="{{ route('catalog') }}" class="section-link">Shop All</a>
   </div>
 
   <div class="carousel-wrapper">
@@ -117,9 +117,9 @@
           </div>
 
           <div class="carousel-card-info">
-            <div class="product-cat">{{ $product->category }}</div>
+            <div class="product-cat">{{ title_case($product->category) }}</div>
             <a href="{{ route('product.show', $product->id) }}" class="product-name-link">
-              <div class="product-name">{{ $product->product_name }}</div>
+              <div class="product-name">{{ title_case($product->product_name) }}</div>
             </a>
             <div class="product-footer" style="margin-top:12px;">
               <div class="product-price">
@@ -161,7 +161,7 @@
       <p class="gallery-sub">Every piece finds its perfect place. From cozy living rooms to professional offices — our furniture tells a story in every space it enters.</p>
     </div>
     <a href="{{ route('catalog') }}" class="btn btn-outline">
-      Shop These Looks →
+      Shop These Looks
     </a>
   </div>
 
@@ -460,7 +460,7 @@
       </div>
     </div>
 
-    <a href="{{ route('catalog') }}" class="btn btn-gold about-cta">See Our Work →</a>
+    <a href="{{ route('catalog') }}" class="btn btn-gold about-cta">See Our Work</a>
 
   </div>
 </div>

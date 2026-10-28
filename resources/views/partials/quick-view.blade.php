@@ -30,7 +30,7 @@
         <p class="cx-desc" id="cxDesc" hidden></p>
         <dl class="cx-info" id="cxInfo"></dl>
         <div id="cxSizeWrap" hidden><span class="cx-lbl">Size</span><div class="cx-dims" id="cxDims"></div></div>
-        <div class="cx-act"><a class="lp-btn" id="cxMore">View full details</a></div>
+        <div class="cx-act"><a class="lp-btn" id="cxMore">View Full Details</a></div>
       </div>
     </div>
   </div>

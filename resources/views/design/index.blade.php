@@ -68,7 +68,7 @@
               <span class="cz-history-t">History</span>
             </a>
           @endauth
-          <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" data-lp-modal-open="cz-howitworks">? How it works</button>
+          <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" data-lp-modal-open="cz-howitworks">? How It Works</button>
         </div>
       </div>
 
@@ -172,7 +172,7 @@
 
           {{-- 3. STYLE AND PHOTO --}}
           <fieldset class="cz-step" data-step="2">
-            <legend class="cz-q">Pick a style <span class="cz-opt-tag">(optional)</span></legend>
+            <legend class="cz-q">Pick a style <span class="cz-opt-tag">(Optional)</span></legend>
             <p class="cz-hint">Look at the photos. Not sure, or want something different? Upload your own reference photo (JPG or PNG).</p>
             <div class="cz-styles">
               @foreach(\App\Support\StyleChoices::LIST as $style)
@@ -193,7 +193,7 @@
                   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
                   <span class="cz-up-lab" id="cz-up-lab">Upload your own photo</span>
                 </label>
-                <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip cz-up-x" id="cz-up-x" hidden>Remove photo</button>
+                <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip cz-up-x" id="cz-up-x" hidden>Remove Photo</button>
               </div>
             </div>
             <p class="cz-msg" id="cz-up-msg" role="alert">@error('reference_image'){{ $message }}@enderror</p>
@@ -202,7 +202,7 @@
 
           {{-- 4. SIZE --}}
           <fieldset class="cz-step" data-step="3">
-            <legend class="cz-q">How big should it be? <span class="cz-opt-tag">(optional)</span></legend>
+            <legend class="cz-q">How big should it be? <span class="cz-opt-tag">(Optional)</span></legend>
             <p class="cz-hint" id="cz-size-hint"><strong>Length</strong> is the longest side across. <strong>Width</strong> is the shorter side across. <strong>Height</strong> is from the floor to the top. Not sure yet? Leave it empty.</p>
             <div class="cz-size">
               @foreach(['length' => ['Length', '120'], 'width' => ['Width', '60'], 'height' => ['Height', '75']] as $key => [$label, $example])
@@ -228,7 +228,7 @@
                 @include('guide._measure')
               </div>
             </details>
-            <label class="cz-more" for="cz-more">Anything else we should know? <span class="cz-opt-tag">(optional)</span></label>
+            <label class="cz-more" for="cz-more">Anything else we should know? <span class="cz-opt-tag">(Optional)</span></label>
             <textarea id="cz-more" name="additional_info" class="cz-field cz-more-area" rows="2" maxlength="1000"
                       placeholder="Storage drawers, foldable mechanism, hidden compartments, special finish, etc.">{{ old('additional_info') }}</textarea>
           </fieldset>
@@ -260,9 +260,9 @@
         </div>
 
         <div class="cz-foot">
-          <button type="button" class="lp-btn lp-btn--secondary" id="cz-prev">&larr; Back</button>
+          <button type="button" class="lp-btn lp-btn--secondary" id="cz-prev">Back</button>
           <span class="cz-need" id="cz-need" role="status"></span>
-          <button type="button" class="lp-btn lp-btn--primary" id="cz-next">Next &rarr;</button>
+          <button type="button" class="lp-btn lp-btn--primary" id="cz-next">Next</button>
           <button type="submit" class="lp-btn lp-btn--primary" id="cz-create" @disabled($outOfDesigns)>
             <svg class="lp-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>
             Create my design

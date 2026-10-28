@@ -73,7 +73,7 @@
       </div>
 
       <button type="submit" class="btn-auth-submit" style="margin-top:24px;">
-        Reset Password →
+        Reset Password
       </button>
     </form>
 

@@ -86,7 +86,8 @@
     for (var i = list.length - 1; i >= MAX; i--) { list[i].parentNode.removeChild(list[i]); }
   }
 
-  function show(type, message) {
+  // title is optional: a short bold line above the message (message-only calls are unchanged)
+  function show(type, message, title) {
     var h = host();
     if (!h || !message) { return null; }
     if (!ICONS[type]) { type = 'info'; }
@@ -103,7 +104,17 @@
       '<div class="lp-toast-msg"></div>' +
       '<button type="button" class="lp-toast-close" data-lp-toast-close aria-label="Dismiss notification"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
       '<span class="lp-toast-bar" aria-hidden="true"></span>';
-    el.querySelector('.lp-toast-msg').textContent = String(message);
+    var msgEl = el.querySelector('.lp-toast-msg');
+    if (title) {
+      var t = document.createElement('strong');
+      t.className = 'lp-toast-title';
+      t.textContent = String(title);
+      msgEl.appendChild(t);
+    }
+    var line = document.createElement('span');
+    line.className = 'lp-toast-line';
+    line.textContent = String(message);
+    msgEl.appendChild(line);
     h.insertBefore(el, h.firstChild);
     themeBehind(el);
     arm(el);
@@ -111,7 +122,7 @@
     return el;
   }
 
-  window.LpToast = { show: show };
+  window.LpToast = { show: show, dismiss: remove };
 
   function init() {
     var h = host();

@@ -17,7 +17,7 @@
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
       </div>
-      <h3 class="cd-modal-title-centered">Please fix the following</h3>
+      <h3 class="cd-modal-title-centered">Please Fix the Following</h3>
       <ul class="cd-modal-error-list" id="cd-validation-error-list"></ul>
     </div>
     <div class="cd-modal-footer-plain">

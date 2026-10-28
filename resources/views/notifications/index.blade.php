@@ -18,7 +18,7 @@
     @if($hasAny)
       <form method="GET" action="{{ route('notifications.index') }}" id="nf-filter" class="nf-filter" data-nf-page>
         @include('partials.notif-controls', ['mode' => 'page', 'filters' => $filters])
-        <noscript><button type="submit" class="lp-btn lp-btn--primary nf-apply">Apply filters</button></noscript>
+        <noscript><button type="submit" class="lp-btn lp-btn--primary nf-apply">Apply Filters</button></noscript>
       </form>
       <form method="POST" action="{{ route('notifications.readAll') }}" id="nf-markall">
         @csrf
@@ -28,14 +28,14 @@
 
     @if(!$hasAny)
       <div class="nf-empty">
-        <h2>No notifications yet</h2>
+        <h2>No Notifications Yet</h2>
         <p>Order updates, payment confirmations, and alerts will appear here.</p>
         <a href="{{ route('catalog') }}" class="lp-btn lp-btn--primary">Browse Catalog</a>
       </div>
     @elseif($notifications->isEmpty())
       <div class="nf-empty">
         <h2>No notifications match.</h2>
-        <a class="lp-link lp-link--tap" href="{{ route('notifications.index') }}">Clear filters</a>
+        <a class="lp-link lp-link--tap" href="{{ route('notifications.index') }}">Clear Filters</a>
       </div>
     @else
       <div class="nf-list">

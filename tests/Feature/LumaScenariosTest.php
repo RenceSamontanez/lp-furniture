@@ -108,7 +108,7 @@ class LumaScenariosTest extends TestCase
         $note = Notification::where('user_id', $this->owner->id)->where('message', 'like', '%' . $req->reference . '%')->latest('id')->firstOrFail();
 
         $this->loginAs($this->owner);
-        $page = $this->get(route('notifications.show', $note->id))->assertOk()->assertSee('Ask Luma about this');
+        $page = $this->get(route('notifications.show', $note->id))->assertOk()->assertSee('Ask Luma About This');
         preg_match('/id="nd-ask-luma" data-ref="([^"]+)"/', $page->getContent(), $m);
         $this->assertSame($req->reference, $m[1] ?? null);
         $page->assertSee('sendChat()', false);   // the button opens the chat and sends the number

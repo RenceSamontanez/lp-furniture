@@ -3112,3 +3112,78 @@
       text-align: center;
     }
   }
+
+/* ══════════════════════════════════════════
+   CHECKOUT STEPS v3 — Back beside Continue, roomier flat spacing (desktop and tablet only).
+   The mobile wizard (max-width 768px) is untouched by this block.
+══════════════════════════════════════════ */
+@media (min-width: 769px) {
+  /* the open step is a flat panel: 22px under the gold line, 26px inside, 22px between its cards */
+  .checkout-screen.ckn-active .checkout-screen-body {
+    max-height: 4000px;
+    margin-top: 22px;
+    padding: 26px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: visible;
+  }
+  .checkout-screen.ckn-active .checkout-screen-body > * { margin-top: 0; margin-bottom: 0; }
+  .checkout-screen.ckn-active .checkout-screen-body > .od { margin: 0 !important; }
+  .checkout-screen .cx-cards-row { gap: 22px; }
+  .checkout-screen .ckn-info-grid { gap: 22px; margin-bottom: 0; }
+  .checkout-screen .ckn-product-card { margin-bottom: 0; padding: 24px; gap: 20px; }
+  .checkout-screen .ckn-info-card,
+  .checkout-screen .ckn-reassurance-panel,
+  .checkout-screen .delivery-option-card,
+  .checkout-screen .payment-type-card,
+  .checkout-screen .payment-method-card { padding: 24px; }
+  .checkout-screen .ckn-info-card-title { margin-bottom: 14px; }
+  .checkout-screen .ckn-info-row,
+  .checkout-screen .ckn-service-item { padding: 6px 0; }
+  .checkout-screen .ckn-reassurance-list { padding-left: 18px; }
+  .checkout-screen .ckn-reassurance-list li { line-height: 1.8; margin-bottom: 4px; }
+  .checkout-screen .ckn-product-details > * + * { margin-top: 6px; }
+
+  /* one bottom row: Back (ghost) first, Continue next, both at the left, same height */
+  .checkout-screen .ckn-continue-wrap { margin-top: 0; }
+  .ckn-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 12px; }
+  .ckn-actions .ckn-back-btn,
+  .ckn-actions .ckn-continue-btn { min-height: 46px; padding: 0 24px; display: inline-flex; align-items: center; justify-content: center; line-height: 1.25; box-sizing: border-box; }
+}
+
+/* "Needs Attention" on an incomplete step title (red text on a pale red chip, 7:1) */
+.ckn-need {
+  display: inline-flex; align-items: center; gap: 6px; margin-left: 10px; padding: 3px 12px;
+  border-radius: 999px; background: #fadcdc; color: #8a1717;
+  font: 600 12px/1.4 var(--font-body); letter-spacing: 0; text-transform: none; vertical-align: middle; white-space: nowrap;
+}
+.ckn-need::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #b42318; }
+
+/* Place Order "ready" state: green tag above, soft gold glow ring around the button */
+.ckn-ready-tag { display: none; margin: 14px 0 0; padding: 8px 12px; border-radius: 12px; background: #e9f7ef; border: 1px solid #bfe6cf; color: #17603c; font: 600 13px/1.4 var(--font-body); align-items: center; gap: 8px; }
+.ckn-ready-tag:not(:empty) { display: flex; }
+.ckn-ready-tag:not(:empty)::before { content: ""; flex: none; width: 9px; height: 9px; border-radius: 50%; background: #1d9a5b; box-shadow: 0 0 0 4px rgba(29, 154, 91, .2); }
+.checkout-summary.is-ready .btn-place-order {
+  box-shadow: 0 0 0 3px #fff, 0 0 0 6px rgba(200, 150, 60, .85), 0 0 28px 6px rgba(240, 190, 90, .7);
+  animation: ckn-glow 1.8s ease-in-out infinite;
+}
+@keyframes ckn-glow {
+  0%, 100% { box-shadow: 0 0 0 3px #fff, 0 0 0 6px rgba(200, 150, 60, .85), 0 0 22px 4px rgba(240, 190, 90, .55); }
+  50% { box-shadow: 0 0 0 3px #fff, 0 0 0 7px rgba(200, 150, 60, .95), 0 0 34px 10px rgba(240, 190, 90, .8); }
+}
+@media (prefers-reduced-motion: reduce) { .checkout-summary.is-ready .btn-place-order { animation: none; } }
+
+/* tablet: the step column is narrow next to the summary, so the cards give a little padding back */
+@media (min-width: 769px) and (max-width: 1100px) {
+  .checkout-screen .ckn-info-card,
+  .checkout-screen .ckn-reassurance-panel,
+  .checkout-screen .delivery-option-card,
+  .checkout-screen .payment-type-card,
+  .checkout-screen .payment-method-card,
+  .checkout-screen .ckn-product-card { padding: 18px; }
+  .checkout-screen.ckn-active .checkout-screen-body { padding: 22px !important; }
+}

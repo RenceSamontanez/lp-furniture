@@ -278,7 +278,7 @@
 
   @if(!empty($timeline))
     <div class="co-card" style="margin-top:20px;">
-      <div class="co-action-title" style="margin-bottom:14px;">What has happened so far</div>
+      <div class="co-action-title" style="margin-bottom:14px;">What Has Happened So Far</div>
       @include('agreements._timeline', ['entries' => $timeline])
     </div>
   @endif
@@ -358,7 +358,7 @@
             @csrf
             <input type="hidden" name="suggestion_id" id="selected-suggestion-id" value="{{ $selected->id }}"/>
             <button type="submit" class="ai-action-btn ai-action-primary">
-              Continue →
+              Continue
             </button>
           </form>
         </div>

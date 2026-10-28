@@ -44,7 +44,7 @@
         <input type="checkbox" name="agree" value="1" required/>
         <span>I have read and agree to the Terms and Conditions, including the cancellation and refund policy.</span>
       </label>
-      <button type="submit" class="ai-action-btn ai-action-primary">Accept agreement</button>
+      <button type="submit" class="ai-action-btn ai-action-primary">Accept Agreement</button>
     </form>
 
     <form method="POST" action="{{ route('design.quote.decline', [$designRequest->id, $quote->id]) }}" class="co-decline-form"
@@ -52,7 +52,7 @@
       @csrf
       <div class="co-action-title">Not for you?</div>
       <textarea name="reason" class="form-input" rows="2" maxlength="1000" placeholder="Reason (optional)"></textarea>
-      <button type="submit" class="ai-action-btn ai-action-secondary">Decline this quote</button>
+      <button type="submit" class="ai-action-btn ai-action-secondary">Decline This Quote</button>
     </form>
   </div>
   </div>

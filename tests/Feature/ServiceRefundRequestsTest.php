@@ -169,7 +169,7 @@ class ServiceRefundRequestsTest extends TestCase
 
         $page = $this->get(route('services.invoice', $i->id))->assertOk()
             ->assertSee('Cancellation requested')->assertSee('Payments are paused until we reply.')->assertSee($r->reference)
-            ->assertDontSee('Pay with GCash')->assertDontSee('Pay with card')->assertDontSee('Pay remaining balance');
+            ->assertDontSee('Pay with GCash')->assertDontSee('Pay with Card')->assertDontSee('Pay remaining balance');
         $this->assertStringNotContainsString('<dt>Balance</dt>', $page->getContent());
         $this->assertStringNotContainsString('Request cancellation or refund', $page->getContent(), 'one open request: link to it, not a second button');
 
@@ -554,7 +554,7 @@ class ServiceRefundRequestsTest extends TestCase
         $this->assertSame(route('services.refund.show', $r->reference), $n->url);
         $this->assertStringNotContainsString(self::GCASH, $n->message);
 
-        $this->asOwner()->get(route('services.refund.show', $r->reference))->assertOk()->assertSee('Send corrected details')->assertSee('We could not send your refund');
+        $this->asOwner()->get(route('services.refund.show', $r->reference))->assertOk()->assertSee('Send Corrected Details')->assertSee('We could not send your refund');
 
         $this->post(route('services.refund.reply', $r->reference), ['gcash_number' => '12345', 'gcash_account_name' => 'Juan'])->assertSessionHasErrors('gcash_number');
         $this->assertSame('refund_problem', $r->fresh()->status);
@@ -689,7 +689,7 @@ class ServiceRefundRequestsTest extends TestCase
 
         $form = $this->get(route('services.refund.create', $tid))->assertOk()
             ->assertSee('Refunds are for the full amount')->assertSee('Other Services cancellation and refund terms')
-            ->assertSee('I checked these details')->assertSee('Go back and edit')->assertSee('Confirm and send request')
+            ->assertSee('I checked these details')->assertSee('Go Back and Edit')->assertSee('Confirm and Send Request')
             ->assertSee('Please check your GCash number and name.')->assertSee('Once a refund is sent, it cannot be recalled or sent again.')
             ->assertSee('Name or initials on your GCash account')->assertSee('As it appears when someone sends you money, for example Juan D.')
             ->assertSee('data-lp-gate="rq-confirm-modal"', false);
@@ -781,7 +781,7 @@ class ServiceRefundRequestsTest extends TestCase
     public function test_the_other_services_terms_page_and_the_form_checkbox(): void
     {
         $this->get('/services/terms')->assertOk()
-            ->assertSee('Other Services terms')->assertSee('Cancellation and refunds')
+            ->assertSee('Other Services Terms')->assertSee('Cancellation and Refunds')
             ->assertSee('A refund is possible only if the service has not started', false)
             ->assertSee('up to 7 days after we approve it', false)
             ->assertSee('GCash or cash', false);
@@ -790,7 +790,7 @@ class ServiceRefundRequestsTest extends TestCase
             'service_type' => 'repair', 'furniture_type' => 'Table', 'concern' => 'The leg of my table is broken, please fix it.',
             'name' => 'Juan', 'phone' => '09171234567', 'email' => 'juan@example.com',
         ];
-        $this->asOwner()->get(route('services.request'))->assertOk()->assertSee('Other Services terms')->assertSee('I have read and agree to the');
+        $this->asOwner()->get(route('services.request'))->assertOk()->assertSee('Other Services Terms')->assertSee('I have read and agree to the');
         $this->post(route('services.request.submit'), $payload)->assertSessionHasErrors('terms');
         $this->assertSame(0, ServiceInquiry::count());
         $this->post(route('services.request.submit'), $payload + ['terms' => '1'])->assertSessionHasNoErrors();

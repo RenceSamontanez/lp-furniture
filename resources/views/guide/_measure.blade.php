@@ -32,7 +32,7 @@
   </figure>
 
   <div class="gm-text">
-    <h3 class="gm-h">Measure in three steps</h3>
+    <h3 class="gm-h">Measure in Three Steps</h3>
     <ol class="gm-steps">
       <li><strong>Use a tape measure</strong> and stay in one unit, such as centimetres or inches. Choose the same unit in the form.</li>
       <li><strong>Length first.</strong> Measure the longest side across the top or the front.</li>
@@ -40,7 +40,7 @@
     </ol>
     <p class="gm-p">Measure the place it will go as well, and check the doors and corners it has to pass through. A close number is fine: we confirm the exact size with you on the call.</p>
 
-    <h3 class="gm-h">What the three sizes mean for each piece</h3>
+    <h3 class="gm-h">What the Three Sizes Mean for Each Piece</h3>
     <p class="gm-p gm-small">The typical sizes are only suggestions to help you start. Your piece can be any size we can build.</p>
     <dl class="gm-types">
       @foreach(\App\Support\FurnitureTypes::GUIDE as $type => $g)

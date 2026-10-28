@@ -87,8 +87,9 @@
   function render(p) {
     data = p;
     var mine = token;
-    el.name.textContent = p.name || currentName;
-    el.cat.textContent = p.category || '';
+    var tc = (window.LpTitleCase && window.LpTitleCase.apply) || function (x) { return x; };
+    el.name.textContent = tc(p.name || currentName);
+    el.cat.textContent = tc(p.category || '');
     el.price.textContent = p.price_display || p.price || '';
     el.priceLbl.textContent = p.on_sale ? ('Was ' + p.price) : 'Price';
     if (p.description && String(p.description).trim()) { el.desc.textContent = p.description; el.desc.hidden = false; }
