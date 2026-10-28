@@ -85,18 +85,18 @@ class PolishPartOneTest extends TestCase
         $this->assertStringNotContainsString('admin-btn-outline">Mark read', $html);
     }
 
-    public function test_order_now_links_no_longer_use_the_low_contrast_gold_text(): void
+    public function test_card_buttons_use_the_dark_brown_text_not_the_low_contrast_gold(): void
     {
-        $css = file_get_contents(public_path('assets/style.css'));
-        $this->assertSame(1, preg_match('/\.btn-view-details \{[^}]*color: #8F6420;/s', $css));
-        $this->assertSame(0, preg_match('/\.btn-view-details \{[^}]*[^-]color: var\(--gold\);/s', $css));
-        $this->assertStringContainsString('.btn-view-details:focus', $css);
+        $css = file_get_contents(public_path('assets/css/product-card.css'));
+        $this->assertStringContainsString('.lp-pcard__btn.lp-btn.lp-btn--secondary { border-color: var(--pc-gold); color: #6A3E1E; }', $css);
+        $this->assertStringNotContainsString('btn-view-details', file_get_contents(public_path('assets/style.css')));
     }
 
-    public function test_the_related_product_card_does_not_navigate_when_quick_view_is_tapped(): void
+    public function test_the_related_product_card_opens_quick_view_from_the_picture_and_never_navigates_by_script(): void
     {
-        $blade = file_get_contents(resource_path('views/product/show.blade.php'));
-        $this->assertStringContainsString("if (!event.target.closest('[data-quick-view]')) window.location=", $blade);
+        $blade = file_get_contents(resource_path('views/components/product-card.blade.php'));
+        $this->assertStringContainsString('class="lp-pcard__media" data-quick-view=', $blade);
+        $this->assertStringNotContainsString('window.location', $blade);
     }
 
     public function test_the_old_nav_rules_are_gone_from_the_stylesheet_but_the_bare_nav_rule_stays(): void

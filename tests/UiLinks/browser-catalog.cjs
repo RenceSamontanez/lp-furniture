@@ -152,9 +152,9 @@ async function main() {
       await setCookie(who === 'user' ? cookieFor() : null);
       await viewport(w, h);
       await go('/catalog');
-      const page = await evalJs(`({ cards: document.querySelectorAll('.cx-card').length, tags: document.querySelectorAll('.cx-tag span').length, sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth,
-        badges: [...document.querySelectorAll('.cx-card .cx-badge')].map((b) => b.closest('.cx-card').querySelector('h3').textContent.trim() + ':' + b.textContent),
-        cats: [...document.querySelectorAll('.cx-cats a')].map((a) => a.textContent.trim().replace(/\\s+/g, ' ')), tagFont: getComputedStyle(document.querySelector('.cx-tag span')).fontFamily,
+      const page = await evalJs(`({ cards: document.querySelectorAll('.lp-pcard').length, tags: document.querySelectorAll('.lp-pcard__price').length, sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth,
+        badges: [...document.querySelectorAll('.lp-pcard__badge--info')].map((b) => b.closest('.lp-pcard').querySelector('.lp-pcard__title').textContent.trim() + ':' + b.textContent),
+        cats: [...document.querySelectorAll('.cx-cats a')].map((a) => a.textContent.trim().replace(/\\s+/g, ' ')), tagFont: getComputedStyle(document.querySelector('.lp-pcard__price')).fontFamily,
         bg: getComputedStyle(document.body).backgroundColor, catMinH: Math.min(...[...document.querySelectorAll('.cx-cats a')].map((a) => a.getBoundingClientRect().height)),
         navVisible: getComputedStyle(document.getElementById('site-nav')).visibility })`);
       run.page = page;
@@ -269,7 +269,7 @@ async function main() {
         await key('Escape'); await sleep(200);
         // price tag and card text, from pixels, on the page
         await evalJs(`window.scrollTo(0, 0)`); await sleep(700);
-        const cardText = await contrastOf(['.cx-tag span', '.cx-cap h3', '.cx-k', '.cx-cap p.cx-d', '.cx-count', '.cx-lede', '.cx-cats a', '.cx-badge', '.cx-field > span', '.cx-vd'], 'card');
+        const cardText = await contrastOf(['.lp-pcard__price', '.lp-pcard__title', '.lp-pcard__cat', '.lp-pcard__desc', '.cx-count', '.cx-lede', '.cx-cats a', '.lp-pcard__badge', '.cx-field > span', '.lp-pcard__btn'], 'card');
         report.cardContrast = report.cardContrast || [];
         report.cardContrast.push({ tag, min: Math.min(...cardText.map((i) => i.ratio)), rows: cardText });
         const wc = cardText.reduce((a2, b2) => (b2.ratio < a2.ratio ? b2 : a2));
@@ -284,7 +284,7 @@ async function main() {
       // ---- G: filters + sort work with plain links (no JS needed) ----
       if (w === 1440) {
         await go('/catalog?category=Cabinets&sort=price_desc');
-        const names = await evalJs(`[...document.querySelectorAll('.cx-cap h3')].map((x) => x.textContent.trim())`);
+        const names = await evalJs(`[...document.querySelectorAll('.lp-pcard__title')].map((x) => x.textContent.trim())`);
         note(names.join('|') === '4-Door Wardrobe Cabinet|TV Console Cabinet', `${tag}: category + sort high-to-low (${names.join(', ')})`);
         await go('/catalog?search=zzzz');
         const emp = await evalJs(`({ t: document.querySelector('.cx-empty').textContent.replace(/\\s+/g, ' ').trim(), clear: !!document.querySelector('.cx-empty a[href$="/catalog"]') })`);

@@ -1,0 +1,434 @@
+[
+ {
+  "ok": true,
+  "msg": "1440 /: 16 product cards"
+ },
+ {
+  "ok": true,
+  "msg": "1440 /: buttons on one line per row (max spread 0px)"
+ },
+ {
+  "ok": true,
+  "msg": "1440 /: tag, badges and Quick View never intersect and stay inside the picture "
+ },
+ {
+  "ok": true,
+  "msg": "1440 /: no broken images"
+ },
+ {
+  "ok": true,
+  "msg": "1440 /: no sideways scroll (1425/1425)"
+ },
+ {
+  "ok": true,
+  "msg": "1440 /: no JavaScript errors "
+ },
+ {
+  "ok": true,
+  "msg": "1440 /: Quick View pill never covers the tag or a visible badge on hover "
+ },
+ {
+  "ok": true,
+  "msg": "1440 /catalog: 9 product cards"
+ },
+ {
+  "ok": true,
+  "msg": "1440 /catalog: buttons on one line per row (max spread 0px)"
+ },
+ {
+  "ok": true,
+  "msg": "1440 /catalog: tag, badges and Quick View never intersect and stay inside the picture "
+ },
+ {
+  "ok": true,
+  "msg": "1440 /catalog: no broken images"
+ },
+ {
+  "ok": true,
+  "msg": "1440 /catalog: no sideways scroll (1425/1425)"
+ },
+ {
+  "ok": true,
+  "msg": "1440 /catalog: no JavaScript errors "
+ },
+ {
+  "ok": true,
+  "msg": "1440 /catalog: Quick View pill never covers the tag or a visible badge on hover "
+ },
+ {
+  "ok": true,
+  "msg": "1440 product: 3 product cards"
+ },
+ {
+  "ok": true,
+  "msg": "1440 product: buttons on one line per row (max spread 0px)"
+ },
+ {
+  "ok": true,
+  "msg": "1440 product: tag, badges and Quick View never intersect and stay inside the picture "
+ },
+ {
+  "ok": true,
+  "msg": "1440 product: no broken images"
+ },
+ {
+  "ok": true,
+  "msg": "1440 product: no sideways scroll (1425/1425)"
+ },
+ {
+  "ok": true,
+  "msg": "1440 product: no JavaScript errors "
+ },
+ {
+  "ok": true,
+  "msg": "1440 product: Quick View pill never covers the tag or a visible badge on hover "
+ },
+ {
+  "ok": true,
+  "msg": "1001 /: 16 product cards"
+ },
+ {
+  "ok": true,
+  "msg": "1001 /: buttons on one line per row (max spread 0px)"
+ },
+ {
+  "ok": true,
+  "msg": "1001 /: tag, badges and Quick View never intersect and stay inside the picture "
+ },
+ {
+  "ok": true,
+  "msg": "1001 /: no broken images"
+ },
+ {
+  "ok": true,
+  "msg": "1001 /: no sideways scroll (986/986)"
+ },
+ {
+  "ok": true,
+  "msg": "1001 /: no JavaScript errors "
+ },
+ {
+  "ok": true,
+  "msg": "1001 /: Quick View pill never covers the tag or a visible badge on hover "
+ },
+ {
+  "ok": true,
+  "msg": "1001 /catalog: 9 product cards"
+ },
+ {
+  "ok": true,
+  "msg": "1001 /catalog: buttons on one line per row (max spread 0px)"
+ },
+ {
+  "ok": true,
+  "msg": "1001 /catalog: tag, badges and Quick View never intersect and stay inside the picture "
+ },
+ {
+  "ok": true,
+  "msg": "1001 /catalog: no broken images"
+ },
+ {
+  "ok": true,
+  "msg": "1001 /catalog: no sideways scroll (986/986)"
+ },
+ {
+  "ok": true,
+  "msg": "1001 /catalog: no JavaScript errors "
+ },
+ {
+  "ok": true,
+  "msg": "1001 /catalog: Quick View pill never covers the tag or a visible badge on hover "
+ },
+ {
+  "ok": true,
+  "msg": "1001 product: 3 product cards"
+ },
+ {
+  "ok": true,
+  "msg": "1001 product: buttons on one line per row (max spread 0px)"
+ },
+ {
+  "ok": true,
+  "msg": "1001 product: tag, badges and Quick View never intersect and stay inside the picture "
+ },
+ {
+  "ok": true,
+  "msg": "1001 product: no broken images"
+ },
+ {
+  "ok": true,
+  "msg": "1001 product: no sideways scroll (986/986)"
+ },
+ {
+  "ok": true,
+  "msg": "1001 product: no JavaScript errors "
+ },
+ {
+  "ok": true,
+  "msg": "1001 product: Quick View pill never covers the tag or a visible badge on hover "
+ },
+ {
+  "ok": true,
+  "msg": "800 /: 16 product cards"
+ },
+ {
+  "ok": true,
+  "msg": "800 /: buttons on one line per row (max spread 0px)"
+ },
+ {
+  "ok": true,
+  "msg": "800 /: tag, badges and Quick View never intersect and stay inside the picture "
+ },
+ {
+  "ok": true,
+  "msg": "800 /: no broken images"
+ },
+ {
+  "ok": true,
+  "msg": "800 /: no sideways scroll (785/785)"
+ },
+ {
+  "ok": true,
+  "msg": "800 /: no JavaScript errors "
+ },
+ {
+  "ok": true,
+  "msg": "800 /: Quick View pill never covers the tag or a visible badge on hover "
+ },
+ {
+  "ok": true,
+  "msg": "800 /catalog: 9 product cards"
+ },
+ {
+  "ok": true,
+  "msg": "800 /catalog: buttons on one line per row (max spread 0px)"
+ },
+ {
+  "ok": true,
+  "msg": "800 /catalog: tag, badges and Quick View never intersect and stay inside the picture "
+ },
+ {
+  "ok": true,
+  "msg": "800 /catalog: no broken images"
+ },
+ {
+  "ok": true,
+  "msg": "800 /catalog: no sideways scroll (785/785)"
+ },
+ {
+  "ok": true,
+  "msg": "800 /catalog: no JavaScript errors "
+ },
+ {
+  "ok": true,
+  "msg": "800 /catalog: Quick View pill never covers the tag or a visible badge on hover "
+ },
+ {
+  "ok": true,
+  "msg": "800 product: 3 product cards"
+ },
+ {
+  "ok": true,
+  "msg": "800 product: buttons on one line per row (max spread 0px)"
+ },
+ {
+  "ok": true,
+  "msg": "800 product: tag, badges and Quick View never intersect and stay inside the picture "
+ },
+ {
+  "ok": true,
+  "msg": "800 product: no broken images"
+ },
+ {
+  "ok": true,
+  "msg": "800 product: no sideways scroll (785/785)"
+ },
+ {
+  "ok": true,
+  "msg": "800 product: no JavaScript errors "
+ },
+ {
+  "ok": true,
+  "msg": "800 product: Quick View pill never covers the tag or a visible badge on hover "
+ },
+ {
+  "ok": true,
+  "msg": "390 /: 16 product cards"
+ },
+ {
+  "ok": true,
+  "msg": "390 /: buttons on one line per row (max spread 0px)"
+ },
+ {
+  "ok": true,
+  "msg": "390 /: tag, badges and Quick View never intersect and stay inside the picture "
+ },
+ {
+  "ok": true,
+  "msg": "390 /: no broken images"
+ },
+ {
+  "ok": true,
+  "msg": "390 /: no sideways scroll (390/390)"
+ },
+ {
+  "ok": true,
+  "msg": "390 /: no JavaScript errors "
+ },
+ {
+  "ok": true,
+  "msg": "390 /catalog: 9 product cards"
+ },
+ {
+  "ok": true,
+  "msg": "390 /catalog: buttons on one line per row (max spread 0px)"
+ },
+ {
+  "ok": true,
+  "msg": "390 /catalog: tag, badges and Quick View never intersect and stay inside the picture "
+ },
+ {
+  "ok": true,
+  "msg": "390 /catalog: no broken images"
+ },
+ {
+  "ok": true,
+  "msg": "390 /catalog: no sideways scroll (390/390)"
+ },
+ {
+  "ok": true,
+  "msg": "390 /catalog: no JavaScript errors "
+ },
+ {
+  "ok": true,
+  "msg": "390 product: 3 product cards"
+ },
+ {
+  "ok": true,
+  "msg": "390 product: buttons on one line per row (max spread 0px)"
+ },
+ {
+  "ok": true,
+  "msg": "390 product: tag, badges and Quick View never intersect and stay inside the picture "
+ },
+ {
+  "ok": true,
+  "msg": "390 product: no broken images"
+ },
+ {
+  "ok": true,
+  "msg": "390 product: no sideways scroll (390/390)"
+ },
+ {
+  "ok": true,
+  "msg": "390 product: no JavaScript errors "
+ },
+ {
+  "ok": true,
+  "msg": "390: text sizes, fonts and paddings identical in every place that uses the card (narrow:1, compact:1)"
+ },
+ {
+  "ok": true,
+  "msg": "800: text sizes, fonts and paddings identical in every place that uses the card (wide:1)"
+ },
+ {
+  "ok": true,
+  "msg": "1001: text sizes, fonts and paddings identical in every place that uses the card (compact:1, narrow:1, wide:1)"
+ },
+ {
+  "ok": true,
+  "msg": "1440: text sizes, fonts and paddings identical in every place that uses the card (wide:1)"
+ },
+ {
+  "ok": true,
+  "msg": "catalog: 9 available products shown, the hidden one excluded (9)"
+ },
+ {
+  "ok": true,
+  "msg": "catalog: View Details and the title link go to the right product page for every card"
+ },
+ {
+  "ok": true,
+  "msg": "catalog: every tag has an accessible name like \"Price ₱18,500.00\""
+ },
+ {
+  "ok": true,
+  "msg": "catalog: sale product shows sale price in the tag with the old price struck (₱14,800.00 / ₱18,500.00)"
+ },
+ {
+  "ok": true,
+  "msg": "catalog: sale product shows -20% first and a Best Seller badge (-20% | Best Seller)"
+ },
+ {
+  "ok": true,
+  "msg": "catalog: unavailable product is not listed, so it cannot be ordered"
+ },
+ {
+  "ok": true,
+  "msg": "Quick View: opens the right product with the sale/real price, sits above the nav and everything, closes with X, Escape and backdrop for all 9 cards "
+ },
+ {
+  "ok": true,
+  "msg": "catalog: a click on the card picture opens Quick View"
+ },
+ {
+  "ok": true,
+  "msg": "catalog: clicking View Details lands on that product page"
+ },
+ {
+  "ok": true,
+  "msg": "keyboard: Tab reaches the Quick View, title link and View Details of every card, each with a visible ring (47 stops, 0 without a ring)"
+ },
+ {
+  "ok": true,
+  "msg": "filter: category chip Chairs shows only chairs (4)"
+ },
+ {
+  "ok": true,
+  "msg": "search: \"table\" shows only matching products (Study Table, Narra Dining Table)"
+ },
+ {
+  "ok": true,
+  "msg": "sort: low to high is ordered by the tag price"
+ },
+ {
+  "ok": true,
+  "msg": "sort: high to low is ordered by the tag price"
+ },
+ {
+  "ok": true,
+  "msg": "filter: highest price 10,000 keeps only products at or under it"
+ },
+ {
+  "ok": true,
+  "msg": "filters combine (category + sort + max price)"
+ },
+ {
+  "ok": true,
+  "msg": "filter: no matches shows the empty message"
+ },
+ {
+  "ok": true,
+  "msg": "carousel: 8 cards, every button says Order Now"
+ },
+ {
+  "ok": true,
+  "msg": "carousel: \"N Ordered\" counts are the real order counts (Narra Dining Table=🔥 9 Ordered | Narra Arm Chair with Cushioned Seat, Woven Back and Hand Carved Armrests=🔥 6 Ordered | Executive Office Chair=🔥 4 Ordered | Rocking Chair=🔥 3 Ordered | Study Table=🔥 1 Ordered)"
+ },
+ {
+  "ok": true,
+  "msg": "carousel: arrows scroll both ways (4 -> 781 -> 4) and the dots follow (3 dots, active 1)"
+ },
+ {
+  "ok": true,
+  "msg": "carousel: first dot scrolls back to the start"
+ },
+ {
+  "ok": true,
+  "msg": "Quick View at 1001px opens above everything"
+ },
+ {
+  "ok": true,
+  "msg": "product page: related cards link to their own pages (3)"
+ }
+]

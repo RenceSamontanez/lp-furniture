@@ -20,6 +20,7 @@
 <link rel="stylesheet" href="{{ $lpVer('assets/css/customer-type.css') }}"/>
 <link rel="stylesheet" href="{{ $lpVer('assets/css/luma.css') }}"/>
 <link rel="stylesheet" href="{{ $lpVer('assets/css/lp-switch.css') }}"/>
+<link rel="stylesheet" href="{{ $lpVer('assets/css/product-card.css') }}"/>
 <link rel="stylesheet" href="{{ $lpVer('assets/css/notifications.css') }}"/>
 @stack('styles')
 </head>

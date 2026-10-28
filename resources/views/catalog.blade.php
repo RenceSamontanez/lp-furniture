@@ -4,7 +4,7 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/css/catalog.css') }}?v={{ @filemtime(public_path('assets/css/catalog.css')) ?: 1 }}"/>
-<noscript><style>.cx-qv,.quick-view-btn{display:none}</style></noscript>
+<noscript><style>.lp-pcard__qv{display:none}</style></noscript>
 @endpush
 
 @section('content')
@@ -14,8 +14,6 @@
            'sort' => $sort !== 'newest' ? $sort : null, 'type' => $type];
   $url = fn (array $over = []) => route('catalog', array_filter(array_merge($keep, $over), fn ($v) => filled($v)));
   $filtered = filled(request('category')) || filled(request('search')) || filled(request('max_price')) || !empty($type);
-  $placeholder = asset('images/products/placeholder.jpg');
-  $shapes = ['a', 'b', 'c'];
 @endphp
 
 <div class="cx-shell" data-nav="light">
@@ -65,28 +63,14 @@
       <p class="cx-count" aria-live="polite">{{ $products->count() === 1 ? '1 piece' : $products->count() . ' pieces' }}</p>
     @endif
 
-    <div class="cx-floor">
+    <div class="cx-floor lp-pgrid">
       @forelse($products as $i => $product)
         @php
-          $img = $product->image_url;
-          $badge = $badges[$product->id] ?? null;
+          $cBadges = [];
+          if ($product->on_sale) $cBadges[] = ['text' => '-' . $product->discount_percent . '%', 'kind' => 'sale'];
+          if ($badge = $badges[$product->id] ?? null) $cBadges[] = ['text' => title_case($badge), 'kind' => 'info'];
         @endphp
-        <article class="cx-card {{ $shapes[$i % 3] }}">
-          <div class="cx-pic">
-            <img src="{{ $img }}" alt="{{ $product->product_name }}" @if($i >= 6) loading="lazy" @endif decoding="async"
-                 onerror="this.onerror=null;this.src='{{ $placeholder }}';">
-            @if($badge)<span class="cx-badge">{{ $badge }}</span>@endif
-            <button type="button" class="cx-qv" data-quick-view="{{ $product->id }}" data-name="{{ $product->product_name }}"
-                    aria-label="Quick view: {{ $product->product_name }}">Quick View</button>
-          </div>
-          <div class="cx-cap">
-            <h3><a href="{{ route('product.show', $product->id) }}">{{ title_case($product->product_name) }}</a></h3>
-            <p class="cx-k">{{ title_case($product->category) }}</p>
-            <p class="cx-cost"><span class="cx-now">{{ $product->on_sale ? $product->formatted_sale_price : $product->formatted_price }}</span>@if($product->on_sale)<s class="cx-was">{{ $product->formatted_price }}</s>@endif</p>
-            @if(filled($product->description))<p class="cx-d">{{ $product->description }}</p>@endif
-            <a href="{{ route('product.show', $product->id) }}" class="lp-btn lp-btn--secondary cx-vd">View Details</a>
-          </div>
-        </article>
+        <x-product-card :product="$product" :badges="$cBadges" :lazy="$i >= 6" />
       @empty
         <div class="cx-empty">
           @if($filtered)

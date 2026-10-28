@@ -1,0 +1,106 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   The one light product card: <x-product-card> (resources/views/components/product-card.blade.php).
+   Used by the catalog, the home Featured Collection, the Best Seller carousel and the related pieces on the product page.
+   Layout from docs/cards/landing-cards-v2.html; look (inset picture, brass hanging tag, dark badge, brown category, outlined button)
+   and ALL type sizes from the catalog card as it was before 354a130. Fonts come from customer-type.css (not set here, except sizes).
+   Hero tiles, the Quick View window and the product page price are NOT cards and are not styled here.
+═══════════════════════════════════════════════════════════════════════ */
+:root {
+  --pc-ink: #2B1A12; --pc-mute: #6B5748; --pc-gold: #C98F2B; --pc-gold-2: #8A5A12; --pc-line: #D9C8AB; --pc-focus: #9A6410;
+}
+
+/* grid shared by the catalog, Featured Collection and related pieces: 2 columns on phones */
+.lp-pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 22px; align-items: stretch; }
+@media (max-width: 700px) { .lp-pgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } }
+
+.lp-pcard {
+  container-type: inline-size; position: relative; display: flex; flex-direction: column; min-width: 0;
+  background: #fff; border: 1px solid var(--pc-line); border-radius: 18px; padding: 8px 8px 0;
+  transition: border-color .2s, box-shadow .2s;
+}
+.lp-pcard:hover, .lp-pcard:focus-within { border-color: #B7791F; box-shadow: 0 20px 34px -26px rgba(43, 26, 18, .55); }
+.lp-pcard :focus-visible { outline: 3px solid var(--pc-focus); outline-offset: 3px; border-radius: 10px; }
+
+.lp-pcard__media { position: relative; overflow: hidden; border-radius: 11px; background: #EADFC9; aspect-ratio: 1 / 1.1; cursor: pointer; }
+.lp-pcard__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.2, .7, .2, 1); }
+.lp-pcard:hover .lp-pcard__media img { transform: scale(1.045); }
+.lp-pcard__media img[src$="placeholder.jpg"] { object-fit: contain; }
+
+/* brass hanging tag (markup/CSS of the real catalog tag; the old price sits struck-through on a second line) */
+.lp-pcard__tag { position: absolute; right: 12px; top: 0; z-index: 3; margin: 0; display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+.lp-pcard__tag::before { content: ""; width: 2px; height: 16px; background: rgba(255, 236, 200, .7); }
+.lp-pcard__price, .lp-pcard__was {
+  position: relative; display: block; text-align: center; white-space: nowrap;
+}
+.lp-pcard__price {
+  padding: 14px 12px 10px; border-radius: 4px 4px 10px 10px; background: linear-gradient(170deg, #F4D58F, #D9A441 60%, #BC8628);
+  color: var(--pc-ink); font-size: .95rem; line-height: 1.2; box-shadow: 0 10px 18px -8px rgba(0, 0, 0, .7);
+}
+.lp-pcard__price::before { content: ""; position: absolute; left: 50%; top: 5px; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: #1B100A; box-shadow: inset 0 1px 1px rgba(255, 255, 255, .3); }
+/* sale: the tag is one brass piece with two lines; the struck old price is part of it */
+.lp-pcard__price:has(+ .lp-pcard__was) { border-radius: 4px 4px 0 0; box-shadow: none; padding-bottom: 2px; }
+.lp-pcard__was {
+  padding: 0 12px 9px; border-radius: 0 0 10px 10px; background: linear-gradient(180deg, #D9A441, #BC8628);
+  color: #3A2210; font-size: .75rem; line-height: 1.2; text-decoration: line-through; box-shadow: 0 10px 18px -8px rgba(0, 0, 0, .7);
+}
+
+/* badges: top-left, stacked in a column (-N% first); bottom-left on compact cards */
+.lp-pcard__badges { position: absolute; left: 12px; top: 12px; z-index: 2; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; max-width: calc(100% - 24px); }
+.lp-pcard__badge {
+  max-width: 100%; padding: 6px 12px; border-radius: 999px; font-size: .8rem; line-height: 1.2; color: #fff; white-space: nowrap;
+  background: rgba(27, 16, 10, .88); border: 1px solid rgba(255, 236, 200, .4);
+}
+.lp-pcard__badge--sale { background: var(--danger, #B04040); border-color: transparent; }
+
+.lp-pcard__qv {
+  position: absolute; left: 50%; bottom: 14px; z-index: 2; transform: translate(-50%, 16px); opacity: 0; min-height: 44px; padding: 0 18px; border-radius: 999px;
+  border: 1px solid rgba(255, 236, 200, .5); color: #fff; font-size: .9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(27, 16, 10, .8); backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  transition: transform .3s cubic-bezier(.2, .7, .2, 1), opacity .2s; white-space: nowrap;
+}
+.lp-pcard:hover .lp-pcard__qv, .lp-pcard:focus-within .lp-pcard__qv, .lp-pcard__qv:focus-visible { transform: translate(-50%, 0); opacity: 1; }
+@media (hover: none) { .lp-pcard__qv { transform: translate(-50%, 0); opacity: 1; } }
+
+/* text area: a flex column, the button is pinned to the bottom so every button in a row is on one line */
+.lp-pcard__body { display: flex; flex-direction: column; flex: 1; min-width: 0; padding: 14px 10px 16px; }
+.lp-pcard__cat { margin: 0 0 6px; color: var(--pc-gold-2); font-size: .86rem; font-weight: 600; line-height: 1.3; }
+.lp-pcard__title {
+  margin: 0 0 4px; font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; line-height: 1.2; min-height: 2.4em;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere;
+}
+.lp-pcard__title a { color: var(--pc-ink); text-decoration: none; }
+.lp-pcard__title a:hover { color: var(--pc-gold-2); }
+.lp-pcard__desc {
+  margin: 0 0 14px; color: var(--pc-mute); font-size: .92rem; line-height: 1.55; min-height: 3.1em;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.lp-pcard__btn.lp-btn { margin-top: auto; align-self: flex-start; border-radius: 999px; }
+.lp-pcard__btn.lp-btn.lp-btn--secondary { border-color: var(--pc-gold); color: #6A3E1E; }
+.lp-pcard__btn.lp-btn.lp-btn--secondary:hover, .lp-pcard__btn.lp-btn.lp-btn--secondary:focus { background: var(--pc-gold); color: var(--pc-ink); border-color: var(--pc-gold); }
+
+/* compact card (picture narrower than ~290px): the badges would meet the tag or the Quick View pill, so they go bottom-left
+   and the Quick View pill appears only on hover or keyboard focus (a tap on the picture opens Quick View). */
+@container (max-width: 290px) {
+  .lp-pcard__badges { top: auto; bottom: 10px; left: 10px; }
+  .lp-pcard:has(.lp-pcard__qv:focus-visible) .lp-pcard__badges { opacity: 0; }
+  @media (hover: hover) { .lp-pcard:hover .lp-pcard__badges { opacity: 0; } }
+  @media (hover: none) { .lp-pcard__qv:not(:focus-visible) { opacity: 0; pointer-events: none; } }
+}
+/* narrow card (2-column phone grid): smaller tag and badges, full-width button, three-line description */
+@container (max-width: 235px) {
+  .lp-pcard__tag { right: 6px; }
+  .lp-pcard__tag::before { height: 12px; }
+  .lp-pcard__price { font-size: .8rem; padding: 12px 8px 8px; }
+  .lp-pcard__price::before { top: 4px; width: 5px; height: 5px; margin-left: -2.5px; }
+  .lp-pcard__price:has(+ .lp-pcard__was) { padding-bottom: 2px; }
+  .lp-pcard__was { font-size: .68rem; padding: 0 8px 7px; }
+  .lp-pcard__body { padding: 12px 6px 12px; }
+  .lp-pcard__desc { min-height: 0; -webkit-line-clamp: 3; }
+  .lp-pcard__btn.lp-btn { align-self: stretch; justify-content: center; text-align: center; padding-left: 8px; padding-right: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-pcard, .lp-pcard * { transition: none !important; }
+  .lp-pcard:hover .lp-pcard__media img { transform: none; }
+}
+

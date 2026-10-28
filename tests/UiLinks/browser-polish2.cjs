@@ -278,7 +278,7 @@ async function main() {
       note(!(await lumaOpen()), `${tag}: a second Escape closes Luma`);
       // product page
       await go('/catalog?category=Cabinets');
-      const href = await evalJs(`document.querySelector('.cx-cap h3 a').getAttribute('href')`);
+      const href = await evalJs(`document.querySelector('.lp-pcard__title a').getAttribute('href')`);
       await go(href);
       await quickViewWalk('product', tag, w);
       const errs = consoleErrors.filter((x) => !IGNORE.test(x));

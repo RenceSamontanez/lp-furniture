@@ -26,47 +26,9 @@
   </div>
   @endif
 
-  <div class="product-grid">
+  <div class="lp-pgrid">
     @forelse($featuredProducts as $product)
-      <div class="product-card-v2">
-        <div class="product-card-v2-img" data-quick-view="{{ $product->id }}" data-name="{{ $product->product_name }}">
-          <img
-            src="{{ $product->image_url }}"
-            alt="{{ $product->product_name }} — {{ $product->category }} furniture by LP Furniture"
-            loading="lazy"
-            onerror="this.onerror=null;this.src='{{ asset('images/products/placeholder.jpg') }}';"
-          />
-
-
-          @if($product->on_sale)
-            <span class="badge-sale">-{{ $product->discount_percent }}%</span>
-          @endif
-
-          <button type="button" class="quick-view-btn" data-quick-view="{{ $product->id }}" data-name="{{ $product->product_name }}" aria-label="Quick view: {{ $product->product_name }}">
-            Quick View
-          </button>
-        </div>
-
-        <div class="product-card-v2-info">
-          <div class="product-cat">{{ title_case($product->category) }}</div>
-          <a href="{{ route('product.show', $product->id) }}" class="product-name-link">
-            <div class="product-name">{{ title_case($product->product_name) }}</div>
-          </a>
-          <div class="product-desc">{{ Str::limit($product->description, 65) }}</div>
-
-          <div class="product-footer">
-            <div class="product-price">
-              @if($product->on_sale)
-                <span class="price-old">{{ $product->formatted_price }}</span>
-                <span class="price-now">{{ $product->formatted_sale_price }}</span>
-              @else
-                <span class="price-now">{{ $product->formatted_price }}</span>
-              @endif
-            </div>
-            <a href="{{ route('product.show', $product->id) }}" class="btn-view-details">View Details</a>
-          </div>
-        </div>
-      </div>
+      <x-product-card :product="$product" :badges="$product->on_sale ? [['text' => '-' . $product->discount_percent . '%', 'kind' => 'sale']] : []" />
     @empty
       <div class="empty-state">
         <div class="emoji">🪑</div>
@@ -92,48 +54,14 @@
 
     <div class="carousel-track" id="bestsellers">
       @foreach($bestSellers as $product)
-        <div class="carousel-card">
-          <div class="carousel-card-img" data-quick-view="{{ $product->id }}" data-name="{{ $product->product_name }}">
-            <img
-              src="{{ $product->image_url }}"
-              alt="{{ $product->product_name }}"
-              loading="lazy"
-              onerror="this.onerror=null;this.src='{{ asset('images/products/placeholder.jpg') }}';"
-            />
-
-            @if($product->order_items_count > 0)
-              <span class="badge-ordered">🔥 {{ $product->order_items_count }} Ordered</span>
-            @else
-              <span class="badge-new">✨ New Arrival</span>
-            @endif
-
-            @if($product->on_sale)
-              <span class="badge-sale">-{{ $product->discount_percent }}%</span>
-            @endif
-
-            <button type="button" class="quick-view-btn" data-quick-view="{{ $product->id }}" data-name="{{ $product->product_name }}" aria-label="Quick view: {{ $product->product_name }}">
-              Quick View
-            </button>
-          </div>
-
-          <div class="carousel-card-info">
-            <div class="product-cat">{{ title_case($product->category) }}</div>
-            <a href="{{ route('product.show', $product->id) }}" class="product-name-link">
-              <div class="product-name">{{ title_case($product->product_name) }}</div>
-            </a>
-            <div class="product-footer" style="margin-top:12px;">
-              <div class="product-price">
-                @if($product->on_sale)
-                  <span class="price-old">{{ $product->formatted_price }}</span>
-                  <span class="price-now">{{ $product->formatted_sale_price }}</span>
-                @else
-                  <span class="price-now">{{ $product->formatted_price }}</span>
-                @endif
-              </div>
-              <a href="{{ route('product.show', $product->id) }}" class="btn-view-details">Order Now</a>
-            </div>
-          </div>
-        </div>
+        @php
+          $cBadges = [];
+          if ($product->on_sale) $cBadges[] = ['text' => '-' . $product->discount_percent . '%', 'kind' => 'sale'];
+          $cBadges[] = $product->order_items_count > 0
+            ? ['text' => '🔥 ' . $product->order_items_count . ' Ordered', 'kind' => 'info']
+            : ['text' => '✨ New Arrival', 'kind' => 'info'];
+        @endphp
+        <x-product-card class="carousel-card" :product="$product" :badges="$cBadges" cta="Order Now" />
       @endforeach
     </div>
 

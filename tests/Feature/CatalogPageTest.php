@@ -132,7 +132,7 @@ class CatalogPageTest extends TestCase
         // fewer than three products: HeroRails hides its rails, so no badge at all
         $this->product('A');
         $this->product('B');
-        $this->assertStringNotContainsString('class="cx-badge">', $this->get('/catalog')->getContent());
+        $this->assertStringNotContainsString('lp-pcard__badge--info', $this->get('/catalog')->getContent());
 
         // ten products, only the newest eight are "New" and only an ordered one is "Best seller"
         $made = [];
@@ -156,7 +156,7 @@ class CatalogPageTest extends TestCase
         $this->assertArrayNotHasKey($made[1]->id, $badges, 'older than the eight newest');
 
         $html = $this->get('/catalog')->getContent();
-        $this->assertSame(count($expected), substr_count($html, 'class="cx-badge">'));
+        $this->assertSame(count($expected), substr_count($html, 'lp-pcard__badge--info">'));
     }
 
     public function test_quick_view_returns_gallery_in_order_and_the_details(): void
@@ -224,7 +224,8 @@ class CatalogPageTest extends TestCase
 
         $html = $this->get('/catalog')->assertOk()->getContent();
         $this->assertStringContainsString('data-quick-view="' . $p->id . '"', $html);
-        $this->assertStringContainsString('<span class="cx-now">₱3,000.00</span>', $html);
+        $this->assertStringContainsString('<span class="lp-pcard__price" aria-hidden="true">₱3,000.00</span>', $html);
+        $this->assertStringContainsString('aria-label="Price ₱3,000.00"', $html);
         $this->assertStringContainsString('role="dialog"', $html);
         $this->assertStringContainsString('aria-modal="true"', $html);
         $this->assertStringNotContainsString('Add to cart', $html);

@@ -291,36 +291,9 @@
   @if($relatedProducts->count() > 0)
     <div class="detail-related">
       <h2 class="detail-related-title">More <span>{{ title_case($product->category) }}</span> Pieces</h2>
-      <div class="product-grid">
+      <div class="lp-pgrid">
         @foreach($relatedProducts as $related)
-          <div class="product-card-v2">
-            <div class="product-card-v2-img"
-                 onclick="if (!event.target.closest('[data-quick-view]')) window.location='{{ route('product.show', $related->id) }}'">
-              <img
-                src="{{ $related->image_url }}"
-                alt="{{ $related->product_name }}"
-                loading="lazy"
-                onerror="this.onerror=null;this.src='{{ asset('images/products/placeholder.jpg') }}';"
-              />
-              <button type="button" class="quick-view-btn" data-quick-view="{{ $related->id }}" data-name="{{ $related->product_name }}" aria-label="Quick view: {{ $related->product_name }}">
-                Quick View
-              </button>
-            </div>
-            <div class="product-card-v2-info">
-              <div class="product-cat">{{ title_case($related->category) }}</div>
-              <a href="{{ route('product.show', $related->id) }}" class="product-name-link">
-                <div class="product-name">{{ title_case($related->product_name) }}</div>
-              </a>
-              <div class="product-footer" style="margin-top:10px;">
-                <div class="product-price">
-                  <span class="price-now">{{ $related->formatted_price }}</span>
-                </div>
-                <a href="{{ route('product.show', $related->id) }}" class="btn-view-details">
-                  View Details
-                </a>
-              </div>
-            </div>
-          </div>
+          <x-product-card :product="$related" :badges="$related->on_sale ? [['text' => '-' . $related->discount_percent . '%', 'kind' => 'sale']] : []" />
         @endforeach
       </div>
     </div>
