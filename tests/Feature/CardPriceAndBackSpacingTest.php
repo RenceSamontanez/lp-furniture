@@ -54,6 +54,7 @@ class CardPriceAndBackSpacingTest extends TestCase
         $css = file_get_contents(public_path('assets/css/product-card.css'));
         $this->assertStringContainsString('.lp-pcard__btn.lp-btn { margin-top: auto;', $css);
         $this->assertStringContainsString('min-height: 2.4em', $css);
+        $this->assertStringContainsString('body.lp-type .lp-pcard .lp-pcard__tag .lp-pcard__price { font-weight: 700;', $css);
         $this->assertStringContainsString('@container (max-width: 235px)', $css);
     }
 

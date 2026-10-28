@@ -113,7 +113,7 @@ async function main() {
       sheetOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
       paneOverflowX: document.querySelector('.cx-pane').scrollWidth > document.querySelector('.cx-pane').clientWidth + 1 }; })()`);
   const waitReady = async (want = 'ready') => { for (let i = 0; i < 50; i++) { if ((await state()).state === want) return true; await sleep(100); } return false; };
-  const btnRect = (name) => evalJs(`(() => { const b = [...document.querySelectorAll('[data-quick-view]')].find((x) => x.dataset.name === ${JSON.stringify(name)}); if (!b) return null;
+  const btnRect = (name) => evalJs(`(() => { const b = [...document.querySelectorAll('button[data-quick-view]')].find((x) => x.dataset.name === ${JSON.stringify(name)}); if (!b) return null;
     b.scrollIntoView({ block: 'center' }); const r = b.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, h: r.height, id: b.dataset.quickView }; })()`);
 
   async function openByClick(name) {
@@ -209,7 +209,7 @@ async function main() {
       note(await openerFocused(a.id), `${tag}: focus returned to the card's Quick view button`);
 
       // ---- B: keyboard open (Enter), Escape closes ----
-      await evalJs(`[...document.querySelectorAll('[data-quick-view]')].find((x) => x.dataset.name === 'Executive Office Chair').focus()`);
+      await evalJs(`[...document.querySelectorAll('button[data-quick-view]')].find((x) => x.dataset.name === 'Executive Office Chair').focus()`);
       await key('Enter'); const okB = await waitReady(); s = await state();
       note(okB && s.open && s.focusInside, `${tag}: Enter on the focused button opens it`);
       note(!s.arrows && s.pos === null, `${tag}: single-photo product shows no arrows and no counter`);

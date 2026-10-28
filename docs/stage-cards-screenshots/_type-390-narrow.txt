@@ -1,1 +1,1 @@
-_title:"Cormorant Garamond"/21.6px/600/25.92px/0px | _cat:Montserrat/13.76px/600/17.888px/0px | _desc:Montserrat/14.72px/400/22.816px/0px | _price:Montserrat/12.8px/500/15.36px | _btn:Montserrat/14px/600/17.5px/10px 8px | body:12px 6px | card:8px 8px 0px
+_title:"Cormorant Garamond"/21.6px/600/25.92px/0px | _cat:Montserrat/13.76px/600/17.888px/0px | _desc:Montserrat/14.72px/400/22.816px/0px | _price:Montserrat/12.8px/700/15.36px | _btn:Montserrat/14px/600/17.5px/10px 8px | body:12px 6px | card:8px 8px 0px

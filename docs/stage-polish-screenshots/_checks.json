@@ -28,12 +28,12 @@
   "buttonContrast": [
     {
       "tag": "guest-1440-luma",
-      "count": 33,
+      "count": 41,
       "failures": []
     },
     {
       "tag": "guest-1440-home-quickview",
-      "count": 30,
+      "count": 38,
       "failures": []
     },
     {
@@ -43,22 +43,22 @@
     },
     {
       "tag": "guest-1024-luma",
-      "count": 34,
+      "count": 42,
       "failures": []
     },
     {
       "tag": "guest-390-luma",
-      "count": 35,
+      "count": 43,
       "failures": []
     },
     {
       "tag": "user-1440-luma",
-      "count": 31,
+      "count": 39,
       "failures": []
     },
     {
       "tag": "user-1440-home-quickview",
-      "count": 28,
+      "count": 36,
       "failures": []
     },
     {
@@ -68,16 +68,16 @@
     },
     {
       "tag": "user-1024-luma",
-      "count": 32,
+      "count": 40,
       "failures": []
     },
     {
       "tag": "user-390-luma",
-      "count": 35,
+      "count": 43,
       "failures": []
     }
   ],
   "problems": [],
-  "pageOnlyFailures": 8,
-  "jsFallbackClicks": 3
+  "pageOnlyFailures": 0,
+  "jsFallbackClicks": 2
 }
