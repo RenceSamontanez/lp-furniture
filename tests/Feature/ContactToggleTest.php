@@ -250,7 +250,7 @@ class ContactToggleTest extends TestCase
 
     public function test_the_stylesheet_has_the_switch_with_a_visible_focus_state(): void
     {
-        $css = file_get_contents(public_path('assets/css/custom-orders.css'));
+        $css = file_get_contents(public_path('assets/css/lp-switch.css'));
         $this->assertStringContainsString('.lp-switch-input:focus-visible + .lp-switch-track', $css);
         $this->assertStringContainsString('.lp-switch-input:checked + .lp-switch-track', $css);
         $this->assertStringContainsString('min-height: 44px', $css);   // touch-sized target

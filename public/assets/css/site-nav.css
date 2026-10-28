@@ -77,8 +77,8 @@ nav.site-nav .sn-link:active { background: rgba(255, 236, 200, .14); color: #fff
 nav.site-nav .sn-link[aria-current="page"]::after {
   content: ""; position: absolute; left: 14px; right: 14px; bottom: 6px; height: 2px; border-radius: 2px; background: var(--sn-gold);
 }
-nav.site-nav .sn-link svg { flex: none; color: var(--sn-gold-2); }
-nav.site-nav .sn-reactivate svg { width: 16px; height: 16px; }
+/* icons are the height of the words (1.1em, 1.8 stroke), never larger, centred on the text line */
+nav.site-nav .sn-link svg { flex: none; width: 1.1em; height: 1.1em; color: var(--sn-gold-2); }
 nav.site-nav .sn-icon { padding: 0 12px; }
 
 /* cart count and unread pip sit inline after the label (not pinned to a corner) */
@@ -87,9 +87,10 @@ nav.site-nav .sn-icon .cart-badge {
   background: var(--sn-gold); color: #2B1A12; font-size: .7rem; font-weight: 700; display: inline-grid; place-items: center;
 }
 nav.site-nav .sn-icon .notif-dot {
-  position: static; width: 9px; height: 9px; margin: 10px 0 0 -3px; align-self: flex-start;
+  position: absolute; top: 10px; right: 1px; width: 9px; height: 9px; margin: 0;
   background: #E3AE4A; box-shadow: 0 0 0 2px rgba(26, 14, 9, .9);
 }
+nav.site-nav .sn-icon .notif-dot[hidden], .sn-sr[hidden] { display: none; }
 
 /* visible labels everywhere; .sn-sr stays screen-reader only */
 nav.site-nav .sn-sr {
@@ -184,7 +185,7 @@ body.overlay-open nav.site-nav { opacity: 0; pointer-events: none; visibility: h
   nav.site-nav .sn-link[aria-current="page"]::after { display: none; }
   nav.site-nav .sn-icon { gap: 12px; padding: 0 14px; }
   nav.site-nav .sn-icon .cart-badge { margin-left: auto; }
-  nav.site-nav .sn-icon .notif-dot { margin: 0 0 0 auto; align-self: center; }
+  nav.site-nav .sn-icon .notif-dot { position: static; margin: 0 0 0 auto; align-self: center; }
   nav.site-nav .sn-cta { width: 100%; min-height: 48px; margin: 6px 0 0; font-size: 1rem; }
   nav.site-nav .sn-cta + .sn-cta { margin-top: 0; }
 }

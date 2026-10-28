@@ -19,6 +19,8 @@
 <link rel="stylesheet" href="{{ $lpVer('assets/css/fonts.css') }}"/>
 <link rel="stylesheet" href="{{ $lpVer('assets/css/customer-type.css') }}"/>
 <link rel="stylesheet" href="{{ $lpVer('assets/css/luma.css') }}"/>
+<link rel="stylesheet" href="{{ $lpVer('assets/css/lp-switch.css') }}"/>
+<link rel="stylesheet" href="{{ $lpVer('assets/css/notifications.css') }}"/>
 @stack('styles')
 </head>
 <body class="lp-type" data-nav="light">
@@ -48,12 +50,19 @@
 
       @include('partials.luma-nav-item')
 
+      {{-- My Orders (icons in the bar are 1.1em, the height of the words: see site-nav.css) --}}
+      <a href="{{ route('orders.index') }}" class="sn-link sn-icon" @if($navIs('orders.*')) aria-current="page" @endif>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/>
+        </svg>
+        <span class="sn-label">My Orders</span>
+      </a>
+
       {{-- Cart --}}
       <a href="{{ route('cart.index') }}" class="sn-link sn-icon" @if($navIs('cart.*')) aria-current="page" @endif>
         @php $cartCount = Auth::user()->cartItems()->sum('quantity'); @endphp
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-          <circle cx="9"  cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-          <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.99-1.73L23 6H6"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 4h2l2.2 11h10.5l2-8H6.2"/><circle cx="9" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/>
         </svg>
         <span class="sn-label">Cart</span>@if($cartCount > 0) <span class="sn-sr">({{ $cartCount }} {{ $cartCount == 1 ? 'item' : 'items' }})</span>@endif
         @if($cartCount > 0)
@@ -62,16 +71,15 @@
       </a>
 
       {{-- Notifications --}}
-      <a href="{{ route('notifications.index') }}" class="sn-link sn-icon" @if($navIs('notifications.*')) aria-current="page" @endif>
+      {{-- On a wide screen notifications.js turns this into the dropdown (#notif-dd); otherwise it is the link to the full page. --}}
+      <a href="{{ route('notifications.index') }}" class="sn-link sn-icon" id="sn-bell" aria-haspopup="dialog" aria-expanded="false" aria-controls="notif-dd"
+         @if($navIs('notifications.*')) aria-current="page" @endif>
         @php $unreadCount = Auth::user()->notifications()->where('is_read', false)->count(); @endphp
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-          <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-          <path d="M13.73 21a2 2 0 01-3.46 0"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 17h12l-1.6-2.4V10a4.4 4.4 0 0 0-8.8 0v4.6z"/><path d="M10 20a2 2 0 0 0 4 0"/>
         </svg>
-        <span class="sn-label">Notifications</span>@if($unreadCount > 0) <span class="sn-sr">(unread)</span>@endif
-        @if($unreadCount > 0)
-          <span class="notif-dot" aria-hidden="true"></span>
-        @endif
+        <span class="sn-label">Notifications</span><span class="sn-sr" id="sn-bell-sr" @if($unreadCount < 1) hidden @endif> (unread)</span>
+        <span class="notif-dot" id="sn-bell-dot" aria-hidden="true" @if($unreadCount < 1) hidden @endif></span>
       </a>
 
       <a href="{{ route('feedback.index') }}" class="sn-link" @if($navIs('feedback.*')) aria-current="page" @endif>Reviews</a>
@@ -81,6 +89,10 @@
     @endguest
   </div>
 </nav>
+
+@auth
+@include('partials.notif-dropdown', ['unreadCount' => $unreadCount ?? 0])
+@endauth
 
 <!-- ═══ SESSION ALERTS (toasts) ═══ -->
 @include('partials.alerts', ['toastNav' => true])
@@ -162,6 +174,9 @@
 <script src="{{ $lpVer('assets/main.js') }}"></script>
 <script src="{{ $lpVer('assets/js/site-nav.js') }}" defer></script>
 <script src="{{ asset('assets/js/lp-modal.js') }}"></script>
+@auth
+<script src="{{ $lpVer('assets/js/notifications.js') }}" defer></script>
+@endauth
 @stack('scripts')
 
 @include('partials.co-loading')

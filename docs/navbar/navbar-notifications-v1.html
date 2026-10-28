@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en" data-icons="same">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Navbar and notifications - prototype v1</title>
+<!--GFONTS--><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet"><!--/GFONTS-->
+<style>
+:root{--ink:#241a10;--muted:#5d4b37;--cream:#f5f0e6;--gold:#c8963c;--link:#7a4f0a;--link-h:#4f3205;--line:rgba(90,66,30,.2);--ok:#1b6238;--bad:#971b1b;
+ --head:'Cormorant Garamond',Georgia,serif;--body:'Montserrat',system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.6}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid #1f4fbf;outline-offset:2px}
+.proto{margin:12px auto 0;max-width:1180px;padding:10px 14px;border:1.5px dashed rgba(90,66,30,.45);border-radius:14px;background:rgba(255,255,255,.85);display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font:500 13px/1.4 system-ui,sans-serif}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:#fff;margin-left:6px}
+.seg button{border:0;background:transparent;padding:6px 12px;cursor:pointer;font:500 13px system-ui,sans-serif}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.proto .note{flex-basis:100%;color:var(--muted);font-weight:400}
+.wrap{max-width:1180px;margin:0 auto;padding:16px 16px 60px}
+h2.sec{font-family:var(--head);font-size:calc(30px*1.22);font-weight:600;margin:26px 0 4px;line-height:1.1}
+p.sub{margin:0 0 12px;color:var(--muted);max-width:80ch}
+.scroller{overflow-x:auto;border-radius:22px}
+.stage{position:relative;min-width:1060px;height:700px;border-radius:22px;overflow:hidden;background:linear-gradient(180deg,#f7f1e6,#f1e8d8);border:1px solid var(--line)}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.7}
+.stage .b1{width:420px;height:420px;background:#ecc578;left:-100px;top:-120px}.stage .b2{width:420px;height:420px;background:#cfae92;right:-120px;top:240px}
+/* navbar */
+.nav{position:absolute;left:18px;right:18px;top:14px;height:62px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 22px;border-radius:18px;background:rgba(255,252,247,.72);border:1px solid rgba(255,255,255,.85);box-shadow:0 12px 30px -14px rgba(70,45,10,.35),inset 0 1px 0 rgba(255,255,255,.9);-webkit-backdrop-filter:blur(16px) saturate(1.25);backdrop-filter:blur(16px) saturate(1.25);z-index:20}
+.logo{font-family:var(--head);font-weight:600;font-size:calc(26px*1.0);color:#5a3a12;white-space:nowrap}.logo i{font-style:italic;color:var(--gold)}
+.links{display:flex;align-items:center;gap:22px}
+.nl{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:0 2px;font-size:14px;font-weight:500;color:var(--ink);background:none;border:0;cursor:pointer;text-decoration:none;position:relative;white-space:nowrap}
+.nl:hover{color:var(--link-h)}
+.nl.on{font-weight:600;box-shadow:inset 0 -2px 0 var(--gold)}
+.nl svg{flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+:root[data-icons="same"] .nl svg{width:1.1em;height:1.1em}
+:root[data-icons="now"] .nl svg{width:22px;height:22px}
+.dot{position:absolute;top:8px;right:-6px;width:9px;height:9px;border-radius:50%;background:var(--gold);border:2px solid #fffaf0}
+:root[data-icons="same"] .dot{top:11px;right:-7px}
+.dot[hidden]{display:none}
+.nl[aria-expanded="true"]{color:var(--link-h);box-shadow:inset 0 -2px 0 var(--gold)}
+/* dropdown */
+.dd{position:absolute;right:18px;top:86px;width:440px;max-height:calc(100% - 104px);display:flex;flex-direction:column;border-radius:18px;background:rgba(255,252,247,.95);border:1px solid rgba(90,66,30,.22);box-shadow:0 24px 54px -16px rgba(70,45,10,.45),inset 0 1px 0 #fff;-webkit-backdrop-filter:blur(18px) saturate(1.2);backdrop-filter:blur(18px) saturate(1.2);z-index:30;overflow:hidden}
+.dd[hidden]{display:none}
+.dd-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:14px 16px 6px}
+.dd-h h3{margin:0;font-family:var(--head);font-weight:600;font-size:calc(22px*1.22);line-height:1.1}
+.cnt{font-size:12.5px;color:var(--muted)}
+.ctl{display:flex;align-items:center;gap:6px;padding:6px 16px 10px;flex-wrap:nowrap}
+.cb{min-height:36px;padding:0 12px;border-radius:10px;border:1px solid rgba(90,66,30,.35);background:rgba(255,255,255,.85);font-weight:600;font-size:12.5px;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.cb:hover{background:#fff}
+.cb svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.cb[aria-pressed="true"]{border-color:var(--gold);background:#fbf0d8}
+.tg{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 4px 0 2px;font-size:12.5px;font-weight:500;cursor:pointer;white-space:nowrap;background:none;border:0}
+.sw{width:34px;height:20px;border-radius:999px;background:#cdbfa8;position:relative;flex:none;transition:background .15s}
+.sw:after{content:"";position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:transform .15s}
+.tg[aria-checked="true"] .sw{background:#7a5210}.tg[aria-checked="true"] .sw:after{transform:translateX(14px)}
+.dates{display:flex;align-items:center;gap:8px;padding:0 16px 10px;flex-wrap:wrap}
+.dates[hidden]{display:none}
+.dates label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.dates input{min-height:34px;border:1px solid rgba(90,66,30,.35);background:#fff;border-radius:9px;padding:0 8px;font-size:12.5px}
+.lnkb{background:none;border:0;padding:6px 2px;color:var(--link);font-weight:500;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:12.5px}
+.lnkb:hover{color:var(--link-h);text-decoration-thickness:2px}
+.list{overflow:auto;border-top:1px solid var(--line);flex:1}
+.it{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.it.unread{background:rgba(200,150,60,.09)}
+.ic{width:34px;height:34px;border-radius:50%;background:#efe4cc;display:grid;place-items:center;color:#7a5a2a}
+.ic svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.it h4{margin:0;font-size:13.5px;font-weight:600;line-height:1.35;display:flex;gap:8px;align-items:center}
+.ud{width:8px;height:8px;border-radius:50%;background:var(--gold);flex:none}
+.it p{margin:2px 0 0;font-size:12.5px;color:var(--muted);line-height:1.5}
+.meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin-top:6px}
+.when{font-size:12px;color:var(--muted)}
+.vb{min-height:32px;padding:0 12px;border-radius:9px;border:0;background:var(--gold);color:var(--ink);font-weight:600;font-size:12.5px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.vb:hover{background:#d4a24a}
+.empty{padding:26px 16px;text-align:center;color:var(--muted)}
+.dd-f{padding:10px 16px;border-top:1px solid var(--line);text-align:center}
+/* Luma */
+.luma{position:absolute;right:20px;bottom:20px;z-index:25;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.lbtn{width:62px;height:62px;border-radius:50%;border:3px solid #d9b46a;background:radial-gradient(circle at 40% 35%,#f3d9a8,#b98a4c);display:grid;place-items:center;font-family:var(--head);font-size:26px;font-weight:700;color:#3b2516;cursor:pointer;box-shadow:0 10px 24px -8px rgba(40,25,5,.5)}
+.lchat{width:320px;border-radius:20px;background:linear-gradient(180deg,#3b2516,#2a1a0f);color:#f6ede0;border:1px solid rgba(255,255,255,.1);box-shadow:0 18px 44px -12px rgba(40,25,5,.55);overflow:hidden}
+.lchat[hidden]{display:none}
+.lh{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.1);font-family:var(--head);font-size:calc(22px*1.1);font-weight:600}
+.lm{padding:12px;display:flex;flex-direction:column;gap:8px;max-height:210px;overflow:auto}
+.lm div{max-width:90%;padding:8px 12px;border-radius:14px;font-size:13px;line-height:1.5}
+.lm .b{background:#423126;border:1px solid rgba(255,255,255,.1);align-self:flex-start;border-bottom-left-radius:5px}
+.lm .m{background:#7e5039;align-self:flex-end;border-bottom-right-radius:5px}
+.lf{display:flex;gap:8px;padding:10px;border-top:1px solid rgba(255,255,255,.1)}
+.lf input{flex:1;min-width:0;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#f6ede0;border-radius:11px;padding:8px 11px;font-size:13px}
+.lf input::placeholder{color:#d0b998;opacity:1}
+.lf button{border:0;border-radius:10px;background:var(--gold);color:var(--ink);font-weight:600;padding:0 14px;min-height:38px;cursor:pointer}
+.lnote{position:absolute;right:20px;bottom:100px;z-index:24;font-size:12px;color:#fff;background:rgba(36,26,16,.85);padding:6px 10px;border-radius:10px;max-width:250px}
+.lnote[hidden]{display:none}
+.page-ph{position:absolute;left:46px;top:130px;width:520px}
+.page-ph h1{font-family:var(--head);font-weight:600;font-size:calc(46px*1.22);line-height:1.05;margin:0 0 10px}
+.page-ph p{color:var(--muted);margin:0;max-width:46ch}
+/* phone frames */
+.phones{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start}
+.pf{width:390px;max-width:100%}
+.pf>small{display:block;margin:0 0 6px;color:var(--muted);font-weight:500}
+.pscr{position:relative;width:390px;max-width:100%;min-height:720px;border-radius:30px;border:1px solid var(--line);background:linear-gradient(180deg,#f7f1e6,#f1e8d8);overflow:hidden;padding:12px 14px 20px;box-shadow:0 18px 40px -22px rgba(70,45,10,.4)}
+.pscr .blob{opacity:.55}
+.pnav{position:relative;z-index:5;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 18px;border-radius:16px;background:rgba(255,252,247,.78);border:1px solid rgba(255,255,255,.9);box-shadow:0 10px 24px -12px rgba(70,45,10,.35),inset 0 1px 0 #fff;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.burger{width:44px;height:44px;border-radius:12px;border:1px solid rgba(90,66,30,.3);background:rgba(255,255,255,.7);display:grid;place-items:center;cursor:pointer}
+.burger svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.pmenu{position:relative;z-index:4;margin-top:8px;border-radius:16px;background:rgba(255,252,247,.86);border:1px solid rgba(255,255,255,.9);box-shadow:0 14px 30px -14px rgba(70,45,10,.4);padding:8px;display:grid;gap:2px;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.pmenu .nl{width:100%;min-height:46px;padding:0 12px;border-radius:10px;font-size:14.5px}
+.pmenu .nl.on{box-shadow:none;background:rgba(200,150,60,.18);font-weight:600}
+.pmenu .nl svg{width:1.1em;height:1.1em}
+.pmenu .dot{position:static;margin-left:auto;border:0}
+.ptitle{position:relative;z-index:3;margin:20px 2px 4px;font-family:var(--head);font-weight:600;font-size:calc(34px*1.22);line-height:1.05}
+.psub{position:relative;z-index:3;margin:0 2px 12px;color:var(--muted);font-size:13px}
+.pctl{position:relative;z-index:3;display:flex;gap:6px;align-items:center;flex-wrap:nowrap;margin-bottom:8px}
+.pctl .cb{min-height:44px;padding:0 9px;font-size:12px;gap:5px}.pctl .cb[data-act="markall"] svg{display:none}
+.pctl .tg{min-height:44px;font-size:12px;gap:6px;padding:0 2px}.pctl{gap:4px}
+.pdates{position:relative;z-index:3;margin-bottom:10px}
+.pdates .dates{padding:0}
+.plist{position:relative;z-index:3;display:grid;gap:10px}
+.pcard{border-radius:16px;background:rgba(255,252,247,.86);border:1px solid rgba(255,255,255,.9);box-shadow:0 8px 20px -14px rgba(70,45,10,.4);overflow:hidden}
+.pcard .it{border:0;padding:14px}
+.pcard .vb{min-height:44px;padding:0 16px;font-size:13px}
+.pcard .lnkb{min-height:44px;font-size:13px;padding:0 4px}
+.pcard .when{flex-basis:100%}.pcard .meta{gap:4px 12px}.pcard.unread{background:rgba(255,248,232,.92)}
+.tag{display:inline-block;margin:0 0 8px;font:600 11.5px system-ui,sans-serif;color:#5d4b37;background:rgba(255,255,255,.8);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+.rules{margin:10px 0 0;padding-left:20px;display:grid;gap:4px;color:var(--muted);max-width:86ch}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <defs>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></symbol>
+  <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h2l2.2 11h10.5l2-8H6.2"/><circle cx="9" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 17h12l-1.6-2.4V10a4.4 4.4 0 0 0-8.8 0v4.6z"/><path d="M10 20a2 2 0 0 0 4 0"/></symbol>
+  <symbol id="i-orders" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.4 7-5.4s6.2 1.8 7 5.4"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5.5c0 4.2-2.8 7.3-7 9.5-4.2-2.2-7-5.3-7-9.5V6z"/><path d="M9 12l2.2 2.2L15.5 10"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24"><path d="M6 8h12l1 12H5z"/><path d="M9 8a3 3 0 0 1 6 0"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20l4.2-1 10-10a2.1 2.1 0 0 0-3-3l-10 10z"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+ </defs>
+</svg>
+
+<div class="proto" role="group" aria-label="Prototype controls">
+  <b>Prototype controls (not part of the real page)</b>
+  <span>Navbar icons <span class="seg" id="sIc"><button data-v="now" aria-pressed="false">Now</button><button data-v="same" aria-pressed="true">Same size as words</button></span></span>
+  <span class="note">Everything below is clickable: open the bell, switch Only show unread, set dates, press Mark read, open and close Luma. The nav items, notification text and dates are samples. Colors, buttons and layout of the rest of the site are unchanged.</span>
+</div>
+
+<main class="wrap">
+ <h2 class="sec">Desktop</h2>
+ <p class="sub">The bell opens a small panel under the navbar instead of a full page. Try this: open Luma at the bottom right, type a message, then click the bell. Luma's chat closes while the panel is open and comes back with the same conversation when the panel closes.</p>
+ <div class="scroller">
+ <div class="stage" id="stage">
+  <div class="blob b1" aria-hidden="true"></div><div class="blob b2" aria-hidden="true"></div>
+  <header class="nav">
+   <div class="logo">LP<i>Furniture</i></div>
+   <nav class="links" aria-label="Main">
+    <a class="nl on" href="#" onclick="return false">Home</a>
+    <a class="nl" href="#" onclick="return false">Catalog</a>
+    <a class="nl" href="#" onclick="return false">Customize</a>
+    <a class="nl" href="#" onclick="return false"><svg aria-hidden="true"><use href="#i-spark"/></svg>Assistant</a>
+    <a class="nl" href="#" onclick="return false"><svg aria-hidden="true"><use href="#i-orders"/></svg>My Orders</a>
+    <a class="nl" href="#" onclick="return false"><svg aria-hidden="true"><use href="#i-cart"/></svg>Cart</a>
+    <button class="nl" id="bell" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="dd"><svg aria-hidden="true"><use href="#i-bell"/></svg>Notifications<span class="dot" id="bdot" aria-label="Unread notifications"></span></button>
+    <a class="nl" href="#" onclick="return false">My Account</a>
+   </nav>
+  </header>
+  <div class="page-ph"><h1>Welcome Back</h1><p>Your Orders, Your Designs And Your Updates Are All Here.</p></div>
+
+  <section class="dd" id="dd" role="dialog" aria-label="Notifications" hidden>
+   <div class="dd-h"><h3>Notifications</h3><span class="cnt" id="dcnt"></span></div>
+   <div class="ctl">
+    <button class="cb" type="button" data-act="markall"><svg aria-hidden="true"><use href="#i-check"/></svg>Mark all as read</button>
+    <button class="tg" type="button" role="switch" aria-checked="false" data-act="unread"><span class="sw" aria-hidden="true"></span>Only show unread</button>
+    <button class="cb" type="button" data-act="dates" aria-pressed="false" aria-expanded="false"><svg aria-hidden="true"><use href="#i-cal"/></svg>Dates</button>
+   </div>
+   <div class="dates" hidden data-dates>
+    <label>From <input type="date" data-from min="2026-01-01" max="2026-12-31"></label>
+    <label>To <input type="date" data-to min="2026-01-01" max="2026-12-31"></label>
+    <button class="lnkb" type="button" data-act="clear">Clear</button>
+   </div>
+   <div class="list" id="dlist" aria-live="polite"></div>
+   <div class="dd-f"><a class="lnkb" href="#" onclick="return false">See All Notifications</a></div>
+  </section>
+
+  <div class="lnote" id="lnote" hidden>Luma is hidden while notifications are open.</div>
+  <div class="luma" id="luma">
+   <div class="lchat" id="lchat" hidden>
+    <div class="lh">Luma</div>
+    <div class="lm" id="lm"><div class="b">Hi, I'm Luma, LP Furniture's shop assistant.</div><div class="m">how long does a dining table take</div><div class="b">Most pieces are ready in 7 to 10 business days after your order is confirmed.</div></div>
+    <form class="lf" id="lf"><input id="li" type="text" placeholder="Ask Luma anything" aria-label="Message Luma"><button type="submit">Send</button></form>
+   </div>
+   <button class="lbtn" id="lbtn" type="button" aria-label="Open Luma chat" aria-expanded="false">L</button>
+  </div>
+ </div>
+ </div>
+
+ <h2 class="sec">Phone</h2>
+ <p class="sub">The phone keeps a full Notifications page, with Mark all as read, Only show unread and Dates in one row. My Orders moves into the menu and replaces the Order History button. The row is shown at a 390px width.</p>
+ <div class="phones">
+  <div class="pf"><small>Menu open</small>
+   <div class="pscr"><div class="blob b1" style="width:260px;height:260px;background:#ecc578;left:-90px;top:-80px" aria-hidden="true"></div>
+    <div class="pnav"><div class="logo">LP<i>Furniture</i></div><button class="burger" type="button" aria-label="Close menu"><svg aria-hidden="true"><use href="#i-menu"/></svg></button></div>
+    <nav class="pmenu" aria-label="Main (phone)">
+     <a class="nl" href="#" onclick="return false">Home</a>
+     <a class="nl" href="#" onclick="return false">Catalog</a>
+     <a class="nl" href="#" onclick="return false">Customize</a>
+     <a class="nl" href="#" onclick="return false"><svg aria-hidden="true"><use href="#i-spark"/></svg>Assistant</a>
+     <a class="nl" href="#" onclick="return false"><svg aria-hidden="true"><use href="#i-orders"/></svg>My Orders</a>
+     <a class="nl" href="#" onclick="return false"><svg aria-hidden="true"><use href="#i-cart"/></svg>Cart</a>
+     <a class="nl on" href="#" onclick="return false"><svg aria-hidden="true"><use href="#i-bell"/></svg>Notifications<span class="dot" data-bdot></span></a>
+     <a class="nl" href="#" onclick="return false">My Account</a>
+    </nav>
+   </div>
+  </div>
+  <div class="pf"><small>Notifications page</small>
+   <div class="pscr"><div class="blob b1" style="width:260px;height:260px;background:#ecc578;left:-90px;top:-80px" aria-hidden="true"></div>
+    <div class="pnav"><div class="logo">LP<i>Furniture</i></div><button class="burger" type="button" aria-label="Open menu"><svg aria-hidden="true"><use href="#i-menu"/></svg></button></div>
+    <h1 class="ptitle">Notifications</h1>
+    <p class="psub" id="pcnt"></p>
+    <div class="pctl" id="pctl">
+     <button class="cb" type="button" data-act="markall"><svg aria-hidden="true"><use href="#i-check"/></svg>Mark all as read</button>
+     <button class="tg" type="button" role="switch" aria-checked="false" data-act="unread"><span class="sw" aria-hidden="true"></span>Only show unread</button>
+     <button class="cb" type="button" data-act="dates" aria-pressed="false" aria-expanded="false"><svg aria-hidden="true"><use href="#i-cal"/></svg>Dates</button>
+    </div>
+    <div class="pdates"><div class="dates" hidden data-dates>
+     <label>From <input type="date" data-from min="2026-01-01" max="2026-12-31"></label>
+     <label>To <input type="date" data-to min="2026-01-01" max="2026-12-31"></label>
+     <button class="lnkb" type="button" data-act="clear">Clear</button></div></div>
+    <div class="plist" id="plist" aria-live="polite"></div>
+   </div>
+  </div>
+ </div>
+
+ <h2 class="sec">What changed</h2>
+ <ul class="rules">
+  <li><b>Icons:</b> Assistant, My Orders, Cart and Notifications icons are now the same height as the words. Use the Navbar icons switch to compare with how they look today.</li>
+  <li><b>My Orders:</b> a new navbar item with an icon. The Order History button on the Notifications page is gone.</li>
+  <li><b>Which notifications get a View details button:</b> order notifications and service notifications (custom design, refunds and invoices). Account notices like Identity Verified, Password Updated and Contact Details Updated only get Mark read, because there is nothing more to open.</li>
+  <li><b>Filters:</b> Mark all as read, Only show unread and Dates (from, to) sit in one row on desktop and on the phone.</li>
+  <li><b>Buttons:</b> no left or right arrows on any button, only words (View details, not View details with an arrow).</li>
+  <li><b>Luma:</b> hides while the notification panel is open and comes back with the same conversation.</li>
+ </ul>
+</main>
+
+<script>
+(function(){
+var root=document.documentElement;
+/* controls */
+(function(){var el=document.getElementById('sIc');el.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;root.setAttribute('data-icons',b.getAttribute('data-v'));Array.prototype.forEach.call(el.querySelectorAll('button'),function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});});})();
+
+/* data */
+var N=[
+ {id:1,type:'account',title:'Identity Verified',text:'Your identity has been verified. You can now place orders.',when:'8 hours ago',date:'2026-10-28',read:false},
+ {id:2,type:'order',title:'Order LP-2026-00012: In Production',text:'Our craftsmen have started building your furniture piece.',when:'18 hours ago',date:'2026-10-27',read:false},
+ {id:3,type:'order',title:'Payment Received and Order Confirmed',text:'Order LP-2026-00012: We received your payment and confirmed your order.',when:'18 hours ago',date:'2026-10-27',read:false},
+ {id:4,type:'service',title:'Custom Design Update',text:'Your design request has a new reply from our team.',when:'Oct 12',date:'2026-10-12',read:false},
+ {id:5,type:'account',title:'Password Updated',text:'Your password was changed successfully.',when:'Oct 5',date:'2026-10-05',read:true},
+ {id:6,type:'order',title:'Order LP-2026-00009: Completed',text:'Your order was picked up. Thank you for choosing LP Furniture.',when:'Feb 20',date:'2026-02-20',read:true},
+ {id:7,type:'account',title:'Contact Details Updated',text:'Your phone number was updated.',when:'Jan 30',date:'2026-01-30',read:true}
+];
+var S={unread:false,from:'',to:'',datesOpen:false};
+var ICON={account:'i-shield',order:'i-bag',service:'i-pencil'};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function vis(){return N.filter(function(n){if(S.unread&&n.read)return false;if(S.from&&n.date<S.from)return false;if(S.to&&n.date>S.to)return false;return true;});}
+function item(n,phone){
+ var acts='<div class="meta"><span class="when">'+esc(n.when)+'</span>';
+ if(n.type!=='account')acts+='<button class="vb" type="button">View details</button>';
+ if(!n.read)acts+='<button class="lnkb" type="button" data-read="'+n.id+'">Mark read</button>';
+ acts+='</div>';
+ return '<article class="it'+(n.read?'':' unread')+'"><div class="ic" aria-hidden="true"><svg><use href="#'+ICON[n.type]+'"/></svg></div><div><h4>'+(n.read?'':'<span class="ud" aria-label="Unread"></span>')+esc(n.title)+'</h4><p>'+esc(n.text)+'</p>'+acts+'</article>';
+}
+function render(){
+ var v=vis(),u=N.filter(function(n){return!n.read}).length;
+ var html=v.length?v.map(function(n){return item(n)}).join(''):'<div class="empty">No notifications match.<br><button class="lnkb" type="button" data-act="clear">Clear filters</button></div>';
+ document.getElementById('dlist').innerHTML=html;
+ document.getElementById('plist').innerHTML=v.length?v.map(function(n){return '<div class="pcard'+(n.read?'':' unread')+'">'+item(n,true)+'</div>'}).join(''):'<div class="pcard"><div class="empty">No notifications match.<br><button class="lnkb" type="button" data-act="clear">Clear filters</button></div></div>';
+ var t=u?(u+' unread'):'All caught up';
+ document.getElementById('dcnt').textContent=t;document.getElementById('pcnt').textContent=t;
+ document.getElementById('bdot').hidden=!u;Array.prototype.forEach.call(document.querySelectorAll('[data-bdot]'),function(d){d.hidden=!u});
+ Array.prototype.forEach.call(document.querySelectorAll('[data-act="unread"]'),function(b){b.setAttribute('aria-checked',S.unread?'true':'false')});
+ Array.prototype.forEach.call(document.querySelectorAll('[data-act="dates"]'),function(b){var on=S.datesOpen||S.from||S.to;b.setAttribute('aria-pressed',on?'true':'false');b.setAttribute('aria-expanded',S.datesOpen?'true':'false')});
+ Array.prototype.forEach.call(document.querySelectorAll('[data-dates]'),function(d){d.hidden=!S.datesOpen});
+}
+document.addEventListener('click',function(e){
+ var r=e.target.closest('[data-read]');if(r){var id=+r.getAttribute('data-read');N.forEach(function(n){if(n.id===id)n.read=true});render();return}
+ var a=e.target.closest('[data-act]');if(!a)return;var act=a.getAttribute('data-act');
+ if(act==='markall'){N.forEach(function(n){n.read=true})}
+ if(act==='unread'){S.unread=!S.unread}
+ if(act==='dates'){S.datesOpen=!S.datesOpen}
+ if(act==='clear'){S.from='';S.to='';S.unread=false;Array.prototype.forEach.call(document.querySelectorAll('[data-from],[data-to]'),function(i){i.value=''})}
+ render();
+});
+document.addEventListener('change',function(e){
+ if(e.target.matches('[data-from]')){S.from=e.target.value;Array.prototype.forEach.call(document.querySelectorAll('[data-from]'),function(i){i.value=S.from});render()}
+ if(e.target.matches('[data-to]')){S.to=e.target.value;Array.prototype.forEach.call(document.querySelectorAll('[data-to]'),function(i){i.value=S.to});render()}
+});
+
+/* dropdown + Luma */
+var bell=document.getElementById('bell'),dd=document.getElementById('dd'),lchat=document.getElementById('lchat'),lbtn=document.getElementById('lbtn'),lnote=document.getElementById('lnote'),luma=document.getElementById('luma');
+var lumaWasOpen=false,lumaOpen=false;
+function setLuma(o){lumaOpen=o;lchat.hidden=!o;lbtn.setAttribute('aria-expanded',o?'true':'false')}
+function openDD(){dd.hidden=false;bell.setAttribute('aria-expanded','true');lumaWasOpen=lumaOpen;setLuma(false);luma.style.visibility='hidden';lnote.hidden=!lumaWasOpen&&false;}
+function closeDD(){dd.hidden=true;bell.setAttribute('aria-expanded','false');luma.style.visibility='';lnote.hidden=true;if(lumaWasOpen)setLuma(true);lumaWasOpen=false;}
+bell.addEventListener('click',function(e){e.stopPropagation();dd.hidden?openDD():closeDD()});
+document.addEventListener('click',function(e){if(!dd.hidden&&!dd.contains(e.target)&&!bell.contains(e.target))closeDD()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!dd.hidden){closeDD();bell.focus()}});
+lbtn.addEventListener('click',function(){setLuma(!lumaOpen)});
+document.getElementById('lf').addEventListener('submit',function(e){e.preventDefault();var i=document.getElementById('li');var t=i.value.trim();if(!t)return;var m=document.getElementById('lm');var d=document.createElement('div');d.className='m';d.textContent=t;m.appendChild(d);var b=document.createElement('div');b.className='b';b.textContent='Thanks. A short answer would appear here.';m.appendChild(b);m.scrollTop=m.scrollHeight;i.value=''});
+render();
+})();
+</script>
+</body>
+</html>

@@ -135,6 +135,8 @@ Route::middleware(['auth', \App\Http\Middleware\SignOutOnPasswordChange::class])
 
     Route::get('/notifications', [NotificationController::class, 'index'])
          ->name('notifications.index');
+    Route::get('/notifications/feed', [NotificationController::class, 'feed'])
+         ->name('notifications.feed');
     Route::get('/notifications/{id}', [NotificationController::class, 'show'])
          ->name('notifications.show')->whereNumber('id');
     Route::patch('/notifications/{id}/read', [NotificationController::class, 'markRead'])

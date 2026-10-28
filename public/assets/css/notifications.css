@@ -1,0 +1,110 @@
+/* Customer notifications: the navbar dropdown (>= 1001px) and the full Notifications page (what phones use).
+   Look follows docs/navbar/navbar-notifications-v1.html. Markup: partials/notif-controls, notif-dropdown, notif-item, notifications/index.
+   Buttons are the shared .lp-btn, text links .lp-link, the switch is the shared .lp-switch (lp-switch.css). Words only on buttons, no arrows. */
+
+/* ── Luma steps aside while the dropdown is open (her chat keeps its own "open" class, so she returns as she was) ── */
+body.notif-open .chatbot-fab,
+body.notif-open .chatbot-window,
+body.notif-open .chatbot-dismiss-zone { display: none !important; }
+/* the bar stays visible if the chat was open (an open chat normally hides it through body.modal-open) */
+body.notif-open:not(.lp-modal-open) nav.site-nav { opacity: 1; visibility: visible; pointer-events: auto; }
+
+/* ── three controls in ONE row ── */
+.nf-ctl { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
+.nf-ctl .nf-btn { min-height: 36px; padding: 0 12px; font-size: 12.5px; font-weight: 600; white-space: nowrap; flex: 0 0 auto; }
+.nf-ctl .nf-btn[aria-expanded="true"],
+.nf-ctl .nf-btn[data-active] { background: #FBF0D8; border-color: var(--gold); color: var(--brown-deep); }
+.nf-ctl .lp-switch { flex: 0 1 auto; min-height: 36px; padding: 0 4px 0 2px; gap: 8px; align-items: center; font-size: 12.5px; white-space: nowrap; }
+.nf-ctl .lp-switch-input { inset: 0; width: 100%; height: 100%; }
+.nf-ctl .lp-switch-track { flex-basis: 34px; width: 34px; height: 20px; }
+.nf-ctl .lp-switch-thumb { top: 3px; left: 3px; width: 14px; height: 14px; }
+.nf-ctl .lp-switch-input:checked + .lp-switch-track .lp-switch-thumb { transform: translateX(14px); }
+.nf-ctl .lp-switch-text { padding-top: 0; }
+.nf-ctl .lp-switch-label { font-size: 12.5px; font-weight: 500; }
+
+.nf-dates { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 4px 0 0; }
+.nf-dates[hidden] { display: none; }
+.nf-dates label { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text-muted); }
+.nf-dates input[type="date"] {
+  min-height: 36px; padding: 0 8px; font: inherit; font-size: 12.5px; color: var(--brown-deep);
+  background: #fff; border: 1px solid rgba(90, 66, 30, .45); border-radius: 9px;
+}
+
+.nf-count { font-size: 12.5px; color: var(--text-muted); }
+
+/* ── notification rows (dropdown and page) ── */
+.nf-item { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; padding: 12px 16px; }
+.nf-item:focus { outline: none; }
+.nf-item:focus-visible { outline: 3px solid #1f4fbf; outline-offset: -3px; }
+.nf-item--unread { background: rgba(200, 150, 60, .09); }
+.nf-ic { width: 34px; height: 34px; border-radius: 50%; background: #efe4cc; display: grid; place-items: center; color: #6b4d1f; }
+.nf-ic svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.nf-body { min-width: 0; }
+.nf-item-title { margin: 0; display: flex; align-items: center; gap: 8px; font-family: var(--font-body); font-size: 13.5px; font-weight: 600; line-height: 1.35; color: var(--brown-deep); }
+.nf-ud { width: 8px; height: 8px; border-radius: 50%; background: #B7791F; flex: none; }
+.nf-text { margin: 2px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--text-muted); overflow-wrap: anywhere; }
+.nf-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; margin-top: 6px; }
+.nf-meta form { margin: 0; display: inline; }
+.nf-when { font-size: 12px; color: var(--text-muted); }
+.nf-meta .lp-link { font-size: 12.5px; }
+.nf-empty-inline { padding: 26px 16px; text-align: center; color: var(--text-muted); font-size: 13px; }
+
+/* ── navbar dropdown ── */
+.nf-dd {
+  position: fixed; top: 88px; right: var(--sn-gut, 24px); z-index: 99;
+  width: 440px; max-width: calc(100vw - 24px); max-height: calc(100vh - 108px); max-height: calc(100dvh - 108px);
+  display: flex; flex-direction: column; overflow: hidden;
+  border-radius: 18px; background: rgba(255, 252, 247, .96); border: 1px solid rgba(90, 66, 30, .22);
+  box-shadow: 0 24px 54px -16px rgba(70, 45, 10, .45), inset 0 1px 0 #fff;
+  -webkit-backdrop-filter: blur(18px) saturate(1.2); backdrop-filter: blur(18px) saturate(1.2);
+}
+.nf-dd[hidden] { display: none; }
+.nf-dd-h { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 14px 16px 6px; }
+.nf-dd-title { margin: 0; font-family: var(--font-display); font-size: 1.65rem; font-weight: 600; line-height: 1.1; color: var(--brown-deep); }
+.nf-dd > .nf-ctl { padding: 6px 16px 10px; }
+.nf-dd > .nf-dates { padding: 0 16px 10px; }
+.nf-dd-list { overflow-y: auto; flex: 1 1 auto; border-top: 1px solid rgba(90, 66, 30, .2); min-height: 80px; }
+.nf-dd-list .nf-item { border-bottom: 1px solid rgba(90, 66, 30, .2); }
+.nf-dd-f { padding: 4px 16px; border-top: 1px solid rgba(90, 66, 30, .2); text-align: center; }
+.nf-dd-f .lp-link { font-size: 12.5px; }
+
+/* ── full page ── */
+.nf-wrap { background: var(--cream); min-height: calc(100vh - 64px); padding: 40px 60px 56px; }
+.nf-container { max-width: 680px; margin: 0 auto; }
+.nf-head { margin-bottom: 18px; }
+.nf-head .gallery-eyebrow { margin: 0 0 6px; }
+.nf-title { margin: 0; font-family: var(--font-display); font-size: 2.1rem; font-weight: 600; line-height: 1.1; color: var(--brown-deep); }
+.nf-count--page { margin: 6px 0 0; font-size: 13px; }
+.nf-filter { margin-bottom: 14px; }
+.nf-filter .nf-ctl { gap: 8px; }
+.nf-apply { margin-top: 10px; }
+.nf-list { display: flex; flex-direction: column; gap: 10px; }
+.nf-list .nf-item { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 16px 18px; }
+.nf-list .nf-item--unread { background: #FFFBF4; border-color: rgba(200, 150, 62, .35); }
+.nf-empty { background: var(--warm-white); border: 1px solid var(--border); border-radius: 16px; padding: 44px 24px; text-align: center; }
+.nf-empty h2 { margin: 0 0 8px; font-family: var(--font-display); font-size: 1.4rem; font-weight: 600; color: var(--brown-deep); }
+.nf-empty p { margin: 0 0 16px; font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+.nf-pager { margin-top: 20px; }
+
+/* ── phones and tablets: bigger touch targets, controls still in one row ── */
+@media (max-width: 1000px) {
+  .nf-dd { display: none !important; }
+}
+@media (max-width: 640px) {
+  .nf-wrap { padding: 20px 16px 40px; }
+  .nf-title { font-size: 1.9rem; }
+  .nf-filter .nf-ctl { gap: 4px; }
+  .nf-filter .nf-ctl .nf-btn { min-height: 44px; padding: 0 9px; font-size: 12px; }
+  .nf-filter .nf-ctl .lp-switch { min-height: 44px; gap: 6px; padding: 0 2px; }
+  .nf-filter .nf-ctl .lp-switch-label { font-size: 12px; }
+  .nf-filter .nf-dates input[type="date"] { min-height: 44px; }
+  .nf-list .nf-item { padding: 14px; }
+  .nf-meta { gap: 4px 12px; }
+  .nf-when { flex-basis: 100%; }
+  .nf-meta .nf-view { min-height: 44px; padding: 0 16px; font-size: 13px; }
+  .nf-meta .lp-link { font-size: 13px; }
+  .nf-empty { padding: 36px 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nf-dd { transition: none; }
+}
