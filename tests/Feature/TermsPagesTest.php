@@ -43,9 +43,9 @@ class TermsPagesTest extends TestCase
             ->assertSee('Terms and Conditions')
             ->assertSee('Version 2')
             ->assertSee('Last updated')
-            ->assertSee('What we will do')
-            ->assertSee('Cancellation and refunds')
-            ->assertSee('Your data and privacy');
+            ->assertSee('What We Will Do')
+            ->assertSee('Cancellation and Refunds')
+            ->assertSee('Your Data and Privacy');
 
         $this->assertSame(route('terms', [], false), '/terms');
     }
@@ -59,7 +59,7 @@ class TermsPagesTest extends TestCase
         $this->get('/terms')->assertOk()->assertSee('0917-555-0100')->assertSee('hello@lpfurniture.test')->assertDontSee('{contact_phone}', false);
 
         AgreementPolicy::create(['version' => 3, 'title' => 'Terms and Conditions', 'body' => "## Brand new\n\nThird wording."]);
-        $this->get('/terms')->assertOk()->assertSee('Version 3')->assertSee('Brand new')->assertDontSee('What we will do');
+        $this->get('/terms')->assertOk()->assertSee('Version 3')->assertSee('Brand New')->assertDontSee('What We Will Do');
     }
 
     public function test_terms_page_is_safe_when_there_is_no_policy_row(): void

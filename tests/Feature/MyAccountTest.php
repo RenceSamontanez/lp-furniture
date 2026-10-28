@@ -92,7 +92,7 @@ class MyAccountTest extends TestCase
     {
         $u = $this->customer();
         $page = $this->actingAs($u)->get(route('profile'))->assertOk();
-        foreach (['Personal info', 'Security', 'Verification', 'Account', 'Sign out', 'name="phone_number"', 'name="province_id"', 'name="city_id"', 'name="barangay_id"',
+        foreach (['Personal Info', 'Security', 'Verification', 'Account', 'Sign Out', 'name="phone_number"', 'name="province_id"', 'name="city_id"', 'name="barangay_id"',
                   'name="postal_code"', 'name="landmark"', 'You can change your password', 'Available'] as $s) {
             $page->assertSee($s, false);
         }
@@ -393,7 +393,7 @@ class MyAccountTest extends TestCase
         $this->cart($u);
 
         $page = $this->actingAs($u)->get(route('checkout'))->assertOk();
-        $page->assertSee('data-od-pickup', false)->assertSee('Pick up at our shop')->assertSee('12 Rizal Avenue, Test City')->assertSee('Beside the old church')
+        $page->assertSee('data-od-pickup', false)->assertSee('Pick up at Our Shop')->assertSee('12 Rizal Avenue, Test City')->assertSee('Beside the old church')
              ->assertSee('maps.google.com/maps?q=13.5%2C121.25', false)->assertSee('Get directions')
              ->assertSee('0918 111 2222')->assertSee('https://www.google.com/maps/search/?api=1&amp;query=13.5%2C121.25', false)
              ->assertDontSee('Shop location coming soon');

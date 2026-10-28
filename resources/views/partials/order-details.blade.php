@@ -36,7 +36,7 @@
 
 <section class="mx od" data-order-details data-continue="{{ $continue ?? '' }}" data-fixed="{{ $odFixed }}" data-has-saved="{{ $odSaved ? '1' : '0' }}" aria-label="Order details" style="margin:4px 0 18px">
   <div class="g12">
-    <div class="fld c6"><label for="oName">Recipient name <span class="rq" aria-hidden="true">*</span></label>
+    <div class="fld c6"><label for="oName">Recipient Name <span class="rq" aria-hidden="true">*</span></label>
       <input class="inp{{ $odErr ? ' bad' : '' }}" id="oName" name="recipient_name" value="{{ old('recipient_name', $odUser->display_name) }}" maxlength="100" autocomplete="name" aria-required="true">
       <p class="err{{ $odErr ? ' show' : '' }}">{{ $odErr }}</p></div>
     <div class="fld c6">
@@ -77,7 +77,7 @@
 
   {{-- Pick up at our shop: a copy of the footer location block, from the same data --}}
   <div class="pk" data-od-pickup style="margin-top:14px" @if(!$odPickup) hidden @endif>
-    <div class="ash"><h2>Pick up at our shop</h2><span>No delivery address needed.</span></div>
+    <div class="ash"><h2>Pick up at Our Shop</h2><span>No delivery address needed.</span></div>
     @if($shop['visit'])
       <div class="pk__map"><iframe title="Map showing LP Furniture shop location" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="{{ $shop['visit']['embed'] }}"></iframe></div>
       <div class="pk__info">

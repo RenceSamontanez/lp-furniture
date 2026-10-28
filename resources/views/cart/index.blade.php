@@ -47,7 +47,7 @@
       @foreach(['Table','Chair','Cabinet','Bed','Sofa'] as $cat)
         <a href="{{ route('catalog', ['category' => $cat]) }}"
            style="font-size:12px;font-weight:600;padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--warm-white);color:var(--brown-mid);transition:all .2s;">
-          {{ $cat }}s
+          {{ title_case($cat) }}s
         </a>
       @endforeach
     </div>
@@ -77,7 +77,7 @@
                 <path d="M10 11v6M14 11v6"/>
                 <path d="M9 6V4h6v2"/>
               </svg>
-              Clear cart
+              Clear Cart
             </button>
           </form>
         </div>
@@ -206,7 +206,7 @@
                 <polyline points="3,6 5,6 21,6"/>
                 <path d="M19 6l-1 14H6L5 6"/>
               </svg>
-              Clear entire cart
+              Clear Entire Cart
             </button>
           </form>
 

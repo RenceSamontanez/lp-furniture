@@ -22,9 +22,9 @@
   $name     = $user->display_name;
   $initials = strtoupper(mb_substr($user->first_name, 0, 1) . mb_substr($user->last_name, 0, 1)) ?: 'U';
   $titles = [
-    'personal' => ['Personal information', 'Update your name, phone number and delivery address.'],
+    'personal' => ['Personal Information', 'Update your name, phone number and delivery address.'],
     'security' => ['Security', 'Manage how you sign in.'],
-    'verify'   => ['Identity verification', 'Required to place orders and use all features.'],
+    'verify'   => ['Identity Verification', 'Required to place orders and use all features.'],
     'account'  => ['Account', 'Your account status at a glance.'],
   ];
   $addr = $savedAddress ?? [];
@@ -86,14 +86,14 @@
         </form>
       </div>
       <ul class="tabs" id="tabs" role="tablist" aria-label="Account sections">
-        <li><button type="button" class="tab" data-t="personal" role="tab" id="tab-personal" aria-controls="v-personal" aria-selected="{{ $tab === 'personal' ? 'true' : 'false' }}" @if($tab === 'personal') aria-current="page" @endif>{!! $sym('user') !!}Personal info</button></li>
+        <li><button type="button" class="tab" data-t="personal" role="tab" id="tab-personal" aria-controls="v-personal" aria-selected="{{ $tab === 'personal' ? 'true' : 'false' }}" @if($tab === 'personal') aria-current="page" @endif>{!! $sym('user') !!}Personal Info</button></li>
         <li><button type="button" class="tab" data-t="security" role="tab" id="tab-security" aria-controls="v-security" aria-selected="{{ $tab === 'security' ? 'true' : 'false' }}" @if($tab === 'security') aria-current="page" @endif>{!! $sym('lock') !!}Security</button></li>
         <li><button type="button" class="tab" data-t="verify" role="tab" id="tab-verify" aria-controls="v-verify" aria-selected="{{ $tab === 'verify' ? 'true' : 'false' }}" @if($tab === 'verify') aria-current="page" @endif>{!! $sym('shield') !!}Verification<span class="dot{{ $vs === 'approved' ? ' ok' : '' }}" aria-hidden="true">{!! $dotHtml !!}</span></button></li>
         <li><button type="button" class="tab" data-t="account" role="tab" id="tab-account" aria-controls="v-account" aria-selected="{{ $tab === 'account' ? 'true' : 'false' }}" @if($tab === 'account') aria-current="page" @endif>{!! $sym('gear') !!}Account</button></li>
       </ul>
       <span class="sp"></span>
       <form method="POST" action="{{ route('logout') }}" class="signout">@csrf
-        <button type="submit" class="out full">{!! $sym('out') !!}Sign out</button>
+        <button type="submit" class="out full">{!! $sym('out') !!}Sign Out</button>
       </form>
     </aside>
 
@@ -117,14 +117,14 @@
                 <input type="hidden" name="section" value="name">
                 <input type="hidden" name="confirm_name_change" value="0" data-confirm-name>
                 <header><h3 id="hName">Name</h3><div class="hr">{!! $savedTag !!}<button class="lp-btn lp-btn--secondary lpe" type="button" data-edit aria-label="Edit name">{!! $editIcon !!}Edit</button></div></header>
-                <div class="rd" data-rd><div class="rdr"><span class="k">First name</span><b data-v="first_name">{{ $user->first_name }}</b></div><div class="rdr"><span class="k">Last name</span><b data-v="last_name">{{ $user->last_name }}</b></div></div>
+                <div class="rd" data-rd><div class="rdr"><span class="k">First Name</span><b data-v="first_name">{{ $user->first_name }}</b></div><div class="rdr"><span class="k">Last Name</span><b data-v="last_name">{{ $user->last_name }}</b></div></div>
                 <div class="ed" hidden>
                   <fieldset class="edf">
                     <div class="g12">
-                      <div class="fld c12"><label for="fn">First name <span class="rq" aria-hidden="true">*</span></label>
+                      <div class="fld c12"><label for="fn">First Name <span class="rq" aria-hidden="true">*</span></label>
                         <input class="inp{{ $errors->has('first_name') ? ' bad' : '' }}" id="fn" name="first_name" value="{{ old('first_name', $user->first_name) }}" maxlength="60" autocomplete="given-name" data-name aria-required="true">
                         <p class="err{{ $errors->has('first_name') ? ' show' : '' }}" role="alert">{{ $errors->first('first_name') }}</p></div>
-                      <div class="fld c12"><label for="ln">Last name <span class="rq" aria-hidden="true">*</span></label>
+                      <div class="fld c12"><label for="ln">Last Name <span class="rq" aria-hidden="true">*</span></label>
                         <input class="inp{{ $errors->has('last_name') ? ' bad' : '' }}" id="ln" name="last_name" value="{{ old('last_name', $user->last_name) }}" maxlength="60" autocomplete="family-name" data-name aria-required="true">
                         <p class="err{{ $errors->has('last_name') ? ' show' : '' }}" role="alert">{{ $errors->first('last_name') }}</p></div>
                     </div>
@@ -145,10 +145,10 @@
               <form method="POST" action="{{ $sectionAction }}" data-section="phone" novalidate>
                 @csrf @method('PUT')
                 <input type="hidden" name="section" value="phone">
-                <header><h3 id="hPhone">Contact</h3><div class="hr">{!! $savedTag !!}<button class="lp-btn lp-btn--secondary lpe" type="button" data-edit aria-label="{{ $phoneDisplay ? 'Change phone number' : 'Add phone number' }}">{!! $editIcon !!}<span data-edit-text>{{ $phoneDisplay ? 'Change number' : 'Add number' }}</span></button></div></header>
+                <header><h3 id="hPhone">Contact</h3><div class="hr">{!! $savedTag !!}<button class="lp-btn lp-btn--secondary lpe" type="button" data-edit aria-label="{{ $phoneDisplay ? 'Change phone number' : 'Add phone number' }}">{!! $editIcon !!}<span data-edit-text>{{ $phoneDisplay ? 'Change Number' : 'Add Number' }}</span></button></div></header>
                 <div class="rd">
                   <div class="rdr"><span class="k">Email</span><b><span>{{ $user->email }}</span>{!! $sym('lock') !!}</b><span class="hint" id="emh">This is your sign-in email. It cannot be changed here.</span></div>
-                  <div class="rdr" data-rd><span class="k">Phone number</span><b data-v="phone">@if($phoneDisplay){{ $phoneDisplay }}@else<span class="none">No phone number yet</span>@endif</b></div>
+                  <div class="rdr" data-rd><span class="k">Phone Number</span><b data-v="phone">@if($phoneDisplay){{ $phoneDisplay }}@else<span class="none">No phone number yet</span>@endif</b></div>
                 </div>
                 <div class="ed" hidden>
                   <fieldset class="edf">
@@ -167,7 +167,7 @@
             <form method="POST" action="{{ $sectionAction }}" data-section="address" novalidate>
               @csrf @method('PUT')
               <input type="hidden" name="section" value="address">
-              <header><h3 id="hAddr">Delivery Address</h3><div class="hr">{!! $savedTag !!}<button class="lp-btn lp-btn--secondary lpe" type="button" data-edit aria-label="{{ $addr ? 'Change delivery address' : 'Add delivery address' }}">{!! $editIcon !!}<span data-edit-text>{{ $addr ? 'Change address' : 'Add address' }}</span></button></div></header>
+              <header><h3 id="hAddr">Delivery Address</h3><div class="hr">{!! $savedTag !!}<button class="lp-btn lp-btn--secondary lpe" type="button" data-edit aria-label="{{ $addr ? 'Change delivery address' : 'Add delivery address' }}">{!! $editIcon !!}<span data-edit-text>{{ $addr ? 'Change Address' : 'Add Address' }}</span></button></div></header>
               <div class="rd" data-rd>
                 <div data-addr-read>
                   @if($addr)
@@ -229,7 +229,7 @@
                 <div class="fld"><label for="p1">New Password</label><div class="input-password-wrap"><input class="inp{{ $errors->has('password') ? ' bad' : '' }}" id="p1" name="password" type="password" autocomplete="new-password" @disabled($locked)><x-password-toggle for="p1"/></div><p class="err{{ $errors->has('password') ? ' show' : '' }}">{{ $errors->first('password') }}</p></div>
                 <div class="fld"><label for="p2">Confirm New Password</label><div class="input-password-wrap"><input class="inp" id="p2" name="password_confirmation" type="password" autocomplete="new-password" @disabled($locked)><x-password-toggle for="p2"/></div></div>
               </div>
-              <div class="glass card"><h3>Your new password needs</h3>
+              <div class="glass card"><h3>Your New Password Needs</h3>
                 <ul class="rules" id="rules"><li data-r="len">At least 8 characters</li><li data-r="case">Upper and lower case letters</li><li data-r="num">A number</li><li data-r="diff">Different from your current password</li><li data-r="same">Both new passwords match</li></ul>
                 <p style="margin-top:auto">You can change your password once a week. Changing it signs you out of other devices.</p>
               </div>
@@ -260,7 +260,7 @@
                 </div>
               @elseif($vs === 'approved')
                 <div class="glass state">
-                  <span class="ico ok">{!! $sym('shield') !!}</span><h3>You are verified</h3>
+                  <span class="ico ok">{!! $sym('shield') !!}</span><h3>You Are Verified</h3>
                   <p>You can place orders and use every feature of LP Furniture. Nothing more to do.</p>
                   <div class="kv"><span>Identity verified</span></div>
                 </div>
@@ -286,7 +286,7 @@
               @endif
             </div>
             <aside class="glass vr" aria-label="What we check">
-              <h2>What we check</h2>
+              <h2>What We Check</h2>
               <ul>
                 @foreach($checks as $key => $label)
                   <li><i><svg aria-hidden="true"><use href="#i-ok"/></svg></i><span><b>{{ $label }}</b><small>{{ ['name' => 'Use the full name you registered with.', 'face' => 'Whole face visible, no mask, filters or sunglasses.', 'id' => 'Not expired. All four corners show, no glare or blur.'][$key] ?? '' }}</small></span></li>

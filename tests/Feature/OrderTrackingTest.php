@@ -797,7 +797,7 @@ class OrderTrackingTest extends TestCase
 
         $this->actingAs($bob)->get(route('orders.show', $order->id))->assertNotFound();
         $this->actingAs($bob)->get(route('admin.orders.show', $order->id))->assertRedirect(route('admin.login'));
-        $this->actingAs($alice)->get(route('orders.show', $order->id))->assertOk()->assertSee('ALICE-ONLY-NOTE')->assertSee('In production');
+        $this->actingAs($alice)->get(route('orders.show', $order->id))->assertOk()->assertSee('ALICE-ONLY-NOTE')->assertSee('In Production');
     }
 
     public function test_customer_page_shows_stage_text_payment_badge_and_the_admin_page_shows_tags(): void

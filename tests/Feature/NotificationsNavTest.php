@@ -249,7 +249,7 @@ class NotificationsNavTest extends TestCase
 
         $this->assertStringNotContainsString('Order History', $html);
         $this->assertStringContainsString('Mark All as Read', $html);
-        $this->assertStringContainsString('Only show unread', $html);
+        $this->assertStringContainsString('Only Show Unread', $html);
         $this->assertStringContainsString('>Dates<', $html);
         $this->assertStringNotContainsString('notif-action-arrow', $html);
         $this->assertSame(20, substr_count($html, 'class="nf-item '));

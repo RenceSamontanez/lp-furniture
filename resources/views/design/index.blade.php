@@ -57,7 +57,7 @@
     <section class="cz-panel cz-glass" aria-labelledby="cz-title">
       <div class="cz-ph">
         <div class="cz-ph-text">
-          <h1 id="cz-title">Customize your furniture</h1>
+          <h1 id="cz-title">Customize Your Furniture</h1>
           <p class="cz-sub">Tell us what you want. We draw it, you send it to our team.</p>
         </div>
         <div class="cz-pills">
@@ -97,14 +97,14 @@
             <div class="cz-tiles">
               @foreach(\App\Support\FurnitureTypes::CHOICES as $value => $label)
                 <label class="cz-tile">
-                  <input type="radio" name="furniture_type" value="{{ $value }}" data-label="{{ $label }}" required @checked($oldType === $value)/>
-                  <span class="cz-tile-face">{!! $svg($value) !!}<span>{{ $label }}</span></span>
+                  <input type="radio" name="furniture_type" value="{{ $value }}" data-label="{{ title_case($label) }}" required @checked($oldType === $value)/>
+                  <span class="cz-tile-face">{!! $svg($value) !!}<span>{{ title_case($label) }}</span></span>
                 </label>
               @endforeach
             </div>
             <label class="cz-wide">
-              <input type="radio" name="furniture_type" value="{{ \App\Support\FurnitureTypes::OTHER }}" data-label="Something else" @checked($isOther)/>
-              <span class="cz-wide-face">{!! $svg('Other') !!}<span>Something else<small>Not on the list? Tell us what you want built.</small></span></span>
+              <input type="radio" name="furniture_type" value="{{ \App\Support\FurnitureTypes::OTHER }}" data-label="Something Else" @checked($isOther)/>
+              <span class="cz-wide-face">{!! $svg('Other') !!}<span>Something Else<small>Not on the list? Tell us what you want built.</small></span></span>
             </label>
             <div class="cz-other" id="cz-type-other" @unless($isOther) hidden @endunless>
               <label for="cz-type-text">What is it?</label>
@@ -112,7 +112,7 @@
                      value="{{ old('furniture_type_other') }}" placeholder="e.g. Staircase railing, altar, TV wall panel" autocomplete="off" aria-describedby="cz-type-msg"/>
               <div class="cz-chips" aria-label="Examples">
                 @foreach($extraTypes as $example)
-                  <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" data-example="{{ $example }}">{{ $example }}</button>
+                  <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" data-example="{{ $example }}">{{ title_case($example) }}</button>
                 @endforeach
               </div>
               <p class="cz-msg" id="cz-type-msg" role="alert"></p>
@@ -122,7 +122,7 @@
 
           {{-- 2. WOOD --}}
           <fieldset class="cz-step" data-step="1">
-            <legend class="cz-q">Choose your wood</legend>
+            <legend class="cz-q">Choose Your Wood</legend>
             <p class="cz-hint">We build with these three woods. Want another wood? Pick "Other wood".</p>
             <div class="cz-woods">
               @foreach(config('customize.woods') as $wood => [$light, $dark, $blurb])
@@ -172,7 +172,7 @@
 
           {{-- 3. STYLE AND PHOTO --}}
           <fieldset class="cz-step" data-step="2">
-            <legend class="cz-q">Pick a style <span class="cz-opt-tag">(Optional)</span></legend>
+            <legend class="cz-q">Pick a Style <span class="cz-opt-tag">(Optional)</span></legend>
             <p class="cz-hint">Look at the photos. Not sure, or want something different? Upload your own reference photo (JPG or PNG).</p>
             <div class="cz-styles">
               @foreach(\App\Support\StyleChoices::LIST as $style)
@@ -191,7 +191,7 @@
                 <input type="file" id="cz-photo" name="reference_image" accept="image/jpeg,image/png" aria-describedby="cz-up-msg"/>
                 <label for="cz-photo" class="cz-up-face" id="cz-up-face">
                   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
-                  <span class="cz-up-lab" id="cz-up-lab">Upload your own photo</span>
+                  <span class="cz-up-lab" id="cz-up-lab">Upload Your Own Photo</span>
                 </label>
                 <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip cz-up-x" id="cz-up-x" hidden>Remove Photo</button>
               </div>
@@ -202,7 +202,7 @@
 
           {{-- 4. SIZE --}}
           <fieldset class="cz-step" data-step="3">
-            <legend class="cz-q">How big should it be? <span class="cz-opt-tag">(Optional)</span></legend>
+            <legend class="cz-q">How Big Should It Be? <span class="cz-opt-tag">(Optional)</span></legend>
             <p class="cz-hint" id="cz-size-hint"><strong>Length</strong> is the longest side across. <strong>Width</strong> is the shorter side across. <strong>Height</strong> is from the floor to the top. Not sure yet? Leave it empty.</p>
             <div class="cz-size">
               @foreach(['length' => ['Length', '120'], 'width' => ['Width', '60'], 'height' => ['Height', '75']] as $key => [$label, $example])
@@ -228,7 +228,7 @@
                 @include('guide._measure')
               </div>
             </details>
-            <label class="cz-more" for="cz-more">Anything else we should know? <span class="cz-opt-tag">(Optional)</span></label>
+            <label class="cz-more" for="cz-more">Anything Else We Should Know? <span class="cz-opt-tag">(Optional)</span></label>
             <textarea id="cz-more" name="additional_info" class="cz-field cz-more-area" rows="2" maxlength="1000"
                       placeholder="Storage drawers, foldable mechanism, hidden compartments, special finish, etc.">{{ old('additional_info') }}</textarea>
           </fieldset>
@@ -265,7 +265,7 @@
           <button type="button" class="lp-btn lp-btn--primary" id="cz-next">Next</button>
           <button type="submit" class="lp-btn lp-btn--primary" id="cz-create" @disabled($outOfDesigns)>
             <svg class="lp-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>
-            Create my design
+            Create My Design
           </button>
         </div>
       </form>
@@ -308,7 +308,7 @@
 
   </div>
 
-  <x-modal id="cz-howitworks" title="How it works">
+  <x-modal id="cz-howitworks" title="How It Works">
     <p>Tell us the piece you are picturing and we will draw a few concepts for you to choose from. No design experience needed. The more specific you are, the closer the first draft will be to what is in your head.</p>
     <ul class="cz-how">
       <li><strong>Name the piece.</strong> A dining table, a bookshelf, a bed frame. Start with what it is.</li>
@@ -319,7 +319,7 @@
     <p><strong>Good:</strong> "A rustic dining table with turned legs and a distressed finish, seats six."<br/>
        <strong>Too vague:</strong> "A table".</p>
     <x-slot:footer>
-      <button type="button" class="lp-btn lp-btn--primary" data-lp-modal-close>Got it, let's design</button>
+      <button type="button" class="lp-btn lp-btn--primary" data-lp-modal-close>Got It, Let's Design</button>
     </x-slot:footer>
   </x-modal>
 </div>

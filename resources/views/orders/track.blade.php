@@ -54,7 +54,7 @@
           @foreach($stages as $i => $key)
             <li class="{{ $i < $idx ? 'done' : ($i === $idx ? 'current' : '') }}" @if($i === $idx) aria-current="step" @endif>
               <span class="dot">{{ $i < $idx ? '✓' : $i + 1 }}</span>
-              <span>{{ OrderStages::label($key, $pickup) }}</span>
+              <span>{{ title_case(OrderStages::label($key, $pickup)) }}</span>
             </li>
           @endforeach
         </ol>
@@ -66,7 +66,7 @@
     <div>
       <section class="glass card now" aria-labelledby="ot-now-t">
         <p class="sub" style="margin:0;">Where your furniture is right now</p>
-        <h2 id="ot-now-t">{{ $cancelled ? 'Cancelled' : OrderStages::labelFor($order) }}</h2>
+        <h2 id="ot-now-t">{{ $cancelled ? 'Cancelled' : title_case(OrderStages::labelFor($order)) }}</h2>
         <p>{{ OrderStages::customerCopy($order, $status) }}</p>
         @if($latest)
           <div class="preview" style="margin-top:10px;">

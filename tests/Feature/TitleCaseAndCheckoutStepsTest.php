@@ -34,6 +34,13 @@ class TitleCaseAndCheckoutStepsTest extends TestCase
         $this->assertSame('Things to Look At', TitleCase::apply('things to look at'));   // last word is capitalised
     }
 
+    public function test_the_word_after_a_colon_starts_a_new_phrase(): void
+    {
+        $this->assertSame('Order LP-2026-00003: In Production', TitleCase::apply('Order LP-2026-00003: in production'));
+        $this->assertSame('Order LP-2026-00003: In Production', TitleCase::apply('Order LP-2026-00003: In Production'));
+        $this->assertSame('Order LP-2026-00005: Cancelled', TitleCase::apply('order LP-2026-00005: cancelled'));
+    }
+
     public function test_brands_acronyms_units_digits_and_numbers_are_left_alone(): void
     {
         $this->assertSame('Pay with GCash via PayMongo', TitleCase::apply('pay with gcash via paymongo'));

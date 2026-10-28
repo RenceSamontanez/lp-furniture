@@ -75,7 +75,7 @@
                 @endif
                 <div class="order-timeline-line"></div>
               </div>
-              <div class="order-timeline-label">{{ $label }}</div>
+              <div class="order-timeline-label">{{ title_case($label) }}</div>
             </div>
           @endforeach
         </div>

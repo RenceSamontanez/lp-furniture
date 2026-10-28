@@ -132,7 +132,7 @@ class PhoneRequirementTest extends TestCase
         $user = $this->withoutPhone($this->makeUser());
 
         $this->actingAs($user)->get(route('profile'))->assertOk()
-            ->assertSee('name="phone_number"', false)->assertSee('Phone number');
+            ->assertSee('name="phone_number"', false)->assertSee('Phone Number');
         $this->assertFalse($user->hasValidPhone());
     }
 

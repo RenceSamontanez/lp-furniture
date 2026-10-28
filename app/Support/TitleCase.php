@@ -28,8 +28,11 @@ final class TitleCase
         $first = $wordIdx[0] ?? null;
         $last = $wordIdx ? $wordIdx[count($wordIdx) - 1] : null;
 
+        $afterColon = false;
         foreach ($wordIdx as $i) {
-            $parts[$i] = self::token($parts[$i], $i === $first || $i === $last);
+            $isEdge = $i === $first || $i === $last || $afterColon;   // the word after "Order LP-1:" starts a new phrase
+            $afterColon = preg_match('/:$/u', $parts[$i]) === 1;
+            $parts[$i] = self::token($parts[$i], $isEdge);
         }
 
         return implode('', $parts);

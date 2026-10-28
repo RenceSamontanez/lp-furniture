@@ -21,7 +21,7 @@
   <div class="filter-bar">
     <a href="{{ route('catalog') }}" class="filter-chip active">All</a>
     @foreach($categories as $cat)
-      <a href="{{ route('catalog', ['category' => $cat]) }}" class="filter-chip">{{ $cat }}</a>
+      <a href="{{ route('catalog', ['category' => $cat]) }}" class="filter-chip">{{ title_case($cat) }}</a>
     @endforeach
   </div>
   @endif

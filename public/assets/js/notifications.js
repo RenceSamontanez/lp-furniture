@@ -127,9 +127,9 @@
     t.setAttribute('datetime', n.iso);
     meta.appendChild(t);
     var href = safeHref(n.details_url);
-    if (href) { var v = el('a', 'lp-btn lp-btn--primary lp-btn--chip nf-view', 'View details'); v.href = href; meta.appendChild(v); }
+    if (href) { var v = el('a', 'lp-btn lp-btn--primary lp-btn--chip nf-view', 'View Details'); v.href = href; meta.appendChild(v); }
     if (!n.read) {
-      var m = el('button', 'lp-link', 'Mark read');
+      var m = el('button', 'lp-link', 'Mark Read');
       m.type = 'button';
       m.setAttribute('data-nf-read', n.id);
       meta.appendChild(m);

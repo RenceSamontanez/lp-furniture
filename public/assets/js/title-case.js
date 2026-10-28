@@ -35,7 +35,12 @@
     if (!text.trim()) { return text; }
     var parts = text.split(/(\s+)/), idx = [];
     parts.forEach(function (p, i) { if (p && !/^\s+$/.test(p) && /\p{L}/u.test(p)) { idx.push(i); } });
-    idx.forEach(function (i, n) { parts[i] = token(parts[i], n === 0 || n === idx.length - 1); });
+    var afterColon = false;
+    idx.forEach(function (i, n) {
+      var edge = n === 0 || n === idx.length - 1 || afterColon;
+      afterColon = /:$/.test(parts[i]);
+      parts[i] = token(parts[i], edge);
+    });
     return parts.join('');
   }
   window.LpTitleCase = { apply: apply };

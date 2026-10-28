@@ -106,3 +106,6 @@ body.notif-open .chatbot-dismiss-zone { display: none !important; }
 @media (prefers-reduced-motion: reduce) {
   .nf-dd { transition: none; }
 }
+
+/* narrow phones: "Only Show Unread" is wider in Title Case, so the three controls may wrap instead of overlapping */
+@media (max-width: 440px) { .nf-ctl { flex-wrap: wrap; row-gap: 8px; } }

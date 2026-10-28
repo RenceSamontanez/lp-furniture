@@ -26,7 +26,7 @@
     <ul class="cx-cats">
       <li><a href="{{ $url(['category' => null]) }}" @if(!request('category')) aria-current="true" @endif>All <small>{{ $totalCount }}</small></a></li>
       @foreach($categories as $cat)
-        <li><a href="{{ $url(['category' => $cat]) }}" @if(request('category') === $cat) aria-current="true" @endif>{{ $cat }} <small>{{ $categoryCounts[$cat] }}</small></a></li>
+        <li><a href="{{ $url(['category' => $cat]) }}" @if(request('category') === $cat) aria-current="true" @endif>{{ title_case($cat) }} <small>{{ $categoryCounts[$cat] }}</small></a></li>
       @endforeach
     </ul>
 
@@ -35,7 +35,7 @@
       @if(!empty($type))<input type="hidden" name="type" value="{{ $type }}">@endif
       <label class="cx-field"><span>Search</span>
         <input type="search" name="search" placeholder="Search furniture" value="{{ request('search') }}" autocomplete="off"></label>
-      <label class="cx-field"><span>Highest price (₱)</span>
+      <label class="cx-field"><span>Highest Price (₱)</span>
         <input type="number" name="max_price" min="0" step="any" inputmode="decimal" placeholder="Any" value="{{ request('max_price') }}"></label>
       <label class="cx-field"><span>Sort by</span>
         <select name="sort">
@@ -78,13 +78,13 @@
             <div class="cx-tag"><span>{{ $product->on_sale ? $product->formatted_sale_price : $product->formatted_price }}</span></div>
             @if($badge)<span class="cx-badge">{{ $badge }}</span>@endif
             <button type="button" class="cx-qv" data-quick-view="{{ $product->id }}" data-name="{{ $product->product_name }}"
-                    aria-label="Quick view: {{ $product->product_name }}">Quick view</button>
+                    aria-label="Quick view: {{ $product->product_name }}">Quick View</button>
           </div>
           <div class="cx-cap">
             <h3><a href="{{ route('product.show', $product->id) }}">{{ title_case($product->product_name) }}</a></h3>
             <p class="cx-k">{{ title_case($product->category) }}@if($product->on_sale)<span class="cx-was">{{ $product->formatted_price }}</span>@endif</p>
             @if(filled($product->description))<p class="cx-d">{{ $product->description }}</p>@endif
-            <a href="{{ route('product.show', $product->id) }}" class="lp-btn lp-btn--secondary cx-vd">View details</a>
+            <a href="{{ route('product.show', $product->id) }}" class="lp-btn lp-btn--secondary cx-vd">View Details</a>
           </div>
         </article>
       @empty

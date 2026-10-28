@@ -670,7 +670,7 @@
       show: function (v) {
         var b = $('[data-v=phone]', phoneEl);
         b.textContent = v.display || v.phone_number;
-        $('[data-edit-text]', phoneEl).textContent = 'Change number';
+        $('[data-edit-text]', phoneEl).textContent = 'Change Number';
         $('[data-edit]', phoneEl).setAttribute('aria-label', 'Change phone number');
       },
       validate: function () { return phone.check(); },
@@ -689,7 +689,7 @@
         var html = '<div class="rdr"><span class="k">Saved address</span><b data-v="address">' + esc(v.line || addr.line()) + '</b></div>';
         if (v.landmark) { html += '<div class="rdr"><span class="k">Landmark</span><b data-v="landmark">' + esc(v.landmark) + '</b></div>'; }
         read.innerHTML = html;
-        $('[data-edit-text]', addrEl).textContent = 'Change address';
+        $('[data-edit-text]', addrEl).textContent = 'Change Address';
         $('[data-edit]', addrEl).setAttribute('aria-label', 'Change delivery address');
       },
       validate: function () { return addr.validate(); },        // an empty address fails here: Cancel is how to leave without saving

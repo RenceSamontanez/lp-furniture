@@ -17,7 +17,7 @@
     <button type="button" class="lp-btn lp-btn--secondary nf-btn" data-nf-act="markall">Mark All as Read</button>
   @endif
 
-  @include('partials.switch', ['id' => $pfx . '-unread', 'name' => 'unread', 'checked' => $f['unread'], 'label' => 'Only show unread'])
+  @include('partials.switch', ['id' => $pfx . '-unread', 'name' => 'unread', 'checked' => $f['unread'], 'label' => 'Only Show Unread'])
 
   <button type="button" class="lp-btn lp-btn--secondary nf-btn nf-dates-btn" data-nf-act="dates"
           aria-expanded="{{ $datesOpen ? 'true' : 'false' }}" aria-controls="{{ $pfx }}-dates"

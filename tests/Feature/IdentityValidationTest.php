@@ -500,7 +500,7 @@ class IdentityValidationTest extends TestCase
     {
         $page = $this->asCustomer($this->customer())->get(route('validation.show'))->assertOk();
 
-        $page->assertSee('Verify your identity')->assertSee('What we check')->assertSee('IDs we accept')
+        $page->assertSee('Verify Your Identity')->assertSee('What We Check')->assertSee('IDs we accept')
             ->assertSee('name="id_photo"', false)->assertSee('name="selfie_photo"', false)
             ->assertSee('JPEG or PNG, up to 5 MB')
             ->assertSee('Only LP Furniture admins can see your photos. We use them to verify you and for nothing else.');

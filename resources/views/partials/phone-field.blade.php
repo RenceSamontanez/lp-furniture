@@ -8,7 +8,7 @@
   $ccRow = collect($countries)->firstWhere('code', $cc) ?? $countries[0];
   $err = $errors->first($numName);
 @endphp
-<label for="{{ $idp }}ph">Phone number <span class="rq" aria-hidden="true">*</span></label>
+<label for="{{ $idp }}ph">Phone Number <span class="rq" aria-hidden="true">*</span></label>
 <div class="phone" data-phone>
   <div data-combo="country"><div class="cbw">
     <input class="inp" id="{{ $idp }}cc" type="text" role="combobox" aria-expanded="false" aria-controls="{{ $idp }}cc-l" aria-autocomplete="list" aria-label="Country code"

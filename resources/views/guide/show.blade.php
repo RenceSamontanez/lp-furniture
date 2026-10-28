@@ -22,8 +22,8 @@
         <li><h3>Add the Size and the Wood</h3><p>The size is optional, and the next section shows how to measure. Choose Gmelina, Mahogany or Acacia, or choose Special request if you want another wood or want to bring your own.</p></li>
         <li><h3>Generate</h3><p>Press Generate. It usually takes a minute or two to make a few concepts.</p></li>
         <li><h3>Review</h3><p>Look at the concepts and check that the piece is the type you asked for. If it is not, press "No, try again". Pick the one you like best.</p></li>
-        <li><h3>Send it to our team</h3><p>Give us your phone number and the best time to call. This is a request, not an order, and nothing is due yet.</p></li>
-        <li><h3>Wait for our call</h3><p>Our team calls you to talk about the details and the price. If we miss you, we leave a message here in your account.</p></li>
+        <li><h3>Send It to Our Team</h3><p>Give us your phone number and the best time to call. This is a request, not an order, and nothing is due yet.</p></li>
+        <li><h3>Wait for Our Call</h3><p>Our team calls you to talk about the details and the price. If we miss you, we leave a message here in your account.</p></li>
         <li><h3>Accept the Quote</h3><p>We send you a quote in your account. Read the agreement and the Terms and Conditions, then accept it before it expires.</p></li>
         <li><h3>Pay</h3><p>Pay the deposit by card or GCash. Your order is confirmed once we receive it, and we keep you updated until it is ready.</p></li>
       </ol>

@@ -17,7 +17,7 @@
     </header>
 
     @if($policy)
-      <div class="terms-body">@include('agreements._policy', ['text' => $policy->body])</div>
+      <div class="terms-body">@include('agreements._policy', ['text' => $policy->body, 'titleHeadings' => true])</div>
     @else
       <p class="pt-p">Our Terms and Conditions are not available right now. Please contact us through our website.</p>
     @endif

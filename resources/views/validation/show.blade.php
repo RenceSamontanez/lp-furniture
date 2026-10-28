@@ -24,7 +24,7 @@
 
 <div class="vfy">
   <div class="vfy-wrap">
-    <h1 class="vfy-title">Verify your identity</h1>
+    <h1 class="vfy-title">Verify Your Identity</h1>
     <p class="vfy-sub">{{ $forService
         ? 'One-time check before you send a service request. It takes about a minute: add two photos and we review them.'
         : 'One-time check before your first order. It takes about a minute: add two photos and we review them.' }}</p>
@@ -102,7 +102,7 @@
         </form>
 
         <aside class="vfy-glass vfy-crit" aria-label="What we check">
-          <h2>What we check</h2>
+          <h2>What We Check</h2>
           <ul>
             @foreach($checks as $key => $label)
               <li><i>{!! $tick !!}</i><span><b>{{ $label }}</b>

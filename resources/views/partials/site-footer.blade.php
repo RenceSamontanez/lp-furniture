@@ -21,7 +21,7 @@
           <h2>Contact Us</h2>
           <div class="sf__rows">
             @if($f['phone'])
-              <a class="sf__row" href="{{ $f['phone']['href'] }}"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></i><span><b>{{ $f['phone']['display'] }}</b><small>Call or text</small></span></a>
+              <a class="sf__row" href="{{ $f['phone']['href'] }}"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></i><span><b>{{ $f['phone']['display'] }}</b><small>Call or Text</small></span></a>
             @endif
             @if($f['email'])
               <a class="sf__row" href="mailto:{{ $f['email'] }}"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7.5l8.5 6 8.5-6"/></svg></i><span><b>{{ $f['email'] }}</b><small>Email</small></span></a>

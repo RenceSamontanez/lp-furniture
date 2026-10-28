@@ -15,7 +15,7 @@
   $nm = array_filter($ids) ? \App\Support\DeliveryAddress::names($ids) : ['province' => '', 'city' => '', 'barangay' => ''];
   $places = [
     ['key' => 'province', 'label' => 'Province',              'field' => 'province_id', 'col' => 'c4'],
-    ['key' => 'city',     'label' => 'City or municipality',  'field' => 'city_id',     'col' => 'c4'],
+    ['key' => 'city',     'label' => 'City or Municipality',  'field' => 'city_id',     'col' => 'c4'],
     ['key' => 'barangay', 'label' => 'Barangay',              'field' => 'barangay_id', 'col' => 'c4'],
   ];
 @endphp
@@ -41,19 +41,19 @@
   @endforeach
 
   <div class="fld c6">
-    <label for="{{ $idp }}street">House no., street <span class="rq" aria-hidden="true">*</span></label>
+    <label for="{{ $idp }}street">House No., Street <span class="rq" aria-hidden="true">*</span></label>
     <input class="inp{{ $errors->has($p . 'street') ? ' bad' : '' }}" id="{{ $idp }}street" name="{{ $p }}street" maxlength="120" autocomplete="address-line1"
            placeholder="Blk 5 Lot 12, Sampaguita St." value="{{ $val('street') }}" aria-required="true">
     <p class="err{{ $errors->has($p . 'street') ? ' show' : '' }}">{{ $errors->first($p . 'street') }}</p>
   </div>
   <div class="fld c2">
-    <label for="{{ $idp }}zip">Postal code <span class="rq" aria-hidden="true">*</span></label>
+    <label for="{{ $idp }}zip">Postal Code <span class="rq" aria-hidden="true">*</span></label>
     <input class="inp mx-num{{ $errors->has($p . 'postal_code') ? ' bad' : '' }}" id="{{ $idp }}zip" name="{{ $p }}postal_code" inputmode="numeric" maxlength="4"
            placeholder="4217" autocomplete="postal-code" value="{{ $val('postal_code') }}" aria-required="true">
     <p class="err{{ $errors->has($p . 'postal_code') ? ' show' : '' }}">{{ $errors->first($p . 'postal_code') }}</p>
   </div>
   <div class="fld c4">
-    <label for="{{ $idp }}note">Landmark <span class="opt">optional</span></label>
+    <label for="{{ $idp }}note">Landmark <span class="opt">Optional</span></label>
     <input class="inp{{ $errors->has($p . 'landmark') ? ' bad' : '' }}" id="{{ $idp }}note" name="{{ $p }}landmark" maxlength="120"
            placeholder="Near the chapel, blue gate" value="{{ $val('landmark') }}">
     <p class="err{{ $errors->has($p . 'landmark') ? ' show' : '' }}">{{ $errors->first($p . 'landmark') }}</p>

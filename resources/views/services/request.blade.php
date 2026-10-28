@@ -91,7 +91,7 @@
           <legend class="co-section-title">How can we reach you?</legend>
           <div class="co-grid">
             <div class="co-field">
-              <label class="form-label" for="name">Your name</label>
+              <label class="form-label" for="name">Your Name</label>
               <input type="text" id="name" name="name" class="form-input" required maxlength="120" value="{{ old('name', $defaults['name']) }}" autocomplete="name"/>
             </div>
             <div class="co-field">

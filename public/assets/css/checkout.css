@@ -3187,3 +3187,23 @@
   .checkout-screen .ckn-product-card { padding: 18px; }
   .checkout-screen.ckn-active .checkout-screen-body { padding: 22px !important; }
 }
+
+/* tablet widths: the 380px summary left the steps about 160px at 800px, so below 900px the summary goes under the steps,
+   and up to 1100px it is a little narrower. minmax(0, 1fr) lets the step column shrink instead of overflowing. */
+@media (min-width: 769px) and (max-width: 900px) {
+  .checkout-layout { grid-template-columns: minmax(0, 1fr) !important; }
+  .checkout-layout > div:last-child { margin-top: 0; }
+  .checkout-summary { position: static; }
+}
+@media (min-width: 901px) and (max-width: 1100px) {
+  .checkout-layout { grid-template-columns: minmax(0, 1fr) 330px; gap: 20px; }
+}
+
+/* the step column is narrow next to the summary: the order-details fields stack instead of being squeezed into 2 or 3 columns */
+@media (min-width: 769px) and (max-width: 1100px) {
+  .checkout-screen .mx .g12 > .c6,
+  .checkout-screen .mx .g12 > .c4,
+  .checkout-screen .mx .g12 > .c8 { grid-column: 1 / -1; }
+  .checkout-screen .mx .g12 > .c3 { grid-column: span 6; }
+  .checkout-screen .mx .g12 > .c2 { grid-column: span 4; }
+}

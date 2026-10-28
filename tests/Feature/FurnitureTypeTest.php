@@ -130,8 +130,8 @@ class FurnitureTypeTest extends TestCase
             $this->assertContains($value, FurnitureTypes::LIST, 'every tile is a value the server accepts');
         }
         $this->assertSame(['Sofa', 'Bed', 'Table', 'Chair', 'Cabinet', 'Door', 'Shelf / Bookcase', 'Desk'], array_keys(FurnitureTypes::CHOICES));
-        $this->assertStringContainsString('<input type="radio" name="furniture_type" value="Other" data-label="Something else"', $html);
-        $this->assertStringContainsString('Something else', $html);
+        $this->assertStringContainsString('<input type="radio" name="furniture_type" value="Other" data-label="Something Else"', $html);
+        $this->assertStringContainsString('Something Else', $html);
         $this->assertStringContainsString('name="furniture_type_other"', $html);
         $this->assertStringNotContainsString('<select name="furniture_type"', $html);
     }

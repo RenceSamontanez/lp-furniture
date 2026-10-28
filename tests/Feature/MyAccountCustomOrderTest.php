@@ -54,7 +54,7 @@ class MyAccountCustomOrderTest extends TestCase
     {
         [$customer, $agreement] = $this->acceptedForBareCustomer();
         $this->asCustomer($customer)->get(route('custom.checkout', $agreement->id))->assertOk()
-            ->assertSee('Recipient name')->assertSee('name="addr_province_id"', false)->assertSee('Use this as my permanent delivery address?');
+            ->assertSee('Recipient Name')->assertSee('name="addr_province_id"', false)->assertSee('Use this as my permanent delivery address?');
     }
 
     public function test_an_agreement_order_without_phone_and_address_is_refused_on_the_server(): void
