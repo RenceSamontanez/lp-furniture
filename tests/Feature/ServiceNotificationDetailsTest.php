@@ -135,6 +135,7 @@ class ServiceNotificationDetailsTest extends TestCase
             $html = $this->as($this->owner)->get(route('notifications.show', $notif->id))->assertOk()
                 ->assertSee('What Happened')->assertSee('What Happens Next')->assertSee('How to Track This')->assertSee('Back')->getContent();
             $this->assertTrue((bool) $notif->fresh()->is_read, "$kind marked read");
+            $this->assertSame(1, substr_count($html, 'lp-btn--back'), "$kind: one Back, at the top");
             $this->assertStringContainsString('My service requests', $html, $kind);
 
             // read-only: nothing inside the details card can start or submit anything

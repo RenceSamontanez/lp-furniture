@@ -65,12 +65,11 @@
       </p>
     </section>
 
-    <div class="nd-actions">
-      <x-back-link :href="route('notifications.index')" label="notifications" />
-      @if(config('luma.notification_ask_button') && $d['ask_ref'])
+    @if(config('luma.notification_ask_button') && $d['ask_ref'])
+      <div class="nd-actions">
         <button type="button" class="lp-btn lp-btn--primary" id="nd-ask-luma" data-ref="{{ $d['ask_ref'] }}">Ask Luma About This</button>
-      @endif
-    </div>
+      </div>
+    @endif
   </article>
 </div>
 <script>

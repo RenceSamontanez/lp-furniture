@@ -193,7 +193,8 @@ class TitleCaseAndCheckoutStepsTest extends TestCase
         $user = $this->giveDeliveryDetails($this->makeUser());
         $html = $this->checkoutFor($user);
 
-        $this->assertSame(6, substr_count($html, 'checkout-screen-backrow'));
+        $this->assertSame(0, substr_count($html, 'checkout-screen-backrow'), 'no Back row above the step title any more');
+        $this->assertSame(6, substr_count($html, 'checkout-screen-prev"'), 'six Back buttons, one per screen, inside the footers');
         foreach (['Next: Delivery Option', 'Next: Payment Type', 'Next: Payment Method', 'Next: Instructions', 'Review Order', 'Place Order'] as $label) {
             $this->assertStringContainsString('>' . $label . '</button>', $html, $label);
         }

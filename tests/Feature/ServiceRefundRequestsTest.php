@@ -693,6 +693,7 @@ class ServiceRefundRequestsTest extends TestCase
             ->assertSee('Please check your GCash number and name.')->assertSee('Once a refund is sent, it cannot be recalled or sent again.')
             ->assertSee('Name or initials on your GCash account')->assertSee('As it appears when someone sends you money, for example Juan D.')
             ->assertSee('data-lp-gate="rq-confirm-modal"', false);
+        $this->assertSame(1, substr_count($form->getContent(), 'lp-btn--back'), 'one page-level Back (the top one), none beside the submit button');
         $this->assertStringNotContainsString('Work has already started', $form->getContent());
 
         $this->post(route('services.refund.review', $tid), $this->payload(['terms' => null]))->assertSessionHasErrors('terms');

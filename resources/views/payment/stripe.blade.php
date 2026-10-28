@@ -119,8 +119,6 @@
       </div>
     </div>
 
-    <x-back-link :href="route('orders.show', $order->id)" label="My Order" />
-
   </div>
 </div>
 @endsection

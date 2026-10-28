@@ -118,7 +118,6 @@
 
         <div class="rq-actions">
           <button type="submit" class="lp-btn lp-btn--primary">{{ $instant ? 'Review and cancel' : 'Review my request' }}</button>
-          <x-back-link :href="route('services.request')" label="my service requests" />
         </div>
       </form>
     </div>

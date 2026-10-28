@@ -102,7 +102,6 @@
              ROW 1 — REVIEW YOUR ORDER (new)
         ═══════════════════════════════════ --}}
         <div class="checkout-screen" id="screen-review" data-desktop-title="1. Review Your Order">
-          <div class="checkout-screen-backrow"><x-back-link type="button" named label="Cart" onclick="window.location.href='{{ route('cart.index') }}'" /></div>
           <div class="checkout-screen-header">
             <span class="checkout-screen-title">Review Your Order</span>
             <span class="checkout-screen-step-count">Step 1 of 5</span>
@@ -203,6 +202,7 @@
           </div>
 
           <div class="checkout-screen-footer">
+            <x-back-link named type="button" label="Cart" onclick="window.location.href='{{ route('cart.index') }}'"  class="checkout-screen-prev" />
             <button type="button" class="checkout-screen-continue" onclick="pushToScreen('review','delivery')">Next: Delivery Option</button>
           </div>
         </div>
@@ -211,7 +211,6 @@
              ROW 2 — DELIVERY
         ═══════════════════════════════════ --}}
         <div class="checkout-screen" id="screen-delivery" data-desktop-title="2. Delivery Option">
-          <div class="checkout-screen-backrow"><x-back-link type="button" named label="Review" onclick="pushBackToScreen('delivery', 'review')" /></div>
           <div class="checkout-screen-header">
             <span class="checkout-screen-title">Delivery Option</span>
             <span class="checkout-screen-step-count">Step 2 of 5</span>
@@ -273,6 +272,7 @@
           </div>
 
           <div class="checkout-screen-footer">
+            <x-back-link named type="button" label="Review" onclick="pushBackToScreen('delivery', 'review')"  class="checkout-screen-prev" />
             <button type="button" class="checkout-screen-continue" data-od-continue onclick="pushToScreen('delivery','paytype')">Next: Payment Type</button>
           </div>
         </div>
@@ -281,7 +281,6 @@
              ROW 3 — PAYMENT TYPE
         ═══════════════════════════════════ --}}
         <div class="checkout-screen" id="screen-paytype" data-desktop-title="3. Payment Type">
-          <div class="checkout-screen-backrow"><x-back-link type="button" named label="Delivery Option" onclick="pushBackToScreen('paytype','delivery')" /></div>
           <div class="checkout-screen-header">
             <span class="checkout-screen-title">Payment Type</span>
             <span class="checkout-screen-step-count">Step 3 of 5</span>
@@ -356,6 +355,7 @@
           </div>
 
           <div class="checkout-screen-footer">
+            <x-back-link named type="button" label="Delivery Option" onclick="pushBackToScreen('paytype','delivery')"  class="checkout-screen-prev" />
             <button type="button" class="checkout-screen-continue" onclick="pushToScreen('paytype','paymethod')">Next: Payment Method</button>
           </div>
         </div>
@@ -364,7 +364,6 @@
              ROW 4 — PAYMENT METHOD
         ═══════════════════════════════════ --}}
         <div class="checkout-screen" id="screen-paymethod" data-desktop-title="4. Payment Method">
-          <div class="checkout-screen-backrow"><x-back-link type="button" named label="Payment Type" onclick="pushBackToScreen('paymethod','paytype')" /></div>
           <div class="checkout-screen-header">
             <span class="checkout-screen-title">Payment Method</span>
             <span class="checkout-screen-step-count">Step 4 of 5</span>
@@ -432,6 +431,7 @@
           </div>
 
           <div class="checkout-screen-footer">
+            <x-back-link named type="button" label="Payment Type" onclick="pushBackToScreen('paymethod','paytype')"  class="checkout-screen-prev" />
             <button type="button" class="checkout-screen-continue" onclick="pushToScreen('paymethod','notes')">Next: Instructions</button>
           </div>
         </div>
@@ -440,7 +440,6 @@
              ROW 5 — SPECIAL INSTRUCTIONS
         ═══════════════════════════════════ --}}
         <div class="checkout-screen" id="screen-notes" data-desktop-title="5. Special Instructions">
-          <div class="checkout-screen-backrow"><x-back-link type="button" named label="Payment Method" onclick="pushBackToScreen('notes','paymethod')" /></div>
           <div class="checkout-screen-header">
             <span class="checkout-screen-title">Special Instructions</span>
             <span class="checkout-screen-step-count">Step 5 of 5</span>
@@ -481,13 +480,13 @@
           </div>
 
           <div class="checkout-screen-footer">
+            <x-back-link named type="button" label="Payment Method" onclick="pushBackToScreen('notes','paymethod')"  class="checkout-screen-prev" />
             <button type="button" class="checkout-screen-continue" onclick="goToReview()">Review Order</button>
           </div>
         </div>
 
         {{-- SCREEN 6: Final Review — mobile only --}}
         <div class="checkout-screen checkout-review-screen" id="screen-finalreview" data-desktop-title="">
-          <div class="checkout-screen-backrow"><x-back-link type="button" named label="Special Instructions" onclick="pushBackToScreen('finalreview','notes')" /></div>
           <div class="checkout-screen-header">
             <span class="checkout-screen-title">Confirm Your Order</span>
             <span class="checkout-screen-spacer"></span>
@@ -557,6 +556,7 @@
           </div>
 
           <div class="checkout-screen-footer">
+            <x-back-link named type="button" label="Special Instructions" onclick="pushBackToScreen('finalreview','notes')"  class="checkout-screen-prev" />
             <button type="submit" class="checkout-screen-continue checkout-place-order-btn">Place Order</button>
           </div>
         </div>

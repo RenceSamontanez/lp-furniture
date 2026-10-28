@@ -1745,12 +1745,6 @@
     flex-shrink: 0;
   }
 
-  .checkout-screen-backrow {
-    padding: 12px 16px 0;
-    background: var(--warm-white);
-    flex-shrink: 0;
-  }
-
   .checkout-screen-title {
     flex: 1;
     text-align: center;
@@ -1889,7 +1883,6 @@
   /* Desktop doesn't need the mobile "screen" chrome —
      no back arrow, no slide title bar, no separate
      continue button (the sidebar's Place Order handles it) */
-  .checkout-screen-backrow,
   .checkout-screen-header,
   .checkout-screen-footer {
     display: none !important;
@@ -3150,9 +3143,9 @@
 
   /* one bottom row: Back (ghost) first, Continue next, both at the left, same height */
   .checkout-screen .ckn-continue-wrap { margin-top: 0; }
-  .ckn-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 12px; }
+  .ckn-actions { display: flex; flex-wrap: nowrap; align-items: stretch; justify-content: flex-start; gap: 12px; }
   .ckn-actions .ckn-back-btn,
-  .ckn-actions .ckn-continue-btn { min-height: 46px; padding: 0 24px; display: inline-flex; align-items: center; justify-content: center; line-height: 1.25; box-sizing: border-box; }
+  .ckn-actions .ckn-continue-btn { min-height: 46px; padding: 10px 24px; display: inline-flex; align-items: center; justify-content: center; text-align: center; line-height: 1.25; box-sizing: border-box; }
 }
 
 /* "Needs Attention" on an incomplete step title (red text on a pale red chip, 7:1) */
@@ -3206,4 +3199,53 @@
   .checkout-screen .mx .g12 > .c8 { grid-column: 1 / -1; }
   .checkout-screen .mx .g12 > .c3 { grid-column: span 6; }
   .checkout-screen .mx .g12 > .c2 { grid-column: span 4; }
+}
+
+/* ══════════════════════════════════════════
+   BACK BUTTON PLACEMENT
+   Phone wizard: Back sits directly above the primary button inside the footer (stacked, 12px apart, same height).
+   The footer is a flex sibling of the scrolling body (not an overlay), so the content always ends above it, whatever its height.
+   Desktop/tablet: the shared .lp-btn--back rule gives Back an auto right margin (margin: 0 auto 24px 0) which, inside the
+   flex row, pushed Continue to the far right; the row resets it so Back and Continue sit side by side.
+══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .checkout-screen .checkout-screen-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 16px calc(14px + env(safe-area-inset-bottom, 0px));
+  }
+  .checkout-screen .checkout-screen-footer .checkout-screen-prev {
+    order: -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 0;
+    min-height: 48px;
+    padding: 0 14px;
+    border-radius: 12px;
+    box-sizing: border-box;
+  }
+  .checkout-screen .checkout-screen-footer .checkout-screen-continue {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 14px;
+    box-sizing: border-box;
+  }
+  /* soft keyboard open on an input screen: only the primary button stays, so the footer never eats the field's room */
+  .checkout-screen.ck-kb .checkout-screen-footer .checkout-screen-prev { display: none; }
+}
+
+@media (min-width: 769px) {
+  .checkout-screen .ckn-actions .ckn-back-btn,
+  .checkout-screen .ckn-actions .ckn-continue-btn {
+    display: inline-flex;
+    width: auto;
+    margin: 0;
+    flex: 0 1 auto;
+    min-width: 0;
+  }
 }

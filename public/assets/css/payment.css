@@ -819,3 +819,10 @@
   color: var(--gold);
   background: #fff;
 }
+
+/* GCash redirect screen: Back is exactly as wide and tall as "Continue to GCash", 12px below it (ghost style from the shared Back button) */
+.gcash-redirect-overlay .gcash-redirect-actions { align-items: stretch; gap: 12px; }
+.gcash-redirect-overlay .gcash-redirect-actions .btn-submit-gcash,
+.gcash-redirect-overlay .gcash-redirect-actions .lp-btn--back {
+  display: flex; align-items: center; justify-content: center; width: 100%; min-height: 56px; margin: 0; padding-top: 0; padding-bottom: 0; box-sizing: border-box; border-radius: 12px; text-align: center;
+}

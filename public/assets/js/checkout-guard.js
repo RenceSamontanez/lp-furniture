@@ -134,6 +134,31 @@
     form.addEventListener(ev, function () { setTimeout(refresh, 0); });
   });
   form.addEventListener('click', function (e) {
-    if (e.target.closest('.ckn-row-header, .review-edit-btn, .checkout-screen-backrow button')) { setReady(false); }
+    if (e.target.closest('.ckn-row-header, .review-edit-btn, .checkout-screen-footer .checkout-screen-prev')) { setReady(false); }
   });
+  // phone wizard: while a text field is focused the stacked Back is hidden (keyboard room); the screen also follows the visible viewport
+  (function () {
+    var narrow = window.matchMedia('(max-width: 768px)');
+    function screenOf(el) { return el && el.closest ? el.closest('.checkout-screen') : null; }
+    function isText(el) { return el && /^(TEXTAREA|SELECT)$/.test(el.tagName) || (el && el.tagName === 'INPUT' && !/^(radio|checkbox|button|submit)$/.test(el.type)); }
+    document.addEventListener('focusin', function (e) {
+      var sc = screenOf(e.target);
+      if (narrow.matches && sc && isText(e.target)) { sc.classList.add('ck-kb'); }
+    });
+    document.addEventListener('focusout', function (e) {
+      var sc = screenOf(e.target);
+      if (sc) { setTimeout(function () { if (!isText(document.activeElement) || screenOf(document.activeElement) !== sc) { sc.classList.remove('ck-kb'); } }, 60); }
+    });
+    if (window.visualViewport) {
+      var fit = function () {
+        document.querySelectorAll('.checkout-screen').forEach(function (sc) {
+          if (narrow.matches && sc.classList.contains('ck-kb')) { sc.style.bottom = 'auto'; sc.style.height = window.visualViewport.height + 'px'; }
+          else { sc.style.height = ''; sc.style.bottom = ''; }
+        });
+      };
+      window.visualViewport.addEventListener('resize', fit);
+      document.addEventListener('focusin', function () { setTimeout(fit, 250); });
+      document.addEventListener('focusout', function () { setTimeout(fit, 120); });
+    }
+  })();
 })();
