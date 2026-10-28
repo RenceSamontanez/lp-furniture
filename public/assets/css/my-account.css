@@ -9,7 +9,7 @@
 .mx {
   --ma-ink: #2A1A10; --ma-mute: #5E4A3B; --ma-line: rgba(90,55,30,.16); --ma-line2: rgba(90,55,30,.34);
   --ma-gold: #C9973F; --ma-gold-ink: #8F6420; --ma-peach: #A9552B; --ma-ok: #1F6B43; --ma-bad: #B3321F;
-  font-family: 'DM Sans', system-ui, sans-serif; color: var(--ma-ink); font-size: 15px; line-height: 1.45;
+  font-family: var(--font-body); color: var(--ma-ink); font-size: 15px; line-height: 1.45;
   font-variant-numeric: lining-nums; font-feature-settings: "lnum" 1;
 }
 .mx *, .mx *::before, .mx *::after { box-sizing: border-box; }
@@ -44,8 +44,8 @@
 .ma .side::before { content: ""; position: absolute; left: -60px; right: -60px; bottom: -110px; height: 320px; background: radial-gradient(ellipse at 40% 60%, rgba(224,169,74,.3), rgba(224,169,74,0) 70%); pointer-events: none; }
 .ma .side > * { position: relative; }
 .ma .who { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 6px 6px 18px; border-bottom: 1px solid rgba(255,232,205,.14); margin-bottom: 12px; }
-.ma .mono { display: grid; place-items: center; width: 76px; height: 76px; border-radius: 50%; background: linear-gradient(135deg, #F2C06B, #C9973F); color: #2A1A10; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 1.65rem; border: 3px solid rgba(255,244,225,.85); box-shadow: 0 10px 24px -10px rgba(0,0,0,.6); }
-.ma .who h2 { margin: 6px 0 0; font-family: 'Playfair Display', Georgia, serif; font-size: 1.3rem; font-weight: 600; color: #fff; overflow-wrap: anywhere; }
+.ma .mono { display: grid; place-items: center; width: 76px; height: 76px; border-radius: 50%; background: linear-gradient(135deg, #F2C06B, #C9973F); color: #2A1A10; font-family: var(--font-display); font-weight: 700; font-size: 1.65rem; border: 3px solid rgba(255,244,225,.85); box-shadow: 0 10px 24px -10px rgba(0,0,0,.6); }
+.ma .who h2 { margin: 6px 0 0; font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; color: #fff; overflow-wrap: anywhere; }
 .ma .who .em { font-size: .86rem; color: rgba(243,230,214,.82); overflow-wrap: anywhere; }
 .ma .stat { display: inline-flex; align-items: center; gap: 7px; margin-top: 6px; padding: 4px 12px; border-radius: 999px; font-size: .82rem; font-weight: 700; border: 1px solid; }
 .ma .stat::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
@@ -72,7 +72,7 @@
   background: radial-gradient(520px 320px at 100% 0%, rgba(238,154,114,.26), rgba(238,154,114,0) 70%), radial-gradient(560px 360px at 0% 100%, rgba(242,192,107,.3), rgba(242,192,107,0) 70%), radial-gradient(420px 260px at 55% 115%, rgba(227,162,78,.22), rgba(227,162,78,0) 70%); }
 .ma .pane > * { position: relative; }
 .ma .ph { flex: none; display: flex; align-items: flex-end; gap: 16px; padding: 22px 30px 18px; border-bottom: 1px solid var(--ma-line); }
-.ma .ph h1 { margin: 0; font-family: 'Playfair Display', Georgia, serif; font-size: clamp(1.5rem, 2vw, 1.95rem); line-height: 1.1; }
+.ma .ph h1 { margin: 0; font-family: var(--font-display); font-size: clamp(1.5rem, 2vw, 1.95rem); line-height: 1.1; }
 .ma .ph p { margin: 4px 0 0; color: var(--ma-mute); }
 .ma .ph .chip { margin-left: auto; }
 .ma .pb { flex: 1; min-height: 0; overflow: auto; padding: 22px 30px; }
@@ -104,7 +104,7 @@
 .mx .phone { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 8px; }
 .mx .pw { position: relative; }
 .mx .pw .inp { padding-right: 78px; }
-.mx .mx-num { font-family: 'DM Sans', system-ui, sans-serif; font-variant-numeric: lining-nums tabular-nums; font-feature-settings: "tnum" 1, "lnum" 1; }
+.mx .mx-num { font-family: var(--font-body); font-variant-numeric: lining-nums tabular-nums; font-feature-settings: "tnum" 1, "lnum" 1; }
 
 .ma .foot { flex: none; display: flex; align-items: center; gap: 14px; padding: 14px 30px; border-top: 1px solid rgba(201,151,63,.25); border-radius: 0 0 26px 26px; background: rgba(255,255,255,.45); }
 .ma .foot .msg { color: var(--ma-mute); font-size: .9rem; }
@@ -150,7 +150,7 @@
 /* The list is moved to <body> while open and positioned from the field, so no card, pane or scroll area can clip it. */
 .mx-cbl { position: fixed; z-index: 2000; max-height: 260px; overflow: auto; margin: 0; padding: 6px; list-style: none; border-radius: 16px;
   background: #FFF8EC; border: 1px solid rgba(201,151,63,.5); box-shadow: 0 24px 48px -16px rgba(60,30,10,.45);
-  font-family: 'DM Sans', system-ui, sans-serif; font-size: 15px; color: #2A1A10; font-variant-numeric: lining-nums; }
+  font-family: var(--font-body); font-size: 15px; color: #2A1A10; font-variant-numeric: lining-nums; }
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .mx-cbl { background: linear-gradient(150deg, rgba(255,255,255,.97), rgba(255,248,236,.94)); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); }
 }
@@ -244,7 +244,7 @@
 .ma .state { padding: 26px; border-radius: 20px; display: flex; flex-direction: column; gap: 10px; align-self: stretch; justify-content: center; }
 .ma .state .ico { width: 56px; height: 56px; border-radius: 16px; }
 .ma .state .ico svg { width: 28px; height: 28px; }
-.ma .state h3 { margin: 6px 0 0; font-family: 'Playfair Display', Georgia, serif; font-size: 1.5rem; font-weight: 600; }
+.ma .state h3 { margin: 6px 0 0; font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; }
 .ma .state p { margin: 0; color: var(--ma-mute); max-width: 46ch; }
 .ma .photos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
 .ma .photos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; border: 1px solid var(--ma-line2); }
@@ -264,7 +264,7 @@
 .ma .tile { padding: 20px; border-radius: 20px; display: flex; flex-direction: column; gap: 6px; min-height: 118px; }
 .ma .tile .k { display: flex; align-items: center; gap: 8px; color: var(--ma-mute); font-weight: 600; font-size: .9rem; }
 .ma .tile .k svg { width: 18px; height: 18px; color: var(--ma-peach); }
-.ma .tile .v { font-family: 'DM Sans', system-ui, sans-serif; font-size: 1.4rem; font-weight: 700; line-height: 1.2; letter-spacing: -.005em; font-variant-numeric: lining-nums; }
+.ma .tile .v { font-family: var(--font-body); font-size: 1.4rem; font-weight: 700; line-height: 1.2; letter-spacing: -.005em; font-variant-numeric: lining-nums; }
 .ma .tile .v.ok { color: var(--ma-ok); } .ma .tile .v.bad { color: var(--ma-bad); } .ma .tile .v.warn { color: #7A5516; }
 .ma .tile a { margin-top: auto; font-weight: 700; }
 

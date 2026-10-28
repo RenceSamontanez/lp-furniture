@@ -25,7 +25,7 @@
     <div class="rq-flow__summary">@include('services.refunds._summary')</div>
 
     <div class="si-card rq-main rq-flow__form">
-      <a href="{{ route('services.request') }}" class="lp-link rq-back">← Back to my service requests</a>
+      <x-back-link :href="route('services.request')" label="my service requests" />
       <h1 class="rq-title">{{ $instant ? 'Cancel this service request' : 'Request cancellation or refund' }}</h1>
       <p class="rq-lead">
         @if($instant)
@@ -118,7 +118,7 @@
 
         <div class="rq-actions">
           <button type="submit" class="lp-btn lp-btn--primary">{{ $instant ? 'Review and cancel' : 'Review my request' }}</button>
-          <a href="{{ route('services.request') }}" class="lp-btn lp-btn--secondary">Back to my service requests</a>
+          <x-back-link :href="route('services.request')" label="my service requests" />
         </div>
       </form>
     </div>

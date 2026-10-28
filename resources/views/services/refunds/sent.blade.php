@@ -47,7 +47,7 @@
 
       <div class="rq-actions">
         <a href="{{ route('services.refund.show', $req->reference) }}" class="lp-btn lp-btn--primary">See my request</a>
-        <a href="{{ route('services.request') }}" class="lp-btn lp-btn--secondary">Back to my service requests</a>
+        <x-back-link :href="route('services.request')" label="my service requests" />
       </div>
     </div>
 

@@ -4,7 +4,7 @@
 .cc-wrap { --cc-line: rgba(120, 90, 60, .22); --cc-mut: #5f4c3f; --cc-ok: #1d6b45; --cc-okbg: #dff1e6; --cc-gold: #7a5210; --cc-goldbg: #f6e7c6; --cc-bad: #a1262b; --cc-badbg: #fbdede; }
 .cc-wrap.cd-wrap { padding: 14px 24px 20px; min-height: 0; }
 .cc-page { display: flex; flex-direction: column; gap: 12px; }
-.cc-back { align-self: flex-start; min-height: 40px; padding: 8px 16px; }
+.cc-back { align-self: flex-start; }
 
 /* ── header ── */
 .cc-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 14px; flex-wrap: wrap; }

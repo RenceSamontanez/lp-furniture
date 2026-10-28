@@ -13,15 +13,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <title>@yield('title', 'LP Furniture')</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="{{ asset('assets/style.css') }}"/>
 <link rel="stylesheet" href="{{ $lpVer('assets/css/site-nav.css') }}"/>
 <link rel="stylesheet" href="{{ $lpVer('assets/css/site-footer.css') }}"/>
 <link rel="stylesheet" href="{{ $lpVer('assets/css/fonts.css') }}"/>
+<link rel="stylesheet" href="{{ $lpVer('assets/css/customer-type.css') }}"/>
 <link rel="stylesheet" href="{{ $lpVer('assets/css/luma.css') }}"/>
 @stack('styles')
 </head>
-<body data-nav="light">
+<body class="lp-type" data-nav="light">
 
 <!-- ═══ NAV (floating glass bar; see public/assets/css/site-nav.css) ═══ -->
 @php $navIs = fn (string ...$p) => request()->routeIs(...$p); @endphp

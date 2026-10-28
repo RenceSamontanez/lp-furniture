@@ -24,10 +24,7 @@
 
 <div class="cc-page">
 
-  <a href="{{ route('design.gallery', ['tab' => 'history']) }}" class="lp-btn lp-btn--secondary cc-back">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-    Back to My Designs
-  </a>
+  <x-back-link :href="route('design.gallery', ['tab' => 'history'])" label="My Designs" class="cc-back" />
 
   <div class="cc-head">
     <div class="cc-head-text">

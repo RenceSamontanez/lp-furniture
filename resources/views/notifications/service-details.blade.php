@@ -10,7 +10,7 @@
 @section('content')
 <div class="nd-wrap">
   <article class="nd-card" id="notif-detail" aria-labelledby="nd-title">
-    <a href="{{ route('notifications.index') }}" class="lp-link lp-link--tap nd-back">← Back to notifications</a>
+    <x-back-link :href="route('notifications.index')" label="notifications" />
 
     <p class="nd-eyebrow">Notification · {{ $d['when'] }}</p>
     <h1 class="nd-title" id="nd-title">{{ $d['headline'] }}</h1>
@@ -66,7 +66,7 @@
     </section>
 
     <div class="nd-actions">
-      <a href="{{ route('notifications.index') }}" class="lp-btn lp-btn--secondary">Back to notifications</a>
+      <x-back-link :href="route('notifications.index')" label="notifications" />
       @if(config('luma.notification_ask_button') && $d['ask_ref'])
         <button type="button" class="lp-btn lp-btn--primary" id="nd-ask-luma" data-ref="{{ $d['ask_ref'] }}">Ask Luma about this</button>
       @endif

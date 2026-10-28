@@ -1,0 +1,106 @@
+/* Customer typography (docs/fonts/typography-specimen-v2.html, "Customer" rows, Fonts = New).
+   Loaded by layouts/app and layouts/focus ONLY, after style.css; the admin layout never loads it. Everything is under .lp-type
+   (the customer <body> class), so no admin page can be touched by it.
+   Typography only: colours, layout, spacing and button colours stay as the pages define them.
+   Self-hosted faces are in fonts.css (Cormorant Garamond 600 scaled 122% there, Montserrat 400/500/600). */
+
+.lp-type {
+  --font-display: 'Cormorant Garamond', 'Cormorant Fallback', Georgia, 'Times New Roman', serif;
+  --font-body: 'Montserrat', 'Montserrat Fallback', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --lp-link: #7a4f0a; --lp-link-h: #4f3205;
+  font-family: var(--font-body); font-weight: 400; line-height: 1.65;
+  font-variant-numeric: lining-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Headings and brand: Cormorant Garamond SemiBold. Pages already pick the display font through var(--font-display); weight 600
+   is forced here (fonts.css maps 400-700 onto the one 600 file, so there is never a faux bold). */
+.lp-type h1, .lp-type h2, .lp-type h3, .lp-type h4 { font-weight: 600; text-wrap: balance; }
+.lp-type :is(h1, h2, h3, h4)[style*="font-family"] { font-weight: 600; }
+.lp-type em { font-weight: inherit; }
+
+/* Form controls follow the page font (browsers do not inherit it on their own). Sizes and colours stay as the page sets them. */
+.lp-type button, .lp-type input, .lp-type select, .lp-type textarea, .lp-type optgroup { font-family: var(--font-body); }
+.lp-type input::placeholder, .lp-type textarea::placeholder { font-family: var(--font-body); font-weight: 400; }
+.lp-type :is(label, legend) { font-weight: 500; }
+
+/* Numbers and prices: Montserrat Medium, lining + tabular figures (the peso sign comes from the latin-ext file). */
+.lp-type :is(
+  .num, .lp-num, .price, [class*="price"], [class*="-total"], [class*="total-"], .summary-total, .order-total-row,
+  [class*="amount"], [class*="qty"], [class*="quantity"], [class*="subtotal"], [class*="-count"], [class*="count-"], .cx-count, .cz-count,
+  [class*="order-card-date"], [class*="-date"], [class*="-time"], [class*="ref-num"], [class*="-num"], .mx-num,
+  .chat-card-price, .chat-product-price, .chat-ref-number, time
+):not(.lp-btn):not(button) {
+  font-family: var(--font-body); font-weight: 500; font-variant-numeric: lining-nums tabular-nums;
+}
+.lp-type :is(.cart-badge, .sn-icon .cart-badge) { font-weight: 600; font-variant-numeric: lining-nums tabular-nums; }
+
+/* Buttons: Montserrat SemiBold, 14px, sentence case. Colours and sizes (min-height, padding) are untouched. */
+.lp-type :is(
+  .lp-btn:not(.lp-btn--chip):not(.lp-btn--icon), .btn, .btn-gold, .btn-outline, .btn-auth-submit, .btn-auth-secondary, .btn-google,
+  .btn-place-order, .btn-pay-stripe, .btn-submit-gcash, .btn-order-now, .btn-add-cart, .btn-checkout, .btn-clear-cart,
+  .btn-view-details, .quick-view-btn, .review-edit-btn, .ckn-continue-btn, .co-btn, .stock-error-btn, .guide-btn,
+  .checkout-place-order-btn, .ai-action-btn, .cd-modal-ok-btn, .cd-history-btn, .sf__btn
+) {
+  font-family: var(--font-body); font-weight: 600; font-size: 14px; text-transform: none; letter-spacing: 0;
+}
+.lp-type .lp-btn--chip { font-family: var(--font-body); font-weight: 600; text-transform: none; letter-spacing: 0; }
+
+/* The one back button: ghost look = .lp-btn--secondary, about 45px tall (component: <x-back-link>). */
+.lp-type .lp-btn--back { min-height: 45px; padding: 10px 18px; gap: 8px; text-decoration: none; width: auto; max-width: 100%; justify-content: flex-start; }
+.lp-type .lp-btn--back .lp-btn-arrow-left { flex: none; font-size: 16px; line-height: 1; transition: transform .15s; }
+.lp-type .lp-btn--back:hover .lp-btn-arrow-left { transform: translateX(-2px); }
+@media (prefers-reduced-motion: reduce) { .lp-type .lp-btn--back:hover .lp-btn-arrow-left { transform: none; } }
+
+/* Navigation: logo in Cormorant, links Montserrat 500 (current page 600), 14px. */
+.lp-type nav.site-nav .sn-link, .lp-type nav.site-nav .sn-link:visited { font-family: var(--font-body); font-size: 14px; font-weight: 500; }
+.lp-type nav.site-nav .sn-link[aria-current="page"] { font-weight: 600; }
+.lp-type nav.site-nav .sn-brand, .lp-type .focus-logo { font-family: var(--font-display); font-weight: 600; }
+
+/* In-text links: Montserrat Medium, underlined (3px offset, 1px), #7a4f0a; hover #4f3205 with a 2px underline; focus ring visible.
+   Button-like links (.lp-btn) and card/nav links are not touched. */
+.lp-type :is(a.lp-link, .lp-link a, .terms-reminder a, .auth-link, .guide-link, .ckn-edit-in-cart, .pt-p a, .terms-body a):any-link {
+  font-family: var(--font-body); font-weight: 500; color: var(--lp-link);
+  text-decoration: underline; text-decoration-color: currentColor; text-decoration-thickness: 1px; text-underline-offset: 3px;
+}
+.lp-type :is(a.lp-link, .lp-link a, .terms-reminder a, .auth-link, .guide-link, .ckn-edit-in-cart, .pt-p a, .terms-body a):any-link:visited { color: var(--lp-link); }
+.lp-type :is(a.lp-link, .lp-link a, .terms-reminder a, .auth-link, .guide-link, .ckn-edit-in-cart, .pt-p a, .terms-body a):any-link:hover {
+  color: var(--lp-link-h); text-decoration-thickness: 2px;
+}
+.lp-type :is(a.lp-link, .lp-link a, .terms-reminder a, .auth-link, .guide-link, .ckn-edit-in-cart, .pt-p a, .terms-body a):any-link:focus-visible {
+  outline: 3px solid #1f4fbf; outline-offset: 2px; border-radius: 3px; box-shadow: none;
+}
+.lp-type button.lp-link { font-family: var(--font-body); font-weight: 500; color: var(--lp-link); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.lp-type button.lp-link:hover { color: var(--lp-link-h); text-decoration-thickness: 2px; }
+
+/* Footer links: no underline, underline on hover. The footer is a dark area, so it keeps its own light link colour
+   (the specimen's #5d4b37 is for light pages and would be unreadable on it). */
+.lp-type .sf a, .lp-type .sf a:visited { font-family: var(--font-body); font-weight: 400; text-decoration: none; }
+.lp-type .sf a:hover, .lp-type .sf a:focus-visible { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Badges, status labels, tabs, chips. */
+.lp-type :is(.status-pill, [class*="badge"], [class*="status-"], [class*="-tag"], [class*="pill"]):not(.cart-badge):not(.lp-btn) {
+  font-family: var(--font-body); font-weight: 600; letter-spacing: 0;
+}
+.lp-type :is([role="tab"], .tab, [class*="-tab"]):not(.lp-btn) { font-family: var(--font-body); font-weight: 500; }
+.lp-type :is([role="tab"][aria-selected="true"], .tab.on, .tab.active) { font-weight: 600; }
+
+/* Toasts, dialogs, empty states, helper and error text. */
+.lp-type .lp-toast { font-family: var(--font-body); font-weight: 500; line-height: 1.45; }
+.lp-type .lp-modal__title { font-family: var(--font-display); font-weight: 600; }
+.lp-type .empty-state h3 { font-family: var(--font-display); font-weight: 600; }
+.lp-type :is(.helper, .hint, small, .field-hint, .form-hint, .lp-notice__text) { font-family: var(--font-body); font-weight: 400; }
+.lp-type :is(.error, .field-error, .form-error, .invalid-feedback, .lp-error) { font-family: var(--font-body); font-weight: 500; }
+
+/* Strong text inside paragraphs: the 600 file (there is no 700). */
+.lp-type :is(b, strong) { font-weight: 600; }
+
+/* Order tracking page. order-tracking.css is shared with the admin order page and names its fonts directly, so it stays untouched;
+   the customer view re-points it here. */
+.lp-type .ot { font-family: var(--font-body); }
+.lp-type .ot :is(h1, h2, h3) { font-family: var(--font-display); }
+.lp-type .ot .hist h3 { font-family: var(--font-body); font-weight: 600; }
+
+/* Mobile order review "Edit" links were gold on white (2.56:1); they are text links, so they take the link colour (7:1). */
+.lp-type .review-edit-btn { color: var(--lp-link); font-weight: 500; font-size: 13px; }
+.lp-type .review-edit-btn:hover { color: var(--lp-link-h); }

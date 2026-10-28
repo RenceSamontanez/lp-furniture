@@ -27,7 +27,7 @@
 
       <div class="co-actions si-sent-actions">
         <a href="{{ route('services.request') }}" class="lp-btn lp-btn--secondary">View my requests</a>
-        <a href="{{ route('home') }}" class="lp-btn lp-btn--primary">Back to the shop</a>
+        <x-back-link :href="route('home')" label="the shop" />
       </div>
     </div>
   </div>

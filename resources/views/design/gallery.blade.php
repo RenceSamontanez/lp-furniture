@@ -20,10 +20,7 @@
 <div class="cd-wrap md-wrap">
 
   <div class="cd-top-bar">
-    <a href="{{ route('design.index') }}" class="cd-back-btn">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-      Back
-    </a>
+    <x-back-link :href="route('design.index')" label="Customize" />
   </div>
 
   <div class="md-head">

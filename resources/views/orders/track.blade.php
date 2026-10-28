@@ -33,7 +33,7 @@
   @endif
 
   <div class="top">
-    <a class="back" href="{{ route('orders.index') }}">&larr; My orders</a>
+    <x-back-link :href="route('orders.index')" label="My Orders" />
   </div>
 
   <section class="glass card" aria-labelledby="ot-h1">

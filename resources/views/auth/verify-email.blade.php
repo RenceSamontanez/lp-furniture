@@ -10,12 +10,7 @@
 <div class="auth-wrap">
   <div class="auth-card">
 
-    <a href="{{ route('home') }}" class="auth-back-btn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>
-      Home
-    </a>
+    <x-back-link :href="route('home')" label="Home" />
 
     <div class="verify-icon">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">

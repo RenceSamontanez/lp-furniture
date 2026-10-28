@@ -45,7 +45,7 @@
       <x-notice variant="waiting" title="We are reviewing your photos">
         Submitted {{ $validation->submitted_at ? $validation->submitted_at->format('M j, Y') : '' }}. Review usually completes within 24 hours, and we will notify you here.
         @if($forService) When your ID is approved, open Other Services again to send your service request.@endif
-        <x-slot:actions><a href="{{ route('home') }}" class="lp-btn lp-btn--secondary">Back to home</a></x-slot:actions>
+        <x-slot:actions><x-back-link :href="route('home')" label="home" /></x-slot:actions>
       </x-notice>
       <div class="vfy-glass vfy-mine">
         <h2>Your submission</h2>

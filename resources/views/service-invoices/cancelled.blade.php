@@ -52,7 +52,7 @@
       <h2 class="sx-h2">What happens next</h2>
       <p class="sx-next">If a corrected invoice is needed, we will send you a new one and let you know.</p>
 
-      <a href="{{ route('services.request') }}" class="lp-btn lp-btn--secondary sx-back">Back to my service request</a>
+      <x-back-link :href="route('services.request')" label="my service request" />
     </div>
 
     <div class="si-side">

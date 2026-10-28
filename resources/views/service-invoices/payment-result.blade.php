@@ -25,7 +25,7 @@
       <h1 class="sx-title">{{ $copy[0] }}</h1>
       <p class="sx-lead">{{ $copy[1] }}</p>
       <div class="ip-links">
-        <a href="{{ route('services.invoice', $invoice->id) }}" class="lp-btn lp-btn--primary">Back to my invoice</a>
+        <x-back-link :href="route('services.invoice', $invoice->id)" label="my invoice" />
         <a href="{{ route('services.request') }}" class="lp-btn lp-btn--secondary">My service requests</a>
       </div>
     </div>

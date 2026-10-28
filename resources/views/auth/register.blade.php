@@ -11,12 +11,7 @@
 <div class="auth-wrap">
   <div class="auth-card auth-card--wide">
 
-    <a href="{{ route('login') }}" class="auth-back-btn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>
-      Sign in
-    </a>
+    <x-back-link :href="route('login')" label="Sign in" />
 
     <div class="auth-card-header">
       <h1 class="auth-title">Create Account</h1>

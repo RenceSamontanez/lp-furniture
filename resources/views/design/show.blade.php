@@ -19,10 +19,7 @@
 <div class="cd-wrap cd-wrap--wide">
 
   <div class="cd-top-bar">
-    <a href="{{ route('design.index') }}" class="cd-back-btn">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-      Back to Customize
-    </a>
+    <x-back-link :href="route('design.index')" label="Customize" />
 
     <a href="{{ route('design.gallery', ['tab' => 'history']) }}" class="cd-history-btn">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>

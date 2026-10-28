@@ -124,7 +124,7 @@
         @if($r->invoice && $r->status !== 'refunded')
           <a href="{{ route('services.invoice', $r->invoice->id) }}" class="lp-btn lp-btn--secondary">See my invoice</a>
         @endif
-        <a href="{{ route('services.request') }}" class="lp-btn lp-btn--secondary">Back to my service requests</a>
+        <x-back-link :href="route('services.request')" label="my service requests" />
       </div>
     </div>
 

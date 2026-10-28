@@ -9,12 +9,7 @@
 @section('content')
 <div class="orders-wrap">
 
-<a href="{{ route('home') }}" class="orders-back-link">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M19 12H5M12 19l-7-7 7-7"/>
-    </svg>
-    Back to Home
-  </a>
+<x-back-link :href="route('home')" label="Home" />
 
   <div class="orders-header">
     <p class="gallery-eyebrow" style="margin-bottom:6px;">Track Your Purchases</p>

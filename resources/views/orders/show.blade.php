@@ -11,16 +11,8 @@
 <div class="orders-wrap orders-wrap--wide">
 
 <div style="display:flex;gap:16px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
-    <a href="{{ route('home') }}" class="orders-back-link">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>
-      Back to Home
-    </a>
-    <span style="color:var(--border);">|</span>
-    <a href="{{ route('orders.index') }}" class="orders-back-link">
-      View All Orders
-    </a>
+    <x-back-link :href="route('home')" label="Home" />
+    <x-back-link :href="route('orders.index')" label="My Orders" />
   </div>
 
   <div class="orders-header">

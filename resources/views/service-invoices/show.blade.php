@@ -107,7 +107,7 @@
         @if($ticket && $ticket->isOpen() && !$openRequest)
           <a href="{{ route('services.refund.create', $ticket->id) }}" class="lp-btn lp-btn--secondary">Request cancellation or refund</a>
         @endif
-        <a href="{{ route('services.request') }}" class="lp-btn lp-btn--secondary">Back to my service request</a>
+        <x-back-link :href="route('services.request')" label="my service request" />
       </div>
     </div>
 

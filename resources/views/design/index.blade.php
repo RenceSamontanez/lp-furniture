@@ -61,7 +61,7 @@
           <p class="cz-sub">Tell us what you want. We draw it, you send it to our team.</p>
         </div>
         <div class="cz-pills">
-          <a href="{{ route('home') }}" class="lp-btn lp-btn--secondary lp-btn--chip">&larr; Back</a>
+          <x-back-link :href="route('home')" label="Home" />
           @auth
             <a href="{{ route('design.gallery', ['tab' => 'history']) }}" class="lp-btn lp-btn--secondary lp-btn--chip cz-history">
               <svg class="lp-btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>

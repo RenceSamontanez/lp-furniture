@@ -11,12 +11,7 @@
   <div class="payment-container">
 
     {{-- Back --}}
-    <a href="{{ route('orders.show', $order->id) }}" class="payment-back-link">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>
-      Back to My Order
-    </a>
+    <x-back-link :href="route('orders.show', $order->id)" label="My Order" />
 
     {{-- Header --}}
     <div class="payment-header">
@@ -121,12 +116,7 @@
       </div>
     </div>
 
-    <a href="{{ route('orders.show', $order->id) }}" class="stripe-back-btn">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>
-      View My Order
-    </a>
+    <x-back-link :href="route('orders.show', $order->id)" label="My Order" />
 
   </div>
 
@@ -155,12 +145,7 @@
       </p>
       <div class="gcash-redirect-actions">
         <button type="button" class="btn-submit-gcash" id="gcash-continue-btn">Continue to GCash →</button>
-        <a href="{{ route('orders.show', $order->id) }}" class="payment-back-link">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
-          </svg>
-          Back to My Order
-        </a>
+        <x-back-link :href="route('orders.show', $order->id)" label="My Order" />
       </div>
     </div>
 

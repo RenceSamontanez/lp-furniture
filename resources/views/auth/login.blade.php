@@ -9,12 +9,7 @@
 <div class="auth-wrap">
   <div class="auth-card auth-card--wide">
 
-    <a href="{{ route('home') }}" class="auth-back-btn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>
-      Back to Home
-    </a>
+    <x-back-link :href="route('home')" label="Home" />
 
     <div class="auth-card-header">
       <p class="gallery-eyebrow" style="margin-bottom:8px;">Welcome Back</p>

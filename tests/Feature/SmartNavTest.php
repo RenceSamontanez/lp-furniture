@@ -52,7 +52,7 @@ class SmartNavTest extends TestCase
     public function test_focus_pages_keep_their_back_controls_and_forms(): void
     {
         $html = $this->get(route('login'))->assertOk()->getContent();
-        $this->assertStringContainsString('auth-back-btn', $html);
+        $this->assertStringContainsString('lp-btn--back', $html);
         $this->assertStringContainsString('Back to Home', $html);
         $this->assertStringContainsString('name="password"', $html);
     }
@@ -73,7 +73,7 @@ class SmartNavTest extends TestCase
             $this->assertStringContainsString('assets/js/site-nav.js', $html);
             $this->assertStringContainsString('class="lp-toasts lp-toasts--nav"', $html);
             $this->assertToastContainer($html);
-            $this->assertStringContainsString('<body data-nav="light">', $html);
+            $this->assertStringContainsString('<body class="lp-type" data-nav="light">', $html);
         }
     }
 
@@ -101,7 +101,7 @@ class SmartNavTest extends TestCase
                 'burger'   => substr_count($html, 'id="sn-burger"'),
                 'navjs'    => preg_match('#assets/js/site-nav\.js\?v=\d+"\s+defer#', $html),
                 'navcss'   => preg_match('#assets/css/site-nav\.css\?v=\d+#', $html),
-                'body'     => substr_count($html, '<body data-nav="light">'),
+                'body'     => substr_count($html, '<body class="lp-type" data-nav="light">'),
                 'dark'     => substr_count($html, 'data-nav="dark"'),
                 'overlays' => substr_count($html, 'lp-modal.js'),
             ];

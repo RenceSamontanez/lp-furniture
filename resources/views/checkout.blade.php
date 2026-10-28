@@ -102,10 +102,8 @@
              ROW 1 — REVIEW YOUR ORDER (new)
         ═══════════════════════════════════ --}}
         <div class="checkout-screen" id="screen-review" data-desktop-title="1. Review Your Order">
+          <div class="checkout-screen-backrow"><x-back-link type="button" label="cart" onclick="window.location.href='{{ route('cart.index') }}'" /></div>
           <div class="checkout-screen-header">
-            <button type="button" class="checkout-screen-back" onclick="window.location.href='{{ route('cart.index') }}'">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </button>
             <span class="checkout-screen-title">Review Your Order</span>
             <span class="checkout-screen-step-count">Step 1 of 5</span>
           </div>
@@ -210,10 +208,8 @@
              ROW 2 — DELIVERY
         ═══════════════════════════════════ --}}
         <div class="checkout-screen" id="screen-delivery" data-desktop-title="2. Delivery Option">
+          <div class="checkout-screen-backrow"><x-back-link type="button" label="review" onclick="pushBackToScreen('delivery', 'review')" /></div>
           <div class="checkout-screen-header">
-            <button type="button" class="checkout-screen-back" onclick="pushBackToScreen('delivery', 'review')">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </button>
             <span class="checkout-screen-title">Delivery Option</span>
             <span class="checkout-screen-step-count">Step 2 of 5</span>
           </div>
@@ -279,10 +275,8 @@
              ROW 3 — PAYMENT TYPE
         ═══════════════════════════════════ --}}
         <div class="checkout-screen" id="screen-paytype" data-desktop-title="3. Payment Type">
+          <div class="checkout-screen-backrow"><x-back-link type="button" label="delivery option" onclick="pushBackToScreen('paytype','delivery')" /></div>
           <div class="checkout-screen-header">
-            <button type="button" class="checkout-screen-back" onclick="pushBackToScreen('paytype','delivery')">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </button>
             <span class="checkout-screen-title">Payment Type</span>
             <span class="checkout-screen-step-count">Step 3 of 5</span>
           </div>
@@ -361,10 +355,8 @@
              ROW 4 — PAYMENT METHOD
         ═══════════════════════════════════ --}}
         <div class="checkout-screen" id="screen-paymethod" data-desktop-title="4. Payment Method">
+          <div class="checkout-screen-backrow"><x-back-link type="button" label="payment type" onclick="pushBackToScreen('paymethod','paytype')" /></div>
           <div class="checkout-screen-header">
-            <button type="button" class="checkout-screen-back" onclick="pushBackToScreen('paymethod','paytype')">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </button>
             <span class="checkout-screen-title">Payment Method</span>
             <span class="checkout-screen-step-count">Step 4 of 5</span>
           </div>
@@ -436,10 +428,8 @@
              ROW 5 — SPECIAL INSTRUCTIONS
         ═══════════════════════════════════ --}}
         <div class="checkout-screen" id="screen-notes" data-desktop-title="5. Special Instructions">
+          <div class="checkout-screen-backrow"><x-back-link type="button" label="payment method" onclick="pushBackToScreen('notes','paymethod')" /></div>
           <div class="checkout-screen-header">
-            <button type="button" class="checkout-screen-back" onclick="pushBackToScreen('notes','paymethod')">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </button>
             <span class="checkout-screen-title">Special Instructions</span>
             <span class="checkout-screen-step-count">Step 5 of 5</span>
           </div>
@@ -478,10 +468,8 @@
 
         {{-- SCREEN 6: Final Review — mobile only --}}
         <div class="checkout-screen checkout-review-screen" id="screen-finalreview" data-desktop-title="">
+          <div class="checkout-screen-backrow"><x-back-link type="button" label="special instructions" onclick="pushBackToScreen('finalreview','notes')" /></div>
           <div class="checkout-screen-header">
-            <button type="button" class="checkout-screen-back" onclick="pushBackToScreen('finalreview','notes')">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </button>
             <span class="checkout-screen-title">Confirm Your Order</span>
             <span class="checkout-screen-spacer"></span>
           </div>
@@ -650,7 +638,7 @@
             <span id="place-order-btn-label">Place Order</span>
           </button>
           <p class="ckn-charge-note">You won't be charged yet.</p>
-          <a href="{{ route('cart.index') }}" class="checkout-back-link">← Back to Cart</a>
+          <x-back-link :href="route('cart.index')" label="Cart" />
         </div>
       </div>
 

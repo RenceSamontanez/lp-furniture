@@ -5,7 +5,7 @@
 ═══════════════════════════════════════════════════════════════════════ */
 .cx-mod, .cx-badge {
   --cx-ink: #2B1A12; --cx-gold-2: #8A5A12; --cx-focus: #9A6410;
-  --cx-sans: 'Figtree', 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+  --cx-sans: var(--font-body);
 }
 
 .cx-badge {

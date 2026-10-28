@@ -20,8 +20,8 @@
   --lc-gold: #D9A441; --lc-focus: #B7791F; --lc-shadow: rgba(58, 34, 24, .22);
   --lc-link: #5C3D2E; --lc-link-hover: #2B1A12;
   --lc-field-bg: #FFFFFF; --lc-field-border: #8A7566; --lc-error: #8A3520;
-  --lc-font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
-  --lc-font-body: 'Figtree', 'DM Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --lc-font-display: var(--font-display);
+  --lc-font-body: var(--font-body);
   /* the shared .lp-btn colours, re-pointed to Luma's palette inside the widget */
   --btn-primary: #5A3524;        --btn-primary-text: #FBF3E6;
   --btn-primary-hover: #6F4330;  --btn-primary-hover-text: #FFFFFF;

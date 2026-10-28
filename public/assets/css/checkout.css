@@ -1745,17 +1745,9 @@
     flex-shrink: 0;
   }
 
-  .checkout-screen-back {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--cream);
-    border: none;
-    color: var(--brown-deep);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .checkout-screen-backrow {
+    padding: 12px 16px 0;
+    background: var(--warm-white);
     flex-shrink: 0;
   }
 
@@ -1897,6 +1889,7 @@
   /* Desktop doesn't need the mobile "screen" chrome —
      no back arrow, no slide title bar, no separate
      continue button (the sidebar's Place Order handles it) */
+  .checkout-screen-backrow,
   .checkout-screen-header,
   .checkout-screen-footer {
     display: none !important;

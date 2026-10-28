@@ -8,7 +8,7 @@
   --cx-gold: #C98F2B; --cx-gold-2: #8A5A12; --cx-focus: #9A6410;
   --cx-page: clamp(16px, 4vw, 64px);
   /* the bold sans the rest of the shop uses for figures (Figtree 700 is loaded by the layout), never Playfair */
-  --cx-sans: 'Figtree', 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+  --cx-sans: var(--font-body);
 }
 body:has(.cx-shell) { background: var(--cx-bg); }
 

@@ -29,10 +29,7 @@
 <div class="cd-wrap">
 
   <div class="cd-top-bar">
-    <a href="{{ route('design.show', $designRequest->id) }}" class="cd-back-btn">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-      Back to your design
-    </a>
+    <x-back-link :href="route('design.show', $designRequest->id)" label="your design" />
   </div>
 
   <div class="co-card">

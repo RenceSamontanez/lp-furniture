@@ -8,7 +8,7 @@
   --cz-ink: #2a1812; --cz-mut: #4f3d31; --cz-choc: #2a1812; --cz-gold: #c99a3e; --cz-gold-d: #7a5210; --cz-cream: #f6ead8;
   --cz-focus: #7a5210; --cz-line: rgba(255,255,255,.7);
   --w1: #d9b27a; --w2: #8a5a3a; --glow: rgba(217,178,122,.55);
-  position: relative; isolation: isolate; color: var(--cz-ink); font-family: 'DM Sans', system-ui, sans-serif;
+  position: relative; isolation: isolate; color: var(--cz-ink); font-family: var(--font-body);
   background:
     radial-gradient(900px 600px at 10% 6%, var(--w1), transparent 62%),
     radial-gradient(800px 700px at 94% 96%, var(--w2), transparent 60%),
@@ -36,7 +36,7 @@
 .cz-panel { border-radius: 28px; padding: 18px 24px; display: flex; flex-direction: column; min-height: 0; }
 .cz-ph { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex: none; flex-wrap: wrap; }
 .cz-ph-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.cz-panel h1 { font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: clamp(26px, 2.3vw, 34px); line-height: 1.08; margin: 0; color: var(--cz-ink); }
+.cz-panel h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 2.3vw, 34px); line-height: 1.08; margin: 0; color: var(--cz-ink); }
 .cz-sub { color: var(--cz-mut); font-size: 14.5px; margin: 0; }
 .cz-pills { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .cz-form { flex: 1; min-height: 0; display: flex; flex-direction: column; margin: 0; }
@@ -196,7 +196,7 @@ select.cz-field { padding-right: 8px; }
 .cz-ring svg { position: relative; z-index: 2; width: 50%; height: 50%; fill: none; stroke: #fff8ec; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 4px 8px rgba(0,0,0,.35)); }
 .cz-ring.pop { animation: cz-pop .5s; }
 @keyframes cz-pop { 40% { transform: scale(1.08) rotate(2deg); } }
-.cz-bt { font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: clamp(26px, 2.8vw, 40px); line-height: 1.12; overflow-wrap: anywhere; max-width: 100%; }
+.cz-bt { font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 2.8vw, 40px); line-height: 1.12; overflow-wrap: anywhere; max-width: 100%; }
 .cz-bt em { color: #e3b24f; }
 .cz-tags { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
 .cz-tag { border: 1px solid rgba(255,235,205,.4); background: rgba(255,255,255,.12); border-radius: 999px; padding: 6px 14px; font-weight: 600; font-size: 14px; overflow-wrap: anywhere; }
