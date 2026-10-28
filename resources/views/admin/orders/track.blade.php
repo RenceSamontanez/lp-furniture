@@ -287,7 +287,7 @@
               <button type="button" class="lp-btn lp-btn--danger lp-btn--chip" data-ot-open data-ot-kind="cancel"
                       data-ot-url="{{ route('admin.orders.stage.cancel', $order->id) }}"
                       data-ot-title="Cancel this order?"
-                      data-ot-question="The order will be closed and the customer is told it was cancelled. They will see the reason you write."
+                      data-ot-question="The order will be closed and the customer is told it was cancelled. They will see the reason you write. The ordered items are returned to stock."
                       data-ot-reason="1" data-ot-danger="1"
                       data-ot-check="Yes, cancel this order. Refunds are handled outside the system."
                       data-ot-yes="Cancel order">Cancel order</button>

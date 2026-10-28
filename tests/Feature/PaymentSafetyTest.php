@@ -190,7 +190,7 @@ class PaymentSafetyTest extends TestCase
     private function paidNotifications(Order $order): int
     {
         return Notification::where('user_id', $order->user_id)
-            ->where('title', 'Payment Successful')
+            ->whereIn('title', ['Payment Successful', 'Payment received and your order is confirmed.'])   // customized orders / catalog orders (one combined notice)
             ->count();
     }
 

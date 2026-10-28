@@ -8,7 +8,7 @@
         <tr><td>
           <p style="margin:0 0 4px;font-size:13px;color:#5f4d39;">LP Furniture · Order {{ $order->order_number }}</p>
           <h1 style="margin:0 0 14px;font-size:22px;line-height:1.3;color:#2a1d10;">
-            {{ $kind === 'update' ? 'An update on your order' : 'Your order is now ' . $stageLabel }}
+            {{ $kind === 'update' ? 'An update on your order' : ($kind === 'payment' ? \App\Support\OrderTracking::PAID_AND_CONFIRMED : 'Your order is now ' . $stageLabel) }}
           </h1>
           <p style="margin:0 0 16px;font-size:16px;line-height:1.5;">{{ $stageText }}</p>
 

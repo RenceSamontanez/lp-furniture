@@ -45,11 +45,8 @@ class ReleaseAbandonedOrders extends Command
         foreach ($abandoned as $order) {
             DB::transaction(function () use ($order) {
 
-                // Restore stock for every item on this order
-                foreach ($order->items as $item) {
-                    Product::where('id', $item->product_id)
-                        ->increment('stock_quantity', $item->quantity);
-                }
+                // Restore stock for every item on this order (once per order)
+                \App\Support\StockRestorer::restore($order);
 
                 $order->update(['order_status' => 'cancelled']);
                 app(\App\Support\OrderTracking::class)->systemCancel($order, 'Payment was not completed in time.');

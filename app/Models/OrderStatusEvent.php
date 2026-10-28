@@ -9,7 +9,7 @@ class OrderStatusEvent extends Model
 {
     public const UPDATED_AT = null;
 
-    public const TYPES = ['placed', 'payment', 'stage', 'update', 'correction', 'cancel'];
+    public const TYPES = ['placed', 'payment', 'stage', 'update', 'correction', 'cancel', 'stock'];
 
     protected $fillable = [
         'order_id', 'admin_user_id', 'type', 'title', 'from_status', 'to_status',

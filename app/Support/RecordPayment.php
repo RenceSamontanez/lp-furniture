@@ -144,7 +144,7 @@ class RecordPayment
             $confirmed = false;
             if (OrderTracking::handles($order)) {
                 // Catalog orders: one rule for every payment path (history entry, notification and email included).
-                $confirmed = app(OrderTracking::class)->autoConfirm($order, $admin);
+                $confirmed = app(OrderTracking::class)->autoConfirm($order, $admin, true);
             } elseif ($order->order_status === 'pending' && $paid + 0.001 >= (float) $payment->amount) {
                 $order->forceFill([
                     'order_status'      => 'confirmed',
@@ -170,7 +170,10 @@ class RecordPayment
                 }
             }
 
-            $this->notifyCustomer($order, $record, $total - $paid, $confirmed);
+            // A catalog order confirmed by this payment already got the one combined notice from autoConfirm.
+            if (!($confirmed && OrderTracking::handles($order))) {
+                $this->notifyCustomer($order, $record, $total - $paid, $confirmed);
+            }
 
             return $record;
         });

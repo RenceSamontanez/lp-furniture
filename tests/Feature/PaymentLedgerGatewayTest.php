@@ -163,7 +163,7 @@ class PaymentLedgerGatewayTest extends TestCase
         $this->assertSame('1000.00', (string) $order->amount_paid);
         $this->assertSame('confirmed', $order->order_status);
         $this->assertFalse((bool) $order->needs_review);
-        $this->assertSame(1, Notification::where('user_id', $user->id)->where('title', 'Payment Successful')->count());
+        $this->assertSame(1, Notification::where('user_id', $user->id)->whereIn('title', ['Payment Successful', 'Payment received and your order is confirmed.'])->count());
     }
 
     public function test_installment_downpayment_amount_is_the_ledger_amount(): void

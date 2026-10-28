@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Mail;
  *    Completed needs the full total in the ledger
  *  - corrections go back exactly one stage, from In production onward, with a reason, and the customer is never told
  *  - cancel is possible from Pending or Confirmed only, with a reason (refunds are handled outside the system, as before;
- *    stock is not touched, as before: only orders:release-abandoned restocks)
+ *    the ordered items go back into stock once, through StockRestorer, shared with orders:release-abandoned)
  *
  * Every write runs in a transaction under a row lock on the order. Emails go out after the commit and can fail
  * without undoing anything.
@@ -31,6 +31,8 @@ class OrderTracking
     public const MESSAGE_MAX = 300;
     public const REASON_MIN  = 8;
     public const REASON_MAX  = 300;
+
+    public const PAID_AND_CONFIRMED = 'Payment received and your order is confirmed.';
 
     public static function handles(Order $order): bool
     {
@@ -85,7 +87,7 @@ class OrderTracking
      * Pending -> Confirmed once the payment requirement is met. The caller holds the transaction and the row lock
      * (the ledger row is already written). Returns true when the order was confirmed by this call.
      */
-    public function autoConfirm(Order $order, ?User $admin = null): bool
+    public function autoConfirm(Order $order, ?User $admin = null, bool $afterPayment = false): bool
     {
         if (!self::handles($order) || $order->order_status !== 'pending' || !self::payment($order)['met']) {
             return false;
@@ -103,7 +105,8 @@ class OrderTracking
             'customer_notified' => true,
         ]);
 
-        $this->tell($order, $event, 'confirmed');
+        // When a payment is what confirmed the order the customer gets this one notice instead of two.
+        $this->tell($order, $event, 'confirmed', $afterPayment);
 
         return true;
     }
@@ -247,6 +250,16 @@ class OrderTracking
                 'note' => $reason, 'customer_notified' => true,
             ]);
 
+            // Catalog items go back into stock, in this same transaction and once only (the payment is not touched).
+            $units = StockRestorer::restore($order);
+            if ($units > 0) {
+                OrderStatusEvent::create([
+                    'order_id' => $order->id, 'admin_user_id' => $admin->id, 'type' => 'stock',
+                    'title' => 'Items returned to stock (' . $units . ' ' . ($units === 1 ? 'unit' : 'units') . ')',
+                    'from_status' => 'cancelled', 'to_status' => 'cancelled', 'customer_notified' => false,
+                ]);
+            }
+
             $this->tell($order, $event, 'cancelled');
 
             return $order;
@@ -305,7 +318,7 @@ class OrderTracking
     }
 
     /** In-site notification now (inside the transaction); the email after the commit, where a failure only logs. */
-    private function tell(Order $order, OrderStatusEvent $event, string $stage): void
+    private function tell(Order $order, OrderStatusEvent $event, string $stage, bool $withPayment = false): void
     {
         $pickup = OrderStages::isPickup($order);
         $label = OrderStages::label($stage, $pickup);
@@ -314,9 +327,10 @@ class OrderTracking
 
         Notification::create([
             'user_id' => $order->user_id,
-            'title'   => $event->type === 'update' ? 'Update on order ' . $order->order_number : 'Order ' . $order->order_number . ': ' . $label,
-            'message' => trim($text . ($extra ? ' ' . $extra : '')),
-            'type'    => 'order_update',
+            'title'   => $withPayment ? self::PAID_AND_CONFIRMED
+                : ($event->type === 'update' ? 'Update on order ' . $order->order_number : 'Order ' . $order->order_number . ': ' . $label),
+            'message' => trim(($withPayment ? 'Order ' . $order->order_number . ': ' : '') . $text . ($extra ? ' ' . $extra : '')),
+            'type'    => $withPayment ? 'payment_confirmed' : 'order_update',
             'url'     => route('orders.show', $order->id),
             'is_read' => false,
         ]);
@@ -324,7 +338,7 @@ class OrderTracking
         $orderId = $order->id;
         $photoPath = $event->photo_path;
         $note = $event->note;
-        $kind = $event->type;
+        $kind = $withPayment ? 'payment' : $event->type;
 
         DB::afterCommit(function () use ($orderId, $stage, $note, $photoPath, $kind) {
             try {

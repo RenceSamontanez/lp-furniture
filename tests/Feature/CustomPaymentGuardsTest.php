@@ -300,7 +300,8 @@ class CustomPaymentGuardsTest extends TestCase
 
         $this->stripeWebhook('evt_cat_1', $this->paidSession($order, 'cs_cat'))->assertOk();
 
-        $n = Notification::where('user_id', $user->id)->where('title', 'Payment Successful')->sole();
+        // catalog: one combined notice (payment received + order confirmed)
+        $n = Notification::where('user_id', $user->id)->where('title', 'Payment received and your order is confirmed.')->sole();
         $this->assertSame('payment_confirmed', $n->type);
         $this->assertStringNotContainsString('Expected ready date', $n->message);
         $this->assertNull($order->fresh()->expected_ready_date);

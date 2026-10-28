@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Stripe\ApiRequestor;
 use Stripe\HttpClient\ClientInterface;
@@ -274,10 +275,45 @@ class OrderTrackingTest extends TestCase
         $this->assertSame('confirmed', $order->order_status);
         $this->assertSame(1, OrderStatusEvent::where('order_id', $order->id)->where('title', 'Order confirmed automatically')->count());
         $this->assertSame(1, OrderStatusEvent::where('order_id', $order->id)->where('type', 'payment')->count());
-        $this->assertSame(1, Notification::where('user_id', $order->user_id)->where('type', 'order_update')->count());
-        Mail::assertSent(OrderStageMail::class, fn ($m) => $m->hasSubject('Your LP Furniture order ' . $order->order_number . ' is now Confirmed'));
+        // ONE notification and ONE email: the combined one (no separate "payment received" and "confirmed")
+        $this->assertSame(1, Notification::where('user_id', $order->user_id)->count());
+        $n = Notification::where('user_id', $order->user_id)->sole();
+        $this->assertSame('Payment received and your order is confirmed.', $n->title);
+        $this->assertStringContainsString($order->order_number, $n->message);
+        Mail::assertSent(OrderStageMail::class, 1);
+        Mail::assertSent(OrderStageMail::class, fn ($m) => $m->hasSubject('Your LP Furniture order ' . $order->order_number . ' is now Confirmed')
+            && str_contains($m->render(), 'Payment received and your order is confirmed.'));
 
         $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))->assertOk()->assertSee('Paid in full')->assertSee('Payment received');
+    }
+
+    public function test_a_partial_payment_keeps_the_normal_payment_notice_and_the_confirming_one_is_combined(): void
+    {
+        $admin = $this->admin();
+        $customer = $this->makeUser();
+        $order = $this->makeOrder($customer, ['total_amount' => 1000, 'delivery_option' => 'pickup']);
+        $this->makePayment($order, ['amount' => 500, 'payment_method' => 'onsite', 'payment_type' => 'installment']);
+        \App\Support\OrderTracking::recordPlaced($order);
+
+        app(RecordPayment::class)->record($order->id, $admin, '300', 'cash', now('Asia/Manila')->toDateString());
+
+        // below the down payment: the order stays pending, the customer gets the ordinary payment-received notice only
+        $this->assertSame('pending', $order->fresh()->order_status);
+        $this->assertSame(1, Notification::where('user_id', $customer->id)->count());
+        $this->assertNotSame('Payment received and your order is confirmed.', Notification::where('user_id', $customer->id)->sole()->title);
+        Mail::assertNothingSent();
+
+        // the payment that reaches the down payment confirms: one more notice, the combined one, and one email
+        app(RecordPayment::class)->record($order->id, $admin, '200', 'cash', now('Asia/Manila')->toDateString());
+        $this->assertSame('confirmed', $order->fresh()->order_status);
+        $this->assertSame(2, Notification::where('user_id', $customer->id)->count());
+        $this->assertSame(1, Notification::where('user_id', $customer->id)->where('title', 'Payment received and your order is confirmed.')->count());
+        Mail::assertSent(OrderStageMail::class, 1);
+
+        // a later payment on an already confirmed order is an ordinary payment notice again
+        app(RecordPayment::class)->record($order->id, $admin, '500', 'cash', now('Asia/Manila')->toDateString());
+        $this->assertSame(3, Notification::where('user_id', $customer->id)->count());
+        $this->assertSame(1, Notification::where('user_id', $customer->id)->where('title', 'Payment received and your order is confirmed.')->count());
     }
 
     public function test_down_payment_confirms_but_completing_needs_the_full_total(): void
@@ -325,6 +361,9 @@ class OrderTrackingTest extends TestCase
         $this->assertSame(1, OrderStatusEvent::where('order_id', $order->id)->where('title', 'Order confirmed automatically')->count());
         $this->assertSame(1, OrderStatusEvent::where('order_id', $order->id)->where('type', 'payment')->count());
         Mail::assertSent(OrderStageMail::class, 1);
+        // one notification for the whole payment-and-confirm (the order-placed one is not part of this flow)
+        $this->assertSame(1, Notification::where('user_id', $user->id)->where('title', 'Payment received and your order is confirmed.')->count());
+        $this->assertSame(0, Notification::where('user_id', $user->id)->where('title', \App\Support\NotificationTemplates::TEMPLATES['payment_confirmed']['title'])->count());
     }
 
     public function test_stripe_webhook_first_then_return_records_once_and_confirms_once(): void
@@ -501,18 +540,115 @@ class OrderTrackingTest extends TestCase
         Mail::assertSent(OrderStageMail::class, fn ($m) => $m->hasSubject('Your LP Furniture order ' . $order->order_number . ' is now Cancelled'));
     }
 
-    // Same as before: cancelling does not restock or touch the payment. Only orders:release-abandoned does that.
-    public function test_cancel_does_not_touch_stock_or_payment_as_before(): void
+    private function cancelPost(User $admin, Order $order, string $from)
+    {
+        return $this->actingAs($admin, 'admin')->post(route('admin.orders.stage.cancel', $order->id), ['current_status' => $from, 'confirmed' => '1', 'reason' => 'Customer asked us to stop']);
+    }
+
+    private function stockedOrder(string $status, bool $paid, int $qty = 2): array
+    {
+        $order = $this->order($status, 'delivery', $paid);
+        $product = Product::create(['product_name' => 'Chair', 'price' => 500, 'stock_quantity' => 4, 'product_status' => 'available']);
+        \App\Models\OrderItem::create(['order_id' => $order->id, 'product_id' => $product->id, 'product_name' => 'Chair', 'quantity' => $qty, 'unit_price' => 500, 'subtotal' => 500 * $qty]);
+
+        return [$order, $product];
+    }
+
+    public function test_cancel_returns_the_items_to_stock_once_and_leaves_the_payment_alone(): void
     {
         $admin = $this->admin();
-        $order = $this->order('pending', 'delivery', false);
-        $product = Product::create(['product_name' => 'Chair', 'price' => 1000, 'stock_quantity' => 4, 'product_status' => 'available']);
-        \App\Models\OrderItem::create(['order_id' => $order->id, 'product_id' => $product->id, 'product_name' => 'Chair', 'quantity' => 1, 'unit_price' => 1000, 'subtotal' => 1000]);
+        foreach (['pending' => false, 'confirmed' => true] as $from => $paid) {
+            [$order, $product] = $this->stockedOrder($from, $paid);
+            $before = PaymentRecord::where('order_id', $order->id)->count();
+            $payStatus = $order->payment->fresh()->payment_status;
 
-        $this->actingAs($admin, 'admin')->post(route('admin.orders.stage.cancel', $order->id), ['current_status' => 'pending', 'confirmed' => '1', 'reason' => 'Customer asked us to stop'])->assertSessionHas('success');
+            $this->cancelPost($admin, $order, $from)->assertSessionHas('success');
 
+            $this->assertSame(6, (int) $product->fresh()->stock_quantity, "cancelled from {$from}: 2 units back on top of 4");
+            $this->assertNotNull($order->fresh()->stock_restored_at);
+            $this->assertSame($payStatus, $order->payment->fresh()->payment_status, 'payment status untouched');
+            $this->assertSame($before, PaymentRecord::where('order_id', $order->id)->count(), 'ledger untouched');
+
+            $line = OrderStatusEvent::where('order_id', $order->id)->where('type', 'stock')->sole();
+            $this->assertSame('Items returned to stock (2 units)', $line->title);
+            $this->assertFalse($line->customer_notified, 'internal line: the customer page never shows it');
+        }
+
+        $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))->assertSee('Items returned to stock (2 units)');
+    }
+
+    public function test_the_cancel_dialog_says_the_items_are_returned_to_stock(): void
+    {
+        $order = $this->order('confirmed');
+        $this->actingAs($this->admin(), 'admin')->get(route('admin.orders.show', $order->id))->assertOk()->assertSee('The ordered items are returned to stock.');
+    }
+
+    public function test_a_second_cancel_adds_no_stock(): void
+    {
+        $admin = $this->admin();
+        [$order, $product] = $this->stockedOrder('pending', false);
+
+        $this->cancelPost($admin, $order, 'pending')->assertSessionHas('success');
+        $this->cancelPost($admin, $order, 'pending')->assertSessionHas('error');   // stale page / double click
+        $this->cancelPost($admin, $order, 'cancelled')->assertSessionHas('error'); // cancelling a cancelled order
+
+        $this->assertSame(6, (int) $product->fresh()->stock_quantity);
+        $this->assertSame(1, OrderStatusEvent::where('order_id', $order->id)->where('type', 'stock')->count());
+    }
+
+    public function test_the_restock_is_rolled_back_with_a_failed_cancel(): void
+    {
+        $admin = $this->admin();
+        [$order, $product] = $this->stockedOrder('pending', false);
+
+        // a cancel the server refuses (no reason) must not move any stock
+        $this->actingAs($admin, 'admin')->post(route('admin.orders.stage.cancel', $order->id), ['current_status' => 'pending', 'confirmed' => '1', 'reason' => ''])->assertSessionHas('error');
         $this->assertSame(4, (int) $product->fresh()->stock_quantity);
-        $this->assertSame('pending', $order->payment->fresh()->payment_status);
+        $this->assertNull($order->fresh()->stock_restored_at);
+    }
+
+    public function test_cancel_after_the_abandoned_sweep_and_the_sweep_after_cancel_never_restock_twice(): void
+    {
+        $admin = $this->admin();
+
+        // sweep first, then an admin tries to cancel the already cancelled order
+        $user = $this->makeUser();
+        $swept = $this->makeOrder($user, ['total_amount' => 1000]);
+        $this->makePayment($swept, ['payment_method' => 'stripe', 'amount' => 1000]);
+        $product = Product::create(['product_name' => 'Chair', 'price' => 500, 'stock_quantity' => 4, 'product_status' => 'available']);
+        \App\Models\OrderItem::create(['order_id' => $swept->id, 'product_id' => $product->id, 'product_name' => 'Chair', 'quantity' => 3, 'unit_price' => 500, 'subtotal' => 1500]);
+        DB::table('orders')->where('id', $swept->id)->update(['created_at' => now()->subDay()]);
+
+        $this->artisan('orders:release-abandoned', ['--minutes' => 60])->assertSuccessful();
+        $this->assertSame(7, (int) $product->fresh()->stock_quantity);
+        $this->assertNotNull($swept->fresh()->stock_restored_at);
+
+        $this->cancelPost($admin, $swept->fresh(), 'cancelled')->assertSessionHas('error');
+        $this->artisan('orders:release-abandoned', ['--minutes' => 60])->assertSuccessful();
+        $this->assertSame(7, (int) $product->fresh()->stock_quantity);
+
+        // cancel first, then force the sweep to look at the same order again: the marker stops a second restock
+        [$order, $p2] = $this->stockedOrder('pending', false);
+        $this->cancelPost($admin, $order, 'pending')->assertSessionHas('success');
+        $this->assertSame(6, (int) $p2->fresh()->stock_quantity);
+        DB::table('orders')->where('id', $order->id)->update(['order_status' => 'pending', 'created_at' => now()->subDay()]);
+        DB::table('payments')->where('order_id', $order->id)->update(['payment_method' => 'stripe', 'payment_status' => 'pending']);
+
+        $this->artisan('orders:release-abandoned', ['--minutes' => 60])->assertSuccessful();
+        $this->assertSame(6, (int) $p2->fresh()->stock_quantity, 'the marker prevents a second restock');
+    }
+
+    public function test_customized_orders_are_never_restocked_by_the_shared_logic(): void
+    {
+        [$order, $product] = $this->stockedOrder('pending', false);
+
+        Schema::disableForeignKeyConstraints();
+        DB::table('orders')->where('id', $order->id)->update(['design_agreement_id' => 999]);
+        Schema::enableForeignKeyConstraints();
+
+        DB::transaction(fn () => $this->assertSame(0, \App\Support\StockRestorer::restore($order->fresh())));
+        $this->assertSame(4, (int) $product->fresh()->stock_quantity);
+        $this->assertNull($order->fresh()->stock_restored_at);
     }
 
     public function test_the_abandoned_order_sweep_writes_a_history_line(): void

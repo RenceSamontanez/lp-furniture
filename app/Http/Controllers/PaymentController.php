@@ -384,8 +384,11 @@ class PaymentController extends Controller
                 return self::PAID_ORDER_ADVANCED;
             }
 
+            // Catalog orders: the payment is what confirms the order, so autoConfirm sends the one combined notice
+            // and the separate "payment confirmed" notification below is skipped.
+            $combined = false;
             if (OrderTracking::handles($order)) {
-                app(OrderTracking::class)->autoConfirm($order);
+                $combined = app(OrderTracking::class)->autoConfirm($order, null, true);
             } else {
                 $order->update(['order_status' => 'confirmed']);
             }
@@ -409,14 +412,16 @@ class PaymentController extends Controller
                 $customerMessage .= ' Expected ready date: about ' . $ready->format('M d, Y') . '.';
             }
 
-            Notification::create([
-                'user_id' => $order->user_id,
-                'title'   => \App\Support\NotificationTemplates::TEMPLATES['payment_confirmed']['title'],
-                'message' => $customerMessage,
-                'type'    => $order->design_agreement_id !== null ? 'custom_order' : 'payment_confirmed',
-                'url'     => route('orders.show', $order->id),
-                'is_read' => false,
-            ]);
+            if (!$combined) {
+                Notification::create([
+                    'user_id' => $order->user_id,
+                    'title'   => \App\Support\NotificationTemplates::TEMPLATES['payment_confirmed']['title'],
+                    'message' => $customerMessage,
+                    'type'    => $order->design_agreement_id !== null ? 'custom_order' : 'payment_confirmed',
+                    'url'     => route('orders.show', $order->id),
+                    'is_read' => false,
+                ]);
+            }
 
             return self::PAID_CONFIRMED;
         });
@@ -460,7 +465,7 @@ class PaymentController extends Controller
             OrderTracking::recordPaymentEvent($order, (float) $payment->amount, RecordPayment::METHOD_LABELS[$method] ?? $method);
 
             if ($order->order_status === 'pending' && $order->design_agreement_id === null && !$order->needs_review) {
-                app(OrderTracking::class)->autoConfirm($order);
+                app(OrderTracking::class)->autoConfirm($order, null, true);
             }
 
             return true;
