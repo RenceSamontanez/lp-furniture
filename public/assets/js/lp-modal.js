@@ -81,7 +81,7 @@
     if (!current || current.hasAttribute('data-busy')) { return; }
     current.hidden = true;
     document.body.classList.remove('lp-modal-open');
-    if (!document.getElementById('chatbot-window') || !document.getElementById('chatbot-window').classList.contains('open')) { document.body.classList.remove('modal-open'); }
+    document.body.classList.remove('modal-open');
     var back = opener; current = null; opener = null;
     if (back && back.focus && document.contains(back)) { back.focus(); }
   }

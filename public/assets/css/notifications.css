@@ -6,8 +6,6 @@
 body.notif-open .chatbot-fab,
 body.notif-open .chatbot-window,
 body.notif-open .chatbot-dismiss-zone { display: none !important; }
-/* the bar stays visible if the chat was open (an open chat normally hides it through body.modal-open) */
-body.notif-open:not(.lp-modal-open) nav.site-nav { opacity: 1; visibility: visible; pointer-events: auto; }
 
 /* ── three controls in ONE row ── */
 .nf-ctl { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }

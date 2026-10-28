@@ -176,8 +176,8 @@ const note = (ok, msg) => { console.log((ok ? 'ok    ' : 'CHECK ') + msg); if (!
   note(JSON.stringify(lumaAfter) === JSON.stringify(lumaBefore), 'same Luma conversation after the dropdown closed: ' + JSON.stringify(lumaAfter));
   await shot('08-luma-restored-1440');
 
-  // 9) chat OPEN while the dropdown opens: hidden, then reopens as it was. (The bar hides itself while the chat is open, so the bell is driven by script.)
-  await evalJs(`document.getElementById('sn-bell').click()`); await sleep(500);
+  // 9) chat OPEN while the dropdown opens: hidden, then reopens as it was. (The bar now stays visible while the chat is open, so the bell is clicked for real.)
+  await click('#sn-bell');
   note(await evalJs(`!document.getElementById('notif-dd').hidden`), 'dropdown opens even with the chat open');
   note(!(await vis('#chatbot-window')) && !(await vis('#chatbot-fab-btn')), 'open chat window is hidden while the dropdown is open');
   await shot('09-luma-hidden-chat-was-open-1440');

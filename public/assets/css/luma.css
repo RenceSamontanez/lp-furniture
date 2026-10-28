@@ -119,7 +119,7 @@
 
 /* ── panel ──────────────────────────────────────────────────────────────── */
 .chatbot-window {
-  right: 24px; bottom: 100px; width: 380px; height: min(620px, calc(100dvh - 124px));
+  right: 24px; bottom: 100px; width: 380px; height: min(620px, calc(100dvh - 192px)); /* top stays at least 92px down: below the floating navbar (it stays visible while the chat is open) */
   background: var(--lc-bg); color: var(--lc-text); font-family: var(--lc-font-body);
   border: 1px solid var(--lc-border); border-radius: 24px;
   box-shadow: 0 1px 0 rgba(255, 255, 255, .35) inset, 0 18px 40px -12px var(--lc-shadow), 0 4px 10px -4px var(--lc-shadow);
@@ -346,7 +346,7 @@ nav .nav-chatbot-reactivate { background: transparent; border: 0; font-family: v
 }
 @media (max-width: 480px) {
   .chatbot-fab { right: 16px; bottom: 16px; }
-  .chatbot-window { left: 8px; right: 8px; width: auto; bottom: 92px; height: min(580px, calc(100dvh - 108px)); border-radius: 22px; }
+  .chatbot-window { left: 8px; right: 8px; width: auto; bottom: 92px; height: min(580px, calc(100dvh - 184px)); border-radius: 22px; }
   .chatbot-window .chat-buttons,
   .chatbot-window .chat-contact,
   .chatbot-window .chat-ref { margin-left: 0; }

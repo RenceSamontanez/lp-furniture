@@ -6,7 +6,7 @@
      site-nav.js picks the variant from the closest [data-nav="light|dark"] under the bar (body default: light).
    - Scrolling down past 140px collapses it to just the logo in the top-left corner; scrolling up, hovering the
      logo, or focus inside brings it back (class "collapsed").
-   - Hidden while a modal or the Luma chat is open (body.modal-open).
+   - Hidden while a shared modal or the quick view is open (body.modal-open). The Luma chat does NOT hide it: her panel is capped to sit below the bar.
    Login / Register / hamburger are the shared .lp-btn glass variants (style.css).
 ══════════════════════════════════════════════════════════════════════════ */
 :root {
@@ -19,7 +19,7 @@
 }
 
 nav.site-nav {
-  position: sticky; top: 12px; z-index: 100;
+  position: sticky; top: 12px; z-index: 151; /* above the Luma panel (149) and launcher (150): an open hamburger menu is never covered by the chat */
   height: 64px; box-sizing: border-box;
   margin: 12px var(--sn-gut) 0;
   padding: 0 10px 0 var(--sn-pl);

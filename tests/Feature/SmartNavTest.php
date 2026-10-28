@@ -180,6 +180,44 @@ class SmartNavTest extends TestCase
         }
 
         $this->assertStringContainsString("classList.add('lp-modal-open', 'modal-open')", file_get_contents(public_path('assets/js/lp-modal.js')));
-        $this->assertStringContainsString("toggle('modal-open'", file_get_contents(public_path('assets/main.js')));
+        $main = file_get_contents(public_path('assets/main.js'));
+        $this->assertStringNotContainsString("toggle('modal-open'", $main, 'Luma opening must not hide the navbar');
+    }
+
+    /** The navbar stays visible while Luma's chat is open; the bell dropdown hides her and gives her back unchanged. */
+    public function test_navbar_stays_visible_while_the_luma_chat_is_open(): void
+    {
+        $main = file_get_contents(public_path('assets/main.js'));
+        $start = strpos($main, 'function lumaOnOpen');
+        $body = substr($main, $start, strpos($main, "\n}\n", $start) - $start);
+        $this->assertStringNotContainsString('modal-open', $body, 'lumaOnOpen no longer touches body.modal-open');
+
+        // a shared modal or the quick view closing always clears the class now (Luma no longer holds it)
+        foreach (['lp-modal.js', 'quickview.js'] as $f) {
+            $js = file_get_contents(public_path('assets/js/' . $f));
+            $this->assertStringNotContainsString("chatbot-window", $js, $f . ' no longer checks the chat before showing the bar');
+            $this->assertStringContainsString("classList.remove('modal-open')", $js);
+        }
+
+        // the floating panel always ends below the bar (bar bottom 76px + 16px) on desktop and phone
+        $css = file_get_contents(public_path('assets/css/luma.css'));
+        $this->assertStringContainsString('height: min(620px, calc(100dvh - 192px))', $css);
+        $this->assertStringContainsString('height: min(580px, calc(100dvh - 184px))', $css);
+    }
+
+    public function test_the_bell_dropdown_hides_luma_with_a_class_and_never_touches_her_chat_state(): void
+    {
+        $js = file_get_contents(public_path('assets/js/notifications.js'));
+        $this->assertStringContainsString("classList.add('notif-open')", $js);
+        $this->assertStringContainsString("classList.remove('notif-open')", $js);
+        $this->assertStringNotContainsString('chatbot-window', $js, 'her window and conversation are not touched');
+        $this->assertStringNotContainsString('toggleChatbot', $js);
+        $this->assertStringNotContainsString('closeChatbot', $js);
+
+        $css = file_get_contents(public_path('assets/css/notifications.css'));
+        foreach (['body.notif-open .chatbot-fab', 'body.notif-open .chatbot-window', 'body.notif-open .chatbot-dismiss-zone'] as $sel) {
+            $this->assertStringContainsString($sel, $css);
+        }
+        $this->assertStringContainsString('display: none !important', $css);
     }
 }

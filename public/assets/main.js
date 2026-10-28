@@ -156,7 +156,6 @@ function lumaOnOpen(open) {
   if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
   const fab = document.getElementById('chatbot-fab');
   if (fab) fab.classList.toggle('is-open', open);
-  document.body.classList.toggle('modal-open', open || document.body.classList.contains('lp-modal-open')); // hides the smart nav while the chat is open
   if (!open) return;
   lumaUpdatePill();
   const started = !!document.querySelector('#chat-body .chat-msg.user');

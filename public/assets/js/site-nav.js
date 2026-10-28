@@ -90,7 +90,7 @@
   nav.addEventListener('focusin', function () { if (collapsed) setCollapsed(false); });
 
   btn.addEventListener('click', function () { setOpen(!isOpen()); });
-  /* the Assistant link opens the chat, which hides the bar: close the mobile menu so it is not left open behind it */
+  /* the Assistant link opens the chat: close the mobile menu so it is not left open behind the panel */
   nav.addEventListener('click', function (e) { if (e.target.closest('.sn-reactivate') && isOpen()) setOpen(false); });
 
   document.addEventListener('keydown', function (e) {

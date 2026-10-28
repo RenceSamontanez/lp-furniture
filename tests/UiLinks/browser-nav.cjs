@@ -273,15 +273,15 @@ async function main() {
   await go('/cart', 700);
   await shot('cart-top-1440.jpg');
 
-  // ---------- 5. modals and Luma hide the bar ----------
+  // ---------- 5. modals hide the bar; the Luma chat does NOT (her panel sits below it) ----------
   await go('/catalog', 700);
   await evalJs(`document.getElementById('chatbot-fab-btn').click()`); await sleep(500);
   let m1 = await evalJs(`(() => { const c = getComputedStyle(document.getElementById('site-nav')); return { cls: document.body.classList.contains('modal-open'), opacity: c.opacity, vis: c.visibility, pe: c.pointerEvents }; })()`);
-  note(m1.cls && m1.opacity === '0' && m1.vis === 'hidden' && m1.pe === 'none', 'Luma chat open: nav hidden (opacity 0, visibility hidden, pointer-events none)');
-  await shot('luma-open-nav-hidden-1440.jpg');
+  note(!m1.cls && m1.opacity === '1' && m1.vis === 'visible' && m1.pe !== 'none', 'Luma chat open: nav stays visible and clickable');
+  await shot('luma-open-nav-visible-1440.jpg');
   await evalJs(`toggleChatbot()`); await sleep(500);
   m1 = await evalJs(`getComputedStyle(document.getElementById('site-nav')).visibility`);
-  note(m1 === 'visible', 'Luma closed: nav is back');
+  note(m1 === 'visible', 'Luma closed: nav still visible');
   // a shared .lp-modal
   await go('/orders', 600);
   const hasModal = await evalJs(`!!document.querySelector('[data-lp-modal-open]')`);

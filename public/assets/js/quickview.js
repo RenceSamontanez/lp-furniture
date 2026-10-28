@@ -50,8 +50,7 @@
     mod.classList.remove('on');
     mod.hidden = true;
     document.body.style.overflow = lastOverflow;
-    var chat = document.getElementById('chatbot-window');
-    if (!chat || !chat.classList.contains('open')) document.body.classList.remove('modal-open');
+    document.body.classList.remove('modal-open');
     if (opener && document.contains(opener)) opener.focus();
     opener = null;
   }
