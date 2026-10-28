@@ -9,15 +9,29 @@ use Illuminate\Support\Facades\Route;
 /** Everything the shared footer shows, resolved in one place: Contact Settings first, config/shop.php fallbacks second, nothing invented. */
 class FooterData
 {
-    public static function build(): array
+    /** Just the shop's phone, email and Facebook page (Contact Settings first, config/shop.php second). Luma reads these too. */
+    public static function contact(): array
     {
         $bs = BusinessSetting::current();
         $fb = config('shop.fallback');
 
         $phoneRaw = $bs->publicPhone() ?? self::clean($fb['phone'] ?? null);
-        $email    = $bs->publicEmail() ?? self::clean($fb['email'] ?? null);
 
-        $address   = self::clean($bs->shop_address) ?? self::clean($fb['shop_address'] ?? null);
+        return [
+            'phone'    => $phoneRaw ? self::phone($phoneRaw) : null,
+            'email'    => $bs->publicEmail() ?? self::clean($fb['email'] ?? null),
+            'facebook' => $bs->publicFacebookUrl() ?? self::clean($fb['facebook_url'] ?? null),
+            'address'  => self::clean($bs->shop_address) ?? self::clean($fb['shop_address'] ?? null),
+        ];
+    }
+
+    public static function build(): array
+    {
+        $bs = BusinessSetting::current();
+        $fb = config('shop.fallback');
+
+        $contact   = self::contact();
+        $address   = $contact['address'];
         $landmarks = self::clean($bs->shop_landmarks) ?? self::clean($fb['shop_landmarks'] ?? null);
         // Contact Settings win when both are set; otherwise the config pin (config/shop.php) is used.
         if (is_numeric($bs->map_lat) && is_numeric($bs->map_lng)) {
@@ -54,9 +68,9 @@ class FooterData
         }
 
         return [
-            'phone'    => $phoneRaw ? self::phone($phoneRaw) : null,
-            'email'    => $email,
-            'facebook' => $bs->publicFacebookUrl() ?? self::clean($fb['facebook_url'] ?? null),
+            'phone'    => $contact['phone'],
+            'email'    => $contact['email'],
+            'facebook' => $contact['facebook'],
             'tiktok'   => $bs->publicTiktokUrl() ?? self::clean($fb['tiktok_url'] ?? null),
             'visit'    => $visit,
             'payments' => $payments,

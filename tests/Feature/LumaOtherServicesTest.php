@@ -36,7 +36,7 @@ class LumaOtherServicesTest extends TestCase
     private function assertSafe(array $reply, string $label = ''): void
     {
         $this->assertDoesNotMatchRegularExpression('/\bapprov|guarantee|you will get a refund|will be refunded/i', $reply['response'], $label);
-        $this->assertMatchesRegularExpression("/(Luma is always here to help\.|Nandito lang si Luma para tumulong\.|Nandito lang po si Luma para tumulong\.|Nandito lang po ako kung may kailangan kayo\.|I am right here if you need anything\.|come back anytime\.|balik lang kayo anumang oras\.)$/", $reply['response'], $label);
+        $this->assertDoesNotMatchRegularExpression('/Luma is always here|Nandito lang si Luma|Nandito lang po si Luma|You.re welcome!/', $reply['response'], $label);   // no sign-off line any more
     }
 
     private function detected(): string
@@ -76,18 +76,18 @@ class LumaOtherServicesTest extends TestCase
         $this->assertContains('How to describe the problem', $b['suggestions']);
     }
 
-    public function test_a_miss_is_closed_with_the_fallback_line_never_you_are_welcome(): void
+    public function test_a_miss_explains_itself_and_never_says_you_are_welcome(): void
     {
         $en = $this->say('xyzzy plugh');
-        $this->assertStringEndsWith('Luma is always here to help.', $en['response']);
+        $this->assertStringStartsWith("Sorry, I can't answer that one.", $en['response']);
         $this->assertStringNotContainsString("You're welcome", $en['response']);
 
         $tl = $this->say('ewan ko po xyzzy');
-        $this->assertStringEndsWith('Nandito lang po si Luma para tumulong.', $tl['response']);
+        $this->assertStringStartsWith('Pasensya na po', $tl['response']);
         $this->assertStringNotContainsString('Walang anuman', $tl['response']);
 
         $ok = $this->say('other service');
-        $this->assertStringEndsWith("You're welcome! Luma is always here to help.", $ok['response']);
+        $this->assertStringNotContainsString('always here to help', $ok['response']);
     }
 
     public function test_the_fallback_chips_follow_the_words_and_always_offer_a_person(): void
@@ -112,21 +112,18 @@ class LumaOtherServicesTest extends TestCase
         }
     }
 
-    public function test_after_two_misses_in_a_row_she_offers_the_contact_card_and_a_person(): void
+    public function test_every_miss_gives_the_contact_rows_and_a_person_is_one_chip_away(): void
     {
         \App\Models\BusinessSetting::query()->first()->update(['phone' => '0917-222-3333', 'email' => 'owner@lp.test']);
 
-        $first = $this->say('qwerty one');
-        $this->assertNull($first['contact']);
-
-        $second = $this->say('asdfgh two');
-        $this->assertSame(['phone' => '0917-222-3333', 'email' => 'owner@lp.test'], $second['contact']);
-        $this->assertContains('Talk to a person', $second['suggestions']);
-        $this->assertStringContainsString('a real person', $second['response']);
-
-        $this->say('other service');           // a match resets the count
-        $again = $this->say('qwerty three');
-        $this->assertNull($again['contact']);
+        foreach (['qwerty one', 'asdfgh two'] as $text) {
+            $reply = $this->say($text);
+            $this->assertNull($reply['contact']);                               // the rows are in the text itself, no second card
+            $this->assertStringContainsString("Email: owner@lp.test
+Phone number: 0917 222 3333", $reply['response']);
+            $this->assertStringContainsString('<dt>Phone number</dt>', $reply['html']);
+            $this->assertContains('Talk to a person', $reply['suggestions']);
+        }
     }
 
     /* ───────────── Part 3: one word, and the one question ───────────── */
@@ -400,7 +397,7 @@ class LumaOtherServicesTest extends TestCase
         $this->assertStringContainsString('has not started', $notStarted['response']);
         $this->assertStringContainsString('ask to cancel', $notStarted['response']);
         $this->assertContains(route('services.refund.create', $ticket->id, false), $this->buttonUrls($notStarted), json_encode($notStarted['buttons']) . $notStarted['response']);
-        $this->assertNull($notStarted['contact']);
+        $this->assertNull($notStarted['contact']);   // no contact details set yet
 
         \App\Models\BusinessSetting::query()->first()->update(['phone' => '0917-222-3333', 'email' => 'owner@lp.test']);
         $this->startWork($ticket);
@@ -583,7 +580,7 @@ class LumaOtherServicesTest extends TestCase
         $this->assertStringContainsString('was sent. Our team will review it', $done['reply']['text']);
         $this->assertStringContainsString('within 7 days', $done['reply']['text']);
         $this->assertStringContainsString($req->reference, json_encode($done['reply']['buttons']));
-        $this->assertStringEndsWith('I am right here if you need anything.', $done['reply']['text']);
+        $this->assertStringNotContainsString('I am right here', $done['reply']['text']);
         $this->assertDoesNotMatchRegularExpression('/\bapprov|guarantee|you will get a refund/i', $done['reply']['text']);
 
         // double tap, and the same form sent again: nothing new is created
@@ -787,7 +784,7 @@ class LumaOtherServicesTest extends TestCase
         $this->assertNotSame('unmatched', $this->detected());
 
         $thanks = $this->say('salamat po');
-        $this->assertStringContainsString('Walang anuman po!', $thanks['response']);
+        $this->assertStringContainsString('Walang anuman po.', $thanks['response']);
         $this->assertStringContainsString('balik lang', $this->say('bye')['response'] . 'balik lang');
     }
 
@@ -860,7 +857,7 @@ class LumaOtherServicesTest extends TestCase
         }
     }
 
-    public function test_every_reply_in_these_scenarios_has_a_closing_line_and_a_person_is_one_chip_away(): void
+    public function test_a_person_is_one_chip_away_after_repeated_misses(): void
     {
         $this->say('zzz one');
         $r = $this->say('zzz two');

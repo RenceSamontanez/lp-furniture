@@ -54,6 +54,7 @@ final class TestDataCleaner
         'user_validations'             => null,
         'user_name_changes'            => null,
         'chatbot_logs'                 => null,
+        'luma_unanswered_questions'    => null,
         'unanswered_ideas'             => null,
         // framework tables
         'password_reset_tokens'        => null,

@@ -43,6 +43,7 @@ class ChatbotController extends Controller
 
         return response()->json([
             'response'    => $reply['text'],
+            'html'        => $reply['html'],
             'suggestions' => $reply['suggestions'],
             'products'    => $reply['products'],
             'cards'       => $reply['cards'],

@@ -1,7 +1,9 @@
 <?php
 namespace App\Models;
 
+use App\Support\Luma\UnansweredQuestions;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 
 class ChatbotIntent extends Model
 {
@@ -17,6 +19,16 @@ class ChatbotIntent extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    /** A question Luma could not answer leaves the admin list once an active intent with a matching keyword is added or edited. */
+    protected static function booted(): void
+    {
+        static::saved(function (self $intent) {
+            if ($intent->is_active && Schema::hasTable('luma_unanswered_questions')) {
+                UnansweredQuestions::markTaughtBy((string) $intent->keywords);
+            }
+        });
+    }
 
     // Get keywords as array
     // Usage: $intent->keywords_array

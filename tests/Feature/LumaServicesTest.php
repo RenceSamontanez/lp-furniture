@@ -18,6 +18,7 @@ class LumaServicesTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        config(['shop.fallback.phone' => null, 'shop.fallback.email' => null, 'shop.fallback.facebook_url' => null, 'shop.fallback.shop_address' => null]);   // Luma tests start with no contact details, as before
 
         $this->artisan('chatbot:sync-defaults')->assertSuccessful();
     }
@@ -41,7 +42,7 @@ class LumaServicesTest extends TestCase
 
             $this->assertStringContainsString('Labor-only prices vary by furniture type', $reply['response'], $question);
             $this->assertStringContainsString('by phone', $reply['response'], $question);
-            $this->assertSame(['phone' => '0917-222-3333', 'email' => 'owner@lp.test'], $reply['contact'], $question);
+            $this->assertSame(['phone' => '0917 222 3333', 'email' => 'owner@lp.test'], $reply['contact'], $question);
             $this->assertSame([['label' => 'Log in to send a request', 'url' => '/services/request']], $reply['buttons'], $question);
             $this->assertStringContainsString('You need an account to send a request', $reply['response'], $question);
             $this->assertDoesNotMatchRegularExpression('/(PHP|₱)\s?\d/', $reply['response'], $question);
@@ -103,7 +104,7 @@ class LumaServicesTest extends TestCase
         $this->assertStringContainsString('Magkakaiba po ang presyo ng labor', $reply['response']);
         $this->assertSame('Mag-log in para magpadala ng request', $reply['buttons'][0]['label']);
         $this->assertSame('/services/request', $reply['buttons'][0]['url']);
-        $this->assertSame('0917-222-3333', $reply['contact']['phone']);
+        $this->assertSame('0917 222 3333', $reply['contact']['phone']);
     }
 
     public function test_without_contact_settings_the_answer_says_through_our_website(): void
@@ -123,7 +124,7 @@ class LumaServicesTest extends TestCase
         $this->get('/services/request')->assertOk()
             ->assertDontSee('Coming soon')
             ->assertSee('Other services request')
-            ->assertSee('0917-222-3333');
+            ->assertSee('0917 222 3333');
     }
 
     public function test_the_widget_draws_a_business_card_and_clickable_buttons(): void

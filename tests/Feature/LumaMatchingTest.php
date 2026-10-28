@@ -20,6 +20,12 @@ class LumaMatchingTest extends TestCase
     use RefreshDatabase;
     use BuildsCustomOrderFixtures;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        config(['shop.fallback.phone' => null, 'shop.fallback.email' => null, 'shop.fallback.facebook_url' => null, 'shop.fallback.shop_address' => null]);   // Luma tests start with no contact details, as before
+    }
+
     private function intent(string $keywords, string $response = 'An answer.', array $over = []): ChatbotIntent
     {
         return ChatbotIntent::create(array_merge([
@@ -230,7 +236,7 @@ class LumaMatchingTest extends TestCase
         $json = $this->ask('xyzzy plugh');
 
         $this->assertCount(5, $json['suggestions']);   // four topics and "Talk to a person"
-        $this->assertStringContainsString('0917-123-4567', $json['response']);
+        $this->assertStringContainsString('0917 123 4567', $json['response']);
         $this->assertStringContainsString('shop@lp.test', $json['response']);
         $this->assertSame('unmatched', $this->loggedAs());
     }
@@ -241,7 +247,7 @@ class LumaMatchingTest extends TestCase
         $json = $this->ask('xyzzy plugh');
 
         $this->assertStringContainsString('through our website', $json['response']);
-        $this->assertStringNotContainsString('0917-000-0000', $json['response']);
+        $this->assertStringNotContainsString('0917 000 0000', $json['response']);
         $this->assertStringNotContainsString('contact@example.com', $json['response']);
     }
 
@@ -255,9 +261,10 @@ class LumaMatchingTest extends TestCase
         $this->assertSame(2, ChatbotLog::where('intent_detected', 'unmatched')->count());
         $this->assertSame('Do you make boats?', ChatbotLog::where('intent_detected', 'unmatched')->value('message'));
 
+        // the admin list groups the repeats of one normalised question (see LumaUnansweredQuestionsTest for the details)
         $page = $this->actingAs($this->makeUser('admin'), 'admin')->get(route('admin.chatbot.index'));
-        $page->assertOk()->assertSee('Questions Luma could not answer')->assertSee('do you make boats?')->assertSee('asked 2 times');
-        $page->assertDontSee('<li>hello', false);
+        $page->assertOk()->assertSee('Questions Luma could not answer')->assertSee('Do you make boats?')->assertSee('Asked 2 times');
+        $page->assertDontSee('Asked 1 time');   // 'hello' was answered, so it is not in the list
     }
 
     /* ───────────── what already worked still works ───────────── */

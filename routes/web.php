@@ -454,6 +454,7 @@ Route::post('/chatbot', [ChatbotIntentController::class, 'store'])->name('chatbo
 Route::get('/chatbot/{id}/edit', [ChatbotIntentController::class, 'edit'])->name('chatbot.edit');
 Route::put('/chatbot/{id}', [ChatbotIntentController::class, 'update'])->name('chatbot.update');
 Route::post('/chatbot/{id}/toggle', [ChatbotIntentController::class, 'toggleActive'])->name('chatbot.toggle');
+Route::post('/chatbot/unanswered/{id}/dismiss', [ChatbotIntentController::class, 'dismissUnanswered'])->name('chatbot.unanswered.dismiss');
 Route::delete('/chatbot/{id}', [ChatbotIntentController::class, 'destroy'])->name('chatbot.destroy');
 
 // Contact Settings (phone / email / Facebook shown to customers)

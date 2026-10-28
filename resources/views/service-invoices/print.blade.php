@@ -2,8 +2,8 @@
   $i = $invoice;
   $peso = fn ($n) => '₱' . number_format((float) $n, 2);
   $day = fn ($d) => $d?->timezone('Asia/Manila')->format('F j, Y');
-  $phone = \App\Support\Luma\Contact::phone();
-  $email = \App\Support\Luma\Contact::email();
+  $phone = \App\Support\Luma\Contact::settingsPhone();
+  $email = \App\Support\Luma\Contact::settingsEmail();
 @endphp
 <!DOCTYPE html>
 <html lang="en">

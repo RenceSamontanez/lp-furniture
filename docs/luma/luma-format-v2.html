@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en" data-fonts="new">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Luma answer format - prototype v2</title>
+<!--GFONTS--><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@400;500;600&family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"><!--/GFONTS-->
+<style>
+:root{--ink:#241a10;--muted:#5d4b37;--cream:#f7f2e9;--gold:#c8963c;--line:rgba(90,66,30,.18)}
+:root[data-fonts="new"]{--head:'Cormorant Garamond',Georgia,serif;--body:'Montserrat',system-ui,sans-serif;--num:'Montserrat',system-ui,sans-serif;--numw:500;--hs:1.22;--fs:14.5px;--lh:1.6}
+:root[data-fonts="current"]{--head:'Playfair Display',Georgia,serif;--body:'DM Sans',system-ui,sans-serif;--num:'DM Sans',system-ui,sans-serif;--numw:700;--hs:1;--fs:15px;--lh:1.5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--body);line-height:1.5;min-height:100vh}
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden}.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.6}
+.b1{width:460px;height:460px;background:#e9bf6e;top:-140px;left:-100px}.b2{width:520px;height:520px;background:#c7a387;right:-160px;top:200px}
+:focus-visible{outline:3px solid #7fb0ff;outline-offset:2px}
+.proto{margin:12px auto 0;max-width:1100px;padding:10px 14px;border:1.5px dashed rgba(90,66,30,.45);border-radius:14px;background:rgba(255,255,255,.75);display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font:500 13px/1.4 system-ui,sans-serif}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:#fff;margin-left:6px}
+.seg button{border:0;background:transparent;padding:6px 12px;cursor:pointer;font:500 13px system-ui,sans-serif}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.proto .note{flex-basis:100%;color:var(--muted);font-weight:400}
+.wrap{max-width:1100px;margin:0 auto;padding:18px 16px 60px}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px;align-items:start}
+.col>h2{font:600 17px/1.3 system-ui,sans-serif;margin:0 0 4px}.col>p{margin:0 0 12px;color:var(--muted);font:400 13.5px/1.5 system-ui,sans-serif}
+@media(max-width:860px){.cols{grid-template-columns:minmax(0,1fr)}}
+
+/* Luma panel */
+.luma{background:linear-gradient(180deg,#3b2516 0%,#2a1a0f 40%,#2f1d11 100%);color:#f6ede0;border-radius:24px;overflow:hidden;box-shadow:0 20px 50px rgba(40,25,5,.35);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;max-width:440px;margin:0 auto}
+.lh{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.av{width:48px;height:48px;border-radius:50%;border:2px solid #d9b46a;background:radial-gradient(circle at 40% 35%,#f3d9a8,#b98a4c);display:grid;place-items:center;font-family:var(--head);font-size:calc(24px*var(--hs)*.85);font-weight:700;color:#3b2516;flex:none}
+.who{flex:1;min-width:0}
+.who b{font-family:var(--head);font-size:calc(26px*var(--hs)*.85);font-weight:600;line-height:1;display:block}
+.who b i{color:#d9b46a;font-style:normal;font-size:.7em;margin-left:4px}
+.who span{font-size:12.5px;color:#d6c0a0}
+.pill{font-size:11.5px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:inline-flex;gap:6px;align-items:center;color:#e8dcc8;white-space:nowrap}
+.pill:before{content:"";width:9px;height:9px;border-radius:50%;background:#6fbf73}
+.x{background:none;border:0;color:#f6ede0;font-size:20px;cursor:pointer;width:36px;height:36px}
+.msgs{padding:16px;display:flex;flex-direction:column;gap:12px;max-height:none}
+.bot,.me{max-width:92%;padding:12px 15px;font-size:var(--fs);line-height:var(--lh);border-radius:18px}
+.bot{align-self:flex-start;background:#423126;border:1px solid rgba(255,255,255,.1);border-bottom-left-radius:6px}
+.me{align-self:flex-end;background:#7e5039;color:#fff;border-bottom-right-radius:6px}
+.bot p{margin:0}.bot p+p,.bot p+.kv,.bot .kv+p,.bot p+ul,.bot p+ol,.bot ul+p,.bot ol+p,.bot p+.price,.bot .price+p,.bot p+.acts,.bot .kv+.acts,.bot .price+.acts{margin-top:10px}
+.bot a{color:#f4d596;text-underline-offset:3px;font-weight:500}
+.bot a:hover{color:#fff}
+.bot b,.bot strong{font-weight:600}
+.num{font-family:var(--num);font-weight:var(--numw);font-variant-numeric:lining-nums tabular-nums}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 14px;margin:0}
+.kv dt{color:#d6c0a0;font-size:.86em;padding-top:2px}
+.kv dd{margin:0;overflow-wrap:anywhere}
+.bot ul,.bot ol{margin:0;padding-left:20px;display:grid;gap:6px}
+.bot ol{padding-left:22px}
+.price{display:grid;gap:0;border-top:1px solid rgba(255,255,255,.12)}
+.price div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.12)}
+.price span:last-child{white-space:nowrap}
+.small{font-size:.86em;color:#cdb594}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;min-height:36px;padding:6px 14px;border-radius:999px;border:1px solid rgba(244,213,150,.5);color:#f4d596;text-decoration:none;font-size:.9em;font-weight:500}
+.bot .chip:hover{background:rgba(244,213,150,.12);color:#fff}
+.inputrow{display:flex;gap:10px;padding:12px 14px;border-top:1px solid rgba(255,255,255,.08)}
+.inputrow input{flex:1;min-width:0;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:#f6ede0;border-radius:14px;padding:11px 14px;font:inherit;font-size:14px}
+.inputrow input::placeholder{color:#d0b998;opacity:1}
+.send{border:0;border-radius:12px;background:var(--gold);color:var(--ink);font:600 14px var(--body);padding:0 18px;min-height:44px;cursor:pointer}
+.tag{display:inline-block;margin:0 0 8px;font:500 11.5px system-ui,sans-serif;color:#5d4b37;background:rgba(255,255,255,.7);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+
+.cards{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;overflow:hidden}
+.card .ph{height:84px;display:grid;place-items:center;background:linear-gradient(160deg,#E8D3AE,#C99B63);position:relative}
+.card .ph svg{width:46px;height:46px;color:#4A2C1D}
+.card .pr{position:absolute;left:6px;bottom:6px;font-size:.8em;padding:2px 9px;border-radius:999px;color:#2B1A12;background:rgba(255,250,240,.85)}
+.card .t{padding:8px 10px 10px;font-size:.9em;font-weight:600;line-height:1.3}
+.card .t small{display:block;font-weight:400;color:#cdb594;margin-top:2px;font-size:.85em}
+.bot p+.cards,.bot .cards+p,.bot .cards+.acts{margin-top:10px}
+.hint{font-family:var(--body)}
+.kv dt.lbl{color:#d6c0a0}
+.saved-no .only-saved{display:none}
+.saved-yes .only-unsaved{display:none}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div></div>
+<div class="proto" role="group" aria-label="Prototype controls">
+  <b>Prototype controls (not part of the real page)</b>
+  <span>Fonts <span class="seg" id="sF"><button data-v="new" aria-pressed="true">New</button><button data-v="current" aria-pressed="false">Current</button></span></span>
+  <span>Question saved? <span class="seg" id="sS"><button data-v="yes" aria-pressed="true">Saved</button><button data-v="no" aria-pressed="false">Not saved (junk)</button></span></span>
+  <span class="note">Left: how Luma answers now. Right: the proposed format. Prices, pictures, phone, email and Facebook below are sample values (the product pictures are placeholders, the real ones are your catalog photos); the real ones come from Contact Settings, the same place the footer reads. The avatar here is a placeholder.</span>
+</div>
+<main class="wrap">
+ <div class="cols">
+  <section class="col" aria-label="Luma now">
+   <h2>Now</h2><p>One block of text. The contact details run together and are hard to pick out.</p>
+   <div class="luma">
+    <div class="msgs">
+     <div class="me">contact information</div>
+     <div class="bot"><p>You can reach our team directly: Phone 0900-000-0000, Email shop@example.com, Facebook https://facebook.com/example &mdash; located in San Juan, Batangas, Philippines, open Mon to Sat 8AM to 5PM. Or feel free to keep chatting with me &mdash; I am here to help with most questions!</p><p>You're welcome! Luma is always here to help.</p></div>
+    </div>
+   </div>
+  </section>
+  <section class="col" aria-label="Luma proposed">
+   <h2>Proposed (v2, with your changes)</h2><p>Contact, ordering and delivery as you approved. Prices keep the picture cards. The unknown-question reply now explains why and gives the contact details.</p>
+   <div class="luma">
+    <div class="lh">
+      <div class="av" aria-hidden="true">L</div>
+      <div class="who"><b>Luma<i>&#10022;</i></b><span>Shop Assistant</span></div>
+      <span class="pill">Available 24/7</span>
+      <button class="x" type="button" aria-label="Close chat">&times;</button>
+    </div>
+    <div class="msgs saved-yes" id="msgs">
+     <div class="bot"><p>Hi, I'm Luma, LP Furniture's shop assistant.</p><p>Ask me about our furniture, prices, custom designs, delivery or your order. Kumusta po! Pwede rin po kayong magtanong sa Tagalog.</p></div>
+
+     <div class="me">contact information</div>
+     <div class="bot">
+       <p>You can reach our team here:</p>
+       <dl class="kv">
+        <dt>Email</dt><dd><a href="mailto:shop@example.com">shop@example.com</a></dd>
+        <dt>Phone</dt><dd><a class="num" href="tel:+630900000000">0900 000 0000</a></dd>
+        <dt>Facebook</dt><dd><a href="#" onclick="return false">LP Furniture on Facebook</a></dd>
+        <dt>Shop</dt><dd>San Juan, Batangas</dd>
+        <dt>Open</dt><dd><span class="num">Mon to Sat, 8:00 AM to 5:00 PM</span></dd>
+       </dl>
+       <p>Or keep chatting with me. I can help with most questions.</p>
+     </div>
+
+     <div class="me">how much is a dining table</div>
+     <div class="bot">
+       <p>Here are some of our dining tables. The price is on each card.</p>
+       <div class="cards">
+        <div class="card"><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18M5 9v10M19 9v10M8 9v4M16 9v4"/></svg><span class="pr num">&#8369;42,500</span></div><div class="t">Narra Dining Table<small>Ready-made design</small></div></div>
+        <div class="card"><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18M5 9v10M19 9v10M8 9v4M16 9v4"/></svg><span class="pr num">&#8369;31,000</span></div><div class="t">Mahogany Dining Table<small>Ready-made design</small></div></div>
+       </div>
+       <div class="acts"><a class="chip" href="#" onclick="return false">View more products</a><a class="chip" href="#" onclick="return false">Start a custom design</a></div>
+     </div>
+
+     <div class="me">how do i order</div>
+     <div class="bot">
+       <p>Here is how ordering works:</p>
+       <ol>
+        <li><b>Pick a piece</b> from the catalog, or start a custom design.</li>
+        <li><b>Choose delivery or pickup</b> and check your details.</li>
+        <li><b>Pay</b> with GCash or card.</li>
+        <li><b>Follow your order.</b> You get a notification at every step.</li>
+       </ol>
+     </div>
+
+     <div class="me">do you deliver?</div>
+     <div class="bot">
+       <p>Yes. You can choose either option at checkout:</p>
+       <ul>
+        <li><b>Door-to-door delivery.</b> The delivery fee is shown before you pay.</li>
+        <li><b>Pickup</b> at our shop in San Juan, Batangas.</li>
+       </ul>
+       <p class="small">You will be notified when your furniture is ready and when it is on its way.</p>
+     </div>
+
+     <div class="me">do you sell pianos?</div>
+     <div class="bot">
+       <p>Sorry, I can't answer that one. I haven't been trained on that topic yet, and I don't want to guess and give you wrong information.<span class="only-saved"> I saved your question so our team can teach me the answer.</span></p>
+       <p>If you need help sooner, you can reach the business directly:</p>
+       <dl class="kv">
+        <dt>Email</dt><dd><a href="mailto:shop@example.com">shop@example.com</a></dd>
+        <dt>Phone number</dt><dd><a class="num" href="tel:+630900000000">0900 000 0000</a></dd>
+        <dt>Facebook account</dt><dd><a href="#" onclick="return false">LP Furniture on Facebook</a></dd>
+       </dl>
+       <p>You can also ask me about our products, prices, ordering, delivery or payment.</p>
+     </div>
+    </div>
+    <form class="inputrow" onsubmit="return false"><input type="text" placeholder="Ask Luma anything" aria-label="Message Luma"><button class="send" type="submit">Send</button></form>
+   </div>
+  </section>
+ </div>
+</main>
+<script>
+(function(){var root=document.documentElement,el=document.getElementById('sF');
+el.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;root.setAttribute('data-fonts',b.getAttribute('data-v'));
+Array.prototype.forEach.call(el.querySelectorAll('button'),function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});});})();
+
+(function(){var m=document.getElementById('msgs'),el=document.getElementById('sS');
+el.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;m.className='msgs saved-'+b.getAttribute('data-v');
+Array.prototype.forEach.call(el.querySelectorAll('button'),function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});});})();
+</script>
+</body>
+</html>

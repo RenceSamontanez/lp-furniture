@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="{{ asset('assets/style.css') }}"/>
 <link rel="stylesheet" href="{{ $lpVer('assets/css/site-nav.css') }}"/>
 <link rel="stylesheet" href="{{ $lpVer('assets/css/site-footer.css') }}"/>
+<link rel="stylesheet" href="{{ $lpVer('assets/css/fonts.css') }}"/>
 <link rel="stylesheet" href="{{ $lpVer('assets/css/luma.css') }}"/>
 @stack('styles')
 </head>

@@ -132,7 +132,7 @@ final class Luma
 
         // 4. thanks, goodbye, follow-ups
         if (Context::isThanks($message) || Context::isGoodbye($message)) {
-            return self::build($lang === Language::TL ? 'Walang anuman po!' : "You're welcome!", [], 'goodbye', $lang, closing: 'goodbye');
+            return self::build($lang === Language::TL ? 'Walang anuman po.' : "You're welcome.", [], 'goodbye', $lang, closing: 'goodbye');
         }
         if (($topic = $state->get('topic')) && ($follow = self::followUp($message, (string) $topic, $lang, $state, $user))) {
             return $follow;
@@ -363,28 +363,15 @@ final class Luma
     }
 
     /**
-     * Adds Luma's closing line, in the language of the answer. The one place it is ever added. The line depends on
-     * the situation (config luma.closing): after a normal answer, after a fallback, in the middle of a flow, at goodbye.
+     * The last step of every reply: removes a retired sign-off an admin may still have typed at the end of an answer
+     * (config luma.retired_closings), then adds the safe HTML version of the text (Formatter). No sign-off line is added.
      */
     public static function finish(array $reply): array
     {
-        $closing = config('luma.closing');
-        $lang    = ($reply['lang'] ?? 'en') === 'tl' ? 'tl' : 'en';
-        $kind    = $reply['closing'] ?? match (true) {
-            ($reply['detected'] ?? '') === 'unmatched' => 'fallback',
-            default                                    => 'answer',
-        };
-
-        $known = [$closing['en'], $closing['tl']];
-        foreach ($closing['situations'] ?? [] as $line) {
-            $known[] = $line['en'];
-            $known[] = $line['tl'];
-        }
-
-        $text = rtrim($reply['text']);
+        $text = rtrim((string) ($reply['text'] ?? ''));
         do {
             $stripped = false;
-            foreach ($known as $line) {
+            foreach (config('luma.retired_closings', []) as $line) {
                 if ($line !== '' && str_ends_with($text, $line)) {
                     $text     = rtrim(substr($text, 0, -strlen($line)));
                     $stripped = true;
@@ -392,9 +379,8 @@ final class Luma
             }
         } while ($stripped);
 
-        $line = $kind === 'answer' ? $closing[$lang] : ($closing['situations'][$kind][$lang] ?? $closing[$lang]);
-
-        $reply['text'] = ($text === '' ? '' : $text . "\n\n") . $line;
+        $reply['text'] = $text;
+        $reply['html'] = Formatter::toHtml($text);
 
         return $reply;
     }
@@ -679,29 +665,24 @@ final class Luma
     }
 
     /**
-     * The friendly dead-end answer: topic chips that match the words typed (always ending in "Talk to a person"), and
-     * after two misses in a row the shop's contact card and an offer to talk to a person. Not the "You're welcome"
-     * closing: a miss gets the fallback closing line.
+     * The dead-end answer, and the moment the question is kept for the team (UnansweredQuestions::record). It always says
+     * why Luma cannot answer, gives the shop's contact details as label/value rows from Contact Settings, and says what she
+     * can help with. "I saved your question" is added only when the question was really saved (junk, links, profanity and
+     * rate-limited visitors are skipped).
      */
     public static function fallback(string $lang, string $message = '', int $misses = 0): array
     {
-        $tl     = $lang === Language::TL;
-        $second = $misses >= 1;
+        $tl    = $lang === Language::TL;
+        $saved = $message !== '' && UnansweredQuestions::record($message);
 
         $text = $tl
-            ? 'Pasensya na po, hindi ko po masagot iyan ngayon, pero matutulungan ko po kayo sa mga paksang ito. Pumili po sa ibaba o subukang itanong sa ibang paraan.'
-            : "I couldn't quite find an answer to that, but I can help with these topics. Pick one below or try asking in a different way.";
-        $text .= ' ' . Contact::sentence($lang);
-        if ($second) {
-            $text .= $tl ? ' Kung gusto ninyo, maaari po kayong makausap ng isang tao.' : ' If you like, a real person can help you directly.';
-        }
+            ? 'Pasensya na po, hindi ko po masagot iyan. Hindi pa po ako naturuan tungkol dito, at ayaw ko pong manghula at magbigay ng maling impormasyon.' . ($saved ? ' Na-save ko po ang tanong ninyo para maituro ito ng aming team sa akin.' : '')
+            : "Sorry, I can't answer that one. I haven't been trained on that topic yet, and I don't want to guess and give you wrong information." . ($saved ? ' I saved your question so our team can teach me the answer.' : '');
+        $text .= $tl
+            ? "\n\nKung kailangan ninyo ng tulong agad, makipag-ugnayan po kayo sa shop:\n\n[[contact:short]]\n\nMaaari rin po kayong magtanong tungkol sa aming mga produkto, presyo, pag-order, delivery o bayad."
+            : "\n\nIf you need help sooner, you can reach the business directly:\n\n[[contact:short]]\n\nYou can also ask me about our products, prices, ordering, delivery or payment.";
 
-        $reply = self::build($text, self::chips(self::fallbackChips($message), $lang), 'unmatched', $lang);
-        if ($second && (Contact::phone() || Contact::email())) {
-            $reply['contact'] = Contact::card();
-        }
-
-        return $reply;
+        return self::build(self::fill($text, $lang), self::chips(self::fallbackChips($message), $lang), 'unmatched', $lang);
     }
 
     /** Chips that fit what was typed first, then the usual topics, then always the way to a person. */
@@ -731,9 +712,15 @@ final class Luma
         return $chips;
     }
 
-    /** Fills the {{tokens}} (contact details, hours, estimates...) as plain text. See Facts. */
+    /**
+     * Fills the {{tokens}} (hours, estimates, a contact sentence...) as plain text (see Facts), and the [[contact]] /
+     * [[contact:short]] tokens as label/value lines built from Contact Settings.
+     */
     public static function fill(string $text, string $lang): string
     {
+        if (str_contains($text, '[[contact')) {
+            $text = str_replace(['[[contact:short]]', '[[contact]]'], [Contact::block($lang, false), Contact::block($lang, true)], $text);
+        }
         if (!str_contains($text, '{{')) {
             return $text;
         }
@@ -820,7 +807,7 @@ final class Luma
         return [
             'text'    => $lang === Language::TL
                 ? 'Heto po ang ilang piraso na pasok sa budget ninyong ' . ProductFinder::money($budget) . ':'
-                : 'Great! Here are some pieces within your ' . ProductFinder::money($budget) . ' budget:',
+                : 'Here are some pieces within your ' . ProductFinder::money($budget) . ' budget:',
             'cards'   => ProductFinder::cards($found),
             'buttons' => [self::button('View more products', 'Tingnan ang iba pang produkto', ProductFinder::catalogUrl($type, $budget), $lang)],
         ];

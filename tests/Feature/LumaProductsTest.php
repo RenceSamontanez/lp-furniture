@@ -18,6 +18,7 @@ class LumaProductsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        config(['shop.fallback.phone' => null, 'shop.fallback.email' => null, 'shop.fallback.facebook_url' => null, 'shop.fallback.shop_address' => null]);   // Luma tests start with no contact details, as before
 
         $this->artisan('chatbot:sync-defaults')->assertSuccessful();
     }
@@ -96,10 +97,10 @@ class LumaProductsTest extends TestCase
 
         $this->assertStringContainsString("don't have any doors", $reply['response']);
         $this->assertStringContainsString('Customize page', $reply['response']);
-        $this->assertStringContainsString('0917-111-2222', $reply['response']);
+        $this->assertStringContainsString('0917 111 2222', $reply['response']);
         $this->assertSame([], $reply['cards']);
         $this->assertSame(route('design.index', [], false), $reply['buttons'][0]['url']);
-        $this->assertSame(['phone' => '0917-111-2222', 'email' => 'shop@lp.test'], $reply['contact']);
+        $this->assertSame(['phone' => '0917 111 2222', 'email' => 'shop@lp.test'], $reply['contact']);
         $this->assertDoesNotMatchRegularExpression('/PHP\s?\d/', $reply['response']);
     }
 
@@ -243,7 +244,7 @@ class LumaProductsTest extends TestCase
         $this->assertSame('tl', $price['lang']);
         $this->assertCount(3, $price['cards']);
         $this->assertStringContainsString('mga pinto', $price['response']);
-        $this->assertStringContainsString('Walang anuman po', $price['response']);
+        $this->assertStringNotContainsString('Walang anuman', $price['response']);   // no sign-off line
         $this->assertSame('Tingnan ang iba pang produkto', $price['buttons'][0]['label']);
         $this->assertSame('/catalog?type=door', $price['buttons'][0]['url']);
 

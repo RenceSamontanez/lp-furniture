@@ -18,19 +18,30 @@
 </div>
 
 
-@if(isset($unanswered) && $unanswered->isNotEmpty())
 <div class="admin-panel" style="margin-bottom:16px;">
   <div class="admin-panel-header"><div class="admin-panel-title">Questions Luma could not answer</div></div>
   <div class="admin-panel-body">
-    <p style="font-size:12px;color:var(--text-muted);margin:0 0 10px;">Add an intent with these words as keywords to teach her.</p>
-    <ul style="margin:0;padding-left:18px;font-size:13px;color:#3D3129;line-height:1.7;">
+    <p style="font-size:12px;color:var(--text-muted);margin:0 0 10px;">Add an intent with these words as keywords to teach her. A question leaves this list when an intent with a matching keyword is added. Dismiss one to hide it.</p>
+    @if(isset($unanswered) && $unanswered->isNotEmpty())
+    <ul style="margin:0;padding:0;list-style:none;font-size:13px;color:#3D3129;line-height:1.5;">
       @foreach($unanswered as $row)
-        <li>{{ $row->question }} @if($row->times > 1)<span style="color:var(--text-muted);">(asked {{ $row->times }} times)</span>@endif</li>
+        <li style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid rgba(0,0,0,.06);">
+          <span style="min-width:0;overflow-wrap:anywhere;">
+            {{ $row->question }}
+            <span style="color:var(--text-muted);display:block;font-size:12px;">Asked {{ $row->times_asked }} {{ $row->times_asked === 1 ? 'time' : 'times' }} &middot; last asked {{ $row->last_asked_at?->timezone(config('luma.timezone'))->format('M j, Y g:i A') }}</span>
+          </span>
+          <form method="POST" action="{{ route('admin.chatbot.unanswered.dismiss', $row->id) }}" style="flex:none;">
+            @csrf
+            <button type="submit" class="admin-btn admin-btn-outline" aria-label="Dismiss this question: {{ $row->question }}">Dismiss</button>
+          </form>
+        </li>
       @endforeach
     </ul>
+    @else
+    <p style="font-size:13px;color:var(--text-muted);margin:0;">No unanswered questions right now.</p>
+    @endif
   </div>
 </div>
-@endif
 
 <div class="admin-panel">
   <div class="admin-panel-body" style="padding:0;">

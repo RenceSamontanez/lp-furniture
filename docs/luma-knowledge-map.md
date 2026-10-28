@@ -112,9 +112,25 @@ Tagalog title: Paano gumawa ng ticket
 - gusto ko mag submit ng service request
 - how po gumawa ng ticket
 
-**Answer (English):** To make a ticket: 1) Log in (an account is needed, so we can reach you). 2) Open Other Services and tap Send a request. 3) Choose the kind of service and the furniture. 4) Describe the problem clearly: what is wrong, where, the size, the material, since when. A photo helps. 5) Check your phone number and email, accept the terms and send it. Our team reviews it, may ask you for details, and then sends your invoice.
+**Answer (English):** To make a ticket:
 
-**Answer (Tagalog):** Para gumawa ng ticket po: 1) Mag-log in (kailangan ng account para makontak namin kayo). 2) Buksan ang Other Services at pindutin ang Send a request. 3) Piliin ang uri ng serbisyo at ang furniture. 4) Ilarawan nang malinaw ang problema: ano ang sira, saan, gaano kalaki, anong materyal, kailan pa. Malaking tulong po ang larawan. 5) Tingnan ang numero at email ninyo, tanggapin ang terms at ipadala. Titingnan ito ng aming team, maaaring humingi ng dagdag na detalye, at saka ipapadala ang invoice.
+1. Log in (an account is needed, so we can reach you).
+2. Open Other Services and tap Send a request.
+3. Choose the kind of service and the furniture.
+4. Describe the problem clearly: what is wrong, where, the size, the material, since when. A photo helps.
+5. Check your phone number and email, accept the terms and send it.
+
+Our team reviews it, may ask you for details, and then sends your invoice.
+
+**Answer (Tagalog):** Para gumawa ng ticket po:
+
+1. Mag-log in (kailangan ng account para makontak namin kayo).
+2. Buksan ang Other Services at pindutin ang Send a request.
+3. Piliin ang uri ng serbisyo at ang furniture.
+4. Ilarawan nang malinaw ang problema: ano ang sira, saan, gaano kalaki, anong materyal, kailan pa. Malaking tulong po ang larawan.
+5. Tingnan ang numero at email ninyo, tanggapin ang terms at ipadala.
+
+Titingnan ito ng aming team, maaaring humingi ng dagdag na detalye, at saka ipapadala ang invoice.
 
 **Follow-up buttons:** `luma_os_describe_problem` (How to describe the problem), `luma_os_need_account` (Do I need an account), `luma_os_after_ticket` (What happens after my ticket), `luma_os_vague_ticket` (What if my ticket is vague)
 
@@ -148,9 +164,27 @@ Tagalog title: Paano ilarawan ang problema
 - describe problem paano
 - details na kailangan sa ticket
 
-**Answer (English):** A clear description helps us price the work correctly. Please tell us: 1) What is wrong (broken, loose, cracked, scratched). 2) Where it is on the furniture. 3) The size, if you know it. 4) What it is made of (wood, glass, metal). 5) Since when. 6) A photo, if you can. A clear written description or a reference photo is enough for us to start.
+**Answer (English):** A clear description helps us price the work correctly. Please tell us:
 
-**Answer (Tagalog):** Nakakatulong po ang malinaw na paglalarawan para tama ang presyo ng trabaho. Pakisabi po: 1) Ano ang sira (basag, maluwag, lamat, gasgas). 2) Saan ito sa furniture. 3) Ang sukat, kung alam ninyo. 4) Anong materyal (kahoy, salamin, metal). 5) Kailan pa ito. 6) Larawan, kung kaya. Sapat na po ang malinaw na paglalarawan o isang reference na larawan para makapagsimula kami.
+1. What is wrong (broken, loose, cracked, scratched).
+2. Where it is on the furniture.
+3. The size, if you know it.
+4. What it is made of (wood, glass, metal).
+5. Since when.
+6. A photo, if you can.
+
+A clear written description or a reference photo is enough for us to start.
+
+**Answer (Tagalog):** Nakakatulong po ang malinaw na paglalarawan para tama ang presyo ng trabaho. Pakisabi po:
+
+1. Ano ang sira (basag, maluwag, lamat, gasgas).
+2. Saan ito sa furniture.
+3. Ang sukat, kung alam ninyo.
+4. Anong materyal (kahoy, salamin, metal).
+5. Kailan pa ito.
+6. Larawan, kung kaya.
+
+Sapat na po ang malinaw na paglalarawan o isang reference na larawan para makapagsimula kami.
 
 **Follow-up buttons:** `luma_os_make_ticket` (How to make a ticket), `luma_os_vague_ticket` (What if my ticket is vague), `luma_os_add_photos` (Add photos to my ticket)
 
@@ -256,9 +290,25 @@ Tagalog title: Ano ang susunod sa ticket
 - when po kayo magrereply sa ticket
 - next step after ticket
 
-**Answer (English):** After you send a ticket: 1) Our team reviews it. 2) We may call or message you to ask for details, such as a photo or the size. 3) We prepare an invoice for the work and send it to you. 4) You pay it online or in cash. 5) The work starts once your payment is in. You will get a notification at each step, and you can follow everything under Service Request in your account.
+**Answer (English):** After you send a ticket:
 
-**Answer (Tagalog):** Pagkatapos ninyong magpadala ng ticket po: 1) Titingnan ito ng aming team. 2) Maaari kaming tumawag o mag-message para hingin ang detalye, tulad ng larawan o sukat. 3) Maghahanda kami ng invoice para sa trabaho at ipapadala sa inyo. 4) Magbabayad kayo online o cash. 5) Magsisimula ang trabaho kapag pumasok na ang bayad ninyo. Makakatanggap po kayo ng notification sa bawat hakbang, at makikita ninyo ang lahat sa Service Request sa inyong account.
+1. Our team reviews it.
+2. We may call or message you to ask for details, such as a photo or the size.
+3. We prepare an invoice for the work and send it to you.
+4. You pay it online or in cash.
+5. The work starts once your payment is in.
+
+You will get a notification at each step, and you can follow everything under Service Request in your account.
+
+**Answer (Tagalog):** Pagkatapos ninyong magpadala ng ticket po:
+
+1. Titingnan ito ng aming team.
+2. Maaari kaming tumawag o mag-message para hingin ang detalye, tulad ng larawan o sukat.
+3. Maghahanda kami ng invoice para sa trabaho at ipapadala sa inyo.
+4. Magbabayad kayo online o cash.
+5. Magsisimula ang trabaho kapag pumasok na ang bayad ninyo.
+
+Makakatanggap po kayo ng notification sa bawat hakbang, at makikita ninyo ang lahat sa Service Request sa inyong account.
 
 **Follow-up buttons:** `luma_os_invoice_what` (What is the invoice), `luma_os_pay_how` (How to pay my invoice), `luma_os_duration` (How long will it take)
 
@@ -514,9 +564,21 @@ Tagalog title: Mga status ng invoice
 - paid na ba pag sent
 - ano meaning ng cancelled status
 
-**Answer (English):** Your invoice shows one of three statuses. Sent: the invoice is ready and waiting for your payment. Paid: it is fully paid. Cancelled: it was cancelled, so it can no longer be paid, for example after a cancellation request or because the service request was closed. If the invoice has a payment plan of two halves, it can show as half paid until the second half is done.
+**Answer (English):** Your invoice shows one of three statuses:
 
-**Answer (Tagalog):** Isa po sa tatlong status ang makikita sa invoice. Sent: handa na ang invoice at naghihintay ng bayad ninyo. Paid: bayad na ito nang buo. Cancelled: kinansela ito kaya hindi na ito mababayaran, halimbawa pagkatapos ng cancellation request o kapag isinara ang service request. Kung may dalawang kalahati ang plano ng bayad, maaari itong lumabas na half paid hanggang matapos ang ikalawang kalahati.
+- **Sent:** the invoice is ready and waiting for your payment.
+- **Paid:** it is fully paid.
+- **Cancelled:** it was cancelled, so it can no longer be paid. This happens after a cancellation request, or when the service request is closed.
+
+If the invoice has a payment plan of two halves, it can show as half paid until the second half is done.
+
+**Answer (Tagalog):** Isa po sa tatlong status ang makikita sa invoice:
+
+- **Sent:** handa na ang invoice at naghihintay ng bayad ninyo.
+- **Paid:** bayad na ito nang buo.
+- **Cancelled:** kinansela ito kaya hindi na ito mababayaran. Nangyayari ito pagkatapos ng cancellation request, o kapag isinara ang service request.
+
+Kung may dalawang kalahati ang plano ng bayad, maaari itong lumabas na half paid hanggang matapos ang ikalawang kalahati.
 
 **Follow-up buttons:** `luma_os_pay_how` (How to pay my invoice), `luma_os_invoice_print` (Print my invoice), `luma_os_refund_rule` (Refund rules)
 
@@ -872,9 +934,21 @@ Tagalog title: Hindi umuusad ang GCash
 - nag loading lang ang gcash
 - gcash error po
 
-**Answer (English):** I'm sorry about the trouble. Please try these: 1) Close the payment page and open your invoice again. 2) Check that your GCash app is updated and has enough balance. 3) Try again in a few minutes. If you were already charged, please keep your reference number and contact our team before paying again. {{contact}}
+**Answer (English):** I'm sorry about the trouble. Please try these:
 
-**Answer (Tagalog):** Pasensya na po sa abala. Subukan po ito: 1) Isara ang pahina ng bayad at buksan ulit ang invoice. 2) Siguraduhing updated ang GCash app ninyo at may sapat na balance. 3) Subukan ulit pagkalipas ng ilang minuto. Kung nasingil na kayo, itabi ang reference number at kontakin ang aming team bago magbayad ulit. {{contact}}
+1. Close the payment page and open your invoice again.
+2. Check that your GCash app is updated and has enough balance.
+3. Try again in a few minutes.
+
+If you were already charged, please keep your reference number and contact our team before paying again. {{contact}}
+
+**Answer (Tagalog):** Pasensya na po sa abala. Subukan po ito:
+
+1. Isara ang pahina ng bayad at buksan ulit ang invoice.
+2. Siguraduhing updated ang GCash app ninyo at may sapat na balance.
+3. Subukan ulit pagkalipas ng ilang minuto.
+
+Kung nasingil na kayo, itabi ang reference number at kontakin ang aming team bago magbayad ulit. {{contact}}
 
 **Follow-up buttons:** `luma_os_checkout_expired` (Checkout expired), `luma_os_paid_still_unpaid` (I paid but it says unpaid), `luma_os_card_declined` (My card was declined)
 

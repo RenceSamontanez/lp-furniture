@@ -97,7 +97,7 @@ class LumaScenariosTest extends TestCase
         $done = $this->postJson(route('chatbot.refund'), ['step' => 'confirm', 'token' => $body['summary']['token'], 'checked' => true, 'lang' => 'tl'])->json();
         $this->assertStringContainsString('Naipadala na po ang request ninyo', $done['reply']['text']);
         $this->assertStringContainsString('7 araw', $done['reply']['text']);
-        $this->assertStringEndsWith('Nandito lang po ako kung may kailangan kayo.', $done['reply']['text']);
+        $this->assertStringNotContainsString('Nandito lang po ako', $done['reply']['text']);   // no sign-off line
         $this->assertDoesNotMatchRegularExpression('/approv|guarantee/i', $done['reply']['text']);
     }
 

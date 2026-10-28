@@ -1,0 +1,412 @@
+{
+    "luma_greeting": {
+        "en": "Hi, I'm Luma, LP Furniture Shop's assistant. I can help with prices, ready-made designs, custom designs, wood choices, delivery, payment and your orders. What would you like to know?",
+        "tl": "Kumusta po! Ako po si Luma, ang assistant ng LP Furniture Shop. Matutulungan ko po kayo sa presyo, mga ready-made na disenyo, custom na disenyo, mga kahoy, delivery, bayad at inyong mga order. Ano po ang gusto ninyong malaman?"
+    },
+    "luma_products_cost": {
+        "en": "Every product in our Catalog shows its price on its page. Custom designs are priced by the shop after we call you, in a written quote, and nothing is charged until you accept it. Here are some of our products. Tell me the type (for example door, table or bed) and I'll show you those.",
+        "tl": "Nakasulat po ang presyo ng bawat produkto sa Catalog. Ang custom na disenyo naman po ay pinepresyuhan ng shop pagkatapos ka naming tawagan, sa nakasulat na quote, at walang sisingilin hangga’t hindi ninyo ito tinatanggap. Heto po ang ilan sa aming mga produkto. Sabihin lang po ang uri (halimbawa pinto, mesa o kama) at ipapakita ko po."
+    },
+    "luma_ready_made": {
+        "en": "Yes, our Catalog has ordinary designs for many furniture types. Everything is made to order: nothing is built in advance, so production starts as soon as your order is placed and confirmed.",
+        "tl": "Opo, may mga ordinaryong disenyo po sa aming Catalog para sa iba’t ibang uri ng furniture. Lahat po ay gawa kapag may order: wala pong ginagawa nang maaga, kaya sisimulan ang paggawa pagka-order at kumpirmasyon ninyo."
+    },
+    "luma_about_business": {
+        "en": "LP Furniture Shop is a furniture shop in San Juan, Batangas. We make furniture to order, both ready-made designs from our Catalog and custom pieces designed with you. We are open {{hours}}. {{contact}}",
+        "tl": "Ang LP Furniture Shop po ay isang furniture shop sa San Juan, Batangas. Gawa po kapag may order ang aming furniture, mula sa mga ready-made na disenyo sa Catalog hanggang sa custom na piraso na idinisenyo kasama kayo. Bukas po kami {{hours}}. {{contact}}"
+    },
+    "luma_shop_open": {
+        "en": "Yes, LP Furniture Shop is active. Our hours are {{hours}} (Philippine time). {{open_status}}",
+        "tl": "Opo, aktibo pa po ang LP Furniture Shop. Ang oras po namin ay {{hours}} (oras sa Pilipinas). {{open_status}}"
+    },
+    "luma_price_list": {
+        "en": "We don't keep one fixed price list because every piece is made to order. The price of each Catalog product is on its page, and custom designs are quoted by the shop after we call you. Here are some products. Tell me a type, like door or table, for more.",
+        "tl": "Wala po kaming iisang nakapirming price list dahil gawa kapag may order ang bawat piraso. Nasa pahina po ng bawat produkto ang presyo nito sa Catalog, at ang custom na disenyo ay kino-quote ng shop pagkatapos ka naming tawagan. Heto po ang ilang produkto. Sabihin lang po ang uri, gaya ng pinto o mesa, para sa iba pa."
+    },
+    "luma_price_range": {
+        "en": "Tell me the furniture type (for example door, table or bed) and I will show you the lowest and highest price in our Catalog.",
+        "tl": "Sabihin lang po ang uri ng furniture (halimbawa pinto, mesa o kama) at ipapakita ko po ang pinakamababa at pinakamataas na presyo sa aming Catalog."
+    },
+    "luma_how_long": {
+        "en": "Finishing a piece usually takes roughly {{days}} days, for any furniture type. That is an estimate: the exact expected ready date is given in your quote. Everything is made to order, so nothing is built in advance and production starts as soon as your order is placed and confirmed (once the deposit is received).",
+        "tl": "Karaniwan pong aabutin ng humigit-kumulang {{days}} araw ang paggawa, para sa anumang uri ng furniture. Pagtataya lamang po iyan: ang eksaktong petsa kung kailan ito ready ay nasa quote ninyo. Gawa po kapag may order ang lahat, kaya wala pong ginagawa nang maaga at sisimulan ang paggawa pagka-order at kumpirmasyon ninyo (kapag natanggap na ang deposito)."
+    },
+    "luma_made_to_order": {
+        "en": "Everything is made to order. Nothing is built in advance, so production starts as soon as your order is placed and confirmed, which is once the deposit is received. Finishing usually takes roughly {{days}} days (an estimate; the exact expected ready date is in your quote).",
+        "tl": "Gawa po kapag may order ang lahat. Wala pong ginagawa nang maaga, kaya sisimulan ang paggawa pagka-order at kumpirmasyon ninyo, ibig sabihin kapag natanggap na ang deposito. Karaniwang aabutin ng humigit-kumulang {{days}} araw (pagtataya lamang; ang eksaktong petsa ay nasa quote ninyo)."
+    },
+    "luma_labor_only": {
+        "en": "Yes, we can build with wood you provide (labor only). Labor-only prices vary by furniture type, so the owner discusses them with you by phone. Please send a request or contact us:",
+        "tl": "Opo, maaari po kaming gumawa gamit ang kahoy na ibibigay ninyo (labor lang). Magkakaiba po ang presyo ng labor depende sa uri ng furniture, kaya ang may-ari mismo ang makikipag-usap sa inyo sa telepono. Magpadala po ng request o makipag-ugnayan sa amin:"
+    },
+    "luma_free_delivery": {
+        "en": "Delivery is free for locations close to San Juan, Batangas: {{free_area}}. Beyond that area, {{fee_note}} I cannot list every town or barangay here, so please contact us to check an exact location. {{contact}}",
+        "tl": "Libre po ang delivery sa mga lugar na malapit sa San Juan, Batangas: {{free_area}}. Kung lampas po sa lugar na iyon, {{fee_note}} Hindi ko po mailista ang bawat bayan o barangay dito, kaya makipag-ugnayan po sa amin para malaman ang eksaktong lugar. {{contact}}"
+    },
+    "luma_delivery_fee": {
+        "en": "Delivery is free for locations close to San Juan, Batangas ({{free_area}}). Beyond that, {{fee_note}} You can also choose pickup at the shop when you check out. {{contact}}",
+        "tl": "Libre po ang delivery sa mga lugar na malapit sa San Juan, Batangas ({{free_area}}). Lampas po doon, {{fee_note}} Maaari rin po kayong mag-pickup sa shop pagdating sa checkout. {{contact}}"
+    },
+    "luma_ai_design_steps": {
+        "en": "Custom design works like this: 1) Choose the furniture type. 2) Enter the size as Length x Width x Height. 3) Choose the wood. 4) Describe what you want. 5) Our Customize tool generates pictures. 6) Review them and pick one. 7) Send it to our team. 8) We call you to talk about it. 9) You receive a quote. 10) If you agree, you accept the agreement. 11) You pay to start. Everything is made to order: production starts once your order is placed and confirmed, and finishing usually takes roughly {{days}} days (an estimate; the exact date is in your quote). The full steps are in our guide.",
+        "tl": "Ganito po ang custom na disenyo: 1) Piliin ang uri ng furniture. 2) Ilagay ang sukat bilang Haba x Lapad x Taas. 3) Piliin ang kahoy. 4) Ilarawan ang gusto ninyo. 5) Gagawa ng mga larawan ang aming Customize tool. 6) Tingnan ang mga ito at pumili ng isa. 7) Ipadala sa aming team. 8) Tatawagan namin kayo para pag-usapan. 9) Makakatanggap kayo ng quote. 10) Kung sang-ayon po kayo, tatanggapin ninyo ang agreement. 11) Magbayad para masimulan. Gawa po kapag may order ang lahat: sisimulan ang paggawa pagka-order at kumpirmasyon ninyo, at karaniwang aabutin ng humigit-kumulang {{days}} araw (pagtataya lamang; ang eksaktong petsa ay nasa quote)."
+    },
+    "luma_dimensions": {
+        "en": "Size is always written as Length x Width x Height, in the unit you choose. Length is the longest horizontal side, Width is the other horizontal side, and Height is from the floor up. Our guide shows how to measure each type of furniture, with pictures. If you are not sure, a rough size is fine: we will confirm it when we call you.",
+        "tl": "Laging nakasulat ang sukat bilang Haba x Lapad x Taas, sa unit na pipiliin ninyo. Ang Haba ay ang pinakamahabang gilid na pahalang, ang Lapad ay ang isa pang pahalang na gilid, at ang Taas ay mula sa sahig pataas. Ipinapakita po ng aming gabay kung paano sukatin ang bawat uri ng furniture, may mga larawan. Kung hindi po kayo sigurado, ayos lang ang tantiya: kukumpirmahin namin ito kapag tinawagan namin kayo."
+    },
+    "luma_best_wood": {
+        "en": "We build with Gmelina, Mahogany and Acacia, or you can make a special request. In general: Gmelina is the budget-friendly choice and takes paint or stain well, good for indoor pieces that will not be heavily used. Mahogany has a classic reddish-brown look and is a good choice for a finer, longer-lasting piece, and it usually costs more. Acacia is hard and durable, a good pick for tables, chairs and anything used every day. For another kind of wood, choose Special request and the team will confirm what is possible and the price when we call you.",
+        "tl": "Gumagawa po kami gamit ang Gmelina, Mahogany at Acacia, o maaari kayong mag-special request. Sa pangkalahatan: ang Gmelina po ang pinakamurang opsyon at maganda ang tanggap sa pintura o stain, bagay sa mga gamit sa loob ng bahay na hindi masyadong madalas gamitin. Ang Mahogany ay may klasikong mapula-pulang kayumanggi at magandang piliin para sa mas pino at pangmatagalang piraso, at karaniwang mas mahal. Ang Acacia ay matigas at matibay, magandang piliin para sa mesa, upuan at mga gamit araw-araw. Para sa ibang uri ng kahoy, piliin ang Special request at kukumpirmahin ng team ang posibilidad at presyo kapag tinawagan namin kayo."
+    },
+    "luma_payment_methods": {
+        "en": "You can pay by card (Stripe), by GCash (through PayMongo), or in cash when you pick up or when it is delivered. You choose at checkout. An online payment is confirmed as soon as it goes through.",
+        "tl": "Maaari po kayong magbayad sa card (Stripe), sa GCash (sa pamamagitan ng PayMongo), o cash kapag kukunin o ide-deliver na ang order. Pipili po kayo sa checkout. Nakukumpirma po ang online na bayad sa sandaling matagumpay itong maiproseso."
+    },
+    "luma_service_invoice_payment": {
+        "en": "For Other Services (repairs and labor-only work), we send you an invoice, which you can see in your account under Service Request. You can pay it online by GCash or card, or pay cash in person, and our team records it. You can pay in full, or, for some invoices, half now and the other half when the service is done. The invoice shows which one applies, and the second half becomes payable once we mark the service as done. You can see the status of your payments on the invoice. {{contact}}",
+        "tl": "Sa Other Services (pagpapaayos at labor lang), nagpapadala po kami ng invoice na makikita ninyo sa inyong account sa Service Request. Maaari po ninyo itong bayaran online sa GCash o card, o cash nang personal at ire-record po ito ng aming team. Maaari pong magbayad nang buo, o sa ilang invoice, kalahati ngayon at ang kalahati kapag tapos na ang serbisyo. Nakasulat sa invoice kung alin ang para sa inyo, at magiging bayad na ang ikalawang kalahati kapag minarkahan na naming tapos na ang serbisyo. Makikita po ninyo sa invoice ang status ng inyong mga bayad. {{contact}}"
+    },
+    "luma_deposit_rules": {
+        "en": "For Catalog orders you can pay in full or in installments: the first payment is a {{catalog_down}}% down payment and the rest is split over {{months}} months, every {{frequency}} days. For custom orders, the deposit is written in your quote and is at least {{deposit_min}}% of the total. Production starts once the deposit is received.",
+        "tl": "Sa mga order mula sa Catalog, maaari pong magbayad nang buo o hulugan: ang unang bayad ay {{catalog_down}}% na down payment at hahatiin ang natitira sa {{months}} buwan, kada {{frequency}} araw. Sa custom na order, nakasulat sa quote ang deposito at hindi bababa sa {{deposit_min}}% ng kabuuan. Sisimulan ang paggawa kapag natanggap na ang deposito."
+    },
+    "luma_cancel_refund": {
+        "en": "Our cancellation and refund rules are in the Terms and Conditions. Because every piece is made to order, please contact us as soon as you can if you need to change or cancel an order. {{contact}}",
+        "tl": "Nakasulat po ang aming patakaran sa pagkansela at refund sa Terms and Conditions. Dahil gawa po kapag may order ang bawat piraso, makipag-ugnayan po sa amin sa lalong madaling panahon kung kailangan ninyong baguhin o kanselahin ang order. {{contact}}"
+    },
+    "luma_track_order": {
+        "en": "You can follow your order anytime under My Orders in your account. You also get a notification each time its status changes. For a custom order, the order page shows your agreement and payments too.",
+        "tl": "Masusubaybayan po ninyo ang order anumang oras sa My Orders sa inyong account. Makakatanggap din po kayo ng notification tuwing magbabago ang status nito. Sa custom na order, makikita rin po sa pahina ng order ang agreement at mga bayad ninyo."
+    },
+    "luma_change_contact": {
+        "en": "You can update your phone number, email and other details on your Profile page. Please keep your phone number correct: for custom designs, our team confirms the details by phone. If you need to change the details of an order you already placed, contact us. {{contact}}",
+        "tl": "Maaari po ninyong baguhin ang inyong numero, email at iba pang detalye sa pahina ng Profile. Pakitiyak po na tama ang inyong numero: sa custom na disenyo, tinatawagan namin kayo para kumpirmahin ang mga detalye. Kung kailangan pong baguhin ang detalye ng order na nailagay na, makipag-ugnayan po sa amin. {{contact}}"
+    },
+    "luma_warranty": {
+        "en": "Warranty and after-sales terms are in our Terms and Conditions. If you have a concern about a piece you received, please contact us and we will help. {{contact}}",
+        "tl": "Nakasulat po sa aming Terms and Conditions ang warranty at after-sales. Kung may alalahanin po kayo sa piraso na natanggap ninyo, makipag-ugnayan po sa amin at tutulungan namin kayo. {{contact}}"
+    },
+    "luma_contact_shop": {
+        "en": "{{contact}} We are open {{hours}}. {{open_status}}",
+        "tl": "{{contact}} Bukas po kami {{hours}}. {{open_status}}"
+    },
+    "luma_os_what_is": {
+        "en": "Other Services is for work that is not a new furniture order: repairs, restoration, and labor-only jobs where you bring your own wood. You send us a request (a ticket), our team reviews it, and we send you an invoice for the work. The work can be done at your home or at our shop. A brand-new custom piece is a different flow: that one is the Customize page.",
+        "tl": "Ang Other Services po ay para sa mga trabahong hindi bagong order ng furniture: pagpapaayos, restoration, at labor lang kung kayo ang magbibigay ng kahoy. Magpapadala po kayo ng request (ticket), titingnan ito ng aming team, at padadalhan namin kayo ng invoice para sa trabaho. Maaaring gawin ang trabaho sa bahay ninyo o sa shop namin. Ang bagong custom na piraso po ay ibang proseso: nasa Customize page iyon."
+    },
+    "luma_os_not_do": {
+        "en": "Other Services does not make brand-new furniture. If you want a new piece designed for you, use the Customize page: that is a different flow with its own quote and agreement. Other Services is for repairs, restoration and labor-only work on furniture you already have or wood you bring.",
+        "tl": "Hindi po gumagawa ng bagong furniture ang Other Services. Kung gusto ninyo ng bagong piraso na idinisenyo para sa inyo, gamitin po ang Customize page: ibang proseso iyon na may sariling quote at agreement. Ang Other Services po ay para sa pagpapaayos, restoration at labor lang sa furniture na mayroon na kayo o kahoy na dala ninyo."
+    },
+    "luma_os_make_ticket": {
+        "en": "To make a ticket: 1) Log in (an account is needed, so we can reach you). 2) Open Other Services and tap Send a request. 3) Choose the kind of service and the furniture. 4) Describe the problem clearly: what is wrong, where, the size, the material, since when. A photo helps. 5) Check your phone number and email, accept the terms and send it. Our team reviews it, may ask you for details, and then sends your invoice.",
+        "tl": "Para gumawa ng ticket po: 1) Mag-log in (kailangan ng account para makontak namin kayo). 2) Buksan ang Other Services at pindutin ang Send a request. 3) Piliin ang uri ng serbisyo at ang furniture. 4) Ilarawan nang malinaw ang problema: ano ang sira, saan, gaano kalaki, anong materyal, kailan pa. Malaking tulong po ang larawan. 5) Tingnan ang numero at email ninyo, tanggapin ang terms at ipadala. Titingnan ito ng aming team, maaaring humingi ng dagdag na detalye, at saka ipapadala ang invoice."
+    },
+    "luma_os_describe_problem": {
+        "en": "A clear description helps us price the work correctly. Please tell us: 1) What is wrong (broken, loose, cracked, scratched). 2) Where it is on the furniture. 3) The size, if you know it. 4) What it is made of (wood, glass, metal). 5) Since when. 6) A photo, if you can. A clear written description or a reference photo is enough for us to start.",
+        "tl": "Nakakatulong po ang malinaw na paglalarawan para tama ang presyo ng trabaho. Pakisabi po: 1) Ano ang sira (basag, maluwag, lamat, gasgas). 2) Saan ito sa furniture. 3) Ang sukat, kung alam ninyo. 4) Anong materyal (kahoy, salamin, metal). 5) Kailan pa ito. 6) Larawan, kung kaya. Sapat na po ang malinaw na paglalarawan o isang reference na larawan para makapagsimula kami."
+    },
+    "luma_os_vague_ticket": {
+        "en": "No problem. If a ticket does not have enough details, our team will contact you and ask for what is missing, such as a photo or the size. We cannot send an invoice until we understand the work, so adding details early makes things faster. You can add more details by calling or emailing us. {{contact}}",
+        "tl": "Ayos lang po iyan. Kung kulang ang detalye ng ticket, kokontakin kayo ng aming team para hingin ang kulang, tulad ng larawan o sukat. Hindi po kami makapagpapadala ng invoice hangga't hindi malinaw ang trabaho, kaya mas mabilis kung maaga ang dagdag na detalye. Maaari po kayong tumawag o mag-email para magdagdag. {{contact}}"
+    },
+    "luma_os_need_account": {
+        "en": "Yes, you need an account to send an Other Services request. This is so our team can reach you and you can follow your ticket, your invoice and your payments in one place. Making an account is free, and your ID is checked once (it is the same ID check used for orders).",
+        "tl": "Opo, kailangan po ng account para makapagpadala ng Other Services request. Para po makontak namin kayo at masubaybayan ninyo ang ticket, invoice at bayad sa isang lugar. Libre po ang paggawa ng account, at minsan lang ang pag-check ng ID ninyo (ito rin ang ID check na ginagamit sa mga order)."
+    },
+    "luma_os_after_ticket": {
+        "en": "After you send a ticket: 1) Our team reviews it. 2) We may call or message you to ask for details, such as a photo or the size. 3) We prepare an invoice for the work and send it to you. 4) You pay it online or in cash. 5) The work starts once your payment is in. You will get a notification at each step, and you can follow everything under Service Request in your account.",
+        "tl": "Pagkatapos ninyong magpadala ng ticket po: 1) Titingnan ito ng aming team. 2) Maaari kaming tumawag o mag-message para hingin ang detalye, tulad ng larawan o sukat. 3) Maghahanda kami ng invoice para sa trabaho at ipapadala sa inyo. 4) Magbabayad kayo online o cash. 5) Magsisimula ang trabaho kapag pumasok na ang bayad ninyo. Makakatanggap po kayo ng notification sa bawat hakbang, at makikita ninyo ang lahat sa Service Request sa inyong account."
+    },
+    "luma_os_where_work": {
+        "en": "The work can be done in two ways: at your home, where our laborer comes to you, or at our shop, where you bring the furniture (or we pick it up). You can tell us which you prefer when you make your ticket, and our team will confirm what suits the job. Any visit or pickup fee is confirmed by our team and shown on your invoice, so you always see it before you pay.",
+        "tl": "Maaaring gawin ang trabaho sa dalawang paraan po: sa bahay ninyo, kung saan pupunta ang aming laborer, o sa shop namin, kung saan ninyo dadalhin ang furniture (o kukunin namin). Maaari po ninyong sabihin kung alin ang gusto ninyo kapag gumagawa ng ticket, at kukumpirmahin ng aming team kung ano ang bagay sa trabaho. Anumang bayad sa pagpunta o pagkuha ay kinukumpirma ng aming team at nakasulat sa invoice, kaya makikita ninyo ito bago magbayad."
+    },
+    "luma_os_visit_pickup_fee": {
+        "en": "We do not set one fixed fee for visits or pickups, because it depends on the location and the job. Our team confirms any visit or pickup fee with you, and it is written as its own line on your invoice. You will see the exact amount before you pay anything. {{contact}}",
+        "tl": "Wala po kaming iisang nakapirming bayad sa pagpunta o pagkuha, dahil depende ito sa lugar at sa trabaho. Kinukumpirma ng aming team sa inyo ang anumang bayad, at nakasulat ito bilang hiwalay na linya sa invoice. Makikita ninyo ang eksaktong halaga bago kayo magbayad. {{contact}}"
+    },
+    "luma_os_duration": {
+        "en": "Other Services takes as long as the job needs, so I cannot give you one fixed time. Our team sets the schedule for each ticket and will tell you the target. Work starts only after your payment is in (the full amount, or the first half). If you want to know about your own ticket, I can check its status for you.",
+        "tl": "Ang Other Services po ay tumatagal ayon sa kailangan ng trabaho, kaya hindi ako makapagbibigay ng iisang nakapirming oras. Ang aming team ang nagtatakda ng schedule sa bawat ticket at sasabihin nila sa inyo ang target. Nagsisimula lamang ang trabaho kapag pumasok na ang bayad ninyo (buo, o ang unang kalahati). Kung gusto ninyong malaman ang tungkol sa sarili ninyong ticket, maaari ko pong tingnan ang status nito."
+    },
+    "luma_os_check_status": {
+        "en": "I can check your ticket for you. Please log in so I can look up your own requests.",
+        "tl": "Maaari ko pong tingnan ang ticket ninyo. Mag-log in po muna para makita ko ang sarili ninyong mga request."
+    },
+    "luma_os_invoice_what": {
+        "en": "The invoice is the bill for your Other Services work. It lists the service, the price, any visit or pickup fee, the total and the payment plan. Our team sends it after reviewing your ticket. You pay it online or in cash, and its status shows Sent, Paid or Cancelled.",
+        "tl": "Ang invoice po ay ang singil para sa inyong Other Services na trabaho. Nakasulat dito ang serbisyo, presyo, anumang bayad sa pagpunta o pagkuha, ang kabuuan at ang plano ng bayad. Ipinapadala ito ng aming team pagkatapos tingnan ang ticket ninyo. Babayaran ninyo ito online o cash, at ang status nito ay Sent, Paid o Cancelled."
+    },
+    "luma_os_invoice_find": {
+        "en": "You can find your invoice in your account under Service Request. It shows once our team has sent it, and you also get a notification when it is ready. If your ticket is still being reviewed, there is no invoice yet.",
+        "tl": "Makikita po ninyo ang invoice sa inyong account sa Service Request. Lumalabas ito kapag naipadala na ng aming team, at makakatanggap din kayo ng notification kapag handa na ito. Kung sinusuri pa ang ticket ninyo, wala pa pong invoice."
+    },
+    "luma_os_invoice_status_words": {
+        "en": "Your invoice shows one of three statuses. Sent: the invoice is ready and waiting for your payment. Paid: it is fully paid. Cancelled: it was cancelled, so it can no longer be paid, for example after a cancellation request or because the service request was closed. If the invoice has a payment plan of two halves, it can show as half paid until the second half is done.",
+        "tl": "Isa po sa tatlong status ang makikita sa invoice. Sent: handa na ang invoice at naghihintay ng bayad ninyo. Paid: bayad na ito nang buo. Cancelled: kinansela ito kaya hindi na ito mababayaran, halimbawa pagkatapos ng cancellation request o kapag isinara ang service request. Kung may dalawang kalahati ang plano ng bayad, maaari itong lumabas na half paid hanggang matapos ang ikalawang kalahati."
+    },
+    "luma_os_invoice_print": {
+        "en": "Yes, you can print your invoice from the invoice page. Please note that the invoice is a bill and a record of your payment, but it is not an official receipt. If you need an official receipt for your records, please ask our team. {{contact}}",
+        "tl": "Opo, maaari po ninyong i-print ang invoice mula sa pahina ng invoice. Pakitandaan po na ang invoice ay singil at tala ng bayad ninyo, pero hindi ito official receipt. Kung kailangan ninyo ng official receipt para sa records, itanong po sa aming team. {{contact}}"
+    },
+    "luma_os_pay_how": {
+        "en": "You can pay your invoice online with GCash or card, or pay cash, which our team records for you. You pay in full, or, for invoices of {{half_min}} or more where our team allows it, half now and the other half when the service is done. Online payments must be at least {{min_online}}. Work starts after your payment (the full amount, or the first half).",
+        "tl": "Maaari po ninyong bayaran ang invoice online sa pamamagitan ng GCash o card, o magbayad ng cash na ire-record ng aming team. Magbabayad kayo nang buo, o para sa mga invoice na {{half_min}} pataas kung pinapayagan ng aming team, kalahati ngayon at ang kalahati kapag tapos na ang serbisyo. Hindi bababa sa {{min_online}} ang online na bayad. Magsisimula ang trabaho pagkatapos ng bayad ninyo (buo, o ang unang kalahati)."
+    },
+    "luma_os_pay_full_half": {
+        "en": "You can pay in full. For invoices of {{half_min}} or more, and when our team allows it, you can pay half now and the other half when the service is done. The invoice shows which one applies to you. There are no other installment plans for Other Services: just full, or half and half.",
+        "tl": "Maaari po kayong magbayad nang buo. Para sa mga invoice na {{half_min}} pataas, at kung pinapayagan ng aming team, maaari ang kalahati ngayon at ang kalahati kapag tapos na ang serbisyo. Nakasulat sa invoice kung alin ang para sa inyo. Wala na pong ibang hulugan sa Other Services: buo lang, o half and half."
+    },
+    "luma_os_second_half": {
+        "en": "The second half opens when our team marks your service as done, and you get a notification when it does. Until then it stays locked, so there is nothing for you to pay yet. After that you can pay it online or in cash.",
+        "tl": "Bumubukas po ang ikalawang kalahati kapag minarkahan ng aming team na tapos na ang serbisyo, at makakatanggap kayo ng notification. Hanggang sa oras na iyon, naka-lock pa ito kaya wala pa kayong babayaran. Pagkatapos ay maaari na ninyo itong bayaran online o cash."
+    },
+    "luma_os_pay_status": {
+        "en": "I can check your balance. Please log in so I can look at your own invoice.",
+        "tl": "Maaari ko pong tingnan ang balanse ninyo. Mag-log in po muna para makita ko ang sarili ninyong invoice."
+    },
+    "luma_os_min_payment": {
+        "en": "The smallest online payment (GCash or card) is {{min_online}}. If a payment on your invoice would be less than that, please pay in cash with our team instead, and they will record it. This is a limit of the online payment, not of the shop.",
+        "tl": "Ang pinakamaliit na online na bayad (GCash o card) ay {{min_online}}. Kung mas mababa rito ang babayaran sa invoice ninyo, mag-cash na lang po sa aming team at ire-record nila ito. Limitasyon po ito ng online na bayad, hindi ng shop."
+    },
+    "luma_os_paid_still_unpaid": {
+        "en": "I'm sorry for the worry. Online payments (GCash or card) normally update your invoice within a few minutes of going through. First, please refresh the invoice page. If it still says unpaid, please keep your payment screenshot or reference number and contact our team so they can check it. Please do not pay again before they confirm. {{contact}}",
+        "tl": "Pasensya na po sa pag-aalala. Karaniwang nag-a-update ang invoice sa loob ng ilang minuto matapos ang online na bayad (GCash o card). Subukan muna pong i-refresh ang pahina ng invoice. Kung unpaid pa rin, itabi po ang screenshot o reference number ng bayad ninyo at kontakin ang aming team para matingnan nila. Huwag po muna kayong magbayad ulit hangga't hindi nila nakukumpirma. {{contact}}"
+    },
+    "luma_os_paid_twice": {
+        "en": "I'm sorry about that. If you were charged twice, please keep both payment screenshots or reference numbers and contact our team right away so they can check your invoice and payments. {{contact}}",
+        "tl": "Pasensya na po sa nangyari. Kung dalawang beses kayong na-charge, itabi po ang parehong screenshot o reference number ng bayad at kontakin agad ang aming team para matingnan nila ang invoice at mga bayad ninyo. {{contact}}"
+    },
+    "luma_os_checkout_expired": {
+        "en": "That's fine, nothing was charged if the checkout expired before you paid. Just open your invoice and tap Pay again to start a fresh checkout. If you think you paid but the page expired, please check your invoice first and contact our team before paying again. {{contact}}",
+        "tl": "Ayos lang po iyan, walang nasingil kung nag-expire ang checkout bago kayo nakabayad. Buksan lang po ang invoice at pindutin ang Pay ulit para magsimula ng bagong checkout. Kung sa tingin ninyo ay nakabayad na kayo pero nag-expire ang pahina, tingnan muna ang invoice at kontakin ang aming team bago magbayad ulit. {{contact}}"
+    },
+    "luma_os_gcash_stuck": {
+        "en": "I'm sorry about the trouble. Please try these: 1) Close the payment page and open your invoice again. 2) Check that your GCash app is updated and has enough balance. 3) Try again in a few minutes. If you were already charged, please keep your reference number and contact our team before paying again. {{contact}}",
+        "tl": "Pasensya na po sa abala. Subukan po ito: 1) Isara ang pahina ng bayad at buksan ulit ang invoice. 2) Siguraduhing updated ang GCash app ninyo at may sapat na balance. 3) Subukan ulit pagkalipas ng ilang minuto. Kung nasingil na kayo, itabi ang reference number at kontakin ang aming team bago magbayad ulit. {{contact}}"
+    },
+    "luma_os_card_declined": {
+        "en": "I'm sorry. A card can be declined for reasons only your bank can see, such as a limit or an online-payment setting. Please try another card, or pay with GCash, or pay cash with our team. If money left your account but the invoice is still unpaid, contact our team with your reference number. {{contact}}",
+        "tl": "Pasensya na po. Maaaring ma-decline ang card dahil sa mga dahilang bangko lang ang nakakakita, tulad ng limit o setting para sa online na bayad. Subukan po ang ibang card, o mag-GCash, o magbayad ng cash sa aming team. Kung nabawasan ang account ninyo pero unpaid pa rin ang invoice, kontakin ang aming team dala ang reference number. {{contact}}"
+    },
+    "luma_os_pay_later": {
+        "en": "For Other Services, work starts only after you pay: the full amount, or the first half if your invoice has the half and half plan. So paying after the work is done is not possible, except for the second half, which you pay once the service is marked done. This is called no pay, no work.",
+        "tl": "Sa Other Services po, nagsisimula lamang ang trabaho pagkatapos ninyong magbayad: buo, o ang unang kalahati kung half and half ang plano ng invoice. Kaya hindi po maaaring magbayad pagkatapos ng trabaho, maliban sa ikalawang kalahati na babayaran kapag minarkahang tapos na ang serbisyo. Tinatawag itong no pay, no work."
+    },
+    "luma_os_pay_at_shop": {
+        "en": "Yes, you can pay cash. Please pay at our shop or to our team in person, and they will record it on your invoice. Shop hours are {{hours}}. A recorded cash payment counts the same as an online payment, and the work can start once the full amount (or the first half) is recorded. {{contact}}",
+        "tl": "Opo, maaari po kayong magbayad ng cash. Magbayad po sa shop namin o sa aming team nang personal at ire-record nila ito sa invoice ninyo. Ang oras ng shop ay {{hours}}. Pareho po ang bisa ng naka-record na cash sa online na bayad, at maaaring magsimula ang trabaho kapag na-record na ang buong halaga (o ang unang kalahati). {{contact}}"
+    },
+    "luma_os_no_pay_no_work": {
+        "en": "Our rule is no pay, no work. We start the work only after your payment is in: the full amount, or the first half if your invoice has the half and half plan. This lets us buy materials and set aside the laborer for your job. The second half is paid when the service is done.",
+        "tl": "Ang patakaran po namin ay no pay, no work. Sinisimulan lamang namin ang trabaho pagkatapos pumasok ang bayad ninyo: buo, o ang unang kalahati kung half and half ang plano ng invoice. Nakakatulong ito para makabili kami ng materyales at maitabi ang laborer para sa trabaho ninyo. Ang ikalawang kalahati ay babayaran kapag tapos na ang serbisyo."
+    },
+    "luma_os_refund_rule": {
+        "en": "Here is how it works. If the work has not started, you can ask to cancel, and if our team accepts the request before work starts, the full amount you paid is sent back to you. Once the laborer has started the work, it is non-refundable, but you can still send a request and our team will review it and reply. Refunds go back by GCash or cash, whichever you choose (even if you paid by card), within {{refund_days}} days after our team confirms the request.",
+        "tl": "Ganito po ang patakaran. Kung hindi pa nagsisimula ang trabaho, maaari kayong humiling na magkansela, at kung tatanggapin ng aming team ang request bago magsimula ang trabaho, ibabalik sa inyo ang buong halagang binayaran ninyo. Kapag nagsimula na ang laborer, hindi na ito refundable, pero maaari pa rin kayong magpadala ng request at susuriin ito ng aming team at sasagot sila. Ibinabalik ang refund sa GCash o cash, alinman ang piliin ninyo (kahit card ang ginamit ninyo sa pagbayad), sa loob ng {{refund_days}} araw pagkatapos kumpirmahin ng aming team ang request."
+    },
+    "luma_os_work_started_meaning": {
+        "en": "Work counts as started when our team taps Work started on your ticket, which means the laborer has begun the job (for example the materials are bought or the repair is under way). You will see this on your ticket and get a notification. Before that, the work has not started, and a cancellation can still be refunded.",
+        "tl": "Itinuturing pong nagsimula ang trabaho kapag pinindot ng aming team ang Work started sa ticket ninyo, ibig sabihin ay nasimulan na ng laborer ang trabaho (halimbawa, nabili na ang materyales o umuusad na ang pagpapaayos). Makikita ninyo ito sa ticket at makakatanggap kayo ng notification. Bago iyon, hindi pa nagsisimula ang trabaho at maaari pang ma-refund ang pagkansela."
+    },
+    "luma_os_refund_how": {
+        "en": "I'm sorry to hear that. I can help you with that now.",
+        "tl": "Pasensya na po. Matutulungan ko po kayo ngayon."
+    },
+    "luma_os_refund_timeline": {
+        "en": "If our team confirms your request, the refund is sent within {{refund_days}} days after that confirmation, back by GCash or cash, whichever you chose (even if you paid by card). You will get a notification when it is sent, together with the transaction number. I cannot promise a date before our team has replied.",
+        "tl": "Kung kukumpirmahin ng aming team ang request ninyo, ipapadala ang refund sa loob ng {{refund_days}} araw pagkatapos ng kumpirmasyong iyon, sa GCash o cash, alinman ang pinili ninyo (kahit card ang ginamit sa pagbayad). Makakatanggap kayo ng notification kapag naipadala na, kasama ang transaction number. Hindi po ako makapangangako ng petsa bago sumagot ang aming team."
+    },
+    "luma_os_refund_status": {
+        "en": "I can check your refund request. Please log in so I can look it up.",
+        "tl": "Maaari ko pong tingnan ang refund request ninyo. Mag-log in po muna para makita ko ito."
+    },
+    "luma_os_wrong_gcash": {
+        "en": "No worries, this can be fixed while your request is still open. Open your refund request page and send our team the correct GCash number and the name on the account in a reply. Please check both carefully, because once a refund is sent, it cannot be recalled or sent again.",
+        "tl": "Huwag po kayong mag-alala, maaari itong ayusin habang bukas pa ang request ninyo. Buksan ang pahina ng refund request at ipadala sa aming team ang tamang GCash number at ang pangalan sa account sa isang reply. Pakisuri po nang mabuti ang dalawa, dahil kapag naipadala na ang refund, hindi na ito maibabalik o maipapadala ulit."
+    },
+    "luma_os_refund_declined": {
+        "en": "I'm sorry this was not the answer you hoped for. When a request is declined, our team writes the reason on your refund request page, usually because the work had already started. Please open it to read their reply. If you want to talk about it, or you have more details to share, you can reply there or contact our team. {{contact}}",
+        "tl": "Pasensya na po kung hindi ito ang inaasahan ninyong sagot. Kapag na-decline ang request, isinusulat ng aming team ang dahilan sa pahina ng refund request ninyo, kadalasan dahil nagsimula na ang trabaho. Buksan po ito para mabasa ang sagot nila. Kung gusto ninyong pag-usapan o may dagdag kayong detalye, maaari kayong mag-reply doon o kontakin ang aming team. {{contact}}"
+    },
+    "luma_os_refund_after_start": {
+        "en": "Once the laborer has started, the work is usually non-refundable, because the time and materials are already used. You can still send a request, and our team will review it and reply to you. I cannot say what the answer will be. Sending a request does not cost anything.",
+        "tl": "Kapag nagsimula na ang laborer, karaniwang hindi na refundable ang trabaho dahil nagamit na ang oras at materyales. Maaari pa rin po kayong magpadala ng request, susuriin ito ng aming team at sasagot sila sa inyo. Hindi ko po masasabi kung ano ang magiging sagot. Walang bayad ang pagpapadala ng request."
+    },
+    "luma_os_cancel_unpaid": {
+        "en": "Yes, if you have not paid anything and the work has not started, you can cancel and it happens right away, at no cost. Please note that this cannot be undone: you would need to make a new ticket if you change your mind. I can help you cancel it now.",
+        "tl": "Opo, kung wala pa kayong nababayaran at hindi pa nagsisimula ang trabaho, maaari kayong magkansela at agad itong mangyayari, walang bayad. Pakitandaan po na hindi na ito mababawi: kailangan ninyong gumawa ng bagong ticket kung magbago ang isip ninyo. Matutulungan ko po kayong ikansela ito ngayon."
+    },
+    "luma_os_half_paid_cancel": {
+        "en": "If you paid the first half and want to cancel, the same rule applies. If the work has not started, you can send a request, and if our team confirms it before work starts, the full amount you paid is sent back. If the work has started, it is usually non-refundable, but you can still send a request for our team to review. I can start the request with you now.",
+        "tl": "Kung nabayaran na ang unang kalahati at gusto ninyong magkansela, pareho po ang patakaran. Kung hindi pa nagsisimula ang trabaho, maaari kayong magpadala ng request, at kung kukumpirmahin ito ng aming team bago magsimula ang trabaho, ibabalik ang buong halagang binayaran ninyo. Kung nagsimula na, karaniwang hindi na ito refundable, pero maaari pa rin kayong magpadala ng request para suriin ng aming team. Matutulungan ko po kayong simulan ang request ngayon."
+    },
+    "luma_os_partial_refund": {
+        "en": "We do not offer partial refunds. A request is either for the full amount you paid, when the work has not started, or it is reviewed by our team when the work has already started. If you want to talk about your situation, please contact our team. {{contact}}",
+        "tl": "Hindi po kami nag-aalok ng bahagyang refund. Ang request po ay para sa buong halagang binayaran ninyo kung hindi pa nagsisimula ang trabaho, o susuriin ng aming team kung nagsimula na ito. Kung gusto ninyong pag-usapan ang sitwasyon ninyo, kontakin po ang aming team. {{contact}}"
+    },
+    "luma_os_change_of_mind": {
+        "en": "That's okay, it happens. What you can do depends on whether you have paid and whether the work has started. I can check that for you and help you send the right request.",
+        "tl": "Ayos lang po iyan, nangyayari talaga. Ang magagawa ninyo ay depende kung nakabayad na kayo at kung nagsimula na ang trabaho. Maaari ko pong tingnan iyon at tulungan kayong ipadala ang tamang request."
+    },
+    "luma_os_duplicate_request": {
+        "en": "You only need one request. Each ticket can have one open request at a time, so if you already sent one, please do not send another: it is already with our team. You can follow it, and reply to it, on your refund request page.",
+        "tl": "Isang request lang po ang kailangan. Isang bukas na request lang ang puwede sa bawat ticket, kaya kung nakapagpadala na kayo, huwag na pong magpadala ulit: nasa aming team na ito. Masusubaybayan at masasagot ninyo ito sa pahina ng refund request."
+    },
+    "luma_os_taking_too_long": {
+        "en": "I'm sorry you are still waiting. Let me look at your ticket so I can tell you where things really stand.",
+        "tl": "Pasensya na po at naghihintay pa kayo. Titingnan ko po ang ticket ninyo para masabi ko ang tunay na lagay nito."
+    },
+    "luma_os_no_show": {
+        "en": "I'm sorry about that, and I understand how frustrating it is to wait for nothing. Please contact our team right away so they can find out what happened and set a new time with you. {{contact}}",
+        "tl": "Pasensya na po, at naiintindihan ko pong nakakainis maghintay nang walang dumating. Kontakin po agad ang aming team para malaman nila ang nangyari at makapagtakda ng bagong oras kasama kayo. {{contact}}"
+    },
+    "luma_os_complaint_service": {
+        "en": "I'm sorry that this happened, and thank you for telling us. Our team wants to put it right. Please contact them with your ticket number and, if you can, photos, so they can look into it quickly. {{contact}}",
+        "tl": "Pasensya na po sa nangyari, at salamat sa pagsabi sa amin. Nais ng aming team na maiayos ito. Kontakin po sila dala ang ticket number ninyo at, kung kaya, mga larawan, para mabilis nila itong masuri. {{contact}}"
+    },
+    "luma_os_complaint_price": {
+        "en": "I'm sorry for the confusion. Our team sets the price on each invoice after reviewing your ticket, and any visit or pickup fee is listed as its own line. If something does not match what you discussed with them, please contact them with your invoice number so they can check it with you. {{contact}}",
+        "tl": "Pasensya na po sa kalituhan. Ang aming team ang nagtatakda ng presyo sa bawat invoice pagkatapos suriin ang ticket ninyo, at nakalista bilang hiwalay na linya ang anumang bayad sa pagpunta o pagkuha. Kung may hindi tumutugma sa napag-usapan ninyo, kontakin po sila dala ang invoice number ninyo para masuri nila ito kasama kayo. {{contact}}"
+    },
+    "luma_os_change_contact": {
+        "en": "Your account details can be updated on your Profile page, but the phone number and email on a ticket already sent are best corrected by our team. Please contact them with your ticket number and the correct details so they can update it. {{contact}}",
+        "tl": "Maaaring baguhin ang detalye ng account ninyo sa Profile page, pero ang numero at email sa ticket na naipadala na ay mas mabuting ang aming team ang magtama. Kontakin po sila dala ang ticket number at ang tamang detalye para ma-update nila. {{contact}}"
+    },
+    "luma_os_add_photos": {
+        "en": "A clear photo helps a lot. If you did not add one yet, please send it to our team by email or message with your ticket number, and they will attach it to your request. {{contact}}",
+        "tl": "Malaking tulong po ang malinaw na larawan. Kung hindi pa kayo nakapaglagay, ipadala po sa aming team sa email o message kasama ang ticket number ninyo, at ilalagay nila ito sa request ninyo. {{contact}}"
+    },
+    "luma_os_change_schedule_address": {
+        "en": "Changes to an address or schedule are best made with our team, so the laborer has the right details. Please contact them with your ticket number and what you need changed. {{contact}}",
+        "tl": "Mas mabuting ang aming team ang gumawa ng pagbabago sa address o schedule, para tama ang detalye ng laborer. Kontakin po sila dala ang ticket number ninyo at kung ano ang gusto ninyong baguhin. {{contact}}"
+    },
+    "luma_os_wrong_service_type": {
+        "en": "No problem. Our team reads each ticket before they send an invoice, so a wrong service type can be corrected. Please contact them with your ticket number and tell them what it should be. {{contact}}",
+        "tl": "Walang problema po. Binabasa ng aming team ang bawat ticket bago magpadala ng invoice, kaya maitatama ang maling uri ng serbisyo. Kontakin po sila dala ang ticket number ninyo at sabihin kung ano dapat ito. {{contact}}"
+    },
+    "luma_os_login_problem": {
+        "en": "I'm sorry you are having trouble. On the login page, tap Forgot password to reset it by email. If your account is temporarily locked after too many tries, please wait a little and try again. If it still does not work, contact our team. {{contact}}",
+        "tl": "Pasensya na po sa abala. Sa login page, pindutin ang Forgot password para i-reset ito sa pamamagitan ng email. Kung pansamantalang na-lock ang account dahil sa maraming beses na pagsubok, maghintay muna nang kaunti at subukan ulit. Kung hindi pa rin gumagana, kontakin ang aming team. {{contact}}"
+    },
+    "luma_os_id_validation": {
+        "en": "Your ID is checked once for your account, so our team knows who they are working with. Open the Validation page in your account to send your ID. Our team reviews it and you get a notification when it is done. You need a validated account to send an Other Services request.",
+        "tl": "Minsan lang pong sinusuri ang ID ng account ninyo, para malaman ng aming team kung sino ang katrabaho nila. Buksan ang Validation page sa account ninyo para ipadala ang ID. Susuriin ito ng aming team at makakatanggap kayo ng notification kapag tapos na. Kailangan po ng validated na account para makapagpadala ng Other Services request."
+    },
+    "luma_os_find_ticket": {
+        "en": "Your tickets are in your account under Service Request, so please make sure you are logged in to the same account you used to send it. If you are logged in and still cannot see it, the request may not have been sent. Please check for the confirmation page or notification, or contact our team. {{contact}}",
+        "tl": "Nasa account ninyo ang mga ticket sa Service Request, kaya siguraduhin pong naka-log in kayo sa parehong account na ginamit ninyo sa pagpapadala. Kung naka-log in na kayo at hindi pa rin ito nakikita, maaaring hindi pa naipadala ang request. Tingnan po ang confirmation page o notification, o kontakin ang aming team. {{contact}}"
+    },
+    "luma_os_notification_meaning": {
+        "en": "Every notification about Other Services has a View details button. Opening it shows what the message is about, the status now, and what to do next. If you tell me the reference number in it (it starts with SI, INV or REF), I can look it up for you.",
+        "tl": "Ang bawat notification tungkol sa Other Services ay may View details button. Makikita roon kung ano ang tungkol sa mensahe, ang status ngayon, at ang susunod na gagawin. Kung sasabihin ninyo sa akin ang reference number doon (nagsisimula sa SI, INV o REF), maaari ko po itong tingnan."
+    },
+    "luma_os_cancel_notice": {
+        "en": "A cancelled notice means your service request or invoice was closed, either because you asked to cancel it, or because our team closed it. Open the notification and tap View details to see the reason and what happens to any payment. If you do not know why it was cancelled, please contact our team. {{contact}}",
+        "tl": "Ang cancelled na notice po ay nangangahulugang isinara ang service request o invoice ninyo, dahil humiling kayong ikansela ito, o isinara ito ng aming team. Buksan ang notification at pindutin ang View details para makita ang dahilan at kung ano ang mangyayari sa anumang bayad. Kung hindi ninyo alam kung bakit ito nakansela, kontakin po ang aming team. {{contact}}"
+    },
+    "__legacy": [
+        {
+            "keywords": "hello, hi, hey, good morning, good afternoon, kumusta",
+            "response": "Hi there! 👋 Welcome to LP Furniture. I can help you with ordering, customization, payments, delivery, or tracking your order. What do you need help with?",
+            "answer_tl": null
+        },
+        {
+            "keywords": "how to order, how do i order, place an order, ordering process, paano mag order, how to buy",
+            "response": "Ordering is easy! Here's how: 1) Browse our Catalog and pick a piece you like 2) Click \"Add to Cart\" or \"Order Now\" 3) If it's your first order, you'll need to verify your identity (one-time, takes 2 minutes) 4) Go to Checkout, choose pickup or delivery 5) Select your payment method and confirm. That's it — you'll get updates every step of the way!",
+            "answer_tl": null
+        },
+        {
+            "keywords": "verify, verification, id, identity, why verify, kailangan ba mag verify, valid id",
+            "response": "Identity verification is a one-time requirement before your first order. We ask for a valid government ID and a selfie holding that ID. This protects both you and us from fraud — especially for cash-on-delivery and installment orders. It usually takes less than 24 hours for our team to review. You can still browse and add items to your cart while waiting!",
+            "answer_tl": null
+        },
+        {
+            "keywords": "customize, customization, custom design, custom order, can i request, specific size, change design, sariling design, ai design",
+            "response": "Yes! We love custom pieces. You have two options: 1) On any product page, use the \"Customization Note\" field to request size, wood type, or finish changes before ordering. 2) For a completely custom piece built from scratch, use our AI Custom Design tool — describe what you want, and our AI generates visual design options for you to review before we start production.",
+            "answer_tl": null
+        },
+        {
+            "keywords": "payment, how to pay, payment method, paano magbayad, gcash, stripe, credit card, cash, bayad",
+            "response": "We accept three payment methods: Card payment via Stripe (Visa, Mastercard), GCash QR payment — scan and upload your receipt, and Cash on pickup or delivery. You choose your preferred method during checkout.",
+            "answer_tl": null
+        },
+        {
+            "keywords": "installment, hulugan, monthly payment, split payment, pay later, layaway",
+            "response": "Yes, we offer installment plans! You can split your payment over 7 days, 15 days, 1, 2, 3, or 6 months. Just choose \"Installment Plan\" during checkout and pick your preferred period. Installment requests are reviewed and approved by our team within 24 hours.",
+            "answer_tl": null
+        },
+        {
+            "keywords": "delivery, shipping, deliver, magkano delivery, delivery fee, delivery area, how long delivery, saan available",
+            "response": "We offer two options: Pick-up at our shop in San Juan, Batangas — completely FREE, available Mon to Sat 8AM to 5PM. Door-to-door delivery — flat fee of 500 pesos, available based on your location. You will get a notification the moment your order is ready or out for delivery.",
+            "answer_tl": null
+        },
+        {
+            "keywords": "track, tracking, order status, where is my order, my order, check order, order update",
+            "response": "You can track your order anytime! Go to your Profile then My Orders, or visit the Orders page directly. You will see a live status timeline: Placed then Confirmed then In Production then Ready or Out for Delivery then Completed. You will also get a notification every time your order status changes.",
+            "answer_tl": null
+        },
+        {
+            "keywords": "register, sign up, create account, how to register, gumawa ng account, new account",
+            "response": "Creating an account is free and quick! Click \"Register\" in the top menu, fill in your name, email, phone number, and a secure password — or just sign up instantly with Google. After registering, you will need to verify your identity once before placing your first order.",
+            "answer_tl": null
+        },
+        {
+            "keywords": "forgot password, reset password, lost password, cant login, di makapasok, wrong password",
+            "response": "No worries! Go to the Login page and click \"Forgot password?\" — enter your email and we will send you a secure reset link. If you signed up using Google, you do not need a password at all — just click \"Continue with Google\" to log in.",
+            "answer_tl": null
+        },
+        {
+            "keywords": "material, wood, wood type, narra, mahogany, acacia, lawaan, gemelina, ano gamit na kahoy",
+            "response": "We work with premium Philippine hardwood! Our most popular choices: Narra — premium, durable, beautiful grain. Mahogany — classic reddish-brown tone. Acacia — very durable, great for everyday furniture. Lawaan — more affordable option. Gemelina — ideal if you plan to paint the piece. Not sure which fits your needs? Our Customize tool lets you specify a preference, or leave it to Any and Suggest Best and we will recommend the right wood.",
+            "answer_tl": null
+        },
+        {
+            "keywords": "price, how much, budget, presyo, magkano, cheap, affordable",
+            "response": "Our prices vary by piece, material, and size — typically ranging from a few thousand pesos for smaller items to higher for large custom furniture like dining sets. Tell me your budget and I can help point you toward pieces that fit! You can also browse our Catalog and filter by price range.",
+            "answer_tl": null
+        },
+        {
+            "keywords": "cancel order, refund, return, pwede ba icancel, change my order, i made a mistake",
+            "response": "Since most of our furniture is made-to-order, cancellations are only possible before production begins. If your order status still shows Pending or Confirmed, contact us right away and we will do our best to help. Once an order reaches In Production, it usually cannot be cancelled since materials have already been cut for your piece.",
+            "answer_tl": null
+        },
+        {
+            "keywords": "contact, talk to human, real person, customer service, phone, email, number, facebook, messenger, reach, call, tumawag, kausapin",
+            "response": "You can reach our team directly: Phone {{phone}}, Email {{email}}, Facebook {{facebook}} — located in San Juan, Batangas, Philippines, open Mon to Sat 8AM to 5PM. Or feel free to keep chatting with me — I am here to help with most questions!",
+            "answer_tl": null
+        },
+        {
+            "keywords": "location, address, where are you, store hours, open, saan kayo, oras",
+            "response": "We are located in San Juan, Batangas, Philippines. Our shop is open Monday to Saturday, 8AM to 5PM. You are welcome to visit for pickup orders, or to see our craftsmanship in person!",
+            "answer_tl": null
+        },
+        {
+            "keywords": "catalog, products, what do you sell, furniture types, categories, ano meron",
+            "response": "We offer a wide range of handcrafted furniture: dining tables, chairs, cabinets, bed frames, sofas, doors, study tables, and full sala sets. You can browse everything in our Catalog and filter by category, or tell me what room you are furnishing and I can point you in the right direction!",
+            "answer_tl": null
+        },
+        {
+            "keywords": "cart, add to cart, my cart, remove from cart, checkout help",
+            "response": "Adding items is simple — click \"Add to Cart\" on any product page. You can view, adjust quantities, or remove items anytime from your Cart page. When you are ready, click \"Proceed to Checkout\" to place your order.",
+            "answer_tl": null
+        },
+        {
+            "keywords": "ai design, generate design, dalle, design tool, how does ai design work",
+            "response": "Our Customize tool lets you describe furniture you want built from scratch — type, material, style, dimensions — and our AI generates visual design concepts for you to review. Once you pick your favorite, our team reaches out to discuss pricing and production. It is a great option if you do not see exactly what you want in our catalog!",
+            "answer_tl": null
+        },
+        {
+            "keywords": "google, sign in with google, google login, google account",
+            "response": "Yes, you can sign up or log in instantly using your Google account — no need to create a separate password. Just click \"Continue with Google\" on the Login or Register page.",
+            "answer_tl": null
+        },
+        {
+            "keywords": "help, i am lost, confused, i dont know, di ko alam, saan ba ako",
+            "response": "No worries, I have got you! Here is a quick overview of what you can do: Browse and order furniture, Request a custom design, Track an existing order, or Ask me about payment, delivery, or verification. What would you like to explore first?",
+            "answer_tl": null
+        }
+    ]
+}

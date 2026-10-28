@@ -17,6 +17,12 @@ class LumaDefaultsTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        config(['shop.fallback.phone' => null, 'shop.fallback.email' => null, 'shop.fallback.facebook_url' => null, 'shop.fallback.shop_address' => null]);   // Luma tests start with no contact details, as before
+    }
+
     private function legacy(): void
     {
         foreach (require base_path('tests/Fixtures/LegacyIntents.php') as $id => $row) {
@@ -162,12 +168,14 @@ class LumaDefaultsTest extends TestCase
         BusinessSetting::query()->first()->update(['phone' => '0917-555-1234', 'email' => 'luma@shop.test']);
 
         $set = $this->ask('how can I contact you?');
-        $this->assertStringContainsString('0917-555-1234', $set['response']);
+        $this->assertStringContainsString('0917 555 1234', $set['response']);
         $this->assertStringContainsString('luma@shop.test', $set['response']);
-        $this->assertSame(['phone' => '0917-555-1234', 'email' => 'luma@shop.test'], $set['contact']);
+        $this->assertStringContainsString("Email: luma@shop.test
+Phone: 0917 555 1234", $set['response']);   // label/value rows, not a second card
+        $this->assertNull($set['contact']);
 
         $tl = $this->ask('pwede ko po ba kayong makausap');
-        $this->assertStringContainsString('tumawag sa 0917-555-1234', $tl['response']);
+        $this->assertStringContainsString('Telepono: 0917 555 1234', $tl['response']);
     }
 
     public function test_open_and_closed_are_worked_out_from_the_manila_time_of_the_question(): void

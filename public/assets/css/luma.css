@@ -57,6 +57,13 @@
   }
 }
 
+/* ── fonts inside the panel (self-hosted, see fonts.css): Cormorant Garamond for the name and headings, Montserrat for text ──
+   Only the panel is re-pointed; the launcher keeps its own tokens above. */
+.chatbot-window {
+  --lc-font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --lc-font-body: 'Montserrat', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
 /* ── launcher ───────────────────────────────────────────────────────────── */
 .chatbot-fab {
   position: fixed; right: 24px; bottom: 24px; z-index: 150; width: 64px; height: 64px; padding: 0;
@@ -353,3 +360,51 @@ nav .nav-chatbot-reactivate { background: transparent; border: 0; font-family: v
 
 /* Retry under a failed-send message: its own row, full touch size */
 .chatbot-window .chat-bubble .chat-retry.lp-btn { display: flex; margin-top: 10px; min-height: 44px; }
+
+/* ── answer format v2: paragraphs, lists, label/value rows, notes, links (App\Support\Luma\Formatter builds the markup) ──
+   Montserrat Regular for text, Cormorant Garamond SemiBold for headings, Montserrat Medium with even-width digits for numbers and prices. */
+.chatbot-window .chat-msg .chat-bubble.lf { font: 400 .9rem/1.55 var(--lc-font-body); overflow-wrap: anywhere; }
+.chatbot-window .chat-bubble.lf p { margin: 0; }
+.chatbot-window .chat-bubble.lf p + p,
+.chatbot-window .chat-bubble.lf p + .lf-kv,
+.chatbot-window .chat-bubble.lf .lf-kv + p,
+.chatbot-window .chat-bubble.lf p + .lf-list,
+.chatbot-window .chat-bubble.lf .lf-list + p,
+.chatbot-window .chat-bubble.lf .lf-kv + .lf-list,
+.chatbot-window .chat-bubble.lf .lf-list + .lf-kv { margin-top: 10px; }
+.chatbot-window .chat-bubble.lf strong { font-weight: 600; }
+.chatbot-window .chat-bubble.lf .lf-list { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.chatbot-window .chat-bubble.lf ol.lf-list { padding-left: 22px; }
+.chatbot-window .chat-bubble.lf .lf-note { font-size: .86em; color: var(--lc-muted); }
+.chatbot-window .chat-bubble.lf .lf-kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 14px; margin: 0; }
+.chatbot-window .chat-bubble.lf .lf-kv dt { color: var(--lc-muted); font-size: .86em; padding-top: 2px; }
+.chatbot-window .chat-bubble.lf .lf-kv dd { margin: 0; min-width: 0; }
+.chatbot-window .chat-bubble.lf .lf-num,
+.chatbot-window .chat-card .chat-card-price,
+.chatbot-window .chat-product-price { font-family: var(--lc-font-body); font-weight: 500; font-variant-numeric: lining-nums tabular-nums; }
+.chatbot-window .chat-bubble.lf a { font-weight: 500; }
+
+/* product showcase: same cards and pictures, new fonts. Names semibold, prices Medium with even-width digits. */
+.chatbot-window .chat-card .chat-card-price { font-size: .76rem; }
+.chatbot-window .chat-card .chat-card-name { font-weight: 600; }
+
+/* buttons SemiBold; the name in the header in Cormorant Garamond SemiBold (Cormorant runs small, so it is sized up) */
+.chatbot-window .chat-btn { font-weight: 600; }
+.chatbot-window .chat-header-text h4 { font-weight: 600; font-size: 1.34rem; line-height: 1; }
+.chatbot-window .chat-form-title,
+.chatbot-window .chat-contact-name { font-family: var(--lc-font-display); font-weight: 600; font-size: 1.1rem; }
+
+/* touch: links in a reply are at least 44px tall to hit (the padding grows the hit area, the text does not move) */
+@media (max-width: 520px), (pointer: coarse) {
+  .chatbot-window .chat-bubble.lf a { padding-block: 12px; margin-block: -12px; }
+  .chatbot-window .chat-bubble.lf .lf-kv a { display: inline-block; padding-block: 12px; margin-block: -12px; }
+  .chatbot-window .chat-bubble.lf .lf-kv { row-gap: 14px; }
+}
+@media (max-width: 520px), (pointer: coarse) {
+  .chatbot-window .chat-chip.lp-btn { min-height: 44px; }   /* quick replies are touch targets: 44px tall on a phone */
+}
+
+/* style.css gives every class containing "price" the site body font with !important: the chat's prices keep Montserrat Medium */
+.chatbot-window .chat-card .chat-card-price,
+.chatbot-window .chat-product-price,
+.chatbot-window .chat-bubble.lf .lf-num { font-family: var(--lc-font-body) !important; }

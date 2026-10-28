@@ -26,6 +26,7 @@ trait TalksToLuma
 
     protected function setUpLuma(): void
     {
+        config(['shop.fallback.phone' => null, 'shop.fallback.email' => null, 'shop.fallback.facebook_url' => null, 'shop.fallback.shop_address' => null]);   // Luma tests start with no contact details, as before
         $this->admin = $this->makeUser('admin');
         $this->owner = $this->makeUser();
         $this->other = $this->makeUser();

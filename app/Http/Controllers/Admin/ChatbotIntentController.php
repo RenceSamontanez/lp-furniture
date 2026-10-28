@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ChatbotIntent;
-use App\Models\ChatbotLog;
+use App\Models\LumaUnansweredQuestion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class ChatbotIntentController extends Controller
 {
@@ -18,16 +19,20 @@ class ChatbotIntentController extends Controller
             ->orderBy('category')
             ->paginate(15);
 
-        // Questions Luma could not answer (newest first, repeats counted) so the admin can train her
-        $unanswered = ChatbotLog::query()
-            ->where('intent_detected', 'unmatched')
-            ->selectRaw('LOWER(message) as question, COUNT(*) as times, MAX(created_at) as last_asked')
-            ->groupBy('question')
-            ->orderByDesc('last_asked')
-            ->limit(15)
-            ->get();
+        // Questions Luma could not answer: most asked first, then most recent; dismissed and taught ones are hidden.
+        $unanswered = Schema::hasTable('luma_unanswered_questions')
+            ? LumaUnansweredQuestion::open()->orderByDesc('times_asked')->orderByDesc('last_asked_at')->limit(50)->get()
+            : collect();
 
         return view('admin.chatbot.index', compact('intents', 'search', 'unanswered'));
+    }
+
+    /** Hides a question from the list (it stays in the table until the 30-day cleanup). */
+    public function dismissUnanswered($id)
+    {
+        LumaUnansweredQuestion::findOrFail($id)->forceFill(['dismissed_at' => now()])->save();
+
+        return back()->with('success', 'Question dismissed.');
     }
 
     public function create()

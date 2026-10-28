@@ -215,7 +215,7 @@ function openChatbot() {
 /* Send the initial greeting when chatbot first opens */
 function initChat() {
   addBotMessage(
-    "Hi, I'm Luma, LP Furniture Shop's AI Assistant. Ask me about our furniture, prices, custom designs, delivery or your order. Kumusta po! Pwede rin po kayong magtanong sa Tagalog.",
+    "Hi, I'm Luma, LP Furniture's shop assistant.\n\nAsk me about our furniture, prices, custom designs, delivery or your order. Kumusta po! Pwede rin po kayong magtanong sa Tagalog.",
     ['How to order', 'Custom design', 'Prices', 'Delivery']
   );
   lumaAfterHoursMessage();
@@ -476,7 +476,7 @@ function lumaRefundSummary(s, n, goBack, wrap) {
       const r = await lumaPost(s.post_url, { step: 'confirm', token: s.token, checked: true, lang: window.lumaLang || 'en' });
       if (r.status === 200 && r.data.reply) {
         wrap.remove();
-        addBotMessage(r.data.reply.text, [], [], { reference: r.data.reply.reference || r.data.reference, buttons: r.data.reply.buttons || [], lang: window.lumaLang });
+        addBotMessage(r.data.reply.text, [], [], { html: r.data.reply.html, reference: r.data.reply.reference || r.data.reference, buttons: r.data.reply.buttons || [], lang: window.lumaLang });
         return;
       }
       err.textContent = (r.data.errors && r.data.errors.check && r.data.errors.check[0]) || r.data.message || 'Something went wrong. Please try again.';
@@ -498,10 +498,14 @@ function addBotMessage(msg, suggestions, products, extra) {
   const body = document.getElementById('chat-body');
   extra = extra || {};
 
-  // Create the chat bubble (the text is escaped; only line breaks become <br>)
+  // Create the chat bubble. The server sends `html`, already escaped and formatted by App\Support\Luma\Formatter
+  // (paragraphs, lists, label/value rows, safe links). Without it the text is escaped here and shown as paragraphs.
   const el = document.createElement('div');
   el.className = 'chat-msg bot';
-  el.innerHTML = `<div class="chat-bubble">${chatEsc(msg).replace(/\n/g, '<br/>')}</div>`;
+  const bubbleHtml = typeof extra.html === 'string' && extra.html !== ''
+    ? extra.html
+    : String(msg).split(/\n{2,}/).map(part => '<p>' + chatEsc(part).replace(/\n/g, '<br>') + '</p>').join('');
+  el.innerHTML = `<div class="chat-bubble lf">${bubbleHtml}</div>`;
   body.appendChild(el);
 
   // Product cards from the live catalog
@@ -683,7 +687,7 @@ async function sendChat(retryText) {
     addBotMessage(data.response, data.suggestions, data.products, data);
     // A clarifying question or the "I couldn't quite find an answer" fallback: she wonders. Anything else: she smiles.
     const text = String(data.response || '');
-    if (/\?/.test(text) || /^(I couldn't quite find an answer|Pasensya na po, hindi ko po masagot)/.test(text)) answered = 'wondering';
+    if (/\?/.test(text) || /^(Sorry, I can't answer that one|Pasensya na po, hindi ko po masagot)/.test(text)) answered = 'wondering';
   } catch (e) {
     think.remove();
     addBotMessage(lumaTl()

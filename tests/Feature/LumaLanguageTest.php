@@ -11,15 +11,21 @@ use Tests\Concerns\BuildsCustomOrderFixtures;
 use Tests\TestCase;
 
 /**
- * Stage 20 part B: Luma answers in the language of the question and ends every answer with one closing line.
+ * Stage 20 part B: Luma answers in the language of the question. Since answer format v2 no answer ends with a sign-off line.
  */
 class LumaLanguageTest extends TestCase
 {
     use RefreshDatabase;
     use BuildsCustomOrderFixtures;
 
-    private const CLOSING_EN = "You're welcome! Luma is always here to help.";
-    private const CLOSING_TL = 'Walang anuman po! Nandito lang si Luma para tumulong.';
+    protected function setUp(): void
+    {
+        parent::setUp();
+        config(['shop.fallback.phone' => null, 'shop.fallback.email' => null, 'shop.fallback.facebook_url' => null, 'shop.fallback.shop_address' => null]);   // Luma tests start with no contact details, as before
+    }
+
+    private const RETIRED_EN = "You're welcome! Luma is always here to help.";
+    private const RETIRED_TL = 'Walang anuman po! Nandito lang si Luma para tumulong.';
 
     private function intent(string $keywords, string $en, ?string $tl = null): ChatbotIntent
     {
@@ -73,78 +79,75 @@ class LumaLanguageTest extends TestCase
         $tl = $this->ask('magkano po');
 
         $this->assertStringContainsString('Prices depend on the piece.', $tl['response']);
-        $this->assertStringEndsWith(self::CLOSING_TL, $tl['response']);
+        $this->assertStringEndsWith('Prices depend on the piece.', $tl['response']);
     }
 
-    public function test_every_answer_ends_with_the_closing_line_exactly_once(): void
+    public function test_no_answer_ends_with_a_sign_off_line(): void
     {
         $this->intent('price', 'Prices depend on the piece.', 'Nag-iiba po ang presyo.');
 
-        // an answer ends "You're welcome! ..."; a miss ends with the fallback line, which never says "You're welcome"
-        foreach ([
-            'what is the price' => self::CLOSING_EN, 'magkano po' => self::CLOSING_TL,
-            'xyzzy' => 'Luma is always here to help.', 'hindi ko alam po' => 'Nandito lang po si Luma para tumulong.', 'ewan po' => 'Nandito lang po si Luma para tumulong.',
-        ] as $text => $closing) {
+        foreach (['what is the price' => 'Prices depend on the piece.', 'magkano po' => 'Nag-iiba po ang presyo.'] as $text => $ends) {
             $reply = $this->ask($text)['response'];
 
-            $this->assertStringEndsWith($closing, $reply, $text);
-            $this->assertSame(1, substr_count($reply, 'Luma is always here to help') + substr_count($reply, 'Nandito lang'), $text);
+            $this->assertStringEndsWith($ends, $reply, $text);
+            $this->assertStringNotContainsString('always here to help', $reply, $text);
+            $this->assertStringNotContainsString('Nandito lang', $reply, $text);
         }
+
+        // a miss and thanks are plain too
+        $this->assertStringNotContainsString('always here to help', $this->ask('xyzzy')['response']);
+        $this->assertSame("You're welcome.", $this->ask('thank you')['response']);
     }
 
-    public function test_the_closing_line_is_never_doubled_when_an_admin_typed_it_in_the_answer(): void
+    public function test_a_retired_sign_off_an_admin_typed_into_an_answer_is_removed(): void
     {
-        $this->intent('price', 'Prices depend. ' . self::CLOSING_EN, 'Nag-iiba po. ' . self::CLOSING_TL);
+        $this->intent('price', 'Prices depend. ' . self::RETIRED_EN, 'Nag-iiba po. ' . self::RETIRED_TL);
 
-        $this->assertSame(1, substr_count($this->ask('price')['response'], self::CLOSING_EN));
-        $this->assertSame(1, substr_count($this->ask('magkano po')['response'], self::CLOSING_TL));
+        $this->assertSame('Prices depend.', $this->ask('price')['response']);
+        $this->assertSame('Nag-iiba po.', $this->ask('magkano po')['response']);
     }
 
-    public function test_the_closing_line_is_added_in_one_place_only(): void
+    public function test_the_sign_off_is_gone_from_the_code_and_only_listed_as_retired_in_config(): void
     {
-        $hits = [];
         foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(app_path())) as $file) {
             if (!$file->isFile() || !str_ends_with($file->getFilename(), '.php')) {
                 continue;
             }
-            $code = file_get_contents($file->getPathname());
-            if (str_contains($code, 'Luma is always here') || str_contains($code, 'luma.closing')) {
-                $hits[] = str_replace('\\', '/', substr($file->getPathname(), strlen(app_path()) + 1));
-            }
+            $this->assertStringNotContainsString('Luma is always here', file_get_contents($file->getPathname()), $file->getFilename());
         }
 
-        $this->assertSame(['Support/Luma/Luma.php'], $hits);
-        $this->assertStringContainsString('Luma is always here to help', file_get_contents(config_path('luma.php')));
+        $this->assertNull(config('luma.closing'));
+        $this->assertContains(self::RETIRED_EN, config('luma.retired_closings'));
     }
 
-    public function test_the_fallback_is_bilingual_and_closes_too(): void
+    public function test_the_fallback_is_bilingual_and_explains_itself(): void
     {
         $en = $this->ask('xyzzy plugh');
         $tl = $this->ask('ewan ko po xyzzy');
 
-        $this->assertStringContainsString("I couldn't quite find an answer", $en['response']);
-        $this->assertStringEndsWith('Luma is always here to help.', $en['response']);
+        $this->assertStringStartsWith("Sorry, I can't answer that one.", $en['response']);
+        $this->assertStringContainsString('You can also ask me about our products, prices, ordering, delivery or payment.', $en['response']);
         $this->assertStringNotContainsString("You're welcome", $en['response']);
 
-        $this->assertStringContainsString('Pasensya na po', $tl['response']);
+        $this->assertStringStartsWith('Pasensya na po', $tl['response']);
         $this->assertStringContainsString('website', $tl['response']);
-        $this->assertStringEndsWith('Nandito lang po si Luma para tumulong.', $tl['response']);
         $this->assertStringNotContainsString('Walang anuman', $tl['response']);
         $this->assertContains('Makausap ang isang tao', $tl['suggestions']);
         $this->assertCount(5, $tl['suggestions']);
     }
 
-    public function test_finish_adds_the_closing_in_the_language_of_the_answer(): void
+    public function test_finish_removes_retired_sign_offs_and_adds_safe_html(): void
     {
-        $this->assertSame("Hello.\n\n" . self::CLOSING_TL, Luma::finish(['text' => 'Hello.', 'lang' => 'tl'])['text']);
-        $this->assertSame("Hello.\n\n" . self::CLOSING_EN, Luma::finish(['text' => 'Hello.', 'lang' => 'en'])['text']);
+        $this->assertSame('Hello.', Luma::finish(['text' => "Hello.\n\n" . self::RETIRED_TL, 'lang' => 'tl'])['text']);
+        $this->assertSame('Hello.', Luma::finish(['text' => 'Hello. ' . self::RETIRED_EN, 'lang' => 'en'])['text']);
+        $this->assertSame('<p>&lt;b&gt;Hello&lt;/b&gt;</p>', Luma::finish(['text' => '<b>Hello</b>', 'lang' => 'en'])['html']);
     }
 
     public function test_the_chat_greeting_introduces_luma_in_both_languages(): void
     {
         $widget = file_get_contents(public_path('assets/main.js'));
 
-        $this->assertStringContainsString("Hi, I'm Luma, LP Furniture Shop's AI Assistant", $widget);
+        $this->assertStringContainsString("Hi, I'm Luma, LP Furniture's shop assistant.", $widget);
         $this->assertStringContainsString('Kumusta po', $widget);
     }
 

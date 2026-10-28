@@ -77,15 +77,11 @@ class LumaToneTest extends TestCase
         $this->assertStringContainsString('6028871884223', $texts[Req::REFUNDED][0]);
     }
 
-    public function test_the_widget_keeps_a_polite_goodbye_and_every_closing_line_is_in_config(): void
+    public function test_thanks_and_goodbye_get_one_short_polite_line_and_no_answer_has_a_sign_off(): void
     {
-        $closing = config('luma.closing');
-        $this->assertStringNotContainsString("You're welcome", $closing['situations']['fallback']['en']);
-        $this->assertStringNotContainsString('Walang anuman', $closing['situations']['fallback']['tl']);
-        foreach (['fallback', 'flow', 'goodbye'] as $kind) {
-            $this->assertNotEmpty($closing['situations'][$kind]['en']);
-            $this->assertStringContainsString('po', $closing['situations'][$kind]['tl'], $kind);
-            $this->assertDoesNotMatchRegularExpression(self::FORBIDDEN, $closing['situations'][$kind]['en'], $kind);
-        }
+        $this->assertNull(config('luma.closing'));
+        $this->assertSame("You're welcome.", $this->say('thank you')['response']);
+        $this->assertSame('Walang anuman po.', $this->say('salamat po')['response']);
+        $this->assertDoesNotMatchRegularExpression(self::FORBIDDEN, $this->say('thanks')['response']);
     }
 }

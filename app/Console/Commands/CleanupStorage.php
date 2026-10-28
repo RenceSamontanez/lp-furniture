@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Support\Luma\UnansweredQuestions;
 use App\Support\StorageHealth;
 use App\Support\UploadFolders;
 use Illuminate\Console\Command;
@@ -51,6 +52,10 @@ class CleanupStorage extends Command
         if ($this->option('sessions') && config('session.driver') === 'database' && Schema::hasTable(config('session.table', 'sessions'))) {
             $q = DB::table(config('session.table', 'sessions'))->where('last_activity', '<', now()->subMinutes((int) config('session.lifetime'))->getTimestamp());
             $rows['expired sessions'] = $force ? $q->delete() : $q->count();
+        }
+        // Luma's unanswered-question list: dismissed and taught questions go after 30 days (always part of the cleanup).
+        if (Schema::hasTable('luma_unanswered_questions')) {
+            $rows['dismissed or taught Luma questions older than 30 days'] = UnansweredQuestions::purge(!$force);
         }
         foreach ($rows as $label => $n) {
             $this->line("{$verb} {$label}: <info>{$n}</info>");

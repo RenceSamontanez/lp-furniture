@@ -1,7 +1,7 @@
 {{-- The shop's phone and email from Contact Settings; "through our website" when nothing real is set. --}}
 @php
-  $phone = \App\Support\Luma\Contact::phone();
-  $email = \App\Support\Luma\Contact::email();
+  $phone = \App\Support\Luma\Contact::settingsPhone();
+  $email = \App\Support\Luma\Contact::settingsEmail();
 @endphp
 <aside class="si-card" aria-label="Contact details">
   <h2 class="si-card-title">Prefer to talk first?</h2>

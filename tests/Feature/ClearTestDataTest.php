@@ -95,6 +95,7 @@ class ClearTestDataTest extends TestCase
         DB::table('notifications')->insert(['user_id' => $admin->id, 'title' => 't', 'message' => 'm', 'type' => 'general', 'is_read' => false, 'created_at' => now()]);
         DB::table('chatbot_logs')->insert(['user_id' => $customer->id, 'session_id' => 's', 'message' => 'hi', 'response' => 'hello', 'created_at' => now()]);
         DB::table('unanswered_ideas')->insert(['kind' => 'idea', 'text' => 'test', 'text_key' => 'test', 'times_asked' => 1, 'first_seen_at' => now(), 'last_seen_at' => now(), 'created_at' => now(), 'updated_at' => now()]);
+        DB::table('luma_unanswered_questions')->insert(['question_key' => 'do you sell pianos', 'question' => 'do you sell pianos', 'times_asked' => 3, 'first_asked_at' => now(), 'last_asked_at' => now(), 'created_at' => now(), 'updated_at' => now()]);
         DB::table('password_reset_tokens')->insert(['email' => $customer->email, 'token' => 'x', 'created_at' => now()]);
         DB::table('failed_jobs')->insert(['uuid' => (string) \Illuminate\Support\Str::uuid(), 'connection' => 'c', 'queue' => 'q', 'payload' => '{}', 'exception' => 'e', 'failed_at' => now()]);
         DB::table('extra_furniture_types')->update(['source_idea_id' => 5]);
@@ -114,7 +115,7 @@ class ClearTestDataTest extends TestCase
 
     private function snapshot(): array
     {
-        return array_map(fn ($t) => DB::table($t)->count(), ['users', 'orders', 'payments', 'custom_design_requests', 'design_agreements', 'notifications', 'chatbot_logs', 'unanswered_ideas', 'failed_jobs', 'products', 'design_ideas']);
+        return array_map(fn ($t) => DB::table($t)->count(), ['users', 'orders', 'payments', 'custom_design_requests', 'design_agreements', 'notifications', 'chatbot_logs', 'luma_unanswered_questions', 'unanswered_ideas', 'failed_jobs', 'products', 'design_ideas']);
     }
 
     /* ───────────── data:clear-test ───────────── */
@@ -160,7 +161,7 @@ class ClearTestDataTest extends TestCase
 
         $this->artisan('data:clear-test', ['--force' => true, '--confirm' => 'CLEAR', '--backup-taken' => true])->assertSuccessful();
 
-        foreach (['orders', 'payments', 'custom_design_requests', 'custom_quotes', 'design_agreements', 'notifications', 'chatbot_logs', 'unanswered_ideas', 'password_reset_tokens', 'failed_jobs'] as $t) {
+        foreach (['orders', 'payments', 'custom_design_requests', 'custom_quotes', 'design_agreements', 'notifications', 'chatbot_logs', 'luma_unanswered_questions', 'unanswered_ideas', 'password_reset_tokens', 'failed_jobs'] as $t) {
             $this->assertSame(0, DB::table($t)->count(), "{$t} should be empty");
         }
         // customers gone, admin and staff stay

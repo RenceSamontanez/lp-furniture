@@ -45,16 +45,17 @@ return [
         'ko', 'mo', 'ninyo', 'niyo', 'nyo', 'na', 'pa', 'sa', 'mga', 'din', 'rin', 'daw', 'raw', 'eh', 'bang', 'yung', 'iyong', 'kong', 'mong', 'akong', 'ninyong', 'niyong', 'nyong',
     ],
 
-    // One closing line, added in one place (Luma::finish) to every reply. `en` / `tl` are the default after a normal
-    // answer; `situations` are the variants chosen by what just happened (a fallback never says "You're welcome").
-    'closing' => [
-        'en' => "You're welcome! Luma is always here to help.",
-        'tl' => 'Walang anuman po! Nandito lang si Luma para tumulong.',
-        'situations' => [
-            'fallback' => ['en' => 'Luma is always here to help.', 'tl' => 'Nandito lang po si Luma para tumulong.'],
-            'flow'     => ['en' => 'I am right here if you need anything.', 'tl' => 'Nandito lang po ako kung may kailangan kayo.'],
-            'goodbye'  => ['en' => 'Take care, and come back anytime. Luma is always here to help.', 'tl' => 'Ingat po, balik lang kayo anumang oras. Nandito lang si Luma para tumulong.'],
-        ],
+    // Luma no longer ends answers with a sign-off line. These retired lines are still removed from the end of an answer
+    // that has one typed in (an old admin-edited row), in Luma::finish.
+    'retired_closings' => [
+        "You're welcome! Luma is always here to help.",
+        'Walang anuman po! Nandito lang si Luma para tumulong.',
+        'Luma is always here to help.',
+        'Nandito lang po si Luma para tumulong.',
+        'I am right here if you need anything.',
+        'Nandito lang po ako kung may kailangan kayo.',
+        'Take care, and come back anytime. Luma is always here to help.',
+        'Ingat po, balik lang kayo anumang oras. Nandito lang si Luma para tumulong.',
     ],
 
     // The furniture types Luma recognises in a question. The key is the one word or phrase she
