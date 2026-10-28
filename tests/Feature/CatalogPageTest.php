@@ -224,7 +224,7 @@ class CatalogPageTest extends TestCase
 
         $html = $this->get('/catalog')->assertOk()->getContent();
         $this->assertStringContainsString('data-quick-view="' . $p->id . '"', $html);
-        $this->assertStringContainsString('<span>₱3,000.00</span>', $html);
+        $this->assertStringContainsString('<span class="cx-now">₱3,000.00</span>', $html);
         $this->assertStringContainsString('role="dialog"', $html);
         $this->assertStringContainsString('aria-modal="true"', $html);
         $this->assertStringNotContainsString('Add to cart', $html);

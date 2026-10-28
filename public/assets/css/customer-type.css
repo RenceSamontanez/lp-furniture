@@ -48,6 +48,11 @@
 
 /* The one back button: ghost look = .lp-btn--secondary, about 45px tall (component: <x-back-link>). */
 .lp-type .lp-btn--back { min-height: 45px; padding: 10px 18px; gap: 8px; text-decoration: none; width: auto; max-width: 100%; justify-content: center; }
+/* Space below the Back button so it never touches the heading under it: 24px on pages, 20px inside cards (auth card and other cards).
+   It stays at the left edge of the content column (same edge as the heading). */
+.lp-type .lp-btn--back { display: flex; width: fit-content; margin: 0 auto 24px 0; }
+.lp-type [class*="card"] .lp-btn--back, .lp-type .cc-back { margin-bottom: 20px; }
+.lp-type .cz-pills .lp-btn--back { margin: 0; }   /* Customize studio: Back sits in one row with the pills, which are sized to fit the screen */
 
 /* Navigation: logo in Cormorant, links Montserrat 500 (current page 600), 14px. */
 .lp-type nav.site-nav .sn-link, .lp-type nav.site-nav .sn-link:visited { font-family: var(--font-body); font-size: 14px; font-weight: 500; }

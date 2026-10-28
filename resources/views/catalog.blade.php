@@ -75,14 +75,14 @@
           <div class="cx-pic">
             <img src="{{ $img }}" alt="{{ $product->product_name }}" @if($i >= 6) loading="lazy" @endif decoding="async"
                  onerror="this.onerror=null;this.src='{{ $placeholder }}';">
-            <div class="cx-tag"><span>{{ $product->on_sale ? $product->formatted_sale_price : $product->formatted_price }}</span></div>
             @if($badge)<span class="cx-badge">{{ $badge }}</span>@endif
             <button type="button" class="cx-qv" data-quick-view="{{ $product->id }}" data-name="{{ $product->product_name }}"
                     aria-label="Quick view: {{ $product->product_name }}">Quick View</button>
           </div>
           <div class="cx-cap">
             <h3><a href="{{ route('product.show', $product->id) }}">{{ title_case($product->product_name) }}</a></h3>
-            <p class="cx-k">{{ title_case($product->category) }}@if($product->on_sale)<span class="cx-was">{{ $product->formatted_price }}</span>@endif</p>
+            <p class="cx-k">{{ title_case($product->category) }}</p>
+            <p class="cx-cost"><span class="cx-now">{{ $product->on_sale ? $product->formatted_sale_price : $product->formatted_price }}</span>@if($product->on_sale)<s class="cx-was">{{ $product->formatted_price }}</s>@endif</p>
             @if(filled($product->description))<p class="cx-d">{{ $product->description }}</p>@endif
             <a href="{{ route('product.show', $product->id) }}" class="lp-btn lp-btn--secondary cx-vd">View Details</a>
           </div>

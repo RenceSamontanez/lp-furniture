@@ -331,6 +331,32 @@ class OrderController extends Controller
         return view('orders.show', compact('order', 'timeline'));
     }
 
+    // ── CANCEL AN UNPAID ORDER (customer) ──
+    // Only the customer's own, still Pending order with no payment received. The server checks everything again under a row lock.
+    public function cancel(Request $request, $id)
+    {
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'reason'       => ['required', 'string', \Illuminate\Validation\Rule::in(\App\Support\OrderTracking::CUSTOMER_CANCEL_REASONS)],
+            'reason_other' => ['nullable', 'string', 'max:' . \App\Support\OrderTracking::CUSTOMER_CANCEL_OTHER_MAX, new \App\Rules\NoLinkOrEmail()],
+        ], [
+            'reason.required'  => 'Choose a reason for cancelling.',
+            'reason.in'        => 'Choose a reason for cancelling.',
+            'reason_other.max' => 'Keep the reason to ' . \App\Support\OrderTracking::CUSTOMER_CANCEL_OTHER_MAX . ' characters or fewer.',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->route('orders.show', (int) $id)->with('error', $validator->errors()->first());
+        }
+        $data = $validator->validated();
+
+        try {
+            app(\App\Support\OrderTracking::class)->customerCancel((int) $id, Auth::user(), $data['reason'], $data['reason_other'] ?? null);
+        } catch (\App\Support\OrderTrackingException $e) {
+            return redirect()->route('orders.show', (int) $id)->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('orders.show', (int) $id)->with('success', 'Your order was cancelled. Nothing was charged.');
+    }
+
     // ── CHANGE PAYMENT METHOD ──
     // Lets a customer switch Stripe/GCash/Cash on an order that
     // hasn't been paid yet, without going back through checkout

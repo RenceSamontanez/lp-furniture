@@ -2549,3 +2549,12 @@ nav.lp-pager { position: static; z-index: auto; background: transparent; box-sha
 .lp-btn .lp-btn-icon { width: 16px; height: 16px; flex: none; }
 /* icon-only square button (the nav hamburger) */
 .lp-btn.lp-btn--icon { width: 48px; height: 48px; min-height: 48px; padding: 0; border-radius: 14px; position: relative; flex: none; }
+
+/* ══════════════════════════════════════════
+   PRODUCT CARDS (home, carousel, related): the price always has its own line and the
+   View Details button sits below it, at every width, so a long price can never collide with the button.
+══════════════════════════════════════════ */
+.product-footer { display: flex !important; flex-direction: column !important; align-items: flex-start !important; justify-content: flex-start !important; gap: 10px !important; }
+.product-footer .product-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; text-align: left; max-width: 100%; overflow-wrap: anywhere; }
+.product-footer .btn-view-details { align-self: flex-start; }
+@media (max-width: 480px) { .product-footer { align-items: stretch !important; } .product-footer .btn-view-details { align-self: stretch; } }

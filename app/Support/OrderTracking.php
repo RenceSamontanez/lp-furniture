@@ -266,6 +266,104 @@ class OrderTracking
         });
     }
 
+    /** What the customer can pick when they cancel their own unpaid order (stored as readable text in the history note). */
+    public const CUSTOMER_CANCEL_REASONS = [
+        'Changed My Mind',
+        'Ordered by Mistake',
+        'Do Not Want to Order Anymore',
+        'Found a Better Price',
+        'Want to Change the Items or Details',
+        'Other',
+    ];
+    public const CUSTOMER_CANCEL_OTHER_MAX = 200;
+
+    /**
+     * Why this order cannot be cancelled by its customer right now, or null when it can: a catalog order that is still
+     * Pending with no money received (nothing in the payment ledger, payment not paid or partial).
+     */
+    public static function customerCancelBlock(Order $order): ?string
+    {
+        if (!self::handles($order)) {
+            return 'This is a customized order. Please contact us to change it.';
+        }
+        if ($order->order_status === 'cancelled') {
+            return 'This order was already cancelled.';
+        }
+        if ($order->order_status !== 'pending') {
+            return 'This order has already moved on, so it can no longer be cancelled here. Please contact us.';
+        }
+        $payment = $order->payment ?? $order->payment()->first();
+        $paid = (float) PaymentRecord::where('order_id', $order->id)->sum('amount');
+        if ($paid > 0 || (float) $order->amount_paid > 0 || ($payment && in_array($payment->payment_status, ['paid', 'partial'], true))) {
+            return 'This order already has a payment, so it can no longer be cancelled here. Please contact us.';
+        }
+
+        return null;
+    }
+
+    /**
+     * The customer cancels their own unpaid order: no admin approval. Same effects as the admin cancel (status, history row,
+     * stock back once) plus the customer's notification. A pending payment row is marked failed, as the abandoned-order sweep
+     * does; a payment that still arrives later is handled by PaymentController (recorded and flagged for review, the order
+     * is never revived).
+     *
+     * @throws OrderTrackingException when the order is not the customer's, is paid, or has already moved on
+     */
+    public function customerCancel(int $orderId, User $customer, string $reason, ?string $other): Order
+    {
+        if (!in_array($reason, self::CUSTOMER_CANCEL_REASONS, true)) {
+            throw new OrderTrackingException('Choose a reason for cancelling.');
+        }
+        $detail = null;
+        if ($reason === 'Other') {
+            $detail = TextSanitizer::line((string) $other);
+            if (mb_strlen($detail) > self::CUSTOMER_CANCEL_OTHER_MAX) {
+                throw new OrderTrackingException('Keep the reason to ' . self::CUSTOMER_CANCEL_OTHER_MAX . ' characters or fewer.');
+            }
+        }
+        $note = 'Cancelled by the customer. Reason: ' . $reason . ($detail !== null && $detail !== '' ? ' - ' . $detail : '');
+
+        return DB::transaction(function () use ($orderId, $customer, $note, $reason, $detail) {
+            $order = Order::with('payment')->where('user_id', $customer->id)->lockForUpdate()->findOrFail($orderId);
+
+            if ($block = self::customerCancelBlock($order)) {
+                throw new OrderTrackingException($block);
+            }
+
+            $order->forceFill(['order_status' => 'cancelled', 'status_updated_by' => null, 'status_updated_at' => now()])->save();
+
+            OrderStatusEvent::create([
+                'order_id' => $order->id, 'admin_user_id' => null, 'type' => 'cancel',
+                'title' => 'Order Cancelled', 'from_status' => 'pending', 'to_status' => 'cancelled',
+                'note' => $note, 'customer_notified' => true,
+            ]);
+
+            $units = StockRestorer::restore($order);
+            if ($units > 0) {
+                OrderStatusEvent::create([
+                    'order_id' => $order->id, 'admin_user_id' => null, 'type' => 'stock',
+                    'title' => 'Items returned to stock (' . $units . ' ' . ($units === 1 ? 'unit' : 'units') . ')',
+                    'from_status' => 'cancelled', 'to_status' => 'cancelled', 'customer_notified' => false,
+                ]);
+            }
+
+            if ($order->payment && $order->payment->payment_status === 'pending') {
+                $order->payment()->update(['payment_status' => 'failed']);
+            }
+
+            Notification::create([
+                'user_id' => $order->user_id,
+                'title'   => 'Order ' . $order->order_number . ': Cancelled',
+                'message' => 'You cancelled this order. Nothing was charged. Reason: ' . $reason . ($detail ? ' - ' . $detail : '') . '.',
+                'type'    => 'order_update',
+                'url'     => route('orders.show', $order->id),
+                'is_read' => false,
+            ]);
+
+            return $order;
+        });
+    }
+
     /** The abandoned-order sweep and other system cancellations; no admin, no form. */
     public function systemCancel(Order $order, string $reason): void
     {

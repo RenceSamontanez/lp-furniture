@@ -155,6 +155,9 @@ Route::middleware(['auth', \App\Http\Middleware\SignOutOnPasswordChange::class])
              ->name('orders.index');
         Route::get('/orders/{id}', [OrderController::class, 'show'])
              ->name('orders.show');
+        // The customer cancels their own unpaid order (reason required, no admin approval). Rules: OrderTracking::customerCancel().
+        Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel'])
+             ->name('orders.cancel')->whereNumber('id')->middleware('throttle:10,1');
         Route::post('/orders/{id}/payment-method', [OrderController::class, 'updatePaymentMethod'])
              ->name('orders.paymentMethod.update');
 

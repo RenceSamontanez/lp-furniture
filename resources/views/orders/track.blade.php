@@ -60,6 +60,9 @@
         </ol>
       @endif
     </div>
+    @if(\App\Support\OrderTracking::customerCancelBlock($order) === null)
+      <div class="order-cancel-row">@include('orders.partials.cancel-order', ['order' => $order])</div>
+    @endif
   </section>
 
   <div class="cols">
