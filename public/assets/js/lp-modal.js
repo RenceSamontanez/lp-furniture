@@ -68,6 +68,9 @@
   function open(modal, from) {
     if (current) { return; }
     current = modal; opener = from || document.activeElement;
+    // Mount at the end of <body>: a parent with transform / filter / backdrop-filter / overflow (glass cards, the order view)
+    // would otherwise trap or clip this position:fixed layer. Not done for a modal inside a <form>, so its fields stay in that form.
+    if (modal.parentNode !== document.body && !modal.closest('form')) { document.body.appendChild(modal); }
     if (modal.hasAttribute('data-lp-summary-form')) { fill(modal); }
     modal.querySelectorAll('input[type=checkbox][data-lp-reset]').forEach(function (c) { c.checked = false; });
     syncRequires(modal);

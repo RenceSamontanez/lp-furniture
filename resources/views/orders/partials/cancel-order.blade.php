@@ -34,10 +34,11 @@
         <textarea id="{{ $cid }}-other" name="reason_other" rows="2" maxlength="{{ \App\Support\OrderTracking::CUSTOMER_CANCEL_OTHER_MAX }}" placeholder="Anything else you want us to know."></textarea>
         <small class="oc-count"><span data-oc-count>0</span> / {{ \App\Support\OrderTracking::CUSTOMER_CANCEL_OTHER_MAX }}</small>
       </div>
+      <div class="lp-notice lp-notice--problem oc-error" role="alert" data-oc-error hidden></div>
     </form>
     <x-slot:footer>
       <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Keep Order</button>
-      <button type="submit" form="{{ $cid }}-form" class="lp-btn lp-btn--danger">Cancel Order</button>
+      <button type="submit" form="{{ $cid }}-form" class="lp-btn lp-btn--danger" data-oc-confirm><span class="oc-spin" aria-hidden="true"></span><span data-oc-label>Cancel Order</span></button>
     </x-slot:footer>
   </x-modal>
 @endif

@@ -82,9 +82,6 @@
           </div>
 
         </a>
-        @if(\App\Support\OrderTracking::customerCancelBlock($order) === null)
-          <div class="order-card-actions">@include('orders.partials.cancel-order', ['order' => $order])</div>
-        @endif
       @endforeach
     </div>
 

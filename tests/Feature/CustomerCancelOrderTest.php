@@ -193,19 +193,42 @@ class CustomerCancelOrderTest extends TestCase
         [$paid] = $this->unpaidOrder($customer);
         $paid->forceFill(['order_status' => 'confirmed'])->save();
 
+        // the My Orders list never shows the button or the dialog: View Details is its only action
         $list = $this->actingAs($customer)->get(route('orders.index'))->assertOk()->getContent();
-        $this->assertStringContainsString('id="cancel-order-' . $open->id . '"', $list);
-        $this->assertStringNotContainsString('cancel-order-' . $paid->id, $list);
-        $this->assertStringContainsString('Keep Order', $list);
-        $this->assertStringContainsString('Cancel This Order?', $list);
-        foreach (OrderTracking::CUSTOMER_CANCEL_REASONS as $reason) {
-            $this->assertStringContainsString('value="' . $reason . '"', $list);
-        }
-        $this->assertStringContainsString('maxlength="200"', $list);
+        $this->assertStringNotContainsString('cancel-order-', $list);
+        $this->assertStringNotContainsString('Cancel This Order?', $list);
+        $this->assertStringNotContainsString('Cancel Order', $list);
+        $this->assertStringContainsString('View Details', $list);
 
         $view = $this->actingAs($customer)->get(route('orders.show', $open->id))->assertOk()->getContent();
         $this->assertStringContainsString('data-lp-modal-open="cancel-order-' . $open->id . '"', $view);
+        $this->assertStringContainsString('id="cancel-order-' . $open->id . '"', $view);
+        $this->assertStringContainsString('Keep Order', $view);
+        $this->assertStringContainsString('Cancel This Order?', $view);
+        foreach (OrderTracking::CUSTOMER_CANCEL_REASONS as $reason) {
+            $this->assertStringContainsString('value="' . $reason . '"', $view);
+        }
+        $this->assertStringContainsString('maxlength="200"', $view);
+
+        // a paid / moved-on order has no button on its order view
         $this->assertStringNotContainsString('cancel-order-', $this->actingAs($customer)->get(route('orders.show', $paid->id))->getContent());
+    }
+
+    public function test_cancel_request_sent_by_the_dialog_gets_json_answers(): void
+    {
+        $customer = $this->makeUser();
+        [$order] = $this->unpaidOrder($customer);
+
+        $this->actingAs($customer)->postJson(route('orders.cancel', $order->id), [])
+            ->assertStatus(422)->assertJsonStructure(['message']);
+        $this->assertSame('pending', $order->fresh()->order_status);
+
+        $this->actingAs($customer)->postJson(route('orders.cancel', $order->id), ['reason' => 'Changed My Mind'])
+            ->assertOk()->assertJson(['redirect' => route('orders.show', $order->id)]);
+        $this->assertSame('cancelled', $order->fresh()->order_status);
+
+        $this->actingAs($customer)->postJson(route('orders.cancel', $order->id), ['reason' => 'Changed My Mind'])
+            ->assertStatus(409)->assertJsonStructure(['message']);
     }
 
     public function test_the_admin_cancel_path_is_unchanged(): void

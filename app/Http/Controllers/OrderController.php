@@ -344,6 +344,9 @@ class OrderController extends Controller
             'reason_other.max' => 'Keep the reason to ' . \App\Support\OrderTracking::CUSTOMER_CANCEL_OTHER_MAX . ' characters or fewer.',
         ]);
         if ($validator->fails()) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $validator->errors()->first()], 422);
+            }
             return redirect()->route('orders.show', (int) $id)->with('error', $validator->errors()->first());
         }
         $data = $validator->validated();
@@ -351,10 +354,21 @@ class OrderController extends Controller
         try {
             app(\App\Support\OrderTracking::class)->customerCancel((int) $id, Auth::user(), $data['reason'], $data['reason_other'] ?? null);
         } catch (\App\Support\OrderTrackingException $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $e->getMessage()], 409);
+            }
             return redirect()->route('orders.show', (int) $id)->with('error', $e->getMessage());
         }
 
-        return redirect()->route('orders.show', (int) $id)->with('success', 'Your order was cancelled. Nothing was charged.');
+        $message = 'Your order was cancelled. Nothing was charged.';
+        if ($request->expectsJson()) {
+            // the page script follows `redirect`; the message is flashed so the order page shows it
+            $request->session()->flash('success', $message);
+            return response()->json(['message' => $message, 'redirect' => route('orders.show', (int) $id)])
+                ->withHeaders(['Cache-Control' => 'no-store']);
+        }
+
+        return redirect()->route('orders.show', (int) $id)->with('success', $message);
     }
 
     // ── CHANGE PAYMENT METHOD ──

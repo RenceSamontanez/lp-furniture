@@ -2351,7 +2351,7 @@ nav {
   .lp-modal__facts { grid-template-columns: 1fr; gap: 0; }
   .lp-modal__facts dd { margin-bottom: 8px; }
 }
-body.lp-modal-open { overflow: hidden; }
+body.lp-modal-open, html:has(body.lp-modal-open) { overflow: hidden; } /* html too: it carries overflow-x:hidden, so body alone would not stop the page behind from scrolling */
 
 /* ══════════════════════════════════════════
    Text links inside content: .lp-link (Stage 21h)

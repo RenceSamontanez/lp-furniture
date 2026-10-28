@@ -14,5 +14,10 @@
 .oc-other textarea { width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #C9B393; border-radius: 10px; font: 14px/1.5 var(--font-body); color: #2B1A12; background: #fff; resize: vertical; }
 .oc-other textarea:focus-visible { outline: 3px solid #8F6420; outline-offset: 1px; }
 .oc-count { color: #5C4A3C; font-size: 12px; justify-self: end; }
-.order-card-actions { display: flex; justify-content: flex-end; margin: -6px 0 14px; }
+.oc-error[hidden] { display: none; }
+.oc-spin { display: none; width: 16px; height: 16px; margin-right: 8px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: oc-turn .7s linear infinite; }
+.oc-loading .oc-spin { display: inline-block; }
+.oc-loading:disabled { opacity: 1; cursor: progress; }
+@keyframes oc-turn { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .oc-spin { animation-duration: 2s; } }
 .order-cancel-row { margin-top: 14px; }
