@@ -210,7 +210,7 @@ class ServiceNotificationDetailsTest extends TestCase
         $all['request_received']->forceFill(['created_at' => now()->addMinute()])->save();
         $this->as($this->owner)->get(route('notifications.index'))->assertOk()
             ->assertSee(route('notifications.show', $all['request_received']->id), false)
-            ->assertSee('Related service request');
+            ->assertSee('View details');
     }
 
     public function test_the_ask_luma_button_is_on_by_default_and_the_flag_can_hide_it(): void
