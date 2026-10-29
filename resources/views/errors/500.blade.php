@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="icon" href="/favicon.ico?v=1" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png?v=1">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png?v=1">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png?v=1">
+<link rel="manifest" href="/site.webmanifest?v=1">
 <meta name="robots" content="noindex"/>
 <title>Something went wrong — LP Furniture</title>
 {{-- Static on purpose: no layout, no database, no session, nothing that can fail a second time. --}}

@@ -10,6 +10,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+@include('partials.favicon')
 <meta name="robots" content="noindex"/>
 <title>Invoice {{ $i->invoice_number ?: 'draft ' . $i->id }}</title>
 <link rel="stylesheet" href="{{ asset('assets/style.css') }}"/>

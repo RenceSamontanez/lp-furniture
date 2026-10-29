@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+@include('partials.favicon')
 <meta name="robots" content="noindex"/>
 <title>Agreement {{ $agreement->agreement_number }}</title>
 <link rel="stylesheet" href="{{ asset('assets/css/agreement-print.css') }}"/>
