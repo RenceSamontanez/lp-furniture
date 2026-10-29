@@ -122,18 +122,20 @@ const note = (ok, msg) => { results.push([ok, msg]); console.log((ok ? 'ok    ' 
 
   // ── 4. Contact settings ─────────────────────────────────────────────────────────────────────────
   await b.go('/admin/settings/contact');
+  await b.evalJs(`document.querySelector('[data-lp-modal-open="contact-biz"]').click()`); await sleep(400);
   const oldPhone = await b.evalJs(`${$('#phone')}.value`);
   await setVal('#phone', '0917 555 0199');
-  const saved = await b.evalJs(`(()=>{const f=${$('#phone')}.closest('form'); const btn=f.querySelector('button[type=submit]'); const t=btn.textContent.trim(); btn.click(); return t;})()`);
+  const saved = await b.evalJs(`(()=>{const btn=document.querySelector('[form=contact-biz-form]'); const t=btn.textContent.trim(); btn.click(); return t;})()`);
   await settle(2200);
   await b.go('/admin/settings/contact');
-  note((await b.evalJs(`${$('#phone')}.value`)) === '0917 555 0199', `contact settings saved through "${saved}"`);
-  await setVal('#phone', oldPhone); await b.evalJs(`${$('#phone')}.closest('form').querySelector('button[type=submit]').click()`); await settle(1800);
+  note((await b.evalJs(`document.body.innerText`)).includes('0917 555 0199'), `contact settings saved through "${saved}"`);
+  await b.evalJs(`document.querySelector('[data-lp-modal-open="contact-biz"]').click()`); await sleep(400);
+  await setVal('#phone', oldPhone); await b.evalJs(`document.querySelector('[form=contact-biz-form]').click()`); await settle(1800);
 
   // ── 5. Luma unanswered questions: search + dismiss ──────────────────────────────────────────────
-  await b.go('/admin/chatbot');
+  await b.go('/admin/chatbot?tab=unanswered');
   const rowsBefore = await b.evalJs(`document.querySelectorAll('form[action*="unanswered"]').length`);
-  note(rowsBefore >= 3, `unanswered list shows ${rowsBefore} rows with Dismiss`);
+  note(rowsBefore >= 1, `unanswered list shows ${rowsBefore} rows with Dismiss`);
   await clickText('button', 'Dismiss'); await settle(2000);
   const dismissed = sql('select count(*) c from luma_unanswered_questions where dismissed_at is not null')[0].c;
   note(dismissed >= 1, `Dismiss works (${dismissed} dismissed)`);

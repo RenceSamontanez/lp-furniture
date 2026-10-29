@@ -33,7 +33,10 @@ class BusinessSettingController extends Controller
             'map_lng'        => trim((string) $request->input('map_lng')),
         ]);
 
-        $validated = $request->validate([
+        // The two cards on the page post their own fields (`_section` = business | shop); a post without it (the old single form) saves everything.
+        $section = in_array($request->input('_section'), ['business', 'shop'], true) ? $request->input('_section') : 'all';
+
+        $rules = [
             'phone'        => ['required', 'string', 'max:30', new PhilippinePhone()],
             // rfc,filter alone still allows quoted local parts like "<b>"@x.com,
             // so also require a plain everyday address
@@ -44,7 +47,16 @@ class BusinessSettingController extends Controller
             'shop_landmarks' => ['nullable', 'string', 'max:500'],
             'map_lat'        => ['nullable', 'numeric', 'between:-90,90', 'required_with:map_lng'],
             'map_lng'        => ['nullable', 'numeric', 'between:-180,180', 'required_with:map_lat'],
-        ], [
+        ];
+        $groups = [
+            'business' => ['phone', 'email', 'facebook_url', 'tiktok_url'],
+            'shop'     => ['shop_address', 'shop_landmarks', 'map_lat', 'map_lng'],
+        ];
+        if ($section !== 'all') {
+            $rules = array_intersect_key($rules, array_flip($groups[$section]));
+        }
+
+        $validated = $request->validate($rules, [
             'email.regex' => 'Enter a plain email address, e.g. hello@yourshop.com.',
             'map_lat.between' => 'Latitude must be between -90 and 90.',
             'map_lng.between' => 'Longitude must be between -180 and 180.',
@@ -54,11 +66,12 @@ class BusinessSettingController extends Controller
 
         $settings = BusinessSetting::orderBy('id')->first() ?? new BusinessSetting();
         foreach (['tiktok_url', 'shop_address', 'shop_landmarks', 'map_lat', 'map_lng'] as $optional) {
-            $validated[$optional] = ($validated[$optional] ?? '') === '' ? null : $validated[$optional];
+            if (array_key_exists($optional, $validated)) {
+                $validated[$optional] = ($validated[$optional] ?? '') === '' ? null : $validated[$optional];
+            }
         }
         $settings->fill($validated);
         $settings->updated_by = Auth::guard('admin')->id();
-
         // Re-saving identical values still counts as a save for the audit fields
         $settings->isDirty() ? $settings->save() : $settings->touch();
 

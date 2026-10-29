@@ -26,6 +26,7 @@ $norm = function (string $html): string {
     $html = preg_replace('/csrfToken\s*[:=]\s*"[^"]*"/', 'csrfToken=""', $html);
     $html = preg_replace('/(127\.0\.0\.1):80(11|12)/', '$1:PORT', $html);
     $html = preg_replace('/\b\d{1,2}:\d{2}:\d{2}\b/', 'HH:MM:SS', $html);
+    $html = preg_replace('/\d+ (seconds?|minutes?) ago/', 'N ago', $html);
     $html = preg_replace('/\s+/', ' ', $html);
     return $html;
 };

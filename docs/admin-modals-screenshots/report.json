@@ -1,0 +1,812 @@
+{
+ "pages": {
+  "chatbot@1440": {
+   "layout": {
+    "overflowX": -15,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "styles": {
+    "pageTitle": {
+     "family": "Cormorant Garamond",
+     "size": "19px",
+     "weight": "600",
+     "text": "Chatbot Training"
+    },
+    "tableHeader": {
+     "family": "Montserrat",
+     "size": "11px",
+     "weight": "600",
+     "text": "Category"
+    },
+    "tableCell": {
+     "family": "Montserrat",
+     "size": "13.5px",
+     "weight": "500",
+     "text": "—"
+    },
+    "button": {
+     "family": "Montserrat",
+     "size": "14px",
+     "weight": "600",
+     "text": "Search"
+    },
+    "label": {
+     "family": "Montserrat",
+     "size": "13px",
+     "weight": "500",
+     "text": "Keywords (Comma-Separated)"
+    },
+    "modalTitle": null,
+    "modalInput": null,
+    "sidebar": {
+     "family": "Montserrat",
+     "size": "13px",
+     "weight": "600",
+     "text": "Dashboard"
+    }
+   }
+  },
+  "chatbot-add@1440": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": false
+   },
+   "styles": {
+    "pageTitle": {
+     "family": "Cormorant Garamond",
+     "size": "19px",
+     "weight": "600",
+     "text": "Chatbot Training"
+    },
+    "tableHeader": {
+     "family": "Montserrat",
+     "size": "11px",
+     "weight": "600",
+     "text": "Category"
+    },
+    "tableCell": {
+     "family": "Montserrat",
+     "size": "13.5px",
+     "weight": "500",
+     "text": "—"
+    },
+    "button": {
+     "family": "Montserrat",
+     "size": "14px",
+     "weight": "600",
+     "text": "Search"
+    },
+    "label": {
+     "family": "Montserrat",
+     "size": "13px",
+     "weight": "500",
+     "text": "Keywords (Comma-Separated)"
+    },
+    "modalTitle": {
+     "family": "Montserrat",
+     "size": "21px",
+     "weight": "600",
+     "text": "Add Intent"
+    },
+    "modalInput": {
+     "family": "Montserrat",
+     "size": "14px",
+     "weight": "400",
+     "text": ""
+    },
+    "sidebar": {
+     "family": "Montserrat",
+     "size": "13px",
+     "weight": "600",
+     "text": "Dashboard"
+    }
+   }
+  },
+  "chatbot-edit@1440": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": false
+   }
+  },
+  "chatbot-error@1440": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": false
+   }
+  },
+  "chatbot-delete@1440": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": false
+   }
+  },
+  "chatbot-unanswered@1440": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "styles": {
+    "pageTitle": {
+     "family": "Cormorant Garamond",
+     "size": "19px",
+     "weight": "600",
+     "text": "Chatbot Training"
+    },
+    "tableHeader": null,
+    "tableCell": null,
+    "button": {
+     "family": "Montserrat",
+     "size": "14px",
+     "weight": "600",
+     "text": "Dismiss"
+    },
+    "label": null,
+    "modalTitle": null,
+    "modalInput": null,
+    "sidebar": {
+     "family": "Montserrat",
+     "size": "13px",
+     "weight": "600",
+     "text": "Dashboard"
+    }
+   }
+  },
+  "contact@1440": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "styles": {
+    "pageTitle": {
+     "family": "Cormorant Garamond",
+     "size": "19px",
+     "weight": "600",
+     "text": "Contact Settings"
+    },
+    "tableHeader": null,
+    "tableCell": null,
+    "button": {
+     "family": "Montserrat",
+     "size": "14px",
+     "weight": "600",
+     "text": "Edit"
+    },
+    "label": {
+     "family": "Montserrat",
+     "size": "16px",
+     "weight": "500",
+     "text": "Phone"
+    },
+    "modalTitle": null,
+    "modalInput": null,
+    "sidebar": {
+     "family": "Montserrat",
+     "size": "13px",
+     "weight": "600",
+     "text": "Dashboard"
+    }
+   }
+  },
+  "contact-business@1440": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": false
+   },
+   "styles": {
+    "pageTitle": {
+     "family": "Cormorant Garamond",
+     "size": "19px",
+     "weight": "600",
+     "text": "Contact Settings"
+    },
+    "tableHeader": null,
+    "tableCell": null,
+    "button": {
+     "family": "Montserrat",
+     "size": "14px",
+     "weight": "600",
+     "text": "Edit"
+    },
+    "label": {
+     "family": "Montserrat",
+     "size": "16px",
+     "weight": "500",
+     "text": "Phone"
+    },
+    "modalTitle": {
+     "family": "Montserrat",
+     "size": "21px",
+     "weight": "600",
+     "text": "Edit Business Contact"
+    },
+    "modalInput": {
+     "family": "Montserrat",
+     "size": "14px",
+     "weight": "400",
+     "text": ""
+    },
+    "sidebar": {
+     "family": "Montserrat",
+     "size": "13px",
+     "weight": "600",
+     "text": "Dashboard"
+    }
+   }
+  },
+  "contact-shop@1440": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": false
+   }
+  },
+  "contact-error@1440": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": false
+   }
+  },
+  "health@1440": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "styles": {
+    "pageTitle": {
+     "family": "Cormorant Garamond",
+     "size": "19px",
+     "weight": "600",
+     "text": "System Health"
+    },
+    "tableHeader": {
+     "family": "Montserrat",
+     "size": "11px",
+     "weight": "600",
+     "text": "Folder"
+    },
+    "tableCell": {
+     "family": "Montserrat",
+     "size": "13.5px",
+     "weight": "500",
+     "text": "Customer reference photos (p"
+    },
+    "button": {
+     "family": "Montserrat",
+     "size": "14px",
+     "weight": "600",
+     "text": "Clear Cache"
+    },
+    "label": null,
+    "modalTitle": null,
+    "modalInput": null,
+    "sidebar": {
+     "family": "Montserrat",
+     "size": "13px",
+     "weight": "600",
+     "text": "Dashboard"
+    }
+   }
+  },
+  "health-clear-cache@1440": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": false
+   }
+  },
+  "chatbot@1001": {
+   "layout": {
+    "overflowX": -15,
+    "clipped": [],
+    "lowContrast": []
+   }
+  },
+  "chatbot-add@1001": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": false
+   }
+  },
+  "chatbot-edit@1001": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": false
+   }
+  },
+  "chatbot-error@1001": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": false
+   }
+  },
+  "chatbot-delete@1001": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": false
+   }
+  },
+  "chatbot-unanswered@1001": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   }
+  },
+  "contact@1001": {
+   "layout": {
+    "overflowX": -15,
+    "clipped": [],
+    "lowContrast": []
+   }
+  },
+  "contact-business@1001": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": false
+   }
+  },
+  "contact-shop@1001": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": false
+   }
+  },
+  "contact-error@1001": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": false
+   }
+  },
+  "health@1001": {
+   "layout": {
+    "overflowX": -15,
+    "clipped": [],
+    "lowContrast": []
+   }
+  },
+  "health-clear-cache@1001": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": false
+   }
+  },
+  "chatbot@390": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   }
+  },
+  "chatbot-add@390": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": true,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": true
+   }
+  },
+  "chatbot-edit@390": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": true,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": true
+   }
+  },
+  "chatbot-error@390": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": true,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": true
+   }
+  },
+  "chatbot-delete@390": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": true
+   }
+  },
+  "chatbot-unanswered@390": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   }
+  },
+  "contact@390": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   }
+  },
+  "contact-business@390": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": true
+   }
+  },
+  "contact-shop@390": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": true
+   }
+  },
+  "contact-error@390": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": true
+   }
+  },
+  "health@390": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   }
+  },
+  "health-clear-cache@390": {
+   "layout": {
+    "overflowX": 0,
+    "clipped": [],
+    "lowContrast": []
+   },
+   "modal": {
+    "open": true,
+    "boxInViewport": true,
+    "aboveSidebar": true,
+    "aboveTopbar": true,
+    "footerVisible": true,
+    "footBottomInViewport": true,
+    "bodyScrolls": false,
+    "pageLocked": true,
+    "z": 10100,
+    "aboveToasts": true,
+    "mountedOnBody": true,
+    "sheet": true
+   }
+  }
+ }
+}

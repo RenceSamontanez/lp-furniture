@@ -182,6 +182,8 @@ class LumaLanguageTest extends TestCase
 
         $id = ChatbotIntent::where('keywords', 'sofa')->value('id');
         $this->assertSame('Gumagawa po kami ng sopa.', ChatbotIntent::find($id)->answer_tl);
-        $this->get(route('admin.chatbot.edit', $id))->assertOk()->assertSee('Gumagawa po kami ng sopa.');
+        // the old Edit URL lands on the list with that intent's modal open (the Tagalog answer is in the modal's form)
+        $this->get(route('admin.chatbot.edit', $id))->assertRedirect(route('admin.chatbot.index', ['edit' => $id]));
+        $this->get(route('admin.chatbot.index', ['edit' => $id]))->assertOk()->assertSee('Gumagawa po kami ng sopa.')->assertSee('data-open-on-load', false);
     }
 }

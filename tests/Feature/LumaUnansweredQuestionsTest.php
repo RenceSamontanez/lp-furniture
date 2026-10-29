@@ -189,7 +189,7 @@ class LumaUnansweredQuestionsTest extends TestCase
         $this->row('newer less popular question', 2, ['last_asked_at' => now()->subHour()]);
         $this->row('same count but older one', 2, ['last_asked_at' => now()->subDays(2)]);
 
-        $html = $this->actingAs($this->admin(), 'admin')->get(route('admin.chatbot.index'))->assertOk()->getContent();
+        $html = $this->actingAs($this->admin(), 'admin')->get(route('admin.chatbot.index', ['tab' => 'unanswered']))->assertOk()->getContent();
 
         $this->assertLessThan(strpos($html, 'newer less popular question'), strpos($html, 'old but popular question'));
         $this->assertLessThan(strpos($html, 'same count but older one'), strpos($html, 'newer less popular question'));
@@ -199,7 +199,7 @@ class LumaUnansweredQuestionsTest extends TestCase
         for ($i = 0; $i < 55; $i++) {
             $this->row('bulk question ' . str_pad((string) $i, 2, 'x', STR_PAD_LEFT) . ' words', 1);
         }
-        $page = $this->actingAs($this->admin(), 'admin')->get(route('admin.chatbot.index'))->getContent();
+        $page = $this->actingAs($this->admin(), 'admin')->get(route('admin.chatbot.index', ['tab' => 'unanswered']))->getContent();
         $this->assertSame(50, preg_match_all('/chatbot\/unanswered\/\d+\/dismiss/', $page));
     }
 
@@ -207,7 +207,7 @@ class LumaUnansweredQuestionsTest extends TestCase
     {
         $this->row('<script>alert(1)</script> <a href="https://evil.example">click</a> https://evil.example', 1);
 
-        $html = $this->actingAs($this->admin(), 'admin')->get(route('admin.chatbot.index'))->assertOk()->getContent();
+        $html = $this->actingAs($this->admin(), 'admin')->get(route('admin.chatbot.index', ['tab' => 'unanswered']))->assertOk()->getContent();
 
         $this->assertStringNotContainsString('<script>alert(1)', $html);
         $this->assertStringContainsString('&lt;script&gt;alert(1)&lt;/script&gt;', $html);
@@ -216,7 +216,7 @@ class LumaUnansweredQuestionsTest extends TestCase
 
     public function test_the_empty_state_says_so(): void
     {
-        $this->actingAs($this->admin(), 'admin')->get(route('admin.chatbot.index'))->assertOk()->assertSee('No unanswered questions right now.');
+        $this->actingAs($this->admin(), 'admin')->get(route('admin.chatbot.index', ['tab' => 'unanswered']))->assertOk()->assertSee('No unanswered questions right now.');
     }
 
     /* ───────────── dismiss, and who may ───────────── */
@@ -231,7 +231,7 @@ class LumaUnansweredQuestionsTest extends TestCase
         $this->assertNotNull($row->fresh()->dismissed_at);
         $this->assertNull($other->fresh()->dismissed_at);
         $this->assertSame(2, Q::count());   // kept in the table until the 30-day cleanup
-        $page = $this->actingAs($this->admin(), 'admin')->get(route('admin.chatbot.index'))->getContent();
+        $page = $this->actingAs($this->admin(), 'admin')->get(route('admin.chatbot.index', ['tab' => 'unanswered']))->getContent();
         $this->assertStringNotContainsString('do you sell pianos', $page);
         $this->assertStringContainsString('do you sell violins', $page);
     }
@@ -272,7 +272,7 @@ class LumaUnansweredQuestionsTest extends TestCase
         $this->assertNotNull($pianos->fresh()->taught_at);
         $this->assertNull($violins->fresh()->taught_at);
         $this->assertNull($pianos->fresh()->dismissed_at);
-        $page = $this->actingAs($this->admin(), 'admin')->get(route('admin.chatbot.index'))->getContent();
+        $page = $this->actingAs($this->admin(), 'admin')->get(route('admin.chatbot.index', ['tab' => 'unanswered']))->getContent();
         $this->assertStringNotContainsString('do you sell pianos', $page);
         $this->assertStringContainsString('do you sell violins', $page);
     }

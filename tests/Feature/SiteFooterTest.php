@@ -330,12 +330,15 @@ class SiteFooterTest extends TestCase
         $put(['map_lat' => '13.8', 'map_lng' => ''])->assertSessionHasErrors('map_lng');
         $put(['map_lat' => '-90', 'map_lng' => '180'])->assertSessionHasNoErrors();
 
-        // old input is kept on error and the form explains how to find the numbers
-        $page = $this->actingAs($admin, 'admin')->withSession(['_old_input' => ['map_lat' => '999', 'tiktok_url' => 'https://bad.example/x']])
+        // old input is kept on error, in the card that was submitted (its modal reopens), and the form explains how to find the numbers
+        $page = $this->actingAs($admin, 'admin')->withSession(['_old_input' => ['_section' => 'shop', 'map_lat' => '999', 'map_lng' => '10']])
             ->get(route('admin.settings.contact.edit'))->assertOk()->getContent();
         $this->assertStringContainsString('value="999"', $page);
-        $this->assertStringContainsString('value="https://bad.example/x"', $page);
         $this->assertStringContainsString('right-click the exact spot of the shop', $page);
-        $this->assertStringContainsString('Map Latitude (Optional)', $page);
+        $this->assertStringContainsString('Map Latitude', $page);
+        $this->assertStringContainsString('(Optional)', $page);
+        $page = $this->actingAs($admin, 'admin')->withSession(['_old_input' => ['_section' => 'business', 'tiktok_url' => 'https://bad.example/x']])
+            ->get(route('admin.settings.contact.edit'))->assertOk()->getContent();
+        $this->assertStringContainsString('value="https://bad.example/x"', $page);
     }
 }
