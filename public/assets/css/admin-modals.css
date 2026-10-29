@@ -78,3 +78,21 @@ body.admin-type .lp-modal--mid .lp-modal__foot, body.admin-type .lp-modal--wide 
   .cb-tools form { flex-direction: column; align-items: stretch; }
   .cb-actions { flex-wrap: wrap; }
 }
+
+/* Unanswered Questions tab: a clickable question plus Answer and Dismiss */
+.ua-list { margin: 0; padding: 0; list-style: none; font-size: 13px; color: #3D3129; line-height: 1.5; }
+.ua-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 10px 0; border-top: 1px solid rgba(0, 0, 0, .06); }
+.ua-main { min-width: 0; flex: 1 1 auto; }
+.ua-q { display: block; max-width: 100%; margin: 0; padding: 2px 4px; margin-left: -4px; border: 0; border-radius: 6px; background: none; font: inherit; font-weight: 600; font-size: 13.5px; color: #2C1810; text-align: left; cursor: pointer; overflow-wrap: anywhere; }
+.ua-q:hover { background: #F5EDDD; text-decoration: underline; }
+.ua-q:focus-visible, .ua-row .admin-btn:focus-visible { outline: 3px solid #1D4ED8; outline-offset: 2px; }
+.ua-meta { display: block; margin-top: 2px; font-size: 12px; color: #6B5D52; }
+.ua-actions { display: flex; gap: 8px; flex: none; align-items: center; }
+.ua-actions form { margin: 0; }
+.am-note { display: grid; gap: 2px; margin: 0 0 14px; padding: 10px 12px; background: #FBF1DA; border-left: 4px solid #C8963E; border-radius: 6px; font-size: 13px; color: #2C1810; overflow-wrap: anywhere; }
+.am-note[hidden] { display: none; }
+.am-note__q { font-weight: 600; }
+@media (max-width: 700px) {
+  .ua-row { flex-direction: column; align-items: stretch; gap: 8px; }
+  .ua-actions { justify-content: flex-start; flex-wrap: wrap; }
+}

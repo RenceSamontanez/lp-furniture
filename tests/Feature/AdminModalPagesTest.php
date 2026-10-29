@@ -87,7 +87,7 @@ class AdminModalPagesTest extends TestCase
 
         $this->actingAs($admin, 'admin')->get(route('admin.chatbot.index'))->assertOk()->assertDontSee('Questions Luma Could Not Answer');
         $this->get(route('admin.chatbot.index', ['tab' => 'unanswered']))->assertOk()
-            ->assertSee('Questions Luma Could Not Answer')->assertSee('No unanswered questions right now.')->assertDontSee('Add Intent');
+            ->assertSee('Questions Luma Could Not Answer')->assertSee('No unanswered questions right now.')->assertDontSee('Search Intents');
     }
 
     public function test_adding_and_editing_an_intent_through_the_modal_routes(): void
@@ -352,7 +352,7 @@ class AdminModalPagesTest extends TestCase
                 if ($sel === '' || str_starts_with($sel, '@media')) {
                     continue;
                 }
-                $this->assertMatchesRegularExpression('/^(body\.admin-type |\.am-|\.cb-|\.ct-|\.sh-|\.page-lead)/', $sel, 'unscoped selector: ' . $sel);
+                $this->assertMatchesRegularExpression('/^(body\.admin-type |\.am-|\.cb-|\.ct-|\.sh-|\.ua-|\.page-lead)/', $sel, 'unscoped selector: ' . $sel);
             }
         }
     }

@@ -12,6 +12,17 @@
     @csrf
     @if($intent->exists) @method('PUT') @endif
     <input type="hidden" name="_modal" value="{{ $modalId }}">
+    @if($modalId === 'intent-add')
+      {{-- Filled by "Answer" on the Unanswered Questions tab (admin-modal-forms.js), or here when a rejected save reopens the modal. --}}
+      @php $answering = $mine ? ($answerRow ?? null) : null; @endphp
+      <input type="hidden" name="unanswered_id" value="{{ $answering?->id }}" data-answer-id>
+      <div class="am-note" data-answer-note role="note" @unless($answering) hidden @endunless>
+        <strong>Answering a Question</strong>
+        <span class="am-note__q" data-answer-q>@if($answering)“{{ $answering->question }}”@endif</span>
+        <span data-answer-times>@if($answering)Asked {{ $answering->times_asked }} {{ $answering->times_asked === 1 ? 'time' : 'times' }}@endif</span>
+        <span data-answer-tl @unless($answering && \App\Support\Luma\Language::detect($answering->question) === 'tl') hidden @endunless>This question looks like Tagalog.</span>
+      </div>
+    @endif
     <div class="am-grid">
       <div class="am-field am-full {{ $err('keywords') ? 'is-invalid' : '' }}">
         <label class="form-label" for="{{ $formId }}-keywords">Keywords (Comma-Separated)</label>

@@ -24,19 +24,24 @@
 <div class="admin-panel" style="margin-bottom:16px;">
   <div class="admin-panel-header"><div class="admin-panel-title">Questions Luma Could Not Answer</div></div>
   <div class="admin-panel-body">
-    <p style="font-size:12px;color:var(--text-muted);margin:0 0 10px;">Add an intent with these words as keywords to teach her. A question leaves this list when an intent with a matching keyword is added. Dismiss one to hide it.</p>
+    <p style="font-size:12px;color:var(--text-muted);margin:0 0 10px;">Click a question or press Answer to teach her. A question also leaves this list when an intent with a matching keyword is added. Dismiss one to hide it.</p>
     @if($unanswered->isNotEmpty())
-    <ul style="margin:0;padding:0;list-style:none;font-size:13px;color:#3D3129;line-height:1.5;">
+    <ul class="ua-list">
       @foreach($unanswered as $row)
-        <li style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid rgba(0,0,0,.06);">
-          <span style="min-width:0;overflow-wrap:anywhere;">
-            {{ $row->question }}
-            <span style="color:var(--text-muted);display:block;font-size:12px;">Asked {{ $row->times_asked }} {{ $row->times_asked === 1 ? 'time' : 'times' }} &middot; last asked {{ $row->last_asked_at?->timezone(config('luma.timezone', 'Asia/Manila'))->format('M j, Y g:i A') }}</span>
-          </span>
-          <form method="POST" action="{{ route('admin.chatbot.unanswered.dismiss', $row->id) }}" style="flex:none;">
-            @csrf
-            <button type="submit" class="admin-btn admin-btn-outline" aria-label="Dismiss this question: {{ $row->question }}">Dismiss</button>
-          </form>
+        <li class="ua-row" data-answer-row data-id="{{ $row->id }}" data-keywords="{{ \App\Support\Luma\UnansweredQuestions::key($row->question) }}" data-original="{{ $row->question }}"
+            data-times="Asked {{ $row->times_asked }} {{ $row->times_asked === 1 ? 'time' : 'times' }}"
+            data-tagalog="{{ \App\Support\Luma\Language::detect($row->question) === 'tl' ? '1' : '0' }}">
+          <div class="ua-main">
+            <button type="button" class="ua-q" data-answer-question aria-label="Answer this question: {{ $row->question }}">{{ $row->question }}</button>
+            <span class="ua-meta">Asked {{ $row->times_asked }} {{ $row->times_asked === 1 ? 'time' : 'times' }} &middot; last asked {{ $row->last_asked_at?->timezone(config('luma.timezone', 'Asia/Manila'))->format('M j, Y g:i A') }}</span>
+          </div>
+          <div class="ua-actions">
+            <button type="button" class="admin-btn admin-btn-gold" data-answer-question aria-label="Answer this question: {{ $row->question }}">Answer</button>
+            <form method="POST" action="{{ route('admin.chatbot.unanswered.dismiss', $row->id) }}">
+              @csrf
+              <button type="submit" class="admin-btn admin-btn-outline" aria-label="Dismiss this question: {{ $row->question }}">Dismiss</button>
+            </form>
+          </div>
         </li>
       @endforeach
     </ul>
@@ -45,6 +50,8 @@
     @endif
   </div>
 </div>
+
+@include('admin.chatbot._modal', ['intent' => new \App\Models\ChatbotIntent(), 'modalId' => 'intent-add'])
 
 @else
 

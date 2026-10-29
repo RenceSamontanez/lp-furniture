@@ -87,6 +87,47 @@
     if (lab) { lab.textContent = b.getAttribute('data-label') || ''; }
   }, true);
 
+  // "Answer" on the Unanswered Questions tab: the same Add Intent modal, Keywords pre-filled with the question, a note on top.
+  function blankAdd(modal) {
+    var form = formOf(modal);
+    if (!form) { return null; }
+    ['keywords', 'response', 'answer_tl', 'suggestions', 'category'].forEach(function (n) { if (form.elements[n]) { form.elements[n].value = ''; } });
+    if (form.elements.is_active) { form.elements.is_active.checked = true; }
+    var id = form.querySelector('[data-answer-id]'); if (id) { id.value = ''; }
+    var note = modal.querySelector('[data-answer-note]'); if (note) { note.hidden = true; }
+    clearErrors(form);
+    modal.removeAttribute('data-force-dirty');
+    var bar = modal.querySelector('.am-discard'); if (bar) { bar.classList.remove('is-on'); }
+    return form;
+  }
+
+  document.addEventListener('click', function (e) {
+    var modal = document.getElementById('intent-add');
+    if (!modal) { return; }
+    var answer = e.target.closest && e.target.closest('[data-answer-question]');
+    if (answer) {
+      var row = answer.closest('[data-answer-row]');
+      if (!row) { return; }
+      e.preventDefault(); e.stopPropagation();
+      var form = blankAdd(modal);
+      form.elements.keywords.value = row.getAttribute('data-keywords') || '';
+      form.querySelector('[data-answer-id]').value = row.getAttribute('data-id') || '';
+      var note = modal.querySelector('[data-answer-note]');
+      note.querySelector('[data-answer-q]').textContent = '\u201C' + (row.getAttribute('data-original') || '') + '\u201D';
+      note.querySelector('[data-answer-times]').textContent = row.getAttribute('data-times') || '';
+      note.querySelector('[data-answer-tl]').hidden = row.getAttribute('data-tagalog') !== '1';
+      note.hidden = false;
+      form.__base = serialize(form);       // the pre-filled keywords are not "typed text": Cancel leaves quietly until something is changed
+      if (window.LpModal) { window.LpModal.open(modal, answer); }
+      form.elements.response.focus();
+      return;
+    }
+    var plain = e.target.closest && e.target.closest('[data-lp-modal-open="intent-add"]');
+    if (plain) {
+      var f = blankAdd(modal);
+      if (f) { f.__base = serialize(f); }
+    }
+  }, true);
   function clearErrors(form) {
     form.querySelectorAll('.am-field.is-invalid').forEach(function (f) { f.classList.remove('is-invalid'); });
   }
