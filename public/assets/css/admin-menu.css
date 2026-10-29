@@ -1,0 +1,103 @@
+/* Admin sidebar (docs/admin/admin-menu-v1.html). Loaded by layouts/admin after admin.css and admin-type.css.
+   Text only, slim rows, solid dark chocolate, no glass / blur / glow. Every rule is scoped to .admin-sidebar so nothing else moves. */
+body.admin-type {
+  --mnu-bg: #2a1611; --mnu-bar: #3a2218; --mnu-bar-hover: #47291d; --mnu-text: #f3e7da; --mnu-muted: #cdb9a8;
+  --mnu-gold: #c8963e; --mnu-gold-hi: #e0b25a; --mnu-ink: #2d1810; --mnu-red: #b3261e;
+}
+
+body.admin-type .admin-sidebar {
+  width: 268px; background: var(--mnu-bg); color: var(--mnu-text);
+  display: flex !important; flex-direction: column !important; height: 100vh !important;
+  position: sticky; top: 0; overflow: hidden; z-index: 60;
+  backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; border-radius: 0;
+}
+body.admin-type .admin-sidebar-brand { padding: 20px 22px; border-bottom: 1px solid rgba(255,255,255,.1); flex: none; }
+body.admin-type .admin-sidebar-brand span { font-size: 20px; font-weight: 600; color: #fff; }
+body.admin-type .admin-sidebar-brand em { color: var(--mnu-gold); font-style: italic; }
+body.admin-type .admin-sidebar-close { display: none; color: var(--mnu-text); font-size: 28px; line-height: 1; min-width: 44px; min-height: 44px; }
+
+/* Find a page (the only icon on the menu: the magnifier) */
+body.admin-type .mnu-find { padding: 14px 14px 4px; flex: none; }
+body.admin-type .mnu-find__input {
+  width: 100%; min-height: 42px; box-sizing: border-box; border-radius: 10px; border: 1px solid rgba(255,255,255,.22);
+  background: #3a2218 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23cdb9a8' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.3-4.3'/%3E%3C/svg%3E") no-repeat 12px 50% / 16px;
+  color: var(--mnu-text); font-size: 13px; padding: 0 12px 0 38px;
+}
+body.admin-type .mnu-find__input::placeholder { color: var(--mnu-muted); opacity: 1; }
+body.admin-type .mnu-find__input:focus-visible { outline: 2px solid var(--mnu-gold-hi); outline-offset: 2px; }
+
+body.admin-type .mnu { padding: 8px 12px 14px; overflow-y: auto; flex: 1 1 auto; min-height: 0; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.25) transparent; }
+body.admin-type .mnu-g { margin-top: 6px; }
+body.admin-type .mnu-g[hidden] { display: none; }
+
+/* Group header: a raised bar with the group name and a round gold chevron */
+body.admin-type .mnu-h {
+  width: 100%; min-height: 40px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  background: var(--mnu-bar); color: #f1e3d2; border: 1px solid rgba(255,255,255,.14); border-radius: 10px;
+  box-shadow: 0 2px 0 rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.07);
+  font-size: 13px; font-weight: 600; text-align: left; padding: 6px 8px 6px 14px; cursor: pointer; text-transform: none; letter-spacing: 0;
+}
+body.admin-type .mnu-h:hover { background: var(--mnu-bar-hover); border-color: rgba(200,150,62,.55); color: #fff; }
+body.admin-type .mnu-h[aria-disabled="true"] { cursor: default; }
+body.admin-type .mnu-h__tail { display: flex; align-items: center; gap: 8px; flex: none; }
+body.admin-type .mnu-chev { width: 26px; height: 26px; border-radius: 50%; background: rgba(200,150,62,.25); border: 1px solid rgba(200,150,62,.6); display: grid; place-items: center; }
+body.admin-type .mnu-chev svg { width: 14px; height: 14px; stroke: var(--mnu-gold-hi); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .22s ease; }
+body.admin-type .mnu-g.is-shut .mnu-chev svg { transform: rotate(-90deg); }
+body.admin-type .mnu-h[aria-disabled="true"] .mnu-chev { opacity: .55; }
+
+/* Collapsed groups still show the sum of their red counts */
+body.admin-type .mnu-g-pill { display: none; }
+body.admin-type .mnu-g.is-shut .mnu-g-pill { display: inline-block; }
+
+/* The list slides closed */
+body.admin-type .mnu-l { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .22s ease, visibility .22s; margin-top: 4px; }
+body.admin-type .mnu-l__in { overflow: hidden; min-height: 0; }
+body.admin-type .mnu-g.is-shut .mnu-l { grid-template-rows: 0fr; visibility: hidden; margin-top: 0; }
+body.admin-type .mnu.no-anim .mnu-l, body.admin-type .mnu.no-anim .mnu-chev svg { transition: none; }
+
+/* Slim text rows (no icons, no boxes). admin.css still dresses .admin-nav-link as a boxed button with !important, so these repeat it. */
+body.admin-type .admin-sidebar .mnu-i {
+  display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 10px !important;
+  width: auto !important; min-height: 36px; box-sizing: border-box; margin: 1px 0 !important; padding: 7px 12px 7px 14px !important;
+  border-radius: 9px !important; border: 1px solid transparent !important; background: transparent !important; box-shadow: none;
+  color: var(--mnu-text) !important; font-size: 13.5px; font-weight: 500 !important; text-decoration: none; opacity: 1;
+}
+body.admin-type .admin-sidebar .mnu-i:hover { background: rgba(255,255,255,.1) !important; border-color: transparent !important; color: #fff !important; }
+body.admin-type .admin-sidebar .mnu-i.active { background: var(--mnu-gold) !important; border-color: var(--mnu-gold) !important; color: var(--mnu-ink) !important; font-weight: 600 !important; }
+body.admin-type .mnu-i__t { flex: 1 1 auto; min-width: 0; }
+body.admin-type .mnu-pill {
+  margin-left: 0 !important; animation: none; background: var(--mnu-red); color: #fff; border-radius: 999px; font-size: 11.5px; font-weight: 600; line-height: 1.5;
+  padding: 0 8px; min-width: 22px; text-align: center; flex: none; font-variant-numeric: lining-nums tabular-nums;
+}
+body.admin-type .mnu-i.active .mnu-pill { background: var(--mnu-ink); color: #fff; }
+body.admin-type .mnu-none { color: var(--mnu-muted); font-size: 13px; padding: 14px 12px; margin: 0; }
+body.admin-type .mnu-none[hidden] { display: none; }
+
+body.admin-type .admin-sidebar :is(.mnu-h, .mnu-i, .mnu-find__input, .mnu-signout, .admin-sidebar-close):focus-visible { outline: 2px solid var(--mnu-gold-hi); outline-offset: 2px; }
+
+/* Sign Out: a full-width button pinned at the bottom */
+body.admin-type .admin-sidebar-signout { flex: none; margin: 0; padding: 12px 14px 16px; border-top: 1px solid rgba(255,255,255,.14); background: var(--mnu-bg); }
+body.admin-type .mnu-signout {
+  width: 100%; min-height: 42px; border-radius: 10px; border: 1px solid #e58b7e; background: #4a1f1a; color: #ffd9d3;
+  font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0 14px;
+}
+body.admin-type .mnu-signout:hover { background: #5e2720; color: #fff; }
+
+/* Phone and tablet: the burger opens a drawer */
+@media (max-width: 1000px) {
+  body.admin-type .admin-burger { display: flex; }
+  body.admin-type .admin-sidebar-close { display: block; }
+  body.admin-type .admin-sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0; width: 290px; max-width: 86vw; z-index: 10050;
+    transform: translateX(-100%); visibility: hidden; transition: transform .22s ease, visibility 0s linear .22s; box-shadow: 0 0 40px rgba(0,0,0,.4);
+  }
+  body.admin-type .admin-sidebar.open { transform: none; visibility: visible; transition: transform .22s ease, visibility 0s; }
+  body.admin-type .admin-overlay { display: none; position: fixed; inset: 0; background: rgba(42,22,17,.6); z-index: 10040; }
+  body.admin-type .admin-overlay.show { display: block; }
+  body.admin-type.menu-open { overflow: hidden; }
+  body.admin-type .admin-sidebar .mnu-i { min-height: 40px; }
+  body.admin-type .mnu-h { min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.admin-type .mnu-l, body.admin-type .mnu-chev svg, body.admin-type .admin-sidebar { transition: none; }
+}

@@ -1,23 +1,44 @@
 @extends('layouts.admin')
 
-@section('title', 'Ideas to review — Admin')
+@section('title', 'Ideas to Review — Admin')
 @section('page-title', 'Ideas to Review')
 
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/admin-custom-orders.css') }}"/>
   <link rel="stylesheet" href="{{ asset('assets/css/admin-ideas.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/admin-modals.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/admin-ideas-review.css') }}"/>
 @endpush
 
 @php
-  $statusLabels = \App\Models\UnansweredIdea::STATUS_LABELS;
-  $kindLabels = \App\Models\UnansweredIdea::KIND_LABELS;
-  $base = array_filter(['kind' => $kind, 'q' => $search, 'sort' => $sort === 'most' ? null : $sort]);
+  $statusLabels = ['new' => 'Needs Review', 'answered' => 'Answered', 'added_as_option' => 'Added as Option', 'dismissed' => 'Dismissed'];
+  $tabs = $statusLabels + ['all' => 'All'];
+  $kindLabels = ['furniture_type' => 'Furniture Type', 'wood' => 'Wood', 'idea' => 'Idea Phrase'];
+  $routes = [
+    'answer'  => route('admin.ideas.answer', ['id' => '__ID__']),
+    'option'  => route('admin.ideas.option', ['id' => '__ID__']),
+    'dismiss' => route('admin.ideas.dismiss', ['id' => '__ID__']),
+    'undo'    => route('admin.ideas.undo', ['id' => '__ID__']),
+    'delete'  => route('admin.ideas.delete', ['id' => '__ID__']),
+  ];
+  // what customers can already pick, for the live preview in Add as Option
+  $existingIdeas = \App\Models\DesignIdea::where('is_active', true)->orderBy('sort_order')->get(['scope', 'idea_key', 'text'])
+      ->groupBy(fn ($d) => $d->scope . ':' . $d->idea_key)->map(fn ($g) => $g->pluck('text')->values())->all();
+  $pageData = [
+    'rows' => $rows, 'routes' => $routes, 'typeChoices' => $typeChoices, 'styles' => $styles,
+    'extraTypes' => array_values($extraTypeNames), 'existingIdeas' => $existingIdeas,
+    'initial' => ['tab' => $tab, 'kind' => $kind, 'sort' => $sort, 'q' => $search],
+    'reopen' => $reopen,
+    'nameMax' => ['furniture_type' => \App\Models\ExtraFurnitureType::NAME_MAX, 'idea' => \App\Support\IdeaText::IDEA_MAX],
+    'statusLabels' => $statusLabels, 'answerMax' => \App\Models\UnansweredIdea::ANSWER_MAX,
+  ];
 @endphp
 
 @section('content')
-<div class="co-page ir-page">
+<div class="co-page ir-page ir2">
 
-  <p class="ir-lead">Things customers typed on the Customize page that we had no answer for. Write an answer once and the page shows it the next time someone types the same thing.</p>
+  <p class="ir2-lead">When a customer types something on the Customize page that it doesn't recognize, like a wood name or a style, it lands here. Tell the system what it means, and it will know next time.</p>
+  <p class="ir2-help-row"><button type="button" class="lp-btn lp-btn--secondary ir2-small" data-lp-modal-open="ir-help">Need Help? See An Example</button></p>
 
   @if($undo && $undo->status === 'dismissed')
     <x-notice variant="info" title="Dismissed “{{ $undo->text }}”">
@@ -28,183 +49,167 @@
     </x-notice>
   @endif
 
-  @if($errors->any())
+  @if($errors->any() && !$reopen)
     <x-notice variant="problem" title="That did not save">
       @foreach($errors->all() as $message){{ $message }} @endforeach
     </x-notice>
   @endif
 
-  <div class="co-counts">
-    <a href="{{ route('admin.ideas.index', ['status' => 'all'] + $base) }}" class="co-count {{ $status === null ? 'active' : '' }}">
-      <div class="co-count-num">{{ $total }}</div><div class="co-count-label">All</div>
-    </a>
-    @foreach($statusLabels as $key => $label)
-      <a href="{{ route('admin.ideas.index', ['status' => $key] + $base) }}" class="co-count {{ $status === $key ? 'active' : '' }}">
-        <div class="co-count-num">{{ $counts[$key] ?? 0 }}</div><div class="co-count-label">@titlecase($label)</div>
-      </a>
+  <div class="ir2-how" aria-label="How this page works">
+    <div><span class="ir2-n">1</span><h3>A Customer Types Something New</h3><p>The Customize page didn't have an answer for it, so it was saved here.</p></div>
+    <div><span class="ir2-n">2</span><h3>You Review It</h3><p>Check what it is and how many customers typed it. The more times, the more it matters.</p></div>
+    <div><span class="ir2-n">3</span><h3>You Choose What To Do</h3><p><strong>View</strong> opens it so you can <strong>Send a Reply</strong>, which shows next time. <strong>Add as Option</strong> makes it a choice customers can pick. <strong>Dismiss</strong> ignores it.</p></div>
+  </div>
+
+  <div class="ir2-tabs" role="tablist" aria-label="Ideas by status">
+    @foreach($tabs as $key => $label)
+      <button type="button" class="ir2-tab {{ $tab === $key ? 'is-on' : '' }}" role="tab" data-tab="{{ $key }}" aria-selected="{{ $tab === $key ? 'true' : 'false' }}">{{ $label }}<span class="ir2-count">{{ $key === 'all' ? $total : ($counts[$key] ?? 0) }}</span></button>
     @endforeach
   </div>
 
-  <form method="GET" action="{{ route('admin.ideas.index') }}" class="ir-filters">
-    <input type="hidden" name="status" value="{{ $status ?? 'all' }}"/>
-    <label class="ir-field"><span>Search</span>
-      <input type="search" name="q" value="{{ $search }}" class="form-input" placeholder="Search the text or the answer" maxlength="100"/></label>
-    <label class="ir-field"><span>Kind</span>
-      <select name="kind" class="form-input">
-        <option value="">All kinds</option>
-        @foreach($kindLabels as $key => $label)<option value="{{ $key }}" @selected($kind === $key)>{{ $label }}</option>@endforeach
-      </select></label>
-    <label class="ir-field"><span>Sort</span>
-      <select name="sort" class="form-input">
-        <option value="most" @selected($sort === 'most')>Most asked first</option>
-        <option value="newest" @selected($sort === 'newest')>Newest first</option>
-      </select></label>
-    <button type="submit" class="lp-btn lp-btn--primary">Apply</button>
-    @if($search !== '' || $kind || $sort !== 'most')
-      <a href="{{ route('admin.ideas.index', ['status' => $status ?? 'all']) }}" class="lp-btn lp-btn--secondary">Clear</a>
-    @endif
-  </form>
+  <div class="ir2-tools">
+    <input type="search" id="ir-q" class="form-input" value="{{ $search }}" placeholder="Search the idea or the answer" aria-label="Search the idea or the answer" maxlength="100" autocomplete="off"/>
+    <select id="ir-kind" class="form-input" aria-label="Type">
+      <option value="">All Types</option>
+      @foreach($kindLabels as $key => $label)<option value="{{ $key }}" @selected($kind === $key)>{{ $label }}</option>@endforeach
+    </select>
+    <select id="ir-sort" class="form-input" aria-label="Sort">
+      <option value="most" @selected($sort === 'most')>Most Typed First</option>
+      <option value="recent" @selected($sort === 'newest')>Most Recent First</option>
+    </select>
+  </div>
 
-  <div class="admin-panel">
-    <div class="admin-panel-body" style="padding:0;">
-      @if($rows->isEmpty())
-        <div class="admin-empty ir-empty">
-          <p><strong>Nothing here.</strong></p>
-          <p>
-            @if($total === 0)
-              No customer has typed anything we had no answer for yet. New ones show up here by themselves.
-            @else
-              No ideas match these filters.
-            @endif
-          </p>
-        </div>
-      @else
-        <table class="admin-table ir-table">
-          <thead><tr><th>Idea</th><th>Kind</th><th>Times Seen</th><th>First Seen</th><th>Last Seen</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>
-          @foreach($rows as $row)
-            @php $canOption = $row->kind !== 'wood' && $row->status !== 'dismissed'; @endphp
-            <tr>
-              <td data-label="Idea">
-                <div class="ir-text">{{ $row->text }}</div>
-                @if($row->answer)<div class="ir-answer"><span>Answer:</span> {{ $row->answer }}</div>@endif
-              </td>
-              <td data-label="Kind"><span class="ir-kind ir-kind--{{ $row->kind }}">{{ $kindLabels[$row->kind] ?? $row->kind }}</span></td>
-              <td data-label="Times Seen"><strong>{{ $row->times_asked }}&times;</strong></td>
-              <td data-label="First Seen">{{ $row->first_seen_at?->format('M j, Y') }}</td>
-              <td data-label="Last Seen">{{ $row->last_seen_at?->format('M j, Y') }}</td>
-              <td data-label="Status"><span class="ir-status ir-status--{{ $row->status }}">@titlecase($statusLabels[$row->status] ?? $row->status)</span></td>
-              <td data-label="Actions">
-                <div class="ir-actions">
-                  @if($row->status !== 'dismissed')
-                    <button type="button" class="lp-btn lp-btn--primary lp-btn--chip" data-lp-modal-open="ir-answer-{{ $row->id }}">{{ $row->answer ? 'Edit Answer' : 'Write Answer' }}</button>
-                  @endif
-                  @if($canOption)
-                    @if($row->status !== 'added_as_option')
-                      <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" data-lp-modal-open="ir-option-{{ $row->id }}">Add as Option</button>
-                    @endif
-                  @endif
-                  @if($row->status === 'dismissed')
-                    <form method="POST" action="{{ route('admin.ideas.undo', $row->id) }}">@csrf<button type="submit" class="lp-btn lp-btn--secondary lp-btn--chip">Undo Dismiss</button></form>
-                  @else
-                    <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" data-lp-modal-open="ir-dismiss-{{ $row->id }}">Dismiss</button>
-                  @endif
-                  <button type="button" class="lp-btn lp-btn--danger lp-btn--chip" data-lp-modal-open="ir-delete-{{ $row->id }}">Delete</button>
-                </div>
-              </td>
-            </tr>
-          @endforeach
-          </tbody>
-        </table>
-      @endif
+  <div class="admin-panel ir2-panel">
+    <table class="ir2-table" id="ir-table">
+      <thead><tr><th>Idea</th><th>Type</th><th>Times Typed</th><th>Last Typed</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="ir-rows">
+      @foreach($rows as $row)
+        <tr class="ir2-row" data-id="{{ $row['id'] }}" data-status="{{ $row['status'] }}" data-kind="{{ $row['kind'] }}" data-times="{{ $row['times'] }}" data-last="{{ $row['lastTs'] }}"
+            data-search="{{ mb_strtolower($row['text'] . ' ' . ($row['answer'] ?? '')) }}">
+          <td class="ir2-idea">
+            <span class="ir2-topic" title="{{ $row['text'] }}">{{ $row['text'] }}</span>
+            @if($row['askedFor'] !== '')<div class="ir2-sub">Asked for: {{ $row['askedFor'] }}</div>@endif
+          </td>
+          <td data-label="Type"><span class="ir2-chip">{{ $row['kindLabel'] }}</span></td>
+          <td data-label="Times Typed">{{ $row['times'] }} {{ $row['times'] === 1 ? 'time' : 'times' }}</td>
+          <td data-label="Last Typed">{{ $row['last'] }}</td>
+          <td data-label="Status"><span class="ir2-chip ir2-st-{{ $row['status'] }}">{{ $statusLabels[$row['status']] ?? $row['status'] }}</span></td>
+          <td class="ir2-actions-cell">
+            <div class="ir2-actions">
+              <button type="button" class="lp-btn lp-btn--primary ir2-small" data-view="{{ $row['id'] }}">View</button>
+              <button type="button" class="lp-btn lp-btn--secondary ir2-small ir2-more" data-more="{{ $row['id'] }}" aria-haspopup="menu" aria-expanded="false" aria-label="More actions for {{ $row['text'] }}">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>More
+              </button>
+            </div>
+          </td>
+        </tr>
+      @endforeach
+      </tbody>
+    </table>
+    <div class="ir2-empty" id="ir-empty" @if($rows->isNotEmpty()) hidden @endif>
+      <strong id="ir-empty-title">{{ $total === 0 ? 'Nothing here yet' : 'No ideas match' }}</strong>
+      <span id="ir-empty-text">{{ $total === 0 ? 'No customer has typed anything we had no answer for yet. New ones show up here by themselves.' : 'Try a different tab, type or search.' }}</span>
     </div>
   </div>
 
-  <div style="margin-top:16px;">{{ $rows->links() }}</div>
-
-  {{-- one modal set per row on this page --}}
-  @foreach($rows as $row)
-    <x-modal id="ir-answer-{{ $row->id }}" title="Answer for “{{ $row->text }}”">
-      <form method="POST" action="{{ route('admin.ideas.answer', $row->id) }}" id="ir-answer-form-{{ $row->id }}" class="ir-form">
-        @csrf
-        <label for="ir-answer-text-{{ $row->id }}">What should the customer be told?</label>
-        <textarea id="ir-answer-text-{{ $row->id }}" name="answer" class="form-input" rows="4" maxlength="{{ \App\Models\UnansweredIdea::ANSWER_MAX }}" required>{{ $row->answer }}</textarea>
-        <p class="ir-hint">Plain text, up to {{ \App\Models\UnansweredIdea::ANSWER_MAX }} characters. No links or email addresses. It shows on the Customize page the next time a customer types this exact thing.</p>
-      </form>
-      <x-slot:footer>
-        <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Cancel</button>
-        <button type="submit" form="ir-answer-form-{{ $row->id }}" class="lp-btn lp-btn--primary" data-lp-confirm>Save Answer</button>
-      </x-slot:footer>
-    </x-modal>
-
-    @if($row->kind !== 'wood' && $row->status !== 'dismissed' && $row->status !== 'added_as_option')
-      <x-modal id="ir-option-{{ $row->id }}" title="Add “{{ $row->text }}” as an Option">
-        <form method="POST" action="{{ route('admin.ideas.option', $row->id) }}" id="ir-option-form-{{ $row->id }}" class="ir-form" data-ir-option>
-          @csrf
-          @if($row->kind === 'furniture_type')
-            <label for="ir-w-{{ $row->id }}">Name to show as a quick pick under &ldquo;Something else&rdquo;</label>
-            <input type="text" id="ir-w-{{ $row->id }}" name="wording" class="form-input" value="{{ $row->text }}" maxlength="{{ \App\Models\ExtraFurnitureType::NAME_MAX }}" required/>
-            <p class="ir-hint">It appears as a chip in the &ldquo;Something else&rdquo; box. The customer's request is still saved as &ldquo;Something else&rdquo; with this text.</p>
-          @else
-            <label for="ir-s-{{ $row->id }}">Belongs To</label>
-            <select id="ir-s-{{ $row->id }}" name="scope" class="form-input" data-ir-scope required>
-              <option value="type">A furniture type</option>
-              <option value="style">A style</option>
-            </select>
-            <label for="ir-k-{{ $row->id }}">Which One</label>
-            <select id="ir-k-{{ $row->id }}" name="key" class="form-input" data-ir-key required
-                    data-types='@json(array_keys($typeChoices))' data-styles='@json($styles)'>
-              @foreach(array_keys($typeChoices) as $t)<option value="{{ $t }}">{{ $typeChoices[$t] }}</option>@endforeach
-            </select>
-            <label for="ir-w-{{ $row->id }}">Wording of the Quick Idea</label>
-            <input type="text" id="ir-w-{{ $row->id }}" name="wording" class="form-input" value="{{ $row->text }}" maxlength="{{ \App\Support\IdeaText::IDEA_MAX }}" required/>
-            <p class="ir-hint">Shown as a tap-to-add chip, so keep it short, like &ldquo;glass top&rdquo;.</p>
-          @endif
-        </form>
-        <x-slot:footer>
-          <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Cancel</button>
-          <button type="submit" form="ir-option-form-{{ $row->id }}" class="lp-btn lp-btn--primary" data-lp-confirm>Add Option</button>
-        </x-slot:footer>
-      </x-modal>
-    @endif
-
-    @if($row->status !== 'dismissed')
-      <x-modal id="ir-dismiss-{{ $row->id }}" title="Dismiss “{{ $row->text }}”?">
-        <p>It stops counting as new and customers see nothing for it. You can undo this.</p>
-        <form method="POST" action="{{ route('admin.ideas.dismiss', $row->id) }}" id="ir-dismiss-form-{{ $row->id }}">@csrf</form>
-        <x-slot:footer>
-          <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
-          <button type="submit" form="ir-dismiss-form-{{ $row->id }}" class="lp-btn lp-btn--primary" data-lp-confirm>Dismiss</button>
-        </x-slot:footer>
-      </x-modal>
-    @endif
-
-    <x-modal id="ir-delete-{{ $row->id }}" title="Delete “{{ $row->text }}”?">
-      <p>This removes it and its count for good. If a customer types it again it starts over as new. This cannot be undone.</p>
-      <form method="POST" action="{{ route('admin.ideas.delete', $row->id) }}" id="ir-delete-form-{{ $row->id }}">@csrf</form>
-      <x-slot:footer>
-        <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
-        <button type="submit" form="ir-delete-form-{{ $row->id }}" class="lp-btn lp-btn--danger" data-lp-confirm>Delete for Good</button>
-      </x-slot:footer>
-    </x-modal>
-  @endforeach
+  @if($total > $rows->count())
+    <p class="ir2-cap">Showing the {{ $rows->count() }} most typed of {{ $total }} ideas. Search covers only what is shown.</p>
+  @endif
 </div>
+
+{{-- The More menu: one floating menu for every row --}}
+<div class="ir2-menu" id="ir-menu" role="menu" hidden></div>
+<form method="POST" id="ir-act-form" hidden>@csrf</form>
+<script type="application/json" id="ir-data">@json($pageData)</script>
+
+{{-- Modals: the shared modal, mounted on the body when opened. One of each; the script fills them for the chosen idea. --}}
+<x-modal id="ir-view" title="Customer Idea" size="wide" data-guard>
+  <div id="ir-view-top"></div>
+  <hr class="ir2-rule">
+  <form method="POST" id="ir-reply-form" class="ir2-reply" data-modal-form novalidate>
+    @csrf
+    <input type="hidden" name="_modal" value="reply"><input type="hidden" name="_idea" id="ir-reply-id" value="">
+    <h3 class="ir2-h">Your Reply</h3>
+    <div class="ir2-label" id="ir-can-label">1. Can We Make This?</div>
+    <div class="ir2-opts" role="radiogroup" aria-labelledby="ir-can-label" id="ir-can">
+      <button type="button" class="ir2-opt" role="radio" aria-checked="false" data-o="yes"><b>Yes, We Can Make It</b><small>We offer this as it is.</small></button>
+      <button type="button" class="ir2-opt" role="radio" aria-checked="false" data-o="more"><b>Yes, With A Catch</b><small>It costs more or takes longer.</small></button>
+      <button type="button" class="ir2-opt" role="radio" aria-checked="false" data-o="no"><b>No, We Don't Offer It</b><small>Point them to other choices.</small></button>
+    </div>
+    <div class="am-field ir2-field" id="ir-reply-field">
+      <label class="ir2-label" for="ir-answer">2. Your Reply <span class="ir2-soft">(a starter is filled in. Edit it to fit.)</span></label>
+      <textarea id="ir-answer" name="answer" class="form-input" rows="5" maxlength="{{ \App\Models\UnansweredIdea::ANSWER_MAX }}" data-required placeholder="Pick an option above to fill in a starter reply, or write your own."></textarea>
+      <p class="am-err" data-client="Write a reply before saving." id="ir-answer-err" role="alert"></p>
+      <div class="ir2-soft ir2-addline">Want more detail? Click to add a sentence:</div>
+      <div class="ir2-chips" id="ir-chips"></div>
+      <ul class="ir2-tips">
+        <li>Write it as if you are talking to the customer.</li>
+        <li>Fill in the <strong>[brackets]</strong> with your own words.</li>
+        <li>Don't promise a price here. Say we will confirm it.</li>
+      </ul>
+    </div>
+    <div class="ir2-label">What The Customer Will See</div>
+    <div class="ir2-bubble" id="ir-preview" aria-live="polite"></div>
+  </form>
+</x-modal>
+
+<x-modal id="ir-option" title="Add as an Option" size="mid" data-guard>
+  <form method="POST" id="ir-option-form" data-modal-form novalidate>
+    @csrf
+    <input type="hidden" name="_modal" value="option"><input type="hidden" name="_idea" id="ir-option-id" value="">
+    <div class="ir2-ctx" id="ir-option-ctx"></div>
+    <div class="am-field ir2-field" id="ir-option-list-wrap">
+      <span class="ir2-label" id="ir-option-list-label">Which Choice List?</span>
+      <div id="ir-option-list-fixed" class="ir2-fixed"></div>
+      <div id="ir-option-list-pick" class="ir2-pick" hidden>
+        <select name="scope" id="ir-opt-scope" class="form-input" aria-labelledby="ir-option-list-label">
+          <option value="type">A Furniture Type</option>
+          <option value="style">A Style</option>
+        </select>
+        <select name="key" id="ir-opt-key" class="form-input" aria-label="Which one"></select>
+      </div>
+      <p class="am-err" id="ir-opt-key-err" role="alert"></p>
+    </div>
+    <div class="am-field ir2-field" id="ir-opt-name-field">
+      <label class="ir2-label" for="ir-opt-name">Name Customers Will See</label>
+      <input type="text" name="wording" id="ir-opt-name" class="form-input" data-required autocomplete="off">
+      <p class="am-err" data-client="Enter a name for this option." id="ir-opt-name-err" role="alert"></p>
+    </div>
+    <div class="ir2-label">How It Will Look On The Customize Page</div>
+    <div class="ir2-pills" id="ir-opt-pills"></div>
+    <p class="am-help">Customers can click it like any other choice, so they no longer have to type it.</p>
+  </form>
+  <x-slot:footer>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Cancel</button>
+    <button type="submit" form="ir-option-form" class="lp-btn lp-btn--primary ir2-primary" data-lp-confirm>Add as Option</button>
+  </x-slot:footer>
+</x-modal>
+
+<x-modal id="ir-delete" title="Delete This Idea?" size="mid">
+  <p class="ir2-p">This removes <strong id="ir-del-name"></strong> from the list for good. If a customer types it again, it will come back as new.</p>
+  <form method="POST" id="ir-delete-form">@csrf</form>
+  <x-slot:footer>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Keep Idea</button>
+    <button type="submit" form="ir-delete-form" class="lp-btn lp-btn--danger ir2-primary" data-lp-confirm>Delete Idea</button>
+  </x-slot:footer>
+</x-modal>
+
+<x-modal id="ir-help" title="How To Handle An Idea" size="wide">
+  <div class="ir2-sec"><h3 class="ir2-h">An Example</h3><p class="ir2-p">A customer is designing a <strong>King Bed</strong>. Under Wood they choose <strong>Other Wood</strong> and type <strong>Puno ng Saging</strong>. We have no such choice, so it shows up here as an idea.</p></div>
+  <div class="ir2-sec"><h3 class="ir2-h">Step By Step</h3><ol class="ir2-ol"><li>Click View to read the full idea, see where it came from and which requests asked for it.</li><li>Ask yourself: can we really get and build with this material? Does it change the price or the time?</li><li>Choose what to do, using the guide below.</li></ol></div>
+  <div class="ir2-sec"><h3 class="ir2-h">Which Button Should I Use?</h3>
+    <div class="ir2-guide">
+      <div><b>Send Reply</b><span>We can make it with conditions, or only sometimes. Explain it to the customer, for example "Yes, we can make a King Bed in this wood, but it takes longer."</span></div>
+      <div><b>Add as Option</b><span>We can make it often. It becomes a button on the Customize page, so customers don't have to type it. (A wood cannot be added: the wood list is fixed.)</span></div>
+      <div><b>Dismiss</b><span>It's a typo, a test word, or something we will never make.</span></div>
+    </div>
+  </div>
+  <div class="ir2-sec"><h3 class="ir2-h">Not Sure?</h3><p class="ir2-p">Check with the workshop first, then come back. An idea can stay in Needs Review as long as you need.</p></div>
+  <x-slot:footer><button type="button" class="lp-btn lp-btn--primary ir2-primary" data-lp-modal-close>Got It</button></x-slot:footer>
+</x-modal>
 @endsection
 
 @push('scripts')
-<script>
-// the "Which one" list follows "Belongs to"
-document.querySelectorAll('[data-ir-option]').forEach(function (form) {
-  var scope = form.querySelector('[data-ir-scope]'), key = form.querySelector('[data-ir-key]');
-  if (!scope || !key) { return; }
-  var types = JSON.parse(key.getAttribute('data-types')), styles = JSON.parse(key.getAttribute('data-styles'));
-  var labels = {};
-  [].forEach.call(key.options, function (o) { labels[o.value] = o.textContent; });
-  scope.addEventListener('change', function () {
-    var list = scope.value === 'style' ? styles : types;
-    key.textContent = '';
-    list.forEach(function (v) { var o = document.createElement('option'); o.value = v; o.textContent = labels[v] || v; key.appendChild(o); });
-  });
-});
-</script>
+<script src="{{ asset('assets/js/admin-modal-forms.js') }}"></script>
+<script src="{{ asset('assets/js/admin-ideas-review.js') }}"></script>
 @endpush

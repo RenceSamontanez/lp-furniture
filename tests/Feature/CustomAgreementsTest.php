@@ -697,7 +697,7 @@ class CustomAgreementsTest extends TestCase
 
         $this->actingAs($admin, 'admin')->get(route('admin.notifications.index'))
             ->assertOk()
-            ->assertSeeInOrder(['Notifications', '<span class="admin-nav-badge">2</span>'], false);
+            ->assertSeeInOrder(['Notifications', '<span class="mnu-pill admin-nav-badge">2</span>'], false);
     }
 
     /* ───────────── RBAC matrix on every new route (fresh app per case) ───────────── */

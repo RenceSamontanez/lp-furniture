@@ -43,6 +43,14 @@ class IdeasReviewAdminTest extends TestCase
         return $row->fresh();
     }
 
+    /** The embedded page data of the Ideas page (rows, routes, first tab...). */
+    private function pageData(string $html): array
+    {
+        preg_match('#<script type="application/json" id="ir-data">(.*?)</script>#s', $html, $m);
+
+        return json_decode($m[1] ?? '{}', true);
+    }
+
     private function submitCustomize(User $u, array $over = [])
     {
         Queue::fake();
@@ -114,14 +122,15 @@ class IdeasReviewAdminTest extends TestCase
 
         $html = $this->asAdmin($admin)->get(route('admin.ideas.index'))->assertOk()->getContent();
         $this->assertStringContainsString('Ideas to Review', $html);
-        $this->assertMatchesRegularExpression('/Ideas to Review\s*<span class="admin-nav-badge">2<\/span>/', $html, 'two new rows');
+        $this->assertMatchesRegularExpression('/Ideas to Review<\/span>\s*<span class="mnu-pill admin-nav-badge">2<\/span>/', $html, 'two new rows');
         $this->assertStringContainsString('Pergola', $html);
-        $this->assertStringContainsString('2&times;', $html);
-        $this->assertStringContainsString('Furniture type', $html);
-        $this->assertStringNotContainsString('secret drawer box', $html, 'answered rows are under their own filter');
+        $this->assertStringContainsString('2 times', $html);
+        $this->assertStringContainsString('Furniture Type', $html);
+        $this->assertStringContainsString('data-status="answered"', $html, 'every idea is on the page; the tabs show and hide them');
+        $this->assertSame('new', $this->pageData($html)['initial']['tab'], 'Needs Review is the first tab');
 
-        $this->asAdmin($admin)->get(route('admin.ideas.index', ['status' => 'answered']))->assertOk()->assertSee('secret drawer box')->assertDontSee('Pergola');
-        $this->asAdmin($admin)->get(route('admin.ideas.index', ['status' => 'all']))->assertOk()->assertSee('secret drawer box')->assertSee('Pergola')->assertSee('Teak');
+        $this->assertSame('answered', $this->pageData($this->asAdmin($admin)->get(route('admin.ideas.index', ['status' => 'answered']))->assertOk()->getContent())['initial']['tab']);
+        $this->assertSame('all', $this->pageData($this->asAdmin($admin)->get(route('admin.ideas.index', ['status' => 'all']))->assertOk()->getContent())['initial']['tab']);
     }
 
     public function test_filters_search_and_sorting(): void
@@ -137,15 +146,13 @@ class IdeasReviewAdminTest extends TestCase
         $most = $this->asAdmin($admin)->get(route('admin.ideas.index'))->getContent();
         $this->assertTrue($pos($most, 'Teak') < $pos($most, 'Pergola') && $pos($most, 'Pergola') < $pos($most, 'jewelry compartment'), 'most asked first');
 
-        $newest = $this->asAdmin($admin)->get(route('admin.ideas.index', ['sort' => 'newest']))->getContent();
-        $this->assertTrue($pos($newest, 'jewelry compartment') < $pos($newest, 'Pergola') && $pos($newest, 'Pergola') < $pos($newest, 'Teak'), 'newest first');
-
-        $this->asAdmin($admin)->get(route('admin.ideas.index', ['kind' => 'wood']))->assertSee('Teak')->assertDontSee('Pergola');
-        $this->asAdmin($admin)->get(route('admin.ideas.index', ['q' => 'perg']))->assertSee('Pergola')->assertDontSee('Teak');
-        $this->asAdmin($admin)->get(route('admin.ideas.index', ['q' => 'nothing-like-this']))->assertOk()->assertSee('No ideas match these filters');
+        // search, type and sort are live in the browser; old links still set their starting values
+        $this->assertSame('wood', $this->pageData($this->asAdmin($admin)->get(route('admin.ideas.index', ['kind' => 'wood']))->getContent())['initial']['kind']);
+        $this->assertSame('perg', $this->pageData($this->asAdmin($admin)->get(route('admin.ideas.index', ['q' => 'perg']))->getContent())['initial']['q']);
+        $this->asAdmin($admin)->get(route('admin.ideas.index', ['sort' => 'newest']))->assertSee('<option value="recent" selected>', false);
     }
 
-    public function test_empty_state_and_pagination(): void
+    public function test_empty_state_and_the_whole_list_on_one_page(): void
     {
         $admin = $this->flowAdmin();
         $this->asAdmin($admin)->get(route('admin.ideas.index'))->assertOk()->assertSee('No customer has typed anything we had no answer for yet');
@@ -153,10 +160,9 @@ class IdeasReviewAdminTest extends TestCase
         foreach (range(1, 20) as $i) {
             $this->idea('furniture_type', 'Thing number ' . str_pad((string) $i, 2, '0', STR_PAD_LEFT));
         }
-        $p1 = $this->asAdmin($admin)->get(route('admin.ideas.index', ['sort' => 'newest']))->getContent();
-        $this->assertSame(15, substr_count($p1, 'class="ir-text"'));
-        $this->assertStringContainsString('page=2', $p1);
-        $this->assertSame(5, substr_count($this->asAdmin($admin)->get(route('admin.ideas.index', ['page' => 2]))->getContent(), 'class="ir-text"'));
+        $html = $this->asAdmin($admin)->get(route('admin.ideas.index'))->getContent();
+        $this->assertSame(20, substr_count($html, 'class="ir2-topic"'), 'no paging: the tabs and search work on the whole list');
+        $this->assertStringNotContainsString('page=2', $html);
     }
 
     public function test_the_same_idea_typed_with_other_case_or_spaces_counts_once(): void
@@ -320,9 +326,9 @@ class IdeasReviewAdminTest extends TestCase
         $this->assertSame('new', $row->fresh()->status);
 
         $html = $this->asAdmin($admin)->get(route('admin.ideas.index'))->getContent();
-        $this->assertStringNotContainsString('ir-option-' . $row->id, $html, 'no Add as option button for a wood');
-        $this->assertStringContainsString('ir-answer-' . $row->id, $html);
-        $this->assertStringContainsString('ir-dismiss-' . $row->id, $html);
+        $data = collect($this->pageData($html)['rows'])->firstWhere('id', $row->id);
+        $this->assertFalse($data['canOption'], 'no Add as Option for a wood');
+        $this->assertStringContainsString('data-view="' . $row->id . '"', $html, 'View (and so Send Reply) is still there');
 
         // the wood list itself did not move
         $this->assertSame(['Gmelina', 'Mahogany', 'Acacia', 'Special request'], \App\Support\WoodChoices::LIST);
@@ -369,11 +375,11 @@ class IdeasReviewAdminTest extends TestCase
         $row = $this->idea('furniture_type', 'Pergola');
         $html = $this->asAdmin($admin)->get(route('admin.ideas.index'))->getContent();
 
-        foreach (['dismiss', 'delete'] as $action) {
-            $this->assertStringContainsString('data-lp-modal-open="ir-' . $action . '-' . $row->id . '"', $html);
-            $this->assertStringContainsString('<div class="lp-modal" id="ir-' . $action . '-' . $row->id . '"', $html);
-            $this->assertStringNotContainsString('<form method="POST" action="' . route('admin.ideas.' . $action, $row->id) . '" class=', $html, 'no direct submit button');
-        }
+        // Delete sits behind the one shared confirmation window; no row carries a direct delete button
+        $this->assertStringContainsString('<div class="lp-modal lp-modal--mid" id="ir-delete"', $html);
+        $this->assertStringContainsString('id="ir-delete-form"', $html);
+        $this->assertStringNotContainsString('<form method="POST" action="' . route('admin.ideas.delete', $row->id) . '"', $html, 'no direct submit button');
+        $this->assertSame(route('admin.ideas.delete', ['id' => '__ID__']), $this->pageData($html)['routes']['delete']);
 
         $this->asAdmin($admin)->post(route('admin.ideas.delete', $row->id))->assertSessionHasNoErrors();
         $this->assertNull(UnansweredIdea::find($row->id));

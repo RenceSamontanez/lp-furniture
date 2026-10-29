@@ -229,33 +229,30 @@ class CustomOrderTimelineTest extends TestCase
         $this->makeOrder($c, ['total_amount' => 500, 'order_status' => 'pending']);
         $this->makeOrder($c, ['total_amount' => 999, 'order_status' => 'cancelled']);
 
-        $page = $this->actingAs($admin, 'admin')->get(route('admin.reports'))->assertOk();
-        $before = $page->viewData('totalRevenue');
-        $this->assertEquals(1500, $before);
-        $this->assertEquals(2, array_sum($page->viewData('ordersByStatus')->only(['confirmed', 'pending'])->all()));
-        $this->assertEquals(1500.0, $page->viewData('orderSplit')['catalog']['revenue']);
-        $this->assertSame(0, $page->viewData('orderSplit')['customized']['orders']);
+        $sales = fn () => $this->actingAs($admin, 'admin')->get(route('admin.reports'))->assertOk()->viewData('r')['sales'];
+        $split = fn (array $s, string $label) => collect($s['split'])->firstWhere('label', $label);
+
+        $s = $sales();
+        $this->assertEquals(1500, $s['collected']['total'], 'the all-time value of orders that are not cancelled is unchanged');
+        $this->assertEquals(2, collect($s['statuses'])->whereIn('key', ['confirmed', 'pending'])->sum('count'));
+        $this->assertEquals(1500.0, $split($s, 'Catalog')['total']);
+        $this->assertSame(0, $split($s, 'Customized')['orders']);
 
         // add a customized order: the old totals count it exactly as before, the split separates it
         $custom = $this->makeOrder($c, ['total_amount' => 20000, 'order_status' => 'confirmed']);
-        $a = \App\Models\DesignAgreement::query()->exists() ? null : null;
         $r = $this->makeRequest($c);
         $q = $this->makeQuote($r, ['status' => 'accepted', 'sent_by' => $admin->id]);
         $ag = $this->makeAgreement($q, $c, $admin);
         $custom->forceFill(['design_agreement_id' => $ag->id, 'amount_paid' => 5000])->save();
 
-        $page = $this->actingAs($admin, 'admin')->get(route('admin.reports'))->assertOk();
-        $this->assertEquals(21500, $page->viewData('totalRevenue'), 'the existing total still includes every non-cancelled order');
-        $split = $page->viewData('orderSplit');
-        $this->assertEquals(1500.0, $split['catalog']['revenue']);
-        $this->assertSame(1, $split['customized']['orders']);
-        $this->assertEquals(20000.0, $split['customized']['revenue']);
-        $this->assertEquals(5000.0, $split['customized']['paid']);
-        $this->assertEquals(
-            $split['catalog']['revenue'] + $split['customized']['revenue'],
-            $page->viewData('totalRevenue')
-        );
-        $page->assertSee('Catalog vs Customized Orders');
+        $s = $sales();
+        $this->assertEquals(21500, $s['collected']['total'], 'the existing total still includes every non-cancelled order');
+        $this->assertEquals(1500.0, $split($s, 'Catalog')['total']);
+        $this->assertSame(1, $split($s, 'Customized')['orders']);
+        $this->assertEquals(20000.0, $split($s, 'Customized')['total']);
+        $this->assertEquals(5000.0, $split($s, 'Customized')['paid']);
+        $this->assertEquals($split($s, 'Catalog')['total'] + $split($s, 'Customized')['total'], $s['collected']['total']);
+        $this->actingAs($admin, 'admin')->get(route('admin.reports'))->assertSee('Catalog vs Customized');
     }
 
     public function test_orders_list_can_filter_by_type(): void

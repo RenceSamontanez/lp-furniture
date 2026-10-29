@@ -275,104 +275,12 @@ class AdminController extends Controller
     /* ════════════════════════════════
        REPORTS & ANALYTICS
     ════════════════════════════════ */
-    public function reports()
+    public function reports(Request $request)
     {
-        // ── Revenue: last 6 months ──
-        $revenueByMonth = [];
-
-        for ($i = 5; $i >= 0; $i--) {
-            $month = now()->subMonths($i);
-
-            $total = Order::whereYear('created_at', $month->year)
-                ->whereMonth('created_at', $month->month)
-                ->where('order_status', '!=', 'cancelled')
-                ->sum('total_amount');
-
-            $revenueByMonth[] = [
-                'label' => $month->format('M'),
-                'total' => (float) $total,
-            ];
-        }
-
-        $totalRevenue = Order::where('order_status', '!=', 'cancelled')->sum('total_amount');
-        $thisMonthRevenue = Order::whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->where('order_status', '!=', 'cancelled')
-            ->sum('total_amount');
-        $lastMonthRevenue = Order::whereMonth('created_at', now()->subMonth()->month)
-            ->whereYear('created_at', now()->subMonth()->year)
-            ->where('order_status', '!=', 'cancelled')
-            ->sum('total_amount');
-
-        $revenueChangePercent = $lastMonthRevenue > 0
-            ? round((($thisMonthRevenue - $lastMonthRevenue) / $lastMonthRevenue) * 100, 1)
-            : ($thisMonthRevenue > 0 ? 100 : 0);
-
-        // ── Orders by status ──
-        $ordersByStatus = Order::selectRaw('order_status, count(*) as total')
-            ->groupBy('order_status')
-            ->pluck('total', 'order_status');
-
-        // ── Orders by category (via order items -> product) ──
-        $ordersByCategory = \App\Models\OrderItem::join('products', 'order_items.product_id', '=', 'products.id')
-            ->selectRaw('products.category, count(*) as total')
-            ->whereNotNull('products.category')
-            ->groupBy('products.category')
-            ->orderByDesc('total')
-            ->get();
-
-        // ── Best-selling products ──
-        $bestSellers = \App\Models\OrderItem::join('products', 'order_items.product_id', '=', 'products.id')
-            ->selectRaw('products.id, products.product_name, products.product_image, sum(order_items.quantity) as total_sold')
-            ->groupBy('products.id', 'products.product_name', 'products.product_image')
-            ->orderByDesc('total_sold')
-            ->take(5)
-            ->get();
-        $bestPhotos = \App\Models\Product::with('primaryImage')->whereIn('id', $bestSellers->pluck('id'))->get()->keyBy('id');
-        $bestSellers->each(fn ($b) => $b->photo_url = optional($bestPhotos->get($b->id))->image_url ?? \App\Support\ProductPhotos::placeholderUrl());
-
-        // ── Customer insights ──
-        $totalCustomers = User::where('role', 'customer')->count();
-
-        $newCustomersThisMonth = User::where('role', 'customer')
-            ->whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->count();
-
-        $verifiedCustomers = User::where('role', 'customer')->where('is_validated', true)->count();
-
-        // ── Low stock alert ──
-        $lowStockProducts = Product::where('stock_quantity', '<=', 5)
-            ->orderBy('stock_quantity')
-            ->take(5)
-            ->get();
-
-        // Catalog vs customized split: a separate figure set, the totals above are unchanged.
-        $orderSplit = [];
-        foreach (['catalog' => false, 'customized' => true] as $label => $custom) {
-            $base = Order::query()->where('order_status', '!=', 'cancelled')
-                ->when($custom, fn($q) => $q->whereNotNull('design_agreement_id'), fn($q) => $q->whereNull('design_agreement_id'));
-            $orderSplit[$label] = [
-                'orders'  => (clone $base)->count(),
-                'revenue' => (float) (clone $base)->sum('total_amount'),
-                'paid'    => (float) (clone $base)->sum('amount_paid'),
-            ];
-        }
-
-        return view('admin.reports', compact(
-            'orderSplit',
-            'revenueByMonth',
-            'totalRevenue',
-            'thisMonthRevenue',
-            'revenueChangePercent',
-            'ordersByStatus',
-            'ordersByCategory',
-            'bestSellers',
-            'totalCustomers',
-            'newCustomersThisMonth',
-            'verifiedCustomers',
-            'lowStockProducts'
-        ));
+        return view('admin.reports', [
+            'r' => \App\Support\AdminReports::build((string) $request->query('period', 'm')),
+            'tab' => in_array($request->query('tab'), ['sales', 'prod', 'svc', 'luma', 'cust'], true) ? $request->query('tab') : 'sales',
+        ]);
     }
 
     /* ════════════════════════════════

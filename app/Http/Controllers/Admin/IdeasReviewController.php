@@ -8,6 +8,7 @@ use App\Models\ExtraFurnitureType;
 use App\Models\UnansweredIdea;
 use App\Rules\NoLinkOrEmail;
 use App\Support\FurnitureTypes;
+use App\Support\IdeaOrigins;
 use App\Support\IdeaText;
 use App\Support\StyleChoices;
 use App\Support\TextSanitizer;
@@ -22,37 +23,48 @@ use Illuminate\Validation\Rule;
  */
 class IdeasReviewController extends Controller
 {
-    private const PER_PAGE = 15;
+    /** The page lists up to this many ideas (newest activity first) and filters them in the browser. */
+    private const LIST_LIMIT = 500;
 
     public function index(Request $request)
     {
-        $status = in_array($request->query('status'), UnansweredIdea::STATUSES, true) ? $request->query('status') : (($request->has('status') && $request->query('status') === 'all') ? null : 'new');
-        $kind = in_array($request->query('kind'), UnansweredIdea::KINDS, true) ? $request->query('kind') : null;
+        // Old links keep working: ?status=answered|dismissed|added_as_option|all, ?kind=, ?q=, ?sort=newest
+        $status = $request->query('status');
+        $tab = in_array($status, UnansweredIdea::STATUSES, true) ? $status : ($status === 'all' ? 'all' : 'new');
+        $kind = in_array($request->query('kind'), UnansweredIdea::KINDS, true) ? $request->query('kind') : '';
         $sort = $request->query('sort') === 'newest' ? 'newest' : 'most';
         $search = trim((string) $request->query('q', ''));
 
-        $query = UnansweredIdea::query()
-            ->when($status, fn ($q) => $q->where('status', $status))
-            ->when($kind, fn ($q) => $q->where('kind', $kind))
-            ->when($search !== '', fn ($q) => $q->where(function ($w) use ($search) {
-                $like = '%' . addcslashes(mb_strtolower($search), '\\%_') . '%';
-                $w->where('text_key', 'like', $like)->orWhere('answer', 'like', $like);
-            }));
-
-        $sort === 'newest'
-            ? $query->orderByDesc('first_seen_at')->orderByDesc('id')
-            : $query->orderByDesc('times_asked')->orderByDesc('last_seen_at')->orderByDesc('id');
-
-        $rows = $query->paginate(self::PER_PAGE)->withQueryString();
-
+        $ideas = UnansweredIdea::query()->orderByDesc('times_asked')->orderByDesc('last_seen_at')->orderByDesc('id')->limit(self::LIST_LIMIT)->get();
         $counts = UnansweredIdea::query()->select('status', DB::raw('count(*) as n'))->groupBy('status')->pluck('n', 'status')->all();
+        $origins = IdeaOrigins::for($ideas);
+
+        $rows = $ideas->map(function (UnansweredIdea $i) use ($origins) {
+            $o = $origins[$i->id];
+
+            return [
+                'id' => $i->id, 'text' => $i->text, 'kind' => $i->kind, 'kindLabel' => ['furniture_type' => 'Furniture Type', 'wood' => 'Wood', 'idea' => 'Idea Phrase'][$i->kind] ?? $i->kind,
+                'times' => (int) $i->times_asked, 'status' => $i->status,
+                'last' => $i->last_seen_at?->format('M j, Y'), 'lastTs' => $i->last_seen_at?->timestamp ?? 0,
+                'answer' => $i->answer,
+                'askedFor' => IdeaOrigins::askedFor($o['furniture']), 'furniture' => $o['furniture'],
+                'requests' => $o['requests'], 'requestTotal' => $o['total'],
+                'canOption' => $i->kind !== UnansweredIdea::KIND_WOOD && $i->status !== UnansweredIdea::STATUS_DISMISSED && $i->status !== UnansweredIdea::STATUS_ADDED,
+            ];
+        })->values();
+
+        $reopen = null;
+        if (old('_modal') && old('_idea')) {
+            $reopen = ['modal' => old('_modal'), 'id' => (int) old('_idea'), 'old' => collect(old())->only(['answer', 'wording', 'scope', 'key', 'ok'])->all(), 'errors' => session('errors') ? session('errors')->getBag('default')->toArray() : []];
+        }
 
         return view('admin.ideas.index', [
-            'rows' => $rows, 'status' => $status, 'kind' => $kind, 'sort' => $sort, 'search' => $search,
+            'rows' => $rows, 'tab' => $tab, 'kind' => $kind, 'sort' => $sort, 'search' => $search,
             'counts' => $counts, 'total' => array_sum($counts),
             'extraTypeNames' => ExtraFurnitureType::chips(),
             'typeChoices' => FurnitureTypes::CHOICES, 'styles' => StyleChoices::LIST,
             'undo' => session('undo_idea') ? UnansweredIdea::find(session('undo_idea')) : null,
+            'reopen' => $reopen, 'hideGlobalErrorToast' => true,
         ]);
     }
 
@@ -62,8 +74,9 @@ class IdeasReviewController extends Controller
         $request->merge(['answer' => TextSanitizer::block($request->input('answer'))]);
 
         $data = $request->validate([
-            'answer' => ['required', 'string', 'min:3', 'max:' . UnansweredIdea::ANSWER_MAX, new NoLinkOrEmail()],
+            'answer' => ['required', 'string', 'min:3', 'max:' . UnansweredIdea::ANSWER_MAX, new NoLinkOrEmail(), 'not_regex:/\[[^\]]*\]/u'],
         ], [
+            'answer.not_regex' => 'Replace the [brackets] with your own words before saving.',
             'answer.required' => 'Write what the customer should be told.',
             'answer.min'      => 'The answer is too short. Write at least 3 characters.',
             'answer.max'      => 'The answer is too long. Keep it under ' . UnansweredIdea::ANSWER_MAX . ' characters.',
@@ -88,10 +101,10 @@ class IdeasReviewController extends Controller
         $row = UnansweredIdea::findOrFail($id);
 
         if ($row->kind === UnansweredIdea::KIND_WOOD) {
-            return $this->back('The wood list is fixed to Gmelina, Mahogany and Acacia, so a wood cannot be added as an option. Write an answer or dismiss it.', 'error');
+            return $this->optionFail('The wood list is fixed to Gmelina, Mahogany and Acacia, so a wood cannot be added as an option. Write an answer or dismiss it.');
         }
         if ($row->status === UnansweredIdea::STATUS_DISMISSED) {
-            return $this->back('This one is dismissed. Undo the dismissal first.', 'error');
+            return $this->optionFail('This one is dismissed. Undo the dismissal first.');
         }
 
         if ($row->kind === UnansweredIdea::KIND_TYPE) {
@@ -99,7 +112,7 @@ class IdeasReviewController extends Controller
             $data = $request->validate(['wording' => IdeaText::lineRules(ExtraFurnitureType::NAME_MAX)], ['wording.required' => 'Type the name to show as a quick pick.']);
 
             if (ExtraFurnitureType::isTaken($data['wording'])) {
-                return $this->back('"' . $data['wording'] . '" is already an option.', 'error');
+                return $this->optionFail('"' . $data['wording'] . '" is already an option.');
             }
 
             DB::transaction(function () use ($row, $data) {
@@ -127,10 +140,10 @@ class IdeasReviewController extends Controller
 
         $allowed = $data['scope'] === 'type' ? array_keys(FurnitureTypes::CHOICES) : StyleChoices::LIST;
         if (!in_array($data['key'], $allowed, true)) {
-            return $this->back('Choose a ' . ($data['scope'] === 'type' ? 'furniture type' : 'style') . ' from the list.', 'error');
+            return $this->optionFail('Choose a ' . ($data['scope'] === 'type' ? 'furniture type' : 'style') . ' from the list.', 'key');
         }
         if (QuickIdeasController::exists($data['scope'], $data['key'], $data['wording'])) {
-            return $this->back('That idea already exists for ' . $data['key'] . '.', 'error');
+            return $this->optionFail('That idea already exists for ' . $data['key'] . '.');
         }
 
         DB::transaction(function () use ($row, $data) {
@@ -186,6 +199,12 @@ class IdeasReviewController extends Controller
     private function markAdded(UnansweredIdea $row): void
     {
         $row->forceFill(['status' => UnansweredIdea::STATUS_ADDED, 'handled_by' => Auth::guard('admin')->id(), 'handled_at' => now()])->save();
+    }
+
+    /** A refused "Add as option": back to the page with the Add as Option window open again, the typed values and the reason under the field. */
+    private function optionFail(string $message, string $field = 'wording')
+    {
+        return back()->withInput(request()->all() + ['_modal' => 'option', '_idea' => request()->route('id')])->withErrors([$field => $message])->with('error', $message);
     }
 
     private function back(string $message, string $key = 'success')
