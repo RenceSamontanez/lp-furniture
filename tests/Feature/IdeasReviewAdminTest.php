@@ -113,8 +113,8 @@ class IdeasReviewAdminTest extends TestCase
         $this->idea('idea', 'secret drawer box', ['status' => 'answered', 'answer' => 'Yes.']);
 
         $html = $this->asAdmin($admin)->get(route('admin.ideas.index'))->assertOk()->getContent();
-        $this->assertStringContainsString('Ideas to review', $html);
-        $this->assertMatchesRegularExpression('/Ideas to review\s*<span class="admin-nav-badge">2<\/span>/', $html, 'two new rows');
+        $this->assertStringContainsString('Ideas to Review', $html);
+        $this->assertMatchesRegularExpression('/Ideas to Review\s*<span class="admin-nav-badge">2<\/span>/', $html, 'two new rows');
         $this->assertStringContainsString('Pergola', $html);
         $this->assertStringContainsString('2&times;', $html);
         $this->assertStringContainsString('Furniture type', $html);
@@ -532,7 +532,7 @@ class IdeasReviewAdminTest extends TestCase
             ->assertSee('Call customer about wood quantity')->assertSee('09171234567')->assertSee('href="tel:09171234567"', false);
 
         $list = $this->asAdmin($admin)->get(route('admin.custom-orders.index'))->assertOk();
-        $list->assertSee('Rustic style')->assertSee('Call about wood quantity')->assertSee('Reference photo');
+        $list->assertSee('Rustic style')->assertSee('Call About Wood Quantity')->assertSee('Reference Photo');
     }
 
     public function test_no_call_badge_when_the_shop_buys_the_wood_or_a_fixed_wood_is_chosen(): void

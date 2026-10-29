@@ -21,24 +21,24 @@
 <div class="co-counts">
   <a href="{{ route('admin.refunds.index', $keep(['status' => null])) }}" class="co-count {{ !$status ? 'active' : '' }}">
     <div class="co-count-num">{{ $total }}</div>
-    <div class="co-count-label">All requests</div>
+    <div class="co-count-label">All Requests</div>
   </a>
   @foreach($labels as $key => $label)
     <a href="{{ route('admin.refunds.index', $keep(['status' => $key])) }}" class="co-count {{ $status === $key ? 'active' : '' }}">
       <div class="co-count-num">{{ $counts[$key] ?? 0 }}</div>
-      <div class="co-count-label">{{ $label }}</div>
+      <div class="co-count-label">@titlecase($label)</div>
     </a>
   @endforeach
 </div>
 
 <form method="GET" action="{{ route('admin.refunds.index') }}" class="rf-filters">
   @if($status)<input type="hidden" name="status" value="{{ $status }}"/>@endif
-  <label class="rf-sr" for="rf-work">Work state</label>
+  <label class="rf-sr" for="rf-work">Work State</label>
   <select name="work" id="rf-work" class="form-input" onchange="this.form.submit()">
     <option value="">Any work state</option>
     @foreach(\App\Support\ServiceWorkState::LABELS as $k => $label)<option value="{{ $k }}" @selected($work === $k)>{{ $label }}</option>@endforeach
   </select>
-  <label class="rf-sr" for="rf-method">Refund method</label>
+  <label class="rf-sr" for="rf-method">Refund Method</label>
   <select name="method" id="rf-method" class="form-input" onchange="this.form.submit()">
     <option value="">Any method</option>
     @foreach(\App\Models\ServiceRefundRequest::METHODS as $k => $label)<option value="{{ $k }}" @selected($method === $k)>{{ $label }}</option>@endforeach
@@ -57,7 +57,7 @@
       <div class="admin-empty"><p>No requests match.</p></div>
     @else
       <table class="admin-table">
-        <thead><tr><th>Reference</th><th>Customer</th><th>Paid</th><th>Work</th><th>Refund by</th><th>Status</th><th></th></tr></thead>
+        <thead><tr><th>Reference</th><th>Customer</th><th>Paid</th><th>Work</th><th>Refund By</th><th>Status</th><th></th></tr></thead>
         <tbody>
           @foreach($requests as $r)
             <tr @class(['rf-overdue' => $r->isOverdue()])>
@@ -71,7 +71,7 @@
               </td>
               <td data-label="Paid">₱{{ number_format((float) $r->amount_paid_snapshot, 2) }}</td>
               <td data-label="Work">{{ \App\Support\ServiceWorkState::label($r->work_state_snapshot) }}</td>
-              <td data-label="Refund by">
+              <td data-label="Refund By">
                 {{ $r->methodLabel() ?? '—' }}
                 @if($r->refund_method === 'gcash')<div class="rf-mask" style="font-size:11.5px;color:var(--text-muted);">{{ $r->maskedGcash() }}</div>@endif
                 @if($r->refund_due_at && in_array($r->status, ['approved', 'refund_problem'], true))
@@ -79,7 +79,7 @@
                 @endif
                 @if($r->isOverdue())<span class="rf-overdue-tag">Overdue</span>@endif
               </td>
-              <td data-label="Status"><span class="co-chip co-chip--{{ in_array($r->status, ['declined', 'closed'], true) ? 'rf-' . $r->status : $r->status }}">{{ $r->statusLabel() }}</span></td>
+              <td data-label="Status"><span class="co-chip co-chip--{{ in_array($r->status, ['declined', 'closed'], true) ? 'rf-' . $r->status : $r->status }}">@titlecase($r->statusLabel())</span></td>
               <td data-label=""><a href="{{ route('admin.refunds.show', $r->id) }}" class="lp-btn lp-btn--secondary">Open</a></td>
             </tr>
           @endforeach

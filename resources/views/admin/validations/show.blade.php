@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'Review Identity — Admin')
-@section('page-title', 'Review identity validation')
+@section('page-title', 'Review Identity Validation')
 
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/identity-review.css') }}?v={{ @filemtime(public_path('assets/css/identity-review.css')) }}"/>
@@ -24,7 +24,7 @@
 @endphp
 <div class="idr idr--review" data-idr-review>
 
-  <a href="{{ route('admin.validations.index', ['status' => $validation->status]) }}" class="lp-link lp-link--tap idr-back">&larr; Back to list</a>
+  <a href="{{ route('admin.validations.index', ['status' => $validation->status]) }}" class="lp-link lp-link--tap idr-back">Back to list</a>
 
   {{-- Customer strip --}}
   <div class="idr-glass idr-info">
@@ -33,10 +33,10 @@
       <div>
         <h2>{{ $name }}</h2>
         <div class="idr-tags">
-          <span class="idr-pill is-{{ $validation->status }}">{{ ucfirst($validation->status) }}</span>
+          <span class="idr-pill is-{{ $validation->status }}">@titlecase($validation->status)</span>
           <span class="idr-chip2">Attempt {{ $validation->attempt_number }}</span>
           @if($earlier->isNotEmpty())
-            <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" data-lp-modal-open="idr-past">Past attempts</button>
+            <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" data-lp-modal-open="idr-past">Past Attempts</button>
           @endif
         </div>
       </div>
@@ -75,7 +75,7 @@
     @if($pending)
       <div class="idr-bar__checks">
         <fieldset class="idr-checks" id="idr-checks">
-          <legend>Checks to approve</legend>
+          <legend>Checks to Approve</legend>
           <span class="idr-cnt" id="idr-cnt" aria-live="polite">0 of 3</span>
           @foreach($checks as $key => $label)
             <label class="idr-chk">
@@ -88,10 +88,10 @@
       </div>
       <div class="idr-acts">
         <button type="button" class="lp-btn lp-btn--danger" id="idr-reject-btn">Reject</button>
-        <button type="button" class="lp-btn lp-btn--primary is-locked" id="idr-approve-btn" aria-disabled="true" aria-describedby="idr-cnt">Approve verification</button>
+        <button type="button" class="lp-btn lp-btn--primary is-locked" id="idr-approve-btn" aria-disabled="true" aria-describedby="idr-cnt">Approve Verification</button>
       </div>
       <div class="idr-reason">
-        <label for="idr-why">Reason, needed only to reject</label>
+        <label for="idr-why">Reason, Needed Only to Reject</label>
         @foreach(config('identity.reason_chips') as $chip)
           <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" data-reason-chip>{{ $chip }}</button>
         @endforeach
@@ -105,7 +105,7 @@
       <form id="idr-reject-form" method="POST" action="{{ route('admin.validations.reject', $validation->id) }}">@csrf</form>
     @else
       <div class="idr-record">
-        <span class="idr-pill is-{{ $validation->status }}">{{ ucfirst($validation->status) }}</span>
+        <span class="idr-pill is-{{ $validation->status }}">@titlecase($validation->status)</span>
         <div class="idr-record__t">
           <p>{{ ucfirst($validation->status) }} by {{ $reviewerName }} on {{ $fmt($validation->reviewed_at) }}. This decision is final.</p>
 
@@ -133,12 +133,12 @@
         </div>
         <div class="idr-record__a">
           @if($validation->isRejected() && $isLatest && !$validation->follow_up_requested_at)
-            <button type="button" class="lp-btn lp-btn--primary" data-lp-modal-open="idr-follow-modal">Ask for a new submission</button>
+            <button type="button" class="lp-btn lp-btn--primary" data-lp-modal-open="idr-follow-modal">Ask for a New Submission</button>
           @endif
           @if(!$isLatest && $latest)
             <a class="lp-btn lp-btn--secondary" href="{{ route('admin.validations.show', $latest->id) }}">Open attempt {{ $latest->attempt_number }}</a>
           @endif
-          <a class="lp-btn lp-btn--secondary" href="{{ route('admin.validations.index', ['status' => $validation->status]) }}">Back to list</a>
+          <a class="lp-btn lp-btn--secondary" href="{{ route('admin.validations.index', ['status' => $validation->status]) }}">Back to List</a>
         </div>
       </div>
     @endif
@@ -147,14 +147,14 @@
 
 {{-- Confirmation modals --}}
 @if($pending)
-  <x-modal id="idr-approve-modal" title="Approve this verification?">
+  <x-modal id="idr-approve-modal" title="Approve This Verification?">
     <p>{{ $name }} will be marked as verified and notified right away. All three checks are confirmed.</p>
     <x-slot:footer>
       <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Cancel</button>
       <button type="submit" form="idr-approve-form" class="lp-btn lp-btn--primary" data-lp-confirm>Approve</button>
     </x-slot:footer>
   </x-modal>
-  <x-modal id="idr-reject-modal" title="Reject this verification?">
+  <x-modal id="idr-reject-modal" title="Reject This Verification?">
     <p>{{ $name }} will see this reason and can send new photos.</p>
     <x-notice variant="problem" title="Reason the customer will see"><span id="idr-reject-quote"></span></x-notice>
     <x-slot:footer>
@@ -163,19 +163,19 @@
     </x-slot:footer>
   </x-modal>
 @elseif($validation->isRejected() && $isLatest && !$validation->follow_up_requested_at)
-  <x-modal id="idr-follow-modal" title="Ask for a new submission?">
+  <x-modal id="idr-follow-modal" title="Ask for a New Submission?">
     <p>{{ $name }} is notified with your reason and can send new photos. Their new submission appears under Pending as attempt {{ $validation->attempt_number + 1 }}.</p>
     <x-notice variant="info" title="Reason on file"><span>{{ $validation->rejection_reason }}</span></x-notice>
     <form id="idr-follow-form" method="POST" action="{{ route('admin.validations.follow-up', $validation->id) }}">@csrf</form>
     <x-slot:footer>
       <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Cancel</button>
-      <button type="submit" form="idr-follow-form" class="lp-btn lp-btn--primary" data-lp-confirm>Send request</button>
+      <button type="submit" form="idr-follow-form" class="lp-btn lp-btn--primary" data-lp-confirm>Send Request</button>
     </x-slot:footer>
   </x-modal>
 @endif
 
 @if($earlier->isNotEmpty())
-  <x-modal id="idr-past" title="Past attempts">
+  <x-modal id="idr-past" title="Past Attempts">
     <p>{{ $name }} has had {{ $earlier->count() }} earlier {{ \Illuminate\Support\Str::plural('submission', $earlier->count()) }} before this one.</p>
     <ul class="idr-hist">
       @foreach($earlier as $e)

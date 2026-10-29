@@ -308,6 +308,6 @@ class CustomOrderEdgeChecksTest extends TestCase
         $this->assertSame(0, Order::count());
         $this->assertSame('accepted', $r->fresh()->pipeline_status);
         $this->assertGreaterThanOrEqual(1, Notification::where('user_id', $admin->id)->where('title', 'Agreement Integrity Check Failed')->count());
-        $this->asAdmin($admin)->get(route('admin.custom-orders.show', $r->id))->assertOk()->assertSee('Hash mismatch');
+        $this->asAdmin($admin)->get(route('admin.custom-orders.show', $r->id))->assertOk()->assertSee('Hash Mismatch');
     }
 }

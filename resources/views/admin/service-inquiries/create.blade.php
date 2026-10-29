@@ -15,7 +15,7 @@
   $maxDay = $today->copy()->addDays(\App\Support\ServiceInquiryDesk::DATE_HORIZON_DAYS);
 @endphp
 
-<a href="{{ route('admin.service-inquiries.index') }}" class="lp-btn lp-btn--secondary" style="margin-bottom:20px;">← Back to Other Services</a>
+<a href="{{ route('admin.service-inquiries.index') }}" class="lp-btn lp-btn--secondary" style="margin-bottom:20px;">Back to Other Services</a>
 
 @if($errors->any())
   <div class="co-error" role="alert">
@@ -30,7 +30,7 @@
       @csrf
 
       <div class="co-field si-link" id="si-link">
-        <label class="co-block-label" for="si-search" style="margin-top:0;">Link an existing customer account (optional)</label>
+        <label class="co-block-label" for="si-search" style="margin-top:0;">Link an Existing Customer Account (Optional)</label>
         <input type="search" id="si-search" class="form-input" placeholder="Search by name, phone or email" autocomplete="off" aria-controls="si-results"/>
         <ul class="si-results" id="si-results" role="listbox" hidden></ul>
         <input type="hidden" name="customer_id" id="si-customer-id" value="{{ old('customer_id') }}"/>
@@ -48,7 +48,7 @@
       </div>
 
       <div class="co-field">
-        <label class="co-block-label" for="furniture_type" style="margin-top:0;">Furniture type (optional)</label>
+        <label class="co-block-label" for="furniture_type" style="margin-top:0;">Furniture Type (Optional)</label>
         <select id="furniture_type" name="furniture_type" class="form-input">
           <option value="">Not sure or not listed</option>
           @foreach(\App\Support\FurnitureTypes::LIST as $f)
@@ -68,19 +68,19 @@
           <input type="text" id="name" name="name" class="form-input" required maxlength="120" value="{{ old('name') }}"/>
         </div>
         <div class="co-field">
-          <label class="co-block-label" for="phone" style="margin-top:0;">Mobile number</label>
+          <label class="co-block-label" for="phone" style="margin-top:0;">Mobile Number</label>
           <input type="tel" id="phone" name="phone" class="form-input" required maxlength="16" value="{{ old('phone') }}" placeholder="09171234567"/>
         </div>
       </div>
 
       <div class="co-field">
-        <label class="co-block-label" for="email" style="margin-top:0;">Email (optional)</label>
+        <label class="co-block-label" for="email" style="margin-top:0;">Email (Optional)</label>
         <input type="email" id="email" name="email" class="form-input" maxlength="150" value="{{ old('email') }}"/>
       </div>
 
       <div class="si-form-grid">
         <div class="co-field">
-          <label class="co-block-label" for="preferred_call_window" style="margin-top:0;">Preferred call time</label>
+          <label class="co-block-label" for="preferred_call_window" style="margin-top:0;">Preferred Call Time</label>
           <select id="preferred_call_window" name="preferred_call_window" class="form-input">
             <option value="">Any time</option>
             @foreach(\App\Models\CustomDesignRequest::CALL_WINDOWS as $value => $label)
@@ -89,7 +89,7 @@
           </select>
         </div>
         <div class="co-field">
-          <label class="co-block-label" for="preferred_call_date" style="margin-top:0;">Preferred date (optional)</label>
+          <label class="co-block-label" for="preferred_call_date" style="margin-top:0;">Preferred Date (Optional)</label>
           <input type="date" id="preferred_call_date" name="preferred_call_date" class="form-input"
                  min="{{ $today->toDateString() }}" max="{{ $maxDay->toDateString() }}" value="{{ old('preferred_call_date') }}"/>
           <p class="si-hint">Weekdays only. Calls are made Monday to Friday, 8 AM to 5 PM.</p>
@@ -100,7 +100,7 @@
 
       <div class="co-modal-actions">
         <a href="{{ route('admin.service-inquiries.index') }}" class="lp-btn lp-btn--secondary">Cancel</a>
-        <button type="submit" class="lp-btn lp-btn--primary" data-loading="Saving...">Create ticket</button>
+        <button type="submit" class="lp-btn lp-btn--primary" data-loading="Saving...">Create Ticket</button>
       </div>
     </form>
   </div>

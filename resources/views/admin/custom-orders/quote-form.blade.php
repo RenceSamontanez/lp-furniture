@@ -18,7 +18,7 @@
   $minPercent = \App\Support\InstallmentScheduler::MIN_DEPOSIT_PERCENT;
 @endphp
 
-<a href="{{ route('admin.custom-orders.show', $r->id) }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">← Back to request</a>
+<a href="{{ route('admin.custom-orders.show', $r->id) }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">Back to Request</a>
 
 @if($errors->any())
   <div class="co-error" role="alert">
@@ -33,7 +33,7 @@
 
     <div class="admin-panel">
       <div class="admin-panel-header">
-        <div class="admin-panel-title">Customized order: {{ $r->user->display_name }}</div>
+        <div class="admin-panel-title">Customized Order: {{ $r->user->display_name }}</div>
         @if($nextVersion > 1)<span class="co-version-badge">Version {{ $nextVersion }}</span>@endif
       </div>
       <div class="admin-panel-body">
@@ -52,7 +52,7 @@
 
         <div class="co-field-grid">
           <div class="co-field co-span-2">
-            <label class="form-label" for="final_description">Final description</label>
+            <label class="form-label" for="final_description">Final Description</label>
             <textarea id="final_description" name="final_description" class="form-input" rows="4" maxlength="3000" required>{{ $v['final_description'] ?? '' }}</textarea>
           </div>
 
@@ -73,7 +73,7 @@
             <input type="number" step="0.01" min="0.1" max="9999" id="height_cm" name="height_cm" class="form-input" value="{{ $v['height_cm'] ?? '' }}" required/>
           </div>
           <div class="co-field">
-            <label class="form-label" for="production_days">Production days</label>
+            <label class="form-label" for="production_days">Production Days</label>
             <input type="number" step="1" min="1" max="365" id="production_days" name="production_days" class="form-input" value="{{ $v['production_days'] ?? '' }}" required/>
           </div>
 
@@ -82,11 +82,11 @@
             <input type="text" id="material" name="material" class="form-input" maxlength="100" value="{{ $v['material'] ?? '' }}" required/>
           </div>
           <div class="co-field">
-            <label class="form-label" for="finish">Finish <span class="co-opt">(optional)</span></label>
+            <label class="form-label" for="finish">Finish <span class="co-opt">(Optional)</span></label>
             <input type="text" id="finish" name="finish" class="form-input" maxlength="100" value="{{ $v['finish'] ?? '' }}"/>
           </div>
           <div class="co-field co-span-2">
-            <label class="form-label" for="modifications">Modifications <span class="co-opt">(optional)</span></label>
+            <label class="form-label" for="modifications">Modifications <span class="co-opt">(Optional)</span></label>
             <textarea id="modifications" name="modifications" class="form-input" rows="2" maxlength="3000">{{ $v['modifications'] ?? '' }}</textarea>
           </div>
         </div>
@@ -94,7 +94,7 @@
     </div>
 
     <div class="admin-panel">
-      <div class="admin-panel-header"><div class="admin-panel-title">Price and delivery</div></div>
+      <div class="admin-panel-header"><div class="admin-panel-title">Price and Delivery</div></div>
       <div class="admin-panel-body">
         <div class="co-field-grid">
           <div class="co-field">
@@ -110,13 +110,13 @@
           </div>
 
           <div class="co-field" id="fee-field" @if(!$isDelivery) hidden @endif>
-            <label class="form-label" for="delivery_fee">Delivery fee (₱)</label>
+            <label class="form-label" for="delivery_fee">Delivery Fee (₱)</label>
             <input type="number" step="0.01" min="0" max="99999.99" id="delivery_fee" name="delivery_fee" class="form-input"
                    value="{{ $v['delivery_fee'] ?? '' }}" placeholder="{{ \App\Models\CustomQuote::DEFAULT_DELIVERY_FEE }}"/>
             <p class="co-hint">Set per quote. Default {{ number_format(\App\Models\CustomQuote::DEFAULT_DELIVERY_FEE) }} if left blank.</p>
           </div>
           <div class="co-field co-span-2" id="address-field" @if(!$isDelivery) hidden @endif>
-            <label class="form-label" for="delivery_address">Delivery address</label>
+            <label class="form-label" for="delivery_address">Delivery Address</label>
             <textarea id="delivery_address" name="delivery_address" class="form-input" rows="2" maxlength="500">{{ $v['delivery_address'] ?? '' }}</textarea>
           </div>
         </div>
@@ -124,7 +124,7 @@
     </div>
 
     <div class="admin-panel">
-      <div class="admin-panel-header"><div class="admin-panel-title">Payment terms</div></div>
+      <div class="admin-panel-header"><div class="admin-panel-title">Payment Terms</div></div>
       <div class="admin-panel-body">
         <div class="co-radio-row">
           <label><input type="radio" name="payment_terms" value="full" @checked(!$isDeposit)/> Pay in full up front</label>
@@ -139,7 +139,7 @@
           </div>
           <div class="co-field"></div>
           <div class="co-field">
-            <label class="form-label" for="installment_duration_months">Balance spread over</label>
+            <label class="form-label" for="installment_duration_months">Balance Spread Over</label>
             <select id="installment_duration_months" name="installment_duration_months" class="form-input">
               @foreach(\App\Support\InstallmentScheduler::ALLOWED_DURATION_MONTHS as $m)
                 <option value="{{ $m }}" @selected((int) ($v['installment_duration_months'] ?? 1) === $m)>{{ $m }} month{{ $m > 1 ? 's' : '' }}</option>
@@ -147,7 +147,7 @@
             </select>
           </div>
           <div class="co-field">
-            <label class="form-label" for="installment_frequency_days">Paid every</label>
+            <label class="form-label" for="installment_frequency_days">Paid Every</label>
             <select id="installment_frequency_days" name="installment_frequency_days" class="form-input">
               @foreach(\App\Support\InstallmentScheduler::ALLOWED_FREQUENCY_DAYS as $d)
                 <option value="{{ $d }}" @selected((int) ($v['installment_frequency_days'] ?? 30) === $d)>{{ $d }} days</option>
@@ -159,7 +159,7 @@
     </div>
 
     <div class="admin-panel">
-      <div class="admin-panel-header"><div class="admin-panel-title">Internal call notes</div></div>
+      <div class="admin-panel-header"><div class="admin-panel-title">Internal Call Notes</div></div>
       <div class="admin-panel-body">
         <textarea name="call_notes" class="form-input" rows="3" maxlength="2000"
                   placeholder="Only visible to the team. Never shown to the customer.">{{ $v['call_notes'] ?? '' }}</textarea>
@@ -168,14 +168,14 @@
 
     <div class="co-form-actions">
       <a href="{{ route('admin.custom-orders.show', $r->id) }}" class="admin-btn admin-btn-outline">Cancel</a>
-      <button type="submit" class="admin-btn admin-btn-gold">{{ $quote ? 'Save draft' : 'Save as draft' }}</button>
+      <button type="submit" class="admin-btn admin-btn-gold">{{ $quote ? 'Save Draft' : 'Save as Draft' }}</button>
     </div>
   </form>
 
   {{-- Live preview (server-computed through the same scheduler as the real order) --}}
   <div class="co-side-sticky">
     <div class="admin-panel">
-      <div class="admin-panel-header"><div class="admin-panel-title">Selected design</div></div>
+      <div class="admin-panel-header"><div class="admin-panel-title">Selected Design</div></div>
       <div class="admin-panel-body">
         @php $designImage = $r->previewImageUrl(true); @endphp
         <div class="co-design-summary co-design-summary--stack">
@@ -187,10 +187,10 @@
         @else
           <div class="co-noimage">No image generated</div>
         @endif
-        <div class="co-block-label">Customer's prompt</div>
+        <div class="co-block-label">Customer's Prompt</div>
         <div class="co-quote">{{ $r->description }}</div>
         @if($r->modification_notes)
-          <div class="co-block-label">Customization idea</div>
+          <div class="co-block-label">Customization Idea</div>
           <div class="co-quote">{{ $r->modification_notes }}</div>
         @endif
         </div>

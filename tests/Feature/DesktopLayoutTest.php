@@ -77,12 +77,12 @@ class DesktopLayoutTest extends TestCase
 
         $show = $this->asAdmin($admin)->get(route('admin.custom-orders.show', $r->id))->assertOk()->getContent();
         // the design panel sits in the side column: after the request details, before the actions
-        $this->assertNotFalse(strpos($show, 'Selected design'));
-        $this->assertGreaterThan(strpos($show, 'Preferred call window'), strpos($show, 'Selected design'));
-        $this->assertLessThan(strpos($show, 'This request'), strpos($show, 'Selected design'));
+        $this->assertNotFalse(strpos($show, 'Selected Design'));
+        $this->assertGreaterThan(strpos($show, 'Preferred call window'), strpos($show, 'Selected Design'));
+        $this->assertLessThan(strpos($show, 'This Request'), strpos($show, 'Selected Design'));
 
         $form = $this->asAdmin($admin)->get(route('admin.custom-orders.quotes.create', $r->id))->assertOk()->getContent();
         $this->assertGreaterThan(strpos($form, 'id="quote-form"'), strpos($form, 'co-side-sticky'));
-        $this->assertGreaterThan(strpos($form, 'co-side-sticky'), strpos($form, 'Selected design'));
+        $this->assertGreaterThan(strpos($form, 'co-side-sticky'), strpos($form, 'Selected Design'));
     }
 }

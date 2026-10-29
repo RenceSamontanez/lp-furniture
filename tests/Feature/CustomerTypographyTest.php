@@ -47,14 +47,13 @@ class CustomerTypographyTest extends TestCase
         $this->assertStringNotContainsString('fonts.googleapis.com', $html);
     }
 
-    public function test_admin_layout_is_unchanged(): void
+    public function test_admin_layout_never_loads_the_customer_stylesheet(): void
     {
+        // the admin has its own typography sheet (AdminTypographyTest); it must still never load the customer one
         $admin = $this->user('admin');
         $html = $this->actingAs($admin, 'admin')->get('/admin/orders')->assertOk()->getContent();
 
-        $this->assertStringContainsString('fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap', $html);
         $this->assertStringNotContainsString('customer-type.css', $html);
-        $this->assertStringNotContainsString('assets/css/fonts.css', $html);
         $this->assertDoesNotMatchRegularExpression('/<body[^>]*lp-type/', $html);
         $this->assertStringContainsString('assets/css/admin.css', $html);
     }

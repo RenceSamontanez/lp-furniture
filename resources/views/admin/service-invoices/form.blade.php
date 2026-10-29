@@ -21,7 +21,7 @@
 @endphp
 <div class="co-page">
 
-<a href="{{ $back }}" class="lp-btn lp-btn--secondary" style="margin-bottom:20px;">← Back</a>
+<a href="{{ $back }}" class="lp-btn lp-btn--secondary" style="margin-bottom:20px;">Back</a>
 
 @if($errors->any())
   <div class="co-error" role="alert">
@@ -34,17 +34,17 @@
 
   <div class="inv-main">
     <div class="admin-panel">
-      <div class="admin-panel-header"><div class="admin-panel-title">Service availed</div></div>
+      <div class="admin-panel-header"><div class="admin-panel-title">Service Availed</div></div>
       <div class="admin-panel-body si-form">
         <p class="si-hint" style="margin:0 0 12px;">For ticket {{ $ticket->reference_number }}. The price is the one agreed with the customer in the call.</p>
 
         <div class="co-field">
-          <label class="co-block-label" for="service_description" style="margin-top:0;">Service availed</label>
+          <label class="co-block-label" for="service_description" style="margin-top:0;">Service Availed</label>
           <input type="text" id="service_description" name="service_description" class="form-input" maxlength="200" required value="{{ $v('service_description') }}"/>
         </div>
 
         <div class="co-field">
-          <label class="co-block-label" for="service_cost" style="margin-top:0;">Service cost (₱)</label>
+          <label class="co-block-label" for="service_cost" style="margin-top:0;">Service Cost (₱)</label>
           <input type="text" inputmode="decimal" id="service_cost" name="service_cost" class="form-input inv-money" required value="{{ $v('service_cost') }}" placeholder="0.00" autocomplete="off"/>
         </div>
       </div>
@@ -52,8 +52,8 @@
 
     <div class="admin-panel">
       <div class="admin-panel-header">
-        <div class="admin-panel-title">Material or other fees</div>
-        <button type="button" class="lp-btn lp-btn--secondary" id="inv-add-line">Add a fee</button>
+        <div class="admin-panel-title">Material or Other Fees</div>
+        <button type="button" class="lp-btn lp-btn--secondary" id="inv-add-line">Add a Fee</button>
       </div>
       <div class="admin-panel-body si-form">
         <p class="si-hint" id="inv-no-lines" style="margin:0;" @if(count($rows)) hidden @endif>No extra fees. Add one if the customer is charged for materials or anything else.</p>
@@ -85,14 +85,14 @@
           @endforeach
         </div>
         <div class="co-field" id="inv-delivery-amount-wrap" style="margin-top:14px;" @if(!$chosen || $chosen === 'none') hidden @endif>
-          <label class="co-block-label" for="delivery_amount" style="margin-top:0;">Fee amount (₱)</label>
+          <label class="co-block-label" for="delivery_amount" style="margin-top:0;">Fee Amount (₱)</label>
           <input type="text" inputmode="decimal" id="delivery_amount" name="delivery_amount" class="form-input inv-money" value="{{ $chosen && $chosen !== 'none' ? $v('delivery_amount') : '' }}" placeholder="0.00" autocomplete="off"/>
         </div>
       </div>
     </div>
 
     <div class="admin-panel">
-      <div class="admin-panel-header"><div class="admin-panel-title">How the customer pays</div></div>
+      <div class="admin-panel-header"><div class="admin-panel-title">How the Customer Pays</div></div>
       <div class="admin-panel-body si-form">
         @php
           $halfTotalMin = $halfMin ?? \App\Support\InvoicePaymentRules::HALF_HALF_MIN_TOTAL;
@@ -113,7 +113,7 @@
     </div>
 
     <div class="admin-panel">
-      <div class="admin-panel-header"><div class="admin-panel-title">Customer on the invoice</div></div>
+      <div class="admin-panel-header"><div class="admin-panel-title">Customer on the Invoice</div></div>
       <div class="admin-panel-body si-form">
         <p class="si-hint" style="margin:0 0 12px;">Copied from the ticket. These are saved on the invoice and can be changed only while it is a draft.</p>
         <div class="si-form-grid">
@@ -122,20 +122,20 @@
             <input type="text" id="customer_name" name="customer_name" class="form-input" maxlength="120" required value="{{ $v('customer_name') }}"/>
           </div>
           <div class="co-field">
-            <label class="co-block-label" for="customer_phone" style="margin-top:0;">Mobile number</label>
+            <label class="co-block-label" for="customer_phone" style="margin-top:0;">Mobile Number</label>
             <input type="tel" id="customer_phone" name="customer_phone" class="form-input" maxlength="16" required value="{{ $v('customer_phone') }}"/>
           </div>
         </div>
         <div class="co-field">
-          <label class="co-block-label" for="customer_email" style="margin-top:0;">Email (optional)</label>
+          <label class="co-block-label" for="customer_email" style="margin-top:0;">Email (Optional)</label>
           <input type="email" id="customer_email" name="customer_email" class="form-input" maxlength="150" value="{{ $v('customer_email') }}"/>
         </div>
         <div class="co-field">
-          <label class="co-block-label" for="customer_address" style="margin-top:0;">Address (optional)</label>
+          <label class="co-block-label" for="customer_address" style="margin-top:0;">Address (Optional)</label>
           <textarea id="customer_address" name="customer_address" class="form-textarea" rows="2" maxlength="500">{{ $v('customer_address') }}</textarea>
         </div>
         <div class="co-field">
-          <label class="co-block-label" for="notes" style="margin-top:0;">Note on the invoice (optional)</label>
+          <label class="co-block-label" for="notes" style="margin-top:0;">Note on the Invoice (Optional)</label>
           <textarea id="notes" name="notes" class="form-textarea" rows="2" maxlength="1000">{{ $v('notes') }}</textarea>
         </div>
       </div>
@@ -144,14 +144,14 @@
 
   <aside class="inv-side">
     <div class="admin-panel inv-total-card">
-      <div class="admin-panel-header"><div class="admin-panel-title">Running total</div></div>
+      <div class="admin-panel-header"><div class="admin-panel-title">Running Total</div></div>
       <div class="admin-panel-body">
         <dl class="inv-sum" id="inv-sum" aria-live="polite"></dl>
         <div class="inv-grand"><span>Total</span><strong id="inv-total">₱0.00</strong></div>
         <p class="si-hint" id="inv-delivery-label" style="margin-top:10px;"></p>
-        <button type="submit" class="lp-btn lp-btn--secondary lp-btn--block inv-save" style="margin-top:14px;" data-loading="Saving...">Save draft</button>
+        <button type="submit" class="lp-btn lp-btn--secondary lp-btn--block inv-save" style="margin-top:14px;" data-loading="Saving...">Save Draft</button>
         @if($editing)
-          <button type="button" class="lp-btn lp-btn--primary lp-btn--block" style="margin-top:10px;" data-open-send>Send to customer</button>
+          <button type="button" class="lp-btn lp-btn--primary lp-btn--block" style="margin-top:10px;" data-open-send>Send to Customer</button>
           <p class="si-hint" style="margin-top:8px;">Save draft keeps it private so you can come back and change it. Send to customer saves what is on this page, sends it, and locks it.</p>
         @else
           <p class="si-hint" style="margin-top:8px;">Saving a draft does not send anything to the customer. You can edit it again and send it from the next page.</p>

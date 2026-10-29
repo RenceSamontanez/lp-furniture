@@ -578,7 +578,7 @@ class ServiceInvoicePaymentsTest extends TestCase
         $this->assertSame(['1000.00', 'gcash', $this->admin->id], [(string) $note->amount, $note->method, $note->recorded_by]);
 
         // the table and its data are untouched, and show read-only on the invoice page
-        $this->get(route('admin.service-invoices.show', $i->id))->assertOk()->assertSee('Earlier refund notes')->assertSee('Refunded 1,000 through GCash.')
+        $this->get(route('admin.service-invoices.show', $i->id))->assertOk()->assertSee('Earlier Refund Notes')->assertSee('Refunded 1,000 through GCash.')
             ->assertDontSee('Save refund note');
 
         $this->assertSame($calls, $this->gateway->calls, 'no gateway call of any kind');

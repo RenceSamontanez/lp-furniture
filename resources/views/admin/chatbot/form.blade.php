@@ -5,7 +5,7 @@
 
 @section('content')
 
-<a href="{{ route('admin.chatbot.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">← Back to Chatbot Training</a>
+<a href="{{ route('admin.chatbot.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">Back to Chatbot Training</a>
 
 @if($errors->any())
   <div class="admin-toast admin-toast-error" style="margin:0 0 20px;">
@@ -21,7 +21,7 @@
       @if($intent->exists) @method('PUT') @endif
 
       <div style="margin-bottom:16px;">
-        <label class="form-label">Keywords (comma-separated)</label>
+        <label class="form-label">Keywords (Comma-Separated)</label>
         <textarea name="keywords" class="form-input" rows="2" required
                   placeholder="e.g. how to order, place an order, ordering process, paano mag order">{{ old('keywords', $intent->keywords) }}</textarea>
         <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">
@@ -40,7 +40,7 @@
       </div>
 
       <div style="margin-bottom:16px;">
-        <label class="form-label">Tagalog Response <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+        <label class="form-label">Tagalog Response <span style="font-weight:400;color:var(--text-muted);">(Optional)</span></label>
         <textarea name="answer_tl" class="form-input" rows="4"
                   placeholder="Used when the customer writes in Tagalog. Leave empty to reply in English.">{{ old('answer_tl', $intent->answer_tl) }}</textarea>
         <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">
@@ -49,7 +49,7 @@
       </div>
 
       <div style="margin-bottom:16px;">
-        <label class="form-label">Suggestion Chips (comma-separated) <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+        <label class="form-label">Suggestion Chips (Comma-Separated) <span style="font-weight:400;color:var(--text-muted);">(Optional)</span></label>
         <input type="text" name="suggestions" class="form-input"
                placeholder="e.g. Browse catalog, Payment options, Track my order"
                value="{{ old('suggestions', $intent->suggestions) }}"/>
@@ -57,7 +57,7 @@
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;align-items:end;">
         <div>
-          <label class="form-label">Category <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+          <label class="form-label">Category <span style="font-weight:400;color:var(--text-muted);">(Optional)</span></label>
           <input type="text" name="category" class="form-input" maxlength="100"
                  placeholder="e.g. Ordering, Payment, Delivery"
                  value="{{ old('category', $intent->category) }}"/>

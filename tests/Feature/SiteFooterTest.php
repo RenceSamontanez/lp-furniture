@@ -336,6 +336,6 @@ class SiteFooterTest extends TestCase
         $this->assertStringContainsString('value="999"', $page);
         $this->assertStringContainsString('value="https://bad.example/x"', $page);
         $this->assertStringContainsString('right-click the exact spot of the shop', $page);
-        $this->assertStringContainsString('Map latitude (optional)', $page);
+        $this->assertStringContainsString('Map Latitude (Optional)', $page);
     }
 }

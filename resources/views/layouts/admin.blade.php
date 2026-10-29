@@ -6,12 +6,13 @@
 @include('partials.favicon')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <title>@yield('title', 'Admin — LP Furniture')</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="{{ asset('assets/css/fonts.css') }}"/>
 <link rel="stylesheet" href="{{ asset('assets/style.css') }}"/>
 <link rel="stylesheet" href="{{ asset('assets/css/admin.css') }}"/>
 @stack('styles')
+<link rel="stylesheet" href="{{ asset('assets/css/admin-type.css') }}"/>
 </head>
-<body class="admin-body">
+<body class="admin-body admin-type">
 
 @if(Auth::guard('admin')->check() && Auth::guard('admin')->user()->role === 'admin')
 <div class="admin-shell">
@@ -70,7 +71,7 @@
 
 <a href="{{ route('admin.system-health.index') }}" class="admin-nav-link {{ request()->routeIs('admin.system-health.*') ? 'active' : '' }}">
   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-  System health
+  System Health
 </a>
 
       <div class="admin-nav-group-label">Customers</div>
@@ -92,13 +93,13 @@
       </a>
       <a href="{{ route('admin.ideas.index') }}" class="admin-nav-link {{ request()->routeIs('admin.ideas.*') ? 'active' : '' }}">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.7c.6.5 1 1.2 1 2V17h6v-.3c0-.8.4-1.5 1-2A7 7 0 0012 2z"/></svg>
-        Ideas to review
+        Ideas to Review
         @php $ideasNewCount = \App\Models\UnansweredIdea::where('status', 'new')->count(); @endphp
         @if($ideasNewCount > 0)<span class="admin-nav-badge">{{ $ideasNewCount }}</span>@endif
       </a>
       <a href="{{ route('admin.quick-ideas.index') }}" class="admin-nav-link {{ request()->routeIs('admin.quick-ideas.*') ? 'active' : '' }}">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
-        Quick ideas
+        Quick Ideas
       </a>
       <a href="{{ route('admin.service-inquiries.index') }}" class="admin-nav-link {{ request()->routeIs('admin.service-inquiries.*') ? 'active' : '' }}">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
@@ -185,6 +186,8 @@
   @yield('content')
 @endif
 
+<script>window.LP_TITLECASE = @json(config('titlecase'));</script>
+<script src="{{ asset('assets/js/title-case.js') }}"></script>
 <script src="{{ asset('assets/js/admin.js') }}"></script>
 <script src="{{ asset('assets/js/lp-modal.js') }}"></script>
 @stack('scripts')

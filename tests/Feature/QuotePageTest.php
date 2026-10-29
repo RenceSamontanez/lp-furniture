@@ -104,7 +104,7 @@ class QuotePageTest extends TestCase
         $html = $this->actingAs($admin, 'admin')->get(route('admin.custom-orders.show', $r->id))->assertOk()->getContent();
 
         $this->assertStringContainsString($this->imageRel, $html);
-        $this->assertMatchesRegularExpression('/co-design-summary.*?Customer.s prompt.*?A six-seater narra dining table/s', $html);
+        $this->assertMatchesRegularExpression('/co-design-summary.*?Customer.s Prompt.*?A six-seater narra dining table/s', $html);
     }
 
     public function test_heading_names_the_customer_and_shows_a_version_badge_only_above_one(): void
@@ -113,7 +113,7 @@ class QuotePageTest extends TestCase
         $r = $this->request();
 
         $first = $this->actingAs($admin, 'admin')->get(route('admin.custom-orders.quotes.create', $r->id))->assertOk();
-        $first->assertSee('Customized order: Rence Samontanez')->assertDontSee('Version 1 for');
+        $first->assertSee('Customized Order: Rence Samontanez')->assertDontSee('Version 1 for');
         $this->assertStringNotContainsString('co-version-badge">Version', $first->getContent());
 
         // a second version
@@ -121,7 +121,7 @@ class QuotePageTest extends TestCase
         $r->forceFill(['pipeline_status' => 'expired'])->save();
 
         $second = $this->actingAs($admin, 'admin')->get(route('admin.custom-orders.quotes.create', $r->id))->assertOk();
-        $second->assertSee('Customized order: Rence Samontanez');
+        $second->assertSee('Customized Order: Rence Samontanez');
         $this->assertStringContainsString('<span class="co-version-badge">Version 2</span>', $second->getContent());
     }
 

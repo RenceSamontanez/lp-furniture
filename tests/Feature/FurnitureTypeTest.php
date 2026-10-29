@@ -216,7 +216,7 @@ class FurnitureTypeTest extends TestCase
         $this->assertSame('Not specified', $r->furniture_type_label);
         $this->assertSame('custom furniture', $r->furniture_type_noun);
         $this->asAdmin($admin)->get(route('admin.custom-orders.index'))->assertOk()->assertSee('Not specified');
-        $this->asAdmin($admin)->get(route('admin.custom-orders.show', $r->id))->assertOk()->assertSee('Not specified')->assertSee('Set the type');
+        $this->asAdmin($admin)->get(route('admin.custom-orders.show', $r->id))->assertOk()->assertSee('Not specified')->assertSee('Set the Type');
         $this->asAdmin($admin)->get(route('admin.design-requests.index'))->assertOk()->assertSee('Not specified');
         $this->asAdmin($admin)->get(route('admin.design-requests.show', $r->id))->assertOk()->assertSee('Not specified');
 

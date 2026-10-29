@@ -218,7 +218,7 @@ class IdentityValidationTest extends TestCase
 
         // the page now says it is waiting for the customer
         $this->asAdmin($admin)->get(route('admin.validations.show', $second->id))
-            ->assertSee('Waiting for the customer to send new photos')->assertDontSee('Ask for a new submission');
+            ->assertSee('Waiting for the customer to send new photos')->assertDontSee('Ask for a New Submission');
     }
 
     public function test_follow_up_is_refused_on_pending_and_approved_submissions(): void
@@ -462,9 +462,9 @@ class IdentityValidationTest extends TestCase
         $v = $this->submission($u, 'pending', 2);
 
         $this->asAdmin($this->admin())->get(route('admin.validations.show', $v->id))->assertOk()
-            ->assertSee('Attempt 2')->assertSee('Past attempts')->assertSee('Name matches the account')
+            ->assertSee('Attempt 2')->assertSee('Past Attempts')->assertSee('Name matches the account')
             ->assertSee('Face matches the selfie')->assertSee('ID is valid and readable')->assertSee('0 of 3')
-            ->assertSee('Photo is blurry')->assertSee('Approve verification');
+            ->assertSee('Photo is blurry')->assertSee('Approve Verification');
     }
 
     public function test_decided_review_pages_are_read_only_and_say_so(): void
@@ -477,11 +477,11 @@ class IdentityValidationTest extends TestCase
 
         $this->asAdmin($admin)->get(route('admin.validations.show', $a->id))
             ->assertSee('Approved by Rhea Santos')->assertSee('This decision is final.')->assertSee('Name matches the account')
-            ->assertDontSee('Approve verification')->assertDontSee('Reason, needed only to reject');
+            ->assertDontSee('Approve Verification')->assertDontSee('Reason, Needed Only to Reject');
 
         $this->asAdmin($admin)->get(route('admin.validations.show', $r->id))
             ->assertSee('Rejected by Rhea Santos')->assertSee('This decision is final.')->assertSee('Reason sent to the customer: Photo is blurry')
-            ->assertSee('Ask for a new submission')->assertDontSee('Approve verification');
+            ->assertSee('Ask for a New Submission')->assertDontSee('Approve Verification');
     }
 
     public function test_the_follow_up_button_is_hidden_on_an_older_rejected_attempt(): void
@@ -491,7 +491,7 @@ class IdentityValidationTest extends TestCase
         $this->submission($u, 'pending', 2);
 
         $this->asAdmin($this->admin())->get(route('admin.validations.show', $first->id))
-            ->assertDontSee('Ask for a new submission')->assertSee('newer submission');
+            ->assertDontSee('Ask for a New Submission')->assertSee('newer submission');
     }
 
     /* ───────────── customer page ───────────── */

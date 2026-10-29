@@ -181,6 +181,6 @@ class PersonalInfoCardsTest extends TestCase
 
         $admin = $this->makeUser('admin');
         $this->actingAs($admin, 'admin')->get(route('admin.customers.show', $u->id))
-            ->assertOk()->assertSee('Name changes')->assertSee('Customer Tester')->assertSee('Maria Santos');
+            ->assertOk()->assertSee('Name Changes')->assertSee('Customer Tester')->assertSee('Maria Santos');
     }
 }

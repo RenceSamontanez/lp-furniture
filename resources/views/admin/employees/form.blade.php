@@ -6,7 +6,7 @@
 @section('content')
 
 <a href="{{ route('admin.employees.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">
-  ← Back to Employees
+  Back to Employees
 </a>
 
 @if($errors->any())
@@ -51,7 +51,7 @@
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
         <div>
-          <label class="form-label">Phone Number <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+          <label class="form-label">Phone Number <span style="font-weight:400;color:var(--text-muted);">(Optional)</span></label>
           <input type="text" name="phone" class="form-input" maxlength="20"
                  placeholder="09171234567"
                  value="{{ old('phone', $employee->phone) }}"/>
@@ -68,7 +68,7 @@
       </div>
 
       <div style="margin-bottom:20px;">
-        <label class="form-label">Notes <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+        <label class="form-label">Notes <span style="font-weight:400;color:var(--text-muted);">(Optional)</span></label>
         <textarea name="notes" class="form-input" rows="3" maxlength="1000"
                   placeholder="Specialization, availability notes, etc.">{{ old('notes', $employee->notes) }}</textarea>
       </div>

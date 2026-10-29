@@ -55,7 +55,7 @@ class AdminNotificationButtonTest extends TestCase
         $this->assertStringContainsString('Mark read: New Service Request', $html);
         $this->assertStringContainsString('Mark read: No Destination', $html);
         $this->assertStringNotContainsString('Mark read: Custom Order Update', $html);
-        $this->assertStringContainsString('Mark all as read', $html);
+        $this->assertStringContainsString('Mark All as Read', $html);
     }
 
     public function test_customer_notifications_page_is_unchanged(): void

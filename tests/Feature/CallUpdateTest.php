@@ -162,7 +162,7 @@ class CallUpdateTest extends TestCase
         $this->assertSame((int) $r->lock_version + 1, (int) $r->fresh()->lock_version);
 
         $page = $this->actingAs($admin, 'admin')->get(route('admin.custom-orders.show', $r->id))->assertOk();
-        $page->assertSee('Last call update')->assertSee('Ringing but not answering, 4 times called')
+        $page->assertSee('Last Call Update')->assertSee('Ringing but not answering, 4 times called')
             ->assertSee('Contacting')->assertSee('1 update so far');
     }
 
@@ -232,7 +232,7 @@ class CallUpdateTest extends TestCase
         $r = $this->submitted();
 
         $page = $this->actingAs($admin, 'admin')->get(route('admin.custom-orders.show', $r->id))->assertOk();
-        $page->assertSee('More actions')->assertSee('Decline request');
+        $page->assertSee('More Actions')->assertSee('Decline Request');
         $page->assertDontSee('Log a call')->assertDontSee('Mark unreachable')->assertDontSee('Work this request');
 
         $this->actingAs($admin, 'admin')->post(route('admin.custom-orders.decline', $r->id), [
@@ -253,7 +253,7 @@ class CallUpdateTest extends TestCase
 
         $this->actingAs($admin, 'admin')->get(route('admin.custom-orders.show', $r->id))->assertOk()
             ->assertSee('id="co-call-modal"', false)
-            ->assertSee('Send notification')
+            ->assertSee('Send Notification')
             ->assertSee('Ringing but not answering')
             ->assertSee('0917-555-0100')
             ->assertSee('hello@lpfurniture.test')

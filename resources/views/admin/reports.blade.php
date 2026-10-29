@@ -13,7 +13,7 @@
     </div>
     <div>
       <div class="admin-stat-value">₱{{ number_format($totalRevenue, 0) }}</div>
-      <div class="admin-stat-label">Total Revenue (all time)</div>
+      <div class="admin-stat-label">Total Revenue (All Time)</div>
     </div>
   </div>
 
@@ -38,7 +38,7 @@
     </div>
     <div>
       <div class="admin-stat-value">{{ $totalCustomers }}</div>
-      <div class="admin-stat-label">Total Customers · +{{ $newCustomersThisMonth }} this month</div>
+      <div class="admin-stat-label">Total Customers · +{{ $newCustomersThisMonth }} This Month</div>
     </div>
   </div>
 
@@ -61,18 +61,18 @@
     {{-- Catalog vs customized (new figures only; the totals elsewhere on this page are unchanged) --}}
     <div class="admin-panel">
       <div class="admin-panel-header">
-        <div class="admin-panel-title">Catalog vs Customized orders</div>
-        <a href="{{ route('admin.orders.index', ['type' => 'customized']) }}" class="admin-btn admin-btn-outline">View customized</a>
+        <div class="admin-panel-title">Catalog vs Customized Orders</div>
+        <a href="{{ route('admin.orders.index', ['type' => 'customized']) }}" class="admin-btn admin-btn-outline">View Customized</a>
       </div>
       <div class="admin-panel-body" style="padding:0;">
         <table class="admin-table">
-          <thead><tr><th>Type</th><th>Orders</th><th>Order value</th><th>Received</th></tr></thead>
+          <thead><tr><th>Type</th><th>Orders</th><th>Order Value</th><th>Received</th></tr></thead>
           <tbody>
             @foreach(['catalog' => 'Catalog', 'customized' => 'Customized'] as $key => $label)
               <tr>
                 <td data-label="Type">{{ $label }}</td>
                 <td data-label="Orders">{{ $orderSplit[$key]['orders'] }}</td>
-                <td data-label="Order value">₱{{ number_format($orderSplit[$key]['revenue'], 2) }}</td>
+                <td data-label="Order Value">₱{{ number_format($orderSplit[$key]['revenue'], 2) }}</td>
                 <td data-label="Received">₱{{ number_format($orderSplit[$key]['paid'], 2) }}</td>
               </tr>
             @endforeach
@@ -189,7 +189,7 @@
     <div class="admin-panel">
       <div class="admin-panel-header">
         <div class="admin-panel-title">Low Stock Alert</div>
-        <a href="{{ route('admin.products.index') }}" class="admin-btn admin-btn-outline">Manage →</a>
+        <a href="{{ route('admin.products.index') }}" class="admin-btn admin-btn-outline">Manage</a>
       </div>
       <div class="admin-panel-body" style="padding:0;">
         @if($lowStockProducts->isEmpty())

@@ -5,7 +5,7 @@
 
 @section('content')
 
-<a href="{{ route('admin.inventory.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">← Back to Inventory</a>
+<a href="{{ route('admin.inventory.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">Back to Inventory</a>
 
 @if($errors->any())
   <div class="admin-toast admin-toast-error" style="margin:0 0 20px;">

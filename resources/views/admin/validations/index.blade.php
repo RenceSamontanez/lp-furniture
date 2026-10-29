@@ -27,7 +27,7 @@
     </nav>
     <form method="GET" action="{{ route('admin.validations.index') }}" class="idr-search" role="search">
       <input type="hidden" name="status" value="{{ $status }}">
-      <label class="idr-sr" for="idr-q">Search name or email</label>
+      <label class="idr-sr" for="idr-q">Search Name or Email</label>
       <input id="idr-q" class="idr-input" type="search" name="q" value="{{ $search }}" maxlength="80" placeholder="Search name or email">
       <button type="submit" class="lp-btn lp-btn--secondary">Search</button>
       @if($search !== '')<a class="lp-link lp-link--tap" href="{{ route('admin.validations.index', ['status' => $status]) }}">Clear</a>@endif
@@ -49,7 +49,7 @@
         <div class="idr-who"><b>{{ $name }}</b><small>{{ $u->email }}</small></div>
         <span class="idr-date">{{ $v->submitted_at ? $v->submitted_at->format('M j, Y') : '—' }}</span>
         <span class="idr-att {{ $v->attempt_number > 1 ? 'is-re' : '' }}">Attempt {{ $v->attempt_number }}</span>
-        <span class="idr-pill is-{{ $v->status }}">{{ ucfirst($v->status) }}</span>
+        <span class="idr-pill is-{{ $v->status }}">@titlecase($v->status)</span>
         <a class="lp-btn {{ $v->status === 'pending' ? 'lp-btn--primary' : 'lp-btn--secondary' }} idr-open"
            href="{{ route('admin.validations.show', $v->id) }}"
            aria-label="{{ $v->status === 'pending' ? 'Review' : 'View' }} {{ $name }}, attempt {{ $v->attempt_number }}">{{ $v->status === 'pending' ? 'Review' : 'View' }}</a>

@@ -6,7 +6,7 @@
 @section('content')
 
 <div class="admin-filter-tabs" style="margin-bottom:10px;">
-  <a href="{{ route('admin.orders.index', ['status'=>$status, 'type'=>'all']) }}" class="admin-filter-tab {{ $type==='all'?'active':'' }}">All orders</a>
+  <a href="{{ route('admin.orders.index', ['status'=>$status, 'type'=>'all']) }}" class="admin-filter-tab {{ $type==='all'?'active':'' }}">All Orders</a>
   <a href="{{ route('admin.orders.index', ['status'=>$status, 'type'=>'catalog']) }}" class="admin-filter-tab {{ $type==='catalog'?'active':'' }}">Catalog</a>
   <a href="{{ route('admin.orders.index', ['status'=>$status, 'type'=>'customized']) }}" class="admin-filter-tab {{ $type==='customized'?'active':'' }}">Customized</a>
 </div>
@@ -35,13 +35,13 @@
               <td data-label="Order #">{{ $order->order_number }}
                 @if($order->design_agreement_id)
                   <span class="admin-pill confirmed" style="font-size:10px;margin-left:6px;">Customized</span>
-                  @if($order->isOverdueUnpaid())<span class="admin-pill rejected" style="font-size:10px;margin-left:4px;">Overdue, unpaid</span>@endif
+                  @if($order->isOverdueUnpaid())<span class="admin-pill rejected" style="font-size:10px;margin-left:4px;">Overdue, Unpaid</span>@endif
                 @endif
               </td>
               <td data-label="Customer">{{ $order->user->first_name }} {{ $order->user->last_name }}</td>
               <td data-label="Items">{{ $order->items->count() }} item(s)</td>
               <td data-label="Total">₱{{ number_format($order->total_amount, 2) }}</td>
-              <td data-label="Status"><span class="admin-pill {{ $order->order_status }}">{{ str_replace('_',' ',$order->order_status) }}</span></td>
+              <td data-label="Status"><span class="admin-pill {{ $order->order_status }}">@titlecase(str_replace('_',' ',$order->order_status))</span></td>
               <td data-label=""><a href="{{ route('admin.orders.show', $order->id) }}" class="admin-btn admin-btn-gold">View</a></td>
             </tr>
           @endforeach

@@ -16,14 +16,14 @@
   $noteLines = $t->admin_notes ? array_reverse(explode("\n", $t->admin_notes)) : [];
 @endphp
 
-<a href="{{ route('admin.service-inquiries.index') }}" class="lp-btn lp-btn--secondary" style="margin-bottom:20px;">← Back to Other Services</a>
+<a href="{{ route('admin.service-inquiries.index') }}" class="lp-btn lp-btn--secondary" style="margin-bottom:20px;">Back to Other Services</a>
 
 @php $ctx = $ctx ?? \App\Support\ServiceRefundRequestService::context($t); $work = $ctx['work']; @endphp
 
 @if(session('offer_cancellation_request'))
   <x-notice variant="blocked" title="This service has a payment on it">
     This service has a payment on it, so it must go through a cancellation request so the refund is recorded.
-    <x-slot:actions><a href="#cancellation-request" class="lp-btn lp-btn--primary" data-open-cancellation>Open a cancellation request</a></x-slot:actions>
+    <x-slot:actions><a href="#cancellation-request" class="lp-btn lp-btn--primary" data-open-cancellation>Open a Cancellation Request</a></x-slot:actions>
   </x-notice>
 @elseif($errors->any())
   <div class="co-error" role="alert">{{ $errors->has('ticket') ? $errors->first('ticket') : $errors->first() }}</div>
@@ -34,7 +34,7 @@
 @elseif($ctx['open'])
   <x-notice variant="blocked" title="On hold: cancellation requested">
     Request {{ $ctx['open']->reference }} is {{ strtolower($ctx['open']->statusLabel()) }}. Payments are paused until it is decided.
-    <x-slot:actions><a href="{{ route('admin.refunds.show', $ctx['open']->id) }}" class="lp-btn lp-btn--primary">Open the request</a></x-slot:actions>
+    <x-slot:actions><a href="{{ route('admin.refunds.show', $ctx['open']->id) }}" class="lp-btn lp-btn--primary">Open the Request</a></x-slot:actions>
   </x-notice>
 @elseif($work !== 'not_started' && $t->isOpen())
   <x-notice variant="info" title="{{ $work === 'done' ? 'Service done' : 'Work started' }}">
@@ -47,7 +47,7 @@
     <div class="admin-panel">
       <div class="admin-panel-header">
         <div class="admin-panel-title">{{ $t->reference_number }}</div>
-        <span class="co-chip co-chip--{{ $t->status }}">{{ $t->statusLabel() }}</span>
+        <span class="co-chip co-chip--{{ $t->status }}">@titlecase($t->statusLabel())</span>
       </div>
       <div class="admin-panel-body">
         <dl class="co-dl">
@@ -65,7 +65,7 @@
         <div class="co-block-label">Concern</div>
         <div class="co-quote si-concern">{{ $t->concern }}</div>
         @if(!empty($t->reference_photos))
-          <div class="co-block-label">Reference photos</div>
+          <div class="co-block-label">Reference Photos</div>
           <div class="si-photos">
             @foreach($t->reference_photos as $n => $path)
               <a href="{{ route('admin.service-inquiries.photo', [$t->id, $n]) }}" target="_blank" rel="noopener noreferrer" class="si-photo" aria-label="Open reference photo {{ $n + 1 }} of {{ $t->reference_number }} in a new tab"><img src="{{ route('admin.service-inquiries.photo', [$t->id, $n]) }}" alt="Reference photo {{ $n + 1 }} of {{ $t->reference_number }}" loading="lazy"/></a>
@@ -77,14 +77,14 @@
         @endif
 
         @if($t->status === 'closed' && $t->closed_reason)
-          <div class="co-block-label">Closed because</div>
+          <div class="co-block-label">Closed Because</div>
           <div class="co-quote si-concern">{{ $t->closed_reason }}</div>
         @endif
       </div>
     </div>
 
     <div class="admin-panel">
-      <div class="admin-panel-header"><div class="admin-panel-title">Notes and call history</div></div>
+      <div class="admin-panel-header"><div class="admin-panel-title">Notes and Call History</div></div>
       <div class="admin-panel-body">
         @if(empty($noteLines))
           <p class="co-note-closed">Nothing recorded yet.</p>
@@ -99,9 +99,9 @@
 
         <form method="POST" action="{{ route('admin.service-inquiries.notes', $t->id) }}" class="co-action-form" style="margin-top:16px;">
           @csrf
-          <label class="co-modal-label" for="si-note" style="margin-top:0;">Add a note</label>
+          <label class="co-modal-label" for="si-note" style="margin-top:0;">Add a Note</label>
           <textarea name="note" id="si-note" class="form-input" rows="2" maxlength="1000" required></textarea>
-          <button type="submit" class="lp-btn lp-btn--secondary" style="margin-top:8px;" data-loading="Saving...">Save note</button>
+          <button type="submit" class="lp-btn lp-btn--secondary" style="margin-top:8px;" data-loading="Saving...">Save Note</button>
         </form>
       </div>
     </div>
@@ -117,13 +117,13 @@
               <li>
                 <a href="{{ route('admin.service-invoices.show', $inv->id) }}" class="lp-link">{{ $inv->invoice_number ?: 'Draft #' . $inv->id }}</a>
                 <span>₱{{ number_format((float) $inv->total, 2) }}</span>
-                <span class="co-chip inv-status--{{ $inv->status }}">{{ $inv->statusLabel() }}</span>
+                <span class="co-chip inv-status--{{ $inv->status }}">@titlecase($inv->statusLabel())</span>
               </li>
             @endforeach
           </ul>
         @endif
         @if($t->invoices->where('status', '!=', 'void')->isEmpty())
-          <a href="{{ route('admin.service-invoices.create', $t->id) }}" class="lp-btn lp-btn--primary co-wide">Create invoice</a>
+          <a href="{{ route('admin.service-invoices.create', $t->id) }}" class="lp-btn lp-btn--primary co-wide">Create Invoice</a>
           <p class="si-hint" style="margin-top:8px;">Use the price agreed in the call. Nothing is sent to the customer until you send it.</p>
         @else
           <p class="si-hint">A ticket has one live invoice at a time. Cancel it to send a new one.</p>
@@ -151,13 +151,13 @@
             <x-notice variant="blocked" title="Started before payments were required">Work was marked as started before this rule existed, so nothing needs to be done.</x-notice>
           @endif
           @if($doneInv && !$ctx['open'])
-            <button type="button" class="lp-btn lp-btn--primary lp-btn--block" data-lp-modal-open="si-done-modal">Mark service done</button>
+            <button type="button" class="lp-btn lp-btn--primary lp-btn--block" data-lp-modal-open="si-done-modal">Mark Service Done</button>
           @endif
           @if(!$ctx['open'] && $work === 'started')
-            <button type="button" class="lp-btn lp-btn--secondary lp-btn--block" style="margin-top:10px;" data-lp-modal-open="si-undo-modal">Undo work started</button>
+            <button type="button" class="lp-btn lp-btn--secondary lp-btn--block" style="margin-top:10px;" data-lp-modal-open="si-undo-modal">Undo Work Started</button>
           @endif
         @elseif($can === 'allowed')
-          <button type="button" class="lp-btn lp-btn--primary lp-btn--block" data-lp-modal-open="si-start-modal">Start work</button>
+          <button type="button" class="lp-btn lp-btn--primary lp-btn--block" data-lp-modal-open="si-start-modal">Start Work</button>
         @elseif($can === 'no_invoice')
           <x-notice variant="info" title="Create an invoice first">Work starts after the customer pays.</x-notice>
         @elseif($can === 'invoice_draft' || $can === 'awaiting_payment')
@@ -182,30 +182,30 @@
       </dl>
       <x-notice variant="info" title="After this, the customer can no longer get an automatic refund." />
       <x-slot:footer>
-        <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
-        <button type="submit" form="si-start-form" class="lp-btn lp-btn--primary" data-lp-confirm>Start work</button>
+        <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
+        <button type="submit" form="si-start-form" class="lp-btn lp-btn--primary" data-lp-confirm>Start Work</button>
       </x-slot:footer>
     </x-modal>
     <form method="POST" action="{{ route('admin.service-inquiries.work-started', $t->id) }}" id="si-start-form">@csrf</form>
     @endif
 
     @if($doneInv && !$ctx['open'])
-    <x-modal id="si-done-modal" title="Mark the service as done?">
+    <x-modal id="si-done-modal" title="Mark the Service as Done?">
       <p>{{ $doneInv->isHalfHalf() && $doneInv->balanceCents() > 0 ? 'The customer will be told the remaining balance of ' . $peso($doneInv->balanceCents() / 100) . ' is now due.' : 'This is recorded on the ticket.' }}</p>
       <x-slot:footer>
-        <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
-        <button type="submit" form="si-done-form" class="lp-btn lp-btn--primary" data-lp-confirm>Mark service done</button>
+        <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
+        <button type="submit" form="si-done-form" class="lp-btn lp-btn--primary" data-lp-confirm>Mark Service Done</button>
       </x-slot:footer>
     </x-modal>
     <form method="POST" action="{{ route('admin.service-invoices.service-done', $doneInv->id) }}" id="si-done-form">@csrf</form>
     @endif
 
     @if($t->service_started_at && !$ctx['open'] && $work === 'started')
-    <x-modal id="si-undo-modal" title="Undo &quot;Work started&quot;?">
+    <x-modal id="si-undo-modal" title="Undo &quot;Work Started&quot;?">
       <p>The customer can get an automatic refund again.</p>
       <x-slot:footer>
-        <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
-        <button type="submit" form="si-undo-form" class="lp-btn lp-btn--primary" data-lp-confirm>Undo work started</button>
+        <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
+        <button type="submit" form="si-undo-form" class="lp-btn lp-btn--primary" data-lp-confirm>Undo Work Started</button>
       </x-slot:footer>
     </x-modal>
     <form method="POST" action="{{ route('admin.service-inquiries.work-started-undo', $t->id) }}" id="si-undo-form">@csrf</form>
@@ -216,7 +216,7 @@
       <div class="admin-panel-header"><div class="admin-panel-title">Cancellation</div></div>
       <div class="admin-panel-body">
         <details class="co-more" id="cancellation-request" @if(session('offer_cancellation_request') || $errors->has('reason_code')) open @endif>
-          <summary>Open a cancellation request for the customer</summary>
+          <summary>Open a Cancellation Request for the Customer</summary>
           <p class="si-hint">Use this when the customer asks by phone or in person. It puts the invoice on hold until you decide.@if($ctx['paid_cents'] > 0) {{ \App\Support\ServiceInvoiceDesk::peso($ctx['paid_cents'] / 100) }} has been paid.@endif</p>
           <form method="POST" action="{{ route('admin.service-inquiries.refund-request', $t->id) }}" class="co-action-form" id="cr-form" data-lp-gate="cr-modal">
             @csrf
@@ -226,25 +226,25 @@
                 <option value="{{ $k }}" @selected(old('reason_code', 'change_of_mind') === $k)>{{ $label }}</option>
               @endforeach
             </select>
-            <label class="co-modal-label" for="cr-text">Details (optional)</label>
+            <label class="co-modal-label" for="cr-text">Details (Optional)</label>
             <textarea name="reason_text" id="cr-text" class="form-input" rows="2" maxlength="1000">{{ old('reason_text') }}</textarea>
-            <label class="co-modal-label" for="cr-phone">Customer mobile</label>
+            <label class="co-modal-label" for="cr-phone">Customer Mobile</label>
             <input type="text" name="contact_phone" id="cr-phone" class="form-input" required value="{{ old('contact_phone', $t->phone) }}"/>
-            <label class="co-modal-label" for="cr-email">Customer email</label>
+            <label class="co-modal-label" for="cr-email">Customer Email</label>
             <input type="email" name="contact_email" id="cr-email" class="form-input" required value="{{ old('contact_email', $t->email ?: optional($t->user)->email) }}"/>
             @if($ctx['paid_cents'] > 0)
-              <label class="co-modal-label" for="cr-method">Refund method</label>
+              <label class="co-modal-label" for="cr-method">Refund Method</label>
               <select name="refund_method" id="cr-method" class="form-input" required>
                 @foreach(\App\Models\ServiceRefundRequest::METHODS as $k => $label)
                   <option value="{{ $k }}" @selected(old('refund_method') === $k)>{{ $label }}</option>
                 @endforeach
               </select>
-              <label class="co-modal-label" for="cr-gcash">GCash number (if GCash)</label>
+              <label class="co-modal-label" for="cr-gcash">GCash Number (If GCash)</label>
               <input type="text" name="gcash_number" id="cr-gcash" class="form-input" inputmode="tel" autocomplete="off" value="{{ old('gcash_number') }}"/>
-              <label class="co-modal-label" for="cr-gname">Name on the GCash account (if GCash)</label>
+              <label class="co-modal-label" for="cr-gname">Name on the GCash Account (If GCash)</label>
               <input type="text" name="gcash_account_name" id="cr-gname" class="form-input" autocomplete="off" value="{{ old('gcash_account_name') }}"/>
             @endif
-            <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" style="margin-top:12px;">Open a cancellation request</button>
+            <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" style="margin-top:12px;">Open a Cancellation Request</button>
           </form>
         </details>
       </div>
@@ -256,25 +256,25 @@
       <div class="admin-panel-header"><div class="admin-panel-title">Calls</div></div>
       <div class="admin-panel-body">
         <div class="co-lastcall">
-          <div class="co-lastcall-label">Call attempts</div>
+          <div class="co-lastcall-label">Call Attempts</div>
           <div class="co-lastcall-value">{{ $t->attempts }}</div>
-          <div class="co-lastcall-label" style="margin-top:8px;">Last contacted</div>
+          <div class="co-lastcall-label" style="margin-top:8px;">Last Contacted</div>
           <div class="co-lastcall-value @if(!$t->last_contacted_at) co-muted @endif">
             {{ $t->last_contacted_at ? $t->last_contacted_at->timezone('Asia/Manila')->format('M d, Y h:i A') : 'Not yet' }}
           </div>
         </div>
 
         @if($isOpen)
-          <button type="button" class="lp-btn lp-btn--primary co-wide" id="co-open-call">Send call update</button>
+          <button type="button" class="lp-btn lp-btn--primary co-wide" id="co-open-call">Send Call Update</button>
 
           <details class="co-more">
-            <summary>Close or cancel this ticket</summary>
+            <summary>Close or Cancel This Ticket</summary>
             <form method="POST" action="{{ route('admin.service-inquiries.close', $t->id) }}" class="co-action-form" id="si-close-form" data-lp-gate="si-close-modal">
               @csrf
               <label class="co-modal-label" for="si-reason" style="margin-top:0;">Reason</label>
               <textarea name="reason" id="si-reason" class="form-input" rows="3" maxlength="1000" required
                         placeholder="e.g. Agreed on a price by phone, customer will visit the shop"></textarea>
-              <button type="submit" class="lp-btn lp-btn--secondary co-wide" style="margin-top:8px;">Mark closed</button>
+              <button type="submit" class="lp-btn lp-btn--secondary co-wide" style="margin-top:8px;">Mark Closed</button>
             </form>
           </details>
         @else
@@ -289,7 +289,7 @@
 <div class="co-modal" id="co-call-modal" hidden role="dialog" aria-modal="true" aria-labelledby="co-call-title">
   <div class="co-modal-box">
     <div class="co-modal-head">
-      <h2 id="co-call-title">Send call update</h2>
+      <h2 id="co-call-title">Send Call Update</h2>
       <button type="button" class="co-modal-x" id="co-call-close" aria-label="Close">&times;</button>
     </div>
     <form method="POST" action="{{ route('admin.service-inquiries.call-update', $t->id) }}" id="co-call-form">
@@ -302,7 +302,7 @@
       </select>
 
       <div id="co-attempts-wrap">
-        <label class="co-modal-label" for="co-attempts">Call attempts</label>
+        <label class="co-modal-label" for="co-attempts">Call Attempts</label>
         <input type="number" name="attempts" id="co-attempts" class="form-input" min="1" max="20" value="{{ max(1, (int) $t->attempts) }}"/>
       </div>
 
@@ -310,7 +310,7 @@
       <textarea name="note" id="co-note" class="form-input" rows="2" maxlength="500"></textarea>
 
       @if($t->user_id)
-        <div class="co-modal-label">The customer will receive</div>
+        <div class="co-modal-label">The Customer Will Receive</div>
         <div class="co-preview" aria-live="polite">
           <div class="co-preview-title" id="co-preview-title"></div>
           <div id="co-preview" style="white-space:pre-line;"></div>
@@ -322,7 +322,7 @@
 
       <div class="co-modal-actions">
         <button type="button" class="lp-btn lp-btn--secondary" id="co-call-cancel">Cancel</button>
-        <button type="submit" class="lp-btn lp-btn--primary" id="co-call-send" data-loading="Sending...">{{ $t->user_id ? 'Send notification' : 'Save call update' }}</button>
+        <button type="submit" class="lp-btn lp-btn--primary" id="co-call-send" data-loading="Sending...">{{ $t->user_id ? 'Send Notification' : 'Save Call Update' }}</button>
       </div>
     </form>
   </div>
@@ -331,19 +331,19 @@
 </div>
 
 @if($isOpen)
-<x-modal id="si-close-modal" title="Close this ticket?">
+<x-modal id="si-close-modal" title="Close This Ticket?">
   <p>It can no longer be updated. A sent invoice with no payment on it is cancelled with it and the customer is told.</p>
   <x-slot:footer>
-    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
-    <button type="button" class="lp-btn lp-btn--primary" data-lp-gate-submit="si-close-form" data-lp-confirm>Close ticket</button>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
+    <button type="button" class="lp-btn lp-btn--primary" data-lp-gate-submit="si-close-form" data-lp-confirm>Close Ticket</button>
   </x-slot:footer>
 </x-modal>
 @if(!$ctx['open'])
-<x-modal id="cr-modal" title="Open this cancellation request?">
+<x-modal id="cr-modal" title="Open This Cancellation Request?">
   <p>Payments on this service will be paused until you decide.</p>
   <x-slot:footer>
-    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
-    <button type="button" class="lp-btn lp-btn--primary" data-lp-gate-submit="cr-form" data-lp-confirm>Open request</button>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
+    <button type="button" class="lp-btn lp-btn--primary" data-lp-gate-submit="cr-form" data-lp-confirm>Open Request</button>
   </x-slot:footer>
 </x-modal>
 @endif

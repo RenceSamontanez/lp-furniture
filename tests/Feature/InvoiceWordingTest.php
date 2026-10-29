@@ -123,7 +123,7 @@ class InvoiceWordingTest extends TestCase
 
         $this->assertStringContainsString('CANCELLED', strtoupper($this->visibleText($pages['admin print Cancelled'])));
         $this->assertStringContainsString(ServiceInvoice::CANCEL_CONFIRMATION, html_entity_decode($pages['admin show Sent']));
-        $this->assertStringContainsString('Cancel invoice', $this->visibleText($pages['admin show Paid']));
+        $this->assertStringContainsString('Cancel Invoice', $this->visibleText($pages['admin show Paid']));
     }
 
     public function test_notifications_and_ticket_notes_use_the_new_words(): void

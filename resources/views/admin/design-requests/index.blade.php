@@ -6,7 +6,7 @@
 @section('content')
 
 <div class="admin-filter-tabs" style="margin-bottom:16px;">
-  <a href="{{ route('admin.design-requests.index', ['status'=>'approved']) }}" class="admin-filter-tab {{ $status==='approved'?'active':'' }}">Awaiting Follow-up</a>
+  <a href="{{ route('admin.design-requests.index', ['status'=>'approved']) }}" class="admin-filter-tab {{ $status==='approved'?'active':'' }}">Awaiting Follow-Up</a>
   <a href="{{ route('admin.design-requests.index', ['status'=>'declined']) }}" class="admin-filter-tab {{ $status==='declined'?'active':'' }}">Declined</a>
   <a href="{{ route('admin.design-requests.index', ['status'=>'all']) }}" class="admin-filter-tab {{ $status==='all'?'active':'' }}">All</a>
 </div>
@@ -61,7 +61,7 @@
               <td data-label="Submitted">{{ $req->created_at->format('M d, Y') }}</td>
               <td data-label="Status">
                 <span class="admin-pill {{ $req->status === 'declined' ? 'rejected' : 'approved' }}">
-                  {{ ucfirst($req->status) }}
+                  @titlecase($req->status)
                 </span>
               </td>
               <td data-label="Actions">
@@ -100,7 +100,6 @@
   <div class="admin-modal">
     <div class="admin-modal-header">
       <button type="button" class="admin-modal-back" onclick="closeDesignRejectModal()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         Back
       </button>
       <span class="admin-modal-title" id="design-reject-modal-title">Reject Request</span>

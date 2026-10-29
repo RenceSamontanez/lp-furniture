@@ -11,7 +11,7 @@
 <div class="co-page">
 @php $r = $designRequest; @endphp
 
-<a href="{{ route('admin.custom-orders.show', $r->id) }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">← Back to request</a>
+<a href="{{ route('admin.custom-orders.show', $r->id) }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">Back to Request</a>
 
 <div class="admin-panel" style="max-width:760px;">
   <div class="admin-panel-header">
@@ -33,7 +33,7 @@
       @csrf
       <input type="hidden" name="lock_version" value="{{ $r->lock_version }}"/>
       <a href="{{ route('admin.custom-orders.quotes.edit', [$r->id, $quote->id]) }}" class="admin-btn admin-btn-outline">Edit</a>
-      <button type="submit" class="admin-btn admin-btn-gold">Send quote</button>
+      <button type="submit" class="admin-btn admin-btn-gold">Send Quote</button>
     </form>
   </div>
 </div>

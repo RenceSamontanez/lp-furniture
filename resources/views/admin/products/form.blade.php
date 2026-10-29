@@ -22,7 +22,7 @@
 @section('content')
 
 <a href="{{ route('admin.products.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">
-  ← Back to Products
+  Back to Products
 </a>
 
 <form method="POST"
@@ -114,7 +114,7 @@
                stores "L x W x H cm" in the one `dimensions` column, as it always has. --}}
           @php($dimVals = $product->dimension_form_values)
           <fieldset class="cd-size-group pf-size">
-            <legend class="form-label">Size, length x width x height <span style="font-weight:400;color:var(--text-muted);">(optional)</span></legend>
+            <legend class="form-label">Size, Length x Width x Height <span style="font-weight:400;color:var(--text-muted);">(Optional)</span></legend>
             <p class="cd-size-hint" id="pf-size-hint">
               <strong>Length</strong> is the longest side across. <strong>Width</strong> is the shorter side across. <strong>Height</strong> is from the floor to the top.
               Choose the unit first: it is stored in centimetres. Allowed: {{ \App\Support\Dimensions::number(\App\Support\Dimensions::MIN_CM) }} to {{ \App\Support\Dimensions::number(\App\Support\Dimensions::MAX_CM) }} cm for each side.
@@ -163,7 +163,7 @@
               <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Max ₱999,999</div>
             </div>
             <div>
-              <label class="form-label">Sale Price (₱) <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+              <label class="form-label">Sale Price (₱) <span style="font-weight:400;color:var(--text-muted);">(Optional)</span></label>
               <input type="text" inputmode="decimal" name="sale_price" id="sale-price-input" class="form-input price-formatted"
                      oninput="formatPriceInput(this)"
                      placeholder="Leave blank if not on sale"
@@ -243,7 +243,7 @@
             @endif
 
             @if($extraRoom > 0)
-              <label for="extra-images-input" class="form-label">Add photos ({{ $extraRoom }} more allowed)</label>
+              <label for="extra-images-input" class="form-label">Add Photos ({{ $extraRoom }} more allowed)</label>
               <input type="file" id="extra-images-input" name="extra_images[]" multiple
                      accept="image/jpeg,image/png" class="form-input"
                      aria-describedby="extra-photos-help"/>
@@ -275,8 +275,8 @@
       <img src="{{ $extra->url }}" alt="" style="max-width:100%;max-height:220px;border-radius:8px;display:block;margin-bottom:10px;"/>
       <p>The photo is removed from this product and its file is deleted. This cannot be undone.</p>
       <x-slot:footer>
-        <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
-        <button type="submit" form="remove-photo-form-{{ $extra->id }}" class="lp-btn lp-btn--danger" data-lp-confirm>Remove photo</button>
+        <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
+        <button type="submit" form="remove-photo-form-{{ $extra->id }}" class="lp-btn lp-btn--danger" data-lp-confirm>Remove Photo</button>
       </x-slot:footer>
     </x-modal>
   @endforeach
@@ -296,7 +296,7 @@
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
       </div>
-      <h3 class="admin-modal-title-centered">Please fix the following</h3>
+      <h3 class="admin-modal-title-centered">Please Fix the Following</h3>
       <ul class="admin-modal-error-list" id="validation-error-modal-list"></ul>
 
       <div class="admin-modal-footer">

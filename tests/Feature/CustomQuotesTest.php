@@ -765,7 +765,7 @@ class CustomQuotesTest extends TestCase
 
         $this->actingAs($admin, 'admin')->get(route('admin.custom-orders.show', $r->id))
             ->assertOk()
-            ->assertSee('Quote versions')
+            ->assertSee('Quote Versions')
             ->assertSee('v1')->assertSee('v2')
             ->assertSee('Superseded')
             ->assertSee('was ₱20,000.00')

@@ -5,7 +5,7 @@
 
 @section('content')
 
-<a href="{{ route('admin.orders.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">← Back to Orders</a>
+<a href="{{ route('admin.orders.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">Back to Orders</a>
 
 <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:flex-start;">
 
@@ -14,7 +14,7 @@
     <div class="admin-panel">
       <div class="admin-panel-header">
         <div class="admin-panel-title">Order Items</div>
-        <span class="admin-pill {{ $order->order_status }}">{{ str_replace('_',' ',$order->order_status) }}</span>
+        <span class="admin-pill {{ $order->order_status }}">@titlecase(str_replace('_',' ',$order->order_status))</span>
       </div>
       <div class="admin-panel-body" style="padding:0;">
         <table class="admin-table">
@@ -44,10 +44,10 @@
     @if($order->design_agreement_id && $order->agreement)
       <div class="admin-panel">
         <div class="admin-panel-header">
-          <div class="admin-panel-title">Customized order</div>
+          <div class="admin-panel-title">Customized Order</div>
           <span style="display:flex;gap:6px;flex-wrap:wrap;">
             <span class="admin-pill confirmed">Customized Order</span>
-            @if($order->isOverdueUnpaid())<span class="admin-pill rejected">Overdue, unpaid</span>@endif
+            @if($order->isOverdueUnpaid())<span class="admin-pill rejected">Overdue, Unpaid</span>@endif
 
           </span>
         </div>
@@ -83,10 +83,10 @@
     @if($order->needs_review)
       <div class="admin-panel" style="border-color:#E8C27A;">
         <div class="admin-panel-header">
-          <div class="admin-panel-title">Needs review</div>
+          <div class="admin-panel-title">Needs Review</div>
           <form method="POST" action="{{ route('admin.orders.review', $order->id) }}">
             @csrf
-            <button type="submit" class="admin-btn admin-btn-gold">Mark reviewed</button>
+            <button type="submit" class="admin-btn admin-btn-gold">Mark Reviewed</button>
           </form>
         </div>
         <div class="admin-panel-body" style="font-size:13.5px;">
@@ -106,7 +106,7 @@
     {{-- Payment ledger --}}
     <div class="admin-panel">
       <div class="admin-panel-header">
-        <div class="admin-panel-title">Payments received</div>
+        <div class="admin-panel-title">Payments Received</div>
         @if($unrecorded)
           <span class="admin-pill pending" title="Cash order with no payment recorded yet">Unrecorded</span>
         @endif
@@ -122,7 +122,7 @@
           </p>
         @else
           <table class="admin-table">
-            <thead><tr><th>Date</th><th>Amount</th><th>Method</th><th>Reference</th><th>Recorded by</th><th>Note</th></tr></thead>
+            <thead><tr><th>Date</th><th>Amount</th><th>Method</th><th>Reference</th><th>Recorded By</th><th>Note</th></tr></thead>
             <tbody>
               @foreach($ledger as $row)
                 <tr>
@@ -130,7 +130,7 @@
                   <td data-label="Amount">₱{{ number_format($row->amount, 2) }}</td>
                   <td data-label="Method">{{ $methodLabels[$row->method] ?? $row->method }}</td>
                   <td data-label="Reference" style="overflow-wrap:anywhere;">{{ $row->gateway_reference ?: '—' }}</td>
-                  <td data-label="Recorded by">{{ $row->recorder ? $row->recorder->first_name . ' ' . $row->recorder->last_name : 'System' }}</td>
+                  <td data-label="Recorded By">{{ $row->recorder ? $row->recorder->first_name . ' ' . $row->recorder->last_name : 'System' }}</td>
                   <td data-label="Note">
                     {{ $row->note ?: '—' }}
                     @if($row->installment)<div style="font-size:11.5px;color:var(--text-muted);">Installment #{{ $row->installment->installment_no }}</div>@endif
@@ -152,7 +152,7 @@
     {{-- Record payment --}}
     @if($remaining > 0 && $order->order_status !== 'cancelled' && $order->payment)
       <div class="admin-panel">
-        <div class="admin-panel-header"><div class="admin-panel-title">Record payment</div></div>
+        <div class="admin-panel-header"><div class="admin-panel-title">Record Payment</div></div>
         <div class="admin-panel-body">
           <form method="POST" action="{{ route('admin.orders.payments.store', $order->id) }}" id="record-payment-form">
             @csrf
@@ -171,13 +171,13 @@
                 </select>
               </div>
               <div>
-                <label for="rp-date" style="display:block;font-size:12px;color:var(--text-muted);margin-bottom:6px;">Paid on</label>
+                <label for="rp-date" style="display:block;font-size:12px;color:var(--text-muted);margin-bottom:6px;">Paid On</label>
                 <input id="rp-date" name="paid_on" type="date" class="form-input" required
                        max="{{ now('Asia/Manila')->toDateString() }}" value="{{ old('paid_on', now('Asia/Manila')->toDateString()) }}"/>
               </div>
               @if($unpaidRows->isNotEmpty())
                 <div>
-                  <label for="rp-inst" style="display:block;font-size:12px;color:var(--text-muted);margin-bottom:6px;">Applies to installment (optional)</label>
+                  <label for="rp-inst" style="display:block;font-size:12px;color:var(--text-muted);margin-bottom:6px;">Applies to Installment (Optional)</label>
                   <select id="rp-inst" name="installment_id" class="form-input">
                     <option value="">Not linked</option>
                     @foreach($unpaidRows as $row)
@@ -190,10 +190,10 @@
               @endif
             </div>
             <div style="margin-top:14px;">
-              <label for="rp-note" style="display:block;font-size:12px;color:var(--text-muted);margin-bottom:6px;">Note (optional)</label>
+              <label for="rp-note" style="display:block;font-size:12px;color:var(--text-muted);margin-bottom:6px;">Note (Optional)</label>
               <textarea id="rp-note" name="note" rows="2" maxlength="1000" class="form-input">{{ old('note') }}</textarea>
             </div>
-            <button type="submit" class="admin-btn admin-btn-gold" style="margin-top:14px;" id="rp-submit">Record payment</button>
+            <button type="submit" class="admin-btn admin-btn-gold" style="margin-top:14px;" id="rp-submit">Record Payment</button>
           </form>
           <p style="font-size:12px;color:var(--text-muted);margin:14px 0 0;">
             Refunds are not handled in the system. Handle them outside it and write what was done in the order note.
@@ -273,7 +273,7 @@
         <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:8px;">
           <span style="color:var(--text-muted);">Production Status</span>
           @php $prodStatus = $order->design_agreement_id ? $order->order_status : $order->production_status; @endphp
-          <span class="admin-pill {{ $prodStatus }}" style="font-size:10px;">{{ str_replace('_',' ',$prodStatus) }}</span>
+          <span class="admin-pill {{ $prodStatus }}" style="font-size:10px;">@titlecase(str_replace('_',' ',$prodStatus))</span>
         </div>
 
         <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:var(--brown-deep);padding-top:10px;border-top:2px solid var(--brown-deep);margin-top:10px;">
@@ -323,9 +323,9 @@
                 $overall = $paid + 0.001 >= (float) $order->total_amount ? ['paid', 'Paid in full']
                     : ($paid > 0 ? ['partial', 'Partially paid'] : ['pending', 'Unpaid']);
               @endphp
-              <span class="admin-pill {{ $overall[0] }}" style="font-size:10px;">{{ $overall[1] }}</span>
+              <span class="admin-pill {{ $overall[0] }}" style="font-size:10px;">@titlecase($overall[1])</span>
             @else
-              <span class="admin-pill {{ $order->payment->payment_status }}" style="font-size:10px;">{{ $order->payment->payment_status }}</span>
+              <span class="admin-pill {{ $order->payment->payment_status }}" style="font-size:10px;">@titlecase($order->payment->payment_status)</span>
             @endif
           </div>
 

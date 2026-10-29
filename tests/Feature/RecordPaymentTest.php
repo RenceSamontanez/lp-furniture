@@ -399,9 +399,9 @@ class RecordPaymentTest extends TestCase
 
         $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))
             ->assertOk()
-            ->assertSee('Needs review')
+            ->assertSee('Needs Review')
             ->assertSee('duplicate payment, check for refund')
-            ->assertSee('Mark reviewed')
+            ->assertSee('Mark Reviewed')
             ->assertSee('Refunds are handled outside the system');
 
         $this->actingAs($admin, 'admin')->post(route('admin.orders.review', $order->id))->assertSessionHasNoErrors();
@@ -421,7 +421,7 @@ class RecordPaymentTest extends TestCase
         $order = $this->order();   // onsite (cash), nothing recorded
 
         $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))
-            ->assertOk()->assertSee('Unrecorded')->assertSee('Record payment');
+            ->assertOk()->assertSee('Unrecorded')->assertSee('Record Payment');
 
         $this->pay($admin, $order, ['amount' => '300', 'note' => 'Paid at the shop'])->assertSessionHasNoErrors();
 

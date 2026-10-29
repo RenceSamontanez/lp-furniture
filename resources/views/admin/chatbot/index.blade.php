@@ -19,7 +19,7 @@
 
 
 <div class="admin-panel" style="margin-bottom:16px;">
-  <div class="admin-panel-header"><div class="admin-panel-title">Questions Luma could not answer</div></div>
+  <div class="admin-panel-header"><div class="admin-panel-title">Questions Luma Could Not Answer</div></div>
   <div class="admin-panel-body">
     <p style="font-size:12px;color:var(--text-muted);margin:0 0 10px;">Add an intent with these words as keywords to teach her. A question leaves this list when an intent with a matching keyword is added. Dismiss one to hide it.</p>
     @if(isset($unanswered) && $unanswered->isNotEmpty())

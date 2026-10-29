@@ -515,7 +515,7 @@ class CustomAgreementsTest extends TestCase
 
         $this->actingAs($admin, 'admin')->get(route('admin.agreements.show', $a->id))->assertStatus(409);
         $this->actingAs($admin, 'admin')->get(route('admin.custom-orders.show', $a->request_id))
-            ->assertOk()->assertSee('Hash mismatch');
+            ->assertOk()->assertSee('Hash Mismatch');
     }
 
     /* ───────────── immutability ───────────── */
@@ -653,7 +653,7 @@ class CustomAgreementsTest extends TestCase
             ->assertSee(self::IP)
             ->assertSee(self::UA)
             ->assertSee('Policy version')
-            ->assertSee('Hash verified')
+            ->assertSee('Hash Verified')
             ->assertSee('Payment due by')
             ->assertSee(route('admin.agreements.print', $a->id), false);
 

@@ -1,0 +1,78 @@
+/* Admin typography (docs/fonts/typography-specimen-v2.html, same approved faces as the customer side).
+   Loaded by layouts/admin ONLY (after every page stylesheet); customer layouts never load it, and the customer file customer-type.css
+   is not touched. Everything is under body.admin-type, so nothing outside the admin can change.
+   Typography only: colours, layout, spacing and every font SIZE stay as the pages set them, except buttons (14px, as decided).
+   Faces are self-hosted (fonts.css): Montserrat 400/500/600 for text, tables, forms, labels, numbers and buttons;
+   Cormorant Garamond SemiBold ONLY for the main page title (.admin-topbar-title and the login page title). */
+
+body.admin-type {
+  --font-display: 'Montserrat', 'Montserrat Fallback', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --font-body: 'Montserrat', 'Montserrat Fallback', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --font-title: 'Cormorant Garamond', 'Cormorant Fallback', Georgia, 'Times New Roman', serif;
+  font-family: var(--font-body);
+  font-variant-numeric: lining-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* One family for everything on the page (also beats the Playfair / DM Sans names some page stylesheets hard-code).
+   Code-like elements keep their own family. Weights: only 400 / 500 / 600 exist, anything heavier maps onto 600 (no faux bold). */
+body.admin-type *:not(code):not(pre):not(kbd):not(samp):not(svg):not(svg *) { font-family: var(--font-body); }
+body.admin-type :is(h1, h2, h3, h4, h5, th, strong, b) { font-weight: 600; }
+body.admin-type :is(label, legend) { font-weight: 500; }
+body.admin-type input::placeholder, body.admin-type textarea::placeholder { font-family: var(--font-body); font-weight: 400; }
+body.admin-type .ot .hist h3 { font-family: var(--font-body); }
+
+/* Main page title: Cormorant Garamond SemiBold (the one display use). Size stays as admin.css sets it. */
+body.admin-type .admin-topbar-title,
+body.admin-type .al-title { font-family: var(--font-title); font-weight: 600; letter-spacing: 0; }
+
+/* Card titles, section headings, table headings, tabs: Montserrat. */
+body.admin-type :is(.admin-panel-title, .admin-modal-title-centered, .qi-section, .al-heading, .idr-who2 h2, .ot h1, .ot h2, .ot h3) { font-family: var(--font-body); font-weight: 600; }
+body.admin-type :is(.admin-filter-tab, .admin-nav-link) { font-family: var(--font-body); }
+body.admin-type .admin-nav-link.active { font-weight: 600; }
+
+/* Labels that used to be ALL CAPS now show their Title Case (sizes unchanged, caps spacing removed). */
+body.admin-type :is(.admin-table th, .admin-table td::before, .admin-nav-group-label, .co-block-label, .idr-row--head, .idr-facts dt, .admin-nav-coming-soon-title, .admin-receipt-missing span) {
+  text-transform: none; letter-spacing: 0;
+}
+
+/* Numbers and prices: Montserrat Medium, lining + tabular figures so columns line up. */
+body.admin-type :is(
+  .num, .price, [class*="price"], [class*="-total"], [class*="total-"], [class*="amount"], [class*="qty"], [class*="quantity"],
+  [class*="subtotal"], [class*="-count"], [class*="count-"], [class*="-date"], [class*="-time"], [class*="-num"],
+  .admin-stat-value, .admin-nav-badge, .cart-badge, time
+):not(.lp-btn):not(button):not(.admin-btn) {
+  font-weight: 500; font-variant-numeric: lining-nums tabular-nums;
+}
+body.admin-type .admin-table td, body.admin-type .admin-table th { font-variant-numeric: lining-nums tabular-nums; }
+body.admin-type .admin-stat-value { font-weight: 600; }
+
+/* Buttons and button-styled links: Montserrat SemiBold 14px, sentence-free (Title Case comes from the text itself). */
+body.admin-type :is(
+  .admin-btn, .lp-btn:not(.lp-btn--chip):not(.lp-btn--icon), button.admin-btn, .btn, .btn-gold, .btn-outline
+) {
+  font-weight: 600; font-size: 14px; text-transform: none; letter-spacing: 0;
+}
+body.admin-type .lp-btn--chip { font-weight: 600; text-transform: none; letter-spacing: 0; }
+body.admin-type :is(.admin-pill, .badge, .co-chip, .tag) { font-weight: 600; text-transform: none; letter-spacing: 0; }
+
+/* Sidebar: Montserrat runs about 8% wider than the DM Sans it replaces, so the menu text drops from 14px to 13px (nothing else about the
+   menu changes) to keep every item on one line, as before. */
+body.admin-type .admin-nav-link { font-size: 13px; }
+
+/* Contrast (4.5:1 minimum). These five text colours were already below it; each is moved to the nearest passing shade, same hue. */
+/* admin.css ends these three with !important, so they need it here too */
+body.admin-type .admin-nav-group-label { color: rgba(255,255,255,.5) !important; font-weight: 600 !important; letter-spacing: 0 !important; }   /* colour was .4 = 3.8:1 */
+body.admin-type .admin-table th { color: #7A6B5C; }                                 /* was #8A7B6C = 3.8:1 */
+body.admin-type .admin-nav-badge { background: #B83227; }                           /* white on #E85D5D = 3.4:1 */
+body.admin-type .admin-btn-danger:not(:hover):not(:focus) { color: #B5342A; }       /* was #C0392B on pink = 4.4:1 */
+body.admin-type .co-dl a { color: #8A5A0B; }                                        /* was #92600C on tinted cream = 4.4:1 */
+
+/* Between the phone layout (860px) and the full layout (1100px) Montserrat's wider letters pushed the last column of wide tables
+   (the Open / View button or the Status badge) out of the panel. Cell side padding drops from 16px to 8px there, long words such as e-mail addresses may break, and table buttons stay on one line;
+   font sizes are untouched. */
+@media (min-width: 861px) and (max-width: 1100px) {
+  body.admin-type .admin-table th, body.admin-type .admin-table td { padding-left: 8px; padding-right: 8px; }
+  body.admin-type .admin-table td { overflow-wrap: anywhere; }
+  body.admin-type .admin-table td .lp-btn, body.admin-type .admin-table td .admin-btn { white-space: nowrap; }
+}

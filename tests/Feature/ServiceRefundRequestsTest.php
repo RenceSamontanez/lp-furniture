@@ -239,7 +239,7 @@ class ServiceRefundRequestsTest extends TestCase
             ->assertSessionHasErrors('ticket')->assertSessionHas('offer_cancellation_request', true);
         $this->get(route('admin.service-inquiries.show', $tid))->assertOk()
             ->assertSee('This service has a payment on it, so it must go through a cancellation request so the refund is recorded.')
-            ->assertSee('Open a cancellation request');
+            ->assertSee('Open a Cancellation Request');
 
         $this->post(route('admin.service-inquiries.refund-request', $tid), $this->payload())->assertSessionHasNoErrors();
         $r = Req::sole();

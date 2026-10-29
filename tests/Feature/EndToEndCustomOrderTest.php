@@ -218,7 +218,7 @@ class EndToEndCustomOrderTest extends TestCase
         $this->assertStringNotContainsString('Reached, wants narra', $timeline);
 
         $adminView = $this->asAdmin($admin)->get(route('admin.custom-orders.show', $r->id))->assertOk();
-        $adminView->assertSee('Hash verified')->assertSee('completed');
+        $adminView->assertSee('Hash Verified')->assertSee('completed');
     }
 
     /* ═════════════ flow 2: full payment by GCash ═════════════ */

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'System health — Admin')
-@section('page-title', 'System health')
+@section('page-title', 'System Health')
 
 @php
   use App\Support\UploadFolders;
@@ -12,15 +12,15 @@
 
 <div class="admin-stats-grid">
   <div class="admin-stat-card">
-    <div><div class="admin-stat-value">{{ UploadFolders::human($report['bytes']) }}</div><div class="admin-stat-label">Disk used by uploads ({{ $report['files'] }} files)</div></div>
+    <div><div class="admin-stat-value">{{ UploadFolders::human($report['bytes']) }}</div><div class="admin-stat-label">Disk Used by Uploads ({{ $report['files'] }} files)</div></div>
   </div>
   <div class="admin-stat-card {{ $report['orphans'] > 0 ? 'accent-red' : '' }}">
-    <div><div class="admin-stat-value">{{ $report['orphans'] }}</div><div class="admin-stat-label">Orphan files ({{ UploadFolders::human($report['orphan_bytes']) }})</div></div>
+    <div><div class="admin-stat-value">{{ $report['orphans'] }}</div><div class="admin-stat-label">Orphan Files ({{ UploadFolders::human($report['orphan_bytes']) }})</div></div>
   </div>
   <div class="admin-stat-card">
     <div>
       <div class="admin-stat-value" style="font-size:18px;">{{ $lastCleanup ? $lastCleanup['at']->timezone('Asia/Manila')->format('M j, Y g:i A') : 'Never' }}</div>
-      <div class="admin-stat-label">Last storage cleanup</div>
+      <div class="admin-stat-label">Last Storage Cleanup</div>
     </div>
   </div>
 </div>
@@ -50,16 +50,16 @@
   <div class="admin-panel-header"><div class="admin-panel-title">Cache</div></div>
   <div class="admin-panel-body">
     <p style="font-size:13px;color:var(--text-muted);margin:0 0 14px;">Clears the application cache, the config cache and the compiled views. No orders, accounts or uploads are touched. Everyone stays signed in.</p>
-    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-open="clear-cache">Clear cache</button>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-open="clear-cache">Clear Cache</button>
   </div>
 </div>
 
-<x-modal id="clear-cache" title="Clear the cache?">
+<x-modal id="clear-cache" title="Clear the Cache?">
   <p>This clears the cache, config and compiled views. The site may be a little slower for the next few visits while they rebuild.</p>
   <form method="POST" action="{{ route('admin.system-health.clear-cache') }}" id="clear-cache-form">@csrf</form>
   <x-slot:footer>
-    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
-    <button type="submit" form="clear-cache-form" class="lp-btn lp-btn--primary" data-lp-confirm>Clear cache</button>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
+    <button type="submit" form="clear-cache-form" class="lp-btn lp-btn--primary" data-lp-confirm>Clear Cache</button>
   </x-slot:footer>
 </x-modal>
 

@@ -255,7 +255,7 @@ class CustomOrderTimelineTest extends TestCase
             $split['catalog']['revenue'] + $split['customized']['revenue'],
             $page->viewData('totalRevenue')
         );
-        $page->assertSee('Catalog vs Customized orders');
+        $page->assertSee('Catalog vs Customized Orders');
     }
 
     public function test_orders_list_can_filter_by_type(): void

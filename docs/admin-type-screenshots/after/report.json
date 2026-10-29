@@ -1,0 +1,873 @@
+{
+ "tag": "after",
+ "base": "http://127.0.0.1:8011",
+ "pages": {
+  "login@1440": {
+   "url": "/admin/login",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.password-toggle \"Show\"",
+    "button.lp-btn.lp-btn--glass-primary \"Sign In\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": {
+    "count": 2,
+    "failures": []
+   }
+  },
+  "login@1001": {
+   "url": "/admin/login",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.password-toggle \"Show\"",
+    "button.lp-btn.lp-btn--glass-primary \"Sign In\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "login@390": {
+   "url": "/admin/login",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.password-toggle \"Show\"",
+    "button.lp-btn.lp-btn--glass-primary \"Sign In\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "dashboard@1440": {
+   "url": "/admin/dashboard",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": {
+    "count": 10,
+    "failures": []
+   }
+  },
+  "dashboard@1001": {
+   "url": "/admin/dashboard",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "dashboard@390": {
+   "url": "/admin/dashboard",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "orders@1440": {
+   "url": "/admin/orders",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": {
+    "count": 18,
+    "failures": []
+   }
+  },
+  "orders@1001": {
+   "url": "/admin/orders",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "orders@390": {
+   "url": "/admin/orders",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\"",
+    "span.lp-btn.lp-btn--secondary \"Previous\"",
+    "a.lp-btn.lp-btn--secondary \"Next\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "order-view@1440": {
+   "url": "/admin/orders/1",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": {
+    "count": 5,
+    "failures": []
+   }
+  },
+  "order-view@1001": {
+   "url": "/admin/orders/1",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "order-view@390": {
+   "url": "/admin/orders/1",
+   "overflowX": 0,
+   "clipped": [
+    "div.admin-topbar-title \"Order LP-2026-00001\""
+   ],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\"",
+    "button.lp-btn.lp-btn--secondary \"Send Update Only (Stage Stays)\"",
+    "button.lp-btn.lp-btn--secondary \"Correct Last Step\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "products@1440": {
+   "url": "/admin/products",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": {
+    "count": 6,
+    "failures": [
+     {
+      "text": "",
+      "cls": "admin-quick-stock-btn",
+      "height": 26,
+      "default": 4.67,
+      "visited": 4.67,
+      "hover": 2.71,
+      "focus": 4.67,
+      "active": 4.67,
+      "min": 2.71,
+      "pass": false
+     },
+     {
+      "text": "Delete",
+      "cls": "admin-btn admin-btn-danger",
+      "height": 38,
+      "default": 4.36,
+      "visited": 4.36,
+      "hover": 3.41,
+      "focus": 4.36,
+      "active": 4.36,
+      "min": 3.41,
+      "pass": false
+     }
+    ]
+   }
+  },
+  "products@1001": {
+   "url": "/admin/products",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "products@390": {
+   "url": "/admin/products",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "add-product@1440": {
+   "url": "/admin/products/create",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": {
+    "count": 3,
+    "failures": []
+   }
+  },
+  "add-product@1001": {
+   "url": "/admin/products/create",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "add-product@390": {
+   "url": "/admin/products/create",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "customers@1440": {
+   "url": "/admin/customers",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": {
+    "count": 13,
+    "failures": []
+   }
+  },
+  "customers@1001": {
+   "url": "/admin/customers",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "customers@390": {
+   "url": "/admin/customers",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "custom-orders@1440": {
+   "url": "/admin/custom-orders",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": {
+    "count": 3,
+    "failures": []
+   }
+  },
+  "custom-orders@1001": {
+   "url": "/admin/custom-orders",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "custom-orders@390": {
+   "url": "/admin/custom-orders",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "custom-order-view@1440": {
+   "url": "/admin/custom-orders/1",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": {
+    "count": 7,
+    "failures": [
+     {
+      "text": "",
+      "cls": "admin-btn admin-btn-danger co-wide",
+      "height": 36,
+      "default": 4.36,
+      "visited": 4.36,
+      "hover": 3.41,
+      "focus": 4.36,
+      "active": 4.36,
+      "min": 3.41,
+      "pass": false
+     }
+    ]
+   }
+  },
+  "custom-order-view@1001": {
+   "url": "/admin/custom-orders/1",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "custom-order-view@390": {
+   "url": "/admin/custom-orders/1",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "service-request@1440": {
+   "url": "/admin/service-inquiries/1",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": {
+    "count": 7,
+    "failures": []
+   }
+  },
+  "service-request@1001": {
+   "url": "/admin/service-inquiries/1",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "service-request@390": {
+   "url": "/admin/service-inquiries/1",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "refunds@1440": {
+   "url": "/admin/refund-requests",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link.active \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": {
+    "count": 10,
+    "failures": []
+   }
+  },
+  "refunds@1001": {
+   "url": "/admin/refund-requests",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link.active \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "refunds@390": {
+   "url": "/admin/refund-requests",
+   "overflowX": 0,
+   "clipped": [
+    "div.admin-topbar-title \"Cancellations & Refunds\""
+   ],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link.active \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "notifications@1440": {
+   "url": "/admin/notifications",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": {
+    "count": 2,
+    "failures": []
+   }
+  },
+  "notifications@1001": {
+   "url": "/admin/notifications",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "notifications@390": {
+   "url": "/admin/notifications",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "contact-settings@1440": {
+   "url": "/admin/settings/contact",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": {
+    "count": 2,
+    "failures": []
+   }
+  },
+  "contact-settings@1001": {
+   "url": "/admin/settings/contact",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "contact-settings@390": {
+   "url": "/admin/settings/contact",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "luma-unanswered@1440": {
+   "url": "/admin/chatbot",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": {
+    "count": 9,
+    "failures": [
+     {
+      "text": "Delete",
+      "cls": "admin-btn admin-btn-danger",
+      "height": 36,
+      "default": 4.36,
+      "visited": 4.36,
+      "hover": 3.41,
+      "focus": 4.36,
+      "active": 4.36,
+      "min": 3.41,
+      "pass": false
+     }
+    ]
+   }
+  },
+  "luma-unanswered@1001": {
+   "url": "/admin/chatbot",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "luma-unanswered@390": {
+   "url": "/admin/chatbot",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "system-health@1440": {
+   "url": "/admin/system-health",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": {
+    "count": 2,
+    "failures": []
+   }
+  },
+  "system-health@1001": {
+   "url": "/admin/system-health",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "system-health@390": {
+   "url": "/admin/system-health",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [],
+   "buttonContrast": null
+  }
+ },
+ "styles": {
+  "orders": {
+   "pageTitle": {
+    "family": "Cormorant Garamond",
+    "size": "19px",
+    "weight": "600",
+    "numeric": "lining-nums",
+    "text": "Orders"
+   },
+   "tableHeader": {
+    "family": "Montserrat",
+    "size": "11px",
+    "weight": "600",
+    "numeric": "lining-nums tabular-nums",
+    "text": "Order #"
+   },
+   "tableCell": {
+    "family": "Montserrat",
+    "size": "13.5px",
+    "weight": "500",
+    "numeric": "lining-nums tabular-nums",
+    "text": "LP-UI21J-001"
+   },
+   "number": {
+    "family": "Montserrat",
+    "size": "13.5px",
+    "weight": "500",
+    "numeric": "lining-nums tabular-nums",
+    "text": "₱1,600.00"
+   },
+   "button": {
+    "family": "Montserrat",
+    "size": "14px",
+    "weight": "600",
+    "numeric": "lining-nums tabular-nums",
+    "text": "View"
+   },
+   "formLabel": null,
+   "sidebarItem": {
+    "family": "Montserrat",
+    "size": "13px",
+    "weight": "600",
+    "numeric": "lining-nums",
+    "text": "Dashboard"
+   },
+   "panelTitle": null
+  },
+  "order-view": {
+   "pageTitle": {
+    "family": "Cormorant Garamond",
+    "size": "19px",
+    "weight": "600",
+    "numeric": "lining-nums",
+    "text": "Order LP-2026-00001"
+   },
+   "tableHeader": null,
+   "tableCell": null,
+   "number": null,
+   "button": {
+    "family": "Montserrat",
+    "size": "14px",
+    "weight": "600",
+    "numeric": "normal",
+    "text": "Add a Photo"
+   },
+   "formLabel": {
+    "family": "Montserrat",
+    "size": "14px",
+    "weight": "500",
+    "numeric": "lining-nums",
+    "text": "Message to the Customer (Optio"
+   },
+   "sidebarItem": {
+    "family": "Montserrat",
+    "size": "13px",
+    "weight": "600",
+    "numeric": "lining-nums",
+    "text": "Dashboard"
+   },
+   "panelTitle": null
+  },
+  "add-product": {
+   "pageTitle": {
+    "family": "Cormorant Garamond",
+    "size": "19px",
+    "weight": "600",
+    "numeric": "lining-nums",
+    "text": "Add Product"
+   },
+   "tableHeader": null,
+   "tableCell": null,
+   "number": null,
+   "button": {
+    "family": "Montserrat",
+    "size": "14px",
+    "weight": "600",
+    "numeric": "lining-nums",
+    "text": "Back to Products"
+   },
+   "formLabel": {
+    "family": "Montserrat",
+    "size": "13px",
+    "weight": "500",
+    "numeric": "lining-nums",
+    "text": "Product Name"
+   },
+   "sidebarItem": {
+    "family": "Montserrat",
+    "size": "13px",
+    "weight": "600",
+    "numeric": "lining-nums",
+    "text": "Dashboard"
+   },
+   "panelTitle": {
+    "family": "Montserrat",
+    "size": "16px",
+    "weight": "600",
+    "numeric": "lining-nums",
+    "text": "Product Details"
+   }
+  }
+ }
+}

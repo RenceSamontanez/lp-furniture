@@ -175,7 +175,7 @@ class ServiceInvoiceTest extends TestCase
             ->assertSee('Home service fee (we do the work at the customer&#039;s location)', false)
             ->assertSee('Delivery fee, one way (furniture delivered to the shop, or returned to the customer)')
             ->assertSee('Delivery fee, round trip (picked up and returned)')
-            ->assertSee('Running total');
+            ->assertSee('Running Total');
     }
 
     /* ───────────── create, edit, issue, lock ───────────── */
@@ -561,7 +561,7 @@ class ServiceInvoiceTest extends TestCase
 
         foreach ([['2000', '300'], ['1800', '0'], ['2500', '450']] as $n => [$cost, $fee]) {
             $this->asAdmin()->get(route('admin.service-invoices.edit', $i->id))->assertOk()
-                ->assertSee('Save draft')->assertSee('Send to customer');
+                ->assertSee('Save Draft')->assertSee('Send to Customer');
 
             $res = $this->post(route('admin.service-invoices.update', $i->id), $this->payload([
                 'service_description' => 'Repair v' . $n, 'service_cost' => $cost,
@@ -631,7 +631,7 @@ class ServiceInvoiceTest extends TestCase
 
         // locked: no edit controls on the page, the edit page and the server both refuse
         $this->get(route('admin.service-invoices.show', $i->id))->assertOk()
-            ->assertDontSee('Edit draft')->assertDontSee('Delete draft')->assertDontSee('Save draft');
+            ->assertDontSee('Edit Draft')->assertDontSee('Delete Draft')->assertDontSee('Save Draft');
         $this->get(route('admin.service-invoices.edit', $i->id))->assertRedirect(route('admin.service-invoices.show', $i->id));
         $this->post(route('admin.service-invoices.update', $i->id), $this->payload(['service_cost' => '1', 'then' => 'send']))->assertSessionHasErrors('invoice');
         $this->post(route('admin.service-invoices.update', $i->id), $this->payload(['service_cost' => '1']))->assertSessionHasErrors('invoice');
@@ -647,7 +647,7 @@ class ServiceInvoiceTest extends TestCase
         $i = $this->draft($t);
 
         $this->asAdmin()->get(route('admin.service-invoices.show', $i->id))->assertOk()
-            ->assertSee('Edit draft')->assertSee('Send to customer')->assertSee('Delete draft');
+            ->assertSee('Edit Draft')->assertSee('Send to Customer')->assertSee('Delete Draft');
 
         $this->app['auth']->forgetGuards();
         $this->actingAs($customer);

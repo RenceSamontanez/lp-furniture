@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', $req->reference . ' — Admin')
-@section('page-title', 'Cancellation request')
+@section('page-title', 'Cancellation Request')
 
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/admin-custom-orders.css') }}"/>
@@ -22,7 +22,7 @@
   $starters = \App\Support\ServiceRefundRequestService::DECLINE_STARTERS;
 @endphp
 
-<a href="{{ route('admin.refunds.index') }}" class="lp-btn lp-btn--secondary" style="margin-bottom:20px;">← Back to Cancellations &amp; Refunds</a>
+<a href="{{ route('admin.refunds.index') }}" class="lp-btn lp-btn--secondary" style="margin-bottom:20px;">Back to Cancellations &amp; Refunds</a>
 
 @if($errors->any())
   <div class="co-error" role="alert">{{ $errors->has('request') ? $errors->first('request') : $errors->first() }}</div>
@@ -53,7 +53,7 @@
     <div class="admin-panel">
       <div class="admin-panel-header">
         <div class="admin-panel-title">{{ $r->reference }}</div>
-        <span class="co-chip co-chip--{{ $chip }}">{{ $r->statusLabel() }}</span>
+        <span class="co-chip co-chip--{{ $chip }}">@titlecase($r->statusLabel())</span>
       </div>
       <div class="admin-panel-body">
         <dl class="co-dl">
@@ -84,11 +84,11 @@
         </dl>
 
         @if($r->reason_text)
-          <div class="co-block-label">Details from the customer</div>
+          <div class="co-block-label">Details from the Customer</div>
           <div class="co-quote si-concern">{{ $r->reason_text }}</div>
         @endif
         @if($r->decision_note)
-          <div class="co-block-label">Explanation sent to the customer</div>
+          <div class="co-block-label">Explanation Sent to the Customer</div>
           <div class="co-quote si-concern">{{ $r->decision_note }}</div>
         @endif
       </div>
@@ -110,7 +110,7 @@
 
     @if($r->attempts->isNotEmpty())
     <div class="admin-panel">
-      <div class="admin-panel-header"><div class="admin-panel-title">Refund attempts</div></div>
+      <div class="admin-panel-header"><div class="admin-panel-title">Refund Attempts</div></div>
       <div class="admin-panel-body">
         <table class="rf-attempts">
           <thead><tr><th>When</th><th>Amount</th><th>How</th><th>Transaction no.</th><th>Result</th></tr></thead>
@@ -137,28 +137,28 @@
       <div class="admin-panel-body rf-actions">
         @if(in_array($r->status, ['new', 'needs_info'], true))
           @if($work === 'not_started')
-            <button type="button" class="lp-btn lp-btn--primary lp-btn--block" data-lp-modal-open="rf-approve-modal">Approve{{ $paidCents > 0 ? ' and refund ' . $peso($paidCents / 100) : '' }}</button>
+            <button type="button" class="lp-btn lp-btn--primary lp-btn--block" data-lp-modal-open="rf-approve-modal">Approve{{ $paidCents > 0 ? ' and Refund ' . $peso($paidCents / 100) : '' }}</button>
             <form method="POST" action="{{ route('admin.refunds.approve', $r->id) }}" id="rf-approve-form">@csrf</form>
           @else
             <x-notice variant="blocked" title="Work has already started">
               A normal approval is not offered. You can decline with an explanation, or approve as an exception.
             </x-notice>
             <details class="rf-action">
-              <summary>Approve as an exception</summary>
+              <summary>Approve as an Exception</summary>
               <form method="POST" action="{{ route('admin.refunds.approve-exception', $r->id) }}" id="rf-exc-form" data-lp-gate="rf-exc-modal">
                 @csrf
-                <label class="co-modal-label" for="rf-exc" style="margin-top:0;">Why is this an exception? (required)</label>
+                <label class="co-modal-label" for="rf-exc" style="margin-top:0;">Why Is This an Exception? (Required)</label>
                 <textarea name="reason" id="rf-exc" class="form-input" rows="3" minlength="10" maxlength="1000" required>{{ old('reason') }}</textarea>
-                <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" style="margin-top:10px;">Approve as an exception</button>
+                <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" style="margin-top:10px;">Approve as an Exception</button>
               </form>
             </details>
           @endif
 
           <details class="rf-action">
-            <summary>Decline with an explanation</summary>
+            <summary>Decline with an Explanation</summary>
             <form method="POST" action="{{ route('admin.refunds.decline', $r->id) }}" id="rf-decline-form" data-lp-gate="rf-decline-modal">
               @csrf
-              <label class="co-modal-label" for="rf-starter" style="margin-top:0;">Start from</label>
+              <label class="co-modal-label" for="rf-starter" style="margin-top:0;">Start From</label>
               <select id="rf-starter" class="form-input">
                 <option value="work_started">Work has already started</option>
                 <option value="work_done">Work is already done</option>
@@ -171,27 +171,27 @@
           </details>
 
           <details class="rf-action">
-            <summary>Ask the customer for more information</summary>
+            <summary>Ask the Customer for More Information</summary>
             <form method="POST" action="{{ route('admin.refunds.ask-info', $r->id) }}">
               @csrf
-              <label class="co-modal-label" for="rf-ask" style="margin-top:0;">Your question</label>
+              <label class="co-modal-label" for="rf-ask" style="margin-top:0;">Your Question</label>
               <textarea name="message" id="rf-ask" class="form-input" rows="3" minlength="5" maxlength="1000" required>{{ old('message') }}</textarea>
-              <button type="submit" class="lp-btn lp-btn--secondary lp-btn--block" style="margin-top:10px;" data-loading="Sending...">Send question</button>
+              <button type="submit" class="lp-btn lp-btn--secondary lp-btn--block" style="margin-top:10px;" data-loading="Sending...">Send Question</button>
             </form>
           </details>
 
         @elseif($r->status === 'approved')
           <details class="rf-action" open>
-            <summary>Mark refund as sent</summary>
+            <summary>Mark Refund as Sent</summary>
             <form method="POST" action="{{ route('admin.refunds.mark-refunded', $r->id) }}" id="mr-form" data-lp-gate="rf-sent-modal" novalidate>
               @csrf
-              <label class="co-modal-label" for="mr-amount" style="margin-top:0;">Amount sent (₱)</label>
+              <label class="co-modal-label" for="mr-amount" style="margin-top:0;">Amount Sent (₱)</label>
               <input type="text" inputmode="decimal" name="amount" id="mr-amount" class="form-input" required value="{{ old('amount', number_format((float) $r->approved_amount, 2, '.', '')) }}"/>
-              <label class="co-modal-label" for="mr-method">How it was sent</label>
+              <label class="co-modal-label" for="mr-method">How It Was Sent</label>
               <select name="method" id="mr-method" class="form-input" required>
                 @foreach(\App\Models\ServiceRefundRequest::METHODS as $k => $label)<option value="{{ $k }}" @selected(old('method', $r->refund_method) === $k)>{{ $label }}</option>@endforeach
               </select>
-              <label class="co-modal-label" for="mr-tx">Transaction number</label>
+              <label class="co-modal-label" for="mr-tx">Transaction Number</label>
               <input type="text" name="transaction_number" id="mr-tx" class="form-input" maxlength="60" required autocomplete="off" aria-describedby="mr-tx-hint mr-tx-error" value="{{ old('transaction_number') }}"/>
               <p class="si-hint rf-tx-hint" id="mr-tx-hint">GCash reference numbers are usually 10 to 13 digits, for example 6028 871 884223. Spaces and dashes are ignored.</p>
               <p class="rf-tx-error" id="mr-tx-error" role="alert" hidden></p>
@@ -203,25 +203,25 @@
                 <label class="co-modal-label" for="mr-override-reason">Why is it still correct? (at least 10 characters)</label>
                 <textarea name="reference_override_reason" id="mr-override-reason" class="form-input" rows="2" maxlength="300">{{ old('reference_override_reason') }}</textarea>
               </div>
-              <label class="co-modal-label" for="mr-date">Date sent</label>
+              <label class="co-modal-label" for="mr-date">Date Sent</label>
               <input type="date" name="sent_on" id="mr-date" class="form-input" required max="{{ now('Asia/Manila')->toDateString() }}" value="{{ old('sent_on', now('Asia/Manila')->toDateString()) }}"/>
               <label class="co-modal-label" for="mr-note">Note (required only if the amount differs from the approved amount)</label>
               <textarea name="note" id="mr-note" class="form-input" rows="2" maxlength="1000">{{ old('note') }}</textarea>
-              <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" style="margin-top:10px;">Mark refund as sent</button>
+              <button type="submit" class="lp-btn lp-btn--primary lp-btn--block" style="margin-top:10px;">Mark Refund as Sent</button>
             </form>
           </details>
 
           <details class="rf-action">
-            <summary>Refund did not go through</summary>
+            <summary>Refund Did Not Go Through</summary>
             <form method="POST" action="{{ route('admin.refunds.refund-failed', $r->id) }}" id="rf-failed-form" data-lp-gate="rf-failed-modal">
               @csrf
-              <label class="co-modal-label" for="rf-problem" style="margin-top:0;">What went wrong</label>
+              <label class="co-modal-label" for="rf-problem" style="margin-top:0;">What Went Wrong</label>
               <select name="problem" id="rf-problem" class="form-input" required>
                 @foreach(\App\Support\ServiceRefundRequestService::PROBLEMS as $k => $label)<option value="{{ $k }}">{{ $label }}</option>@endforeach
               </select>
               <label class="co-modal-label" for="rf-pnote">Note</label>
               <textarea name="note" id="rf-pnote" class="form-input" rows="2" maxlength="1000"></textarea>
-              <button type="submit" class="lp-btn lp-btn--danger lp-btn--block" style="margin-top:10px;">Refund did not go through</button>
+              <button type="submit" class="lp-btn lp-btn--danger lp-btn--block" style="margin-top:10px;">Refund Did Not Go Through</button>
             </form>
           </details>
 
@@ -237,31 +237,31 @@
 
 @if(in_array($r->status, ['new', 'needs_info'], true))
   @if($work === 'not_started')
-  <x-modal id="rf-approve-modal" title="Approve this request?">
+  <x-modal id="rf-approve-modal" title="Approve This Request?">
     <p>{{ $paidCents > 0 ? 'The customer will get back the full ' . $peso($paidCents / 100) . ' by ' . $r->methodLabel() . ', within ' . \App\Models\ServiceRefundRequest::REFUND_DAYS . ' days.' : 'Nothing was paid, so the service request will be cancelled.' }}</p>
     <x-slot:footer>
-      <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+      <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
       <button type="submit" form="rf-approve-form" class="lp-btn lp-btn--primary" data-lp-confirm>Approve</button>
     </x-slot:footer>
   </x-modal>
   @else
-  <x-modal id="rf-exc-modal" title="Approve as an exception?">
+  <x-modal id="rf-exc-modal" title="Approve as an Exception?">
     <p>Work has already started. This is flagged and logged with your reason.</p>
     <x-slot:footer>
-      <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
-      <button type="button" class="lp-btn lp-btn--primary" data-lp-gate-submit="rf-exc-form" data-lp-confirm>Approve as an exception</button>
+      <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
+      <button type="button" class="lp-btn lp-btn--primary" data-lp-gate-submit="rf-exc-form" data-lp-confirm>Approve as an Exception</button>
     </x-slot:footer>
   </x-modal>
   @endif
-  <x-modal id="rf-decline-modal" title="Decline this request?">
+  <x-modal id="rf-decline-modal" title="Decline This Request?">
     <p>The customer will read your explanation and payments open again.</p>
     <x-slot:footer>
-      <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+      <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
       <button type="button" class="lp-btn lp-btn--danger" data-lp-gate-submit="rf-decline-form" data-lp-confirm>Decline</button>
     </x-slot:footer>
   </x-modal>
 @elseif($r->status === 'approved')
-  <x-modal id="rf-sent-modal" title="Mark this refund as sent?" summary-form="mr-form">
+  <x-modal id="rf-sent-modal" title="Mark This Refund as Sent?" summary-form="mr-form">
     <dl class="lp-modal__facts">
       <dt>Amount</dt><dd>₱<span data-summary="amount"></span></dd>
       <dt>Method</dt><dd data-summary="method"></dd>
@@ -276,15 +276,15 @@
     <x-notice variant="info" title="Check the details first.">The service request and invoice will be cancelled and the customer told. A sent refund cannot be recalled or sent again.</x-notice>
     <label class="lp-modal__check" for="rf-sent-tick"><input type="checkbox" id="rf-sent-tick" data-lp-reset/> <span>I sent this refund and the details match</span></label>
     <x-slot:footer>
-      <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
-      <button type="button" class="lp-btn lp-btn--primary" data-lp-gate-submit="mr-form" data-lp-requires="rf-sent-tick" data-lp-confirm>Mark refund as sent</button>
+      <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
+      <button type="button" class="lp-btn lp-btn--primary" data-lp-gate-submit="mr-form" data-lp-requires="rf-sent-tick" data-lp-confirm>Mark Refund as Sent</button>
     </x-slot:footer>
   </x-modal>
-  <x-modal id="rf-failed-modal" title="Record that the refund did not go through?">
+  <x-modal id="rf-failed-modal" title="Record That the Refund Did Not Go Through?">
     <p>The customer will be asked to send the right details.</p>
     <x-slot:footer>
-      <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
-      <button type="button" class="lp-btn lp-btn--danger" data-lp-gate-submit="rf-failed-form" data-lp-confirm>Record it</button>
+      <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
+      <button type="button" class="lp-btn lp-btn--danger" data-lp-gate-submit="rf-failed-form" data-lp-confirm>Record It</button>
     </x-slot:footer>
   </x-modal>
 @endif

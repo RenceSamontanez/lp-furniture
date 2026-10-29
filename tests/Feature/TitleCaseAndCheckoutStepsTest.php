@@ -230,13 +230,12 @@ class TitleCaseAndCheckoutStepsTest extends TestCase
         $this->assertSame(0, DB::table('orders')->where('user_id', $user->id)->count());
     }
 
-    /* ───────────── admin untouched ───────────── */
+    /* ───────────── admin: no customer back component (its own typography is AdminTypographyTest) ───────────── */
 
-    public function test_admin_pages_keep_their_original_text(): void
+    public function test_admin_pages_do_not_get_the_customer_back_button(): void
     {
         $admin = $this->makeUser('admin');
         $html = $this->actingAs($admin, 'admin')->get('/admin/orders')->assertOk()->getContent();
-        $this->assertStringNotContainsString('title-case.js', $html);
         $this->assertStringNotContainsString('lp-btn--back', $html);
         $this->assertStringNotContainsString('<span>Back</span>', $html);
     }

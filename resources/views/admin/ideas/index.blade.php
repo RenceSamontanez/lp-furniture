@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'Ideas to review — Admin')
-@section('page-title', 'Ideas to review')
+@section('page-title', 'Ideas to Review')
 
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/admin-custom-orders.css') }}"/>
@@ -40,7 +40,7 @@
     </a>
     @foreach($statusLabels as $key => $label)
       <a href="{{ route('admin.ideas.index', ['status' => $key] + $base) }}" class="co-count {{ $status === $key ? 'active' : '' }}">
-        <div class="co-count-num">{{ $counts[$key] ?? 0 }}</div><div class="co-count-label">{{ $label }}</div>
+        <div class="co-count-num">{{ $counts[$key] ?? 0 }}</div><div class="co-count-label">@titlecase($label)</div>
       </a>
     @endforeach
   </div>
@@ -80,7 +80,7 @@
         </div>
       @else
         <table class="admin-table ir-table">
-          <thead><tr><th>Idea</th><th>Kind</th><th>Times seen</th><th>First seen</th><th>Last seen</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Idea</th><th>Kind</th><th>Times Seen</th><th>First Seen</th><th>Last Seen</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody>
           @foreach($rows as $row)
             @php $canOption = $row->kind !== 'wood' && $row->status !== 'dismissed'; @endphp
@@ -90,22 +90,22 @@
                 @if($row->answer)<div class="ir-answer"><span>Answer:</span> {{ $row->answer }}</div>@endif
               </td>
               <td data-label="Kind"><span class="ir-kind ir-kind--{{ $row->kind }}">{{ $kindLabels[$row->kind] ?? $row->kind }}</span></td>
-              <td data-label="Times seen"><strong>{{ $row->times_asked }}&times;</strong></td>
-              <td data-label="First seen">{{ $row->first_seen_at?->format('M j, Y') }}</td>
-              <td data-label="Last seen">{{ $row->last_seen_at?->format('M j, Y') }}</td>
-              <td data-label="Status"><span class="ir-status ir-status--{{ $row->status }}">{{ $statusLabels[$row->status] ?? $row->status }}</span></td>
+              <td data-label="Times Seen"><strong>{{ $row->times_asked }}&times;</strong></td>
+              <td data-label="First Seen">{{ $row->first_seen_at?->format('M j, Y') }}</td>
+              <td data-label="Last Seen">{{ $row->last_seen_at?->format('M j, Y') }}</td>
+              <td data-label="Status"><span class="ir-status ir-status--{{ $row->status }}">@titlecase($statusLabels[$row->status] ?? $row->status)</span></td>
               <td data-label="Actions">
                 <div class="ir-actions">
                   @if($row->status !== 'dismissed')
-                    <button type="button" class="lp-btn lp-btn--primary lp-btn--chip" data-lp-modal-open="ir-answer-{{ $row->id }}">{{ $row->answer ? 'Edit answer' : 'Write answer' }}</button>
+                    <button type="button" class="lp-btn lp-btn--primary lp-btn--chip" data-lp-modal-open="ir-answer-{{ $row->id }}">{{ $row->answer ? 'Edit Answer' : 'Write Answer' }}</button>
                   @endif
                   @if($canOption)
                     @if($row->status !== 'added_as_option')
-                      <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" data-lp-modal-open="ir-option-{{ $row->id }}">Add as option</button>
+                      <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" data-lp-modal-open="ir-option-{{ $row->id }}">Add as Option</button>
                     @endif
                   @endif
                   @if($row->status === 'dismissed')
-                    <form method="POST" action="{{ route('admin.ideas.undo', $row->id) }}">@csrf<button type="submit" class="lp-btn lp-btn--secondary lp-btn--chip">Undo dismiss</button></form>
+                    <form method="POST" action="{{ route('admin.ideas.undo', $row->id) }}">@csrf<button type="submit" class="lp-btn lp-btn--secondary lp-btn--chip">Undo Dismiss</button></form>
                   @else
                     <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" data-lp-modal-open="ir-dismiss-{{ $row->id }}">Dismiss</button>
                   @endif
@@ -133,12 +133,12 @@
       </form>
       <x-slot:footer>
         <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Cancel</button>
-        <button type="submit" form="ir-answer-form-{{ $row->id }}" class="lp-btn lp-btn--primary" data-lp-confirm>Save answer</button>
+        <button type="submit" form="ir-answer-form-{{ $row->id }}" class="lp-btn lp-btn--primary" data-lp-confirm>Save Answer</button>
       </x-slot:footer>
     </x-modal>
 
     @if($row->kind !== 'wood' && $row->status !== 'dismissed' && $row->status !== 'added_as_option')
-      <x-modal id="ir-option-{{ $row->id }}" title="Add “{{ $row->text }}” as an option">
+      <x-modal id="ir-option-{{ $row->id }}" title="Add “{{ $row->text }}” as an Option">
         <form method="POST" action="{{ route('admin.ideas.option', $row->id) }}" id="ir-option-form-{{ $row->id }}" class="ir-form" data-ir-option>
           @csrf
           @if($row->kind === 'furniture_type')
@@ -146,24 +146,24 @@
             <input type="text" id="ir-w-{{ $row->id }}" name="wording" class="form-input" value="{{ $row->text }}" maxlength="{{ \App\Models\ExtraFurnitureType::NAME_MAX }}" required/>
             <p class="ir-hint">It appears as a chip in the &ldquo;Something else&rdquo; box. The customer's request is still saved as &ldquo;Something else&rdquo; with this text.</p>
           @else
-            <label for="ir-s-{{ $row->id }}">Belongs to</label>
+            <label for="ir-s-{{ $row->id }}">Belongs To</label>
             <select id="ir-s-{{ $row->id }}" name="scope" class="form-input" data-ir-scope required>
               <option value="type">A furniture type</option>
               <option value="style">A style</option>
             </select>
-            <label for="ir-k-{{ $row->id }}">Which one</label>
+            <label for="ir-k-{{ $row->id }}">Which One</label>
             <select id="ir-k-{{ $row->id }}" name="key" class="form-input" data-ir-key required
                     data-types='@json(array_keys($typeChoices))' data-styles='@json($styles)'>
               @foreach(array_keys($typeChoices) as $t)<option value="{{ $t }}">{{ $typeChoices[$t] }}</option>@endforeach
             </select>
-            <label for="ir-w-{{ $row->id }}">Wording of the quick idea</label>
+            <label for="ir-w-{{ $row->id }}">Wording of the Quick Idea</label>
             <input type="text" id="ir-w-{{ $row->id }}" name="wording" class="form-input" value="{{ $row->text }}" maxlength="{{ \App\Support\IdeaText::IDEA_MAX }}" required/>
             <p class="ir-hint">Shown as a tap-to-add chip, so keep it short, like &ldquo;glass top&rdquo;.</p>
           @endif
         </form>
         <x-slot:footer>
           <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Cancel</button>
-          <button type="submit" form="ir-option-form-{{ $row->id }}" class="lp-btn lp-btn--primary" data-lp-confirm>Add option</button>
+          <button type="submit" form="ir-option-form-{{ $row->id }}" class="lp-btn lp-btn--primary" data-lp-confirm>Add Option</button>
         </x-slot:footer>
       </x-modal>
     @endif
@@ -173,7 +173,7 @@
         <p>It stops counting as new and customers see nothing for it. You can undo this.</p>
         <form method="POST" action="{{ route('admin.ideas.dismiss', $row->id) }}" id="ir-dismiss-form-{{ $row->id }}">@csrf</form>
         <x-slot:footer>
-          <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+          <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
           <button type="submit" form="ir-dismiss-form-{{ $row->id }}" class="lp-btn lp-btn--primary" data-lp-confirm>Dismiss</button>
         </x-slot:footer>
       </x-modal>
@@ -183,8 +183,8 @@
       <p>This removes it and its count for good. If a customer types it again it starts over as new. This cannot be undone.</p>
       <form method="POST" action="{{ route('admin.ideas.delete', $row->id) }}" id="ir-delete-form-{{ $row->id }}">@csrf</form>
       <x-slot:footer>
-        <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
-        <button type="submit" form="ir-delete-form-{{ $row->id }}" class="lp-btn lp-btn--danger" data-lp-confirm>Delete for good</button>
+        <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
+        <button type="submit" form="ir-delete-form-{{ $row->id }}" class="lp-btn lp-btn--danger" data-lp-confirm>Delete for Good</button>
       </x-slot:footer>
     </x-modal>
   @endforeach

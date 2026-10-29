@@ -23,10 +23,10 @@
 
 <div class="admin-panel">
   <div class="admin-panel-header">
-    <div class="admin-panel-title">Your notifications</div>
+    <div class="admin-panel-title">Your Notifications</div>
     <form method="POST" action="{{ route('admin.notifications.readAll') }}">
       @csrf
-      <button type="submit" class="lp-btn lp-btn--secondary">Mark all as read</button>
+      <button type="submit" class="lp-btn lp-btn--secondary">Mark All as Read</button>
     </form>
   </div>
   <div class="admin-panel-body" style="padding:0;">
@@ -50,11 +50,11 @@
                 @unless($n->is_read)
                   <form method="POST" action="{{ route('admin.notifications.read', $n->id) }}">
                     @csrf
-                    <button type="submit" class="lp-btn lp-btn--secondary" aria-label="Mark read: {{ $n->title }}">Mark read</button>
+                    <button type="submit" class="lp-btn lp-btn--secondary" aria-label="Mark read: {{ $n->title }}">Mark Read</button>
                   </form>
                 @endunless
                 @if($n->url)
-                  <a href="{{ $n->url }}" class="lp-btn lp-btn--primary" aria-label="Open notification: {{ $n->title }}">Open notification</a>
+                  <a href="{{ $n->url }}" class="lp-btn lp-btn--primary" aria-label="Open notification: {{ $n->title }}">Open Notification</a>
                 @endif
               </td>
             </tr>

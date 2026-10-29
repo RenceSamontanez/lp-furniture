@@ -32,7 +32,7 @@
   ];
 @endphp
 
-<a href="{{ route('admin.custom-orders.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">← Back to Custom Orders</a>
+<a href="{{ route('admin.custom-orders.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">Back to Custom Orders</a>
 
 @if($errors->any())
   <div class="co-error" role="alert">{{ $errors->has('pipeline') ? $errors->first('pipeline') : $errors->first() }}</div>
@@ -64,13 +64,13 @@
               @if(blank($r->furniture_type))
                 <form method="POST" action="{{ route('admin.custom-orders.furniture-type', $r->id) }}" class="co-type-form">
                   @csrf
-                  <label class="co-block-label" for="co-type-set">Set the type (older request)</label>
+                  <label class="co-block-label" for="co-type-set">Set the Type (Older Request)</label>
                   <select name="furniture_type" id="co-type-set" class="form-input" required>
                     <option value="">Choose</option>
                     @foreach(\App\Support\FurnitureTypes::LIST as $t)<option value="{{ $t }}">{{ $t }}</option>@endforeach
                   </select>
                   <input type="text" name="furniture_type_other" class="form-input" maxlength="{{ \App\Support\FurnitureTypes::OTHER_MAX }}" placeholder="If Other, describe it"/>
-                  <button type="submit" class="admin-btn admin-btn-outline">Save type</button>
+                  <button type="submit" class="admin-btn admin-btn-outline">Save Type</button>
                 </form>
               @endif
             </dd>
@@ -104,7 +104,7 @@
     {{-- Quote versions --}}
     @if($quotes->isNotEmpty())
       <div class="admin-panel">
-        <div class="admin-panel-header"><div class="admin-panel-title">Quote versions</div></div>
+        <div class="admin-panel-header"><div class="admin-panel-title">Quote Versions</div></div>
         <div class="admin-panel-body" style="padding:0;">
           <table class="admin-table">
             <thead><tr><th>Version</th><th>Status</th><th>Price</th><th>Total</th><th>Sent</th><th>Expires</th></tr></thead>
@@ -112,7 +112,7 @@
               @foreach($quotes as $q)
                 <tr>
                   <td data-label="Version">v{{ $q->version }}</td>
-                  <td data-label="Status"><span class="co-chip co-quote-chip--{{ $q->status }}">{{ ucfirst($q->status) }}</span></td>
+                  <td data-label="Status"><span class="co-chip co-quote-chip--{{ $q->status }}">@titlecase($q->status)</span></td>
                   <td data-label="Price">
                     ₱{{ number_format($q->price, 2) }}
                     @if($q->previous_price !== null && (float) $q->previous_price !== (float) $q->price)
@@ -149,8 +149,8 @@
         <div class="admin-panel-header">
           <div class="admin-panel-title">Order {{ $order->order_number }}</div>
           <span style="display:flex;gap:6px;">
-            <span class="admin-pill {{ $order->order_status }}">{{ str_replace('_', ' ', $order->order_status) }}</span>
-            @if($order->isOverdueUnpaid())<span class="admin-pill rejected">Overdue, unpaid</span>@endif
+            <span class="admin-pill {{ $order->order_status }}">@titlecase(str_replace('_', ' ', $order->order_status))</span>
+            @if($order->isOverdueUnpaid())<span class="admin-pill rejected">Overdue, Unpaid</span>@endif
           </span>
         </div>
         <div class="admin-panel-body">
@@ -158,7 +158,7 @@
             <div><dt>Paid</dt><dd>₱{{ number_format($order->amount_paid, 2) }} of ₱{{ number_format($order->total_amount, 2) }}</dd></div>
             <div><dt>Expected ready</dt><dd>{{ $order->expected_ready_date ? 'about ' . \Illuminate\Support\Carbon::parse($order->expected_ready_date)->format('M d, Y') : '—' }}</dd></div>
           </dl>
-          <a href="{{ route('admin.orders.show', $order->id) }}" class="admin-btn admin-btn-gold" style="margin-top:12px;">Open order, ledger and status</a>
+          <a href="{{ route('admin.orders.show', $order->id) }}" class="admin-btn admin-btn-gold" style="margin-top:12px;">Open Order, Ledger and Status</a>
         </div>
       </div>
     @endif
@@ -169,9 +169,9 @@
         <div class="admin-panel-header">
           <div class="admin-panel-title">Agreement {{ $agreement->agreement_number }}</div>
           @if($hashOk)
-            <span class="co-chip co-chip--accepted">Hash verified</span>
+            <span class="co-chip co-chip--accepted">Hash Verified</span>
           @else
-            <span class="co-chip co-chip--cancelled">Hash mismatch</span>
+            <span class="co-chip co-chip--cancelled">Hash Mismatch</span>
           @endif
         </div>
         <div class="admin-panel-body">
@@ -186,8 +186,8 @@
           </dl>
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
             @if($hashOk)
-              <a href="{{ route('admin.agreements.show', $agreement->id) }}" class="admin-btn admin-btn-outline">View agreement</a>
-              <a href="{{ route('admin.agreements.print', $agreement->id) }}" class="admin-btn admin-btn-gold" target="_blank" rel="noopener">Print view</a>
+              <a href="{{ route('admin.agreements.show', $agreement->id) }}" class="admin-btn admin-btn-outline">View Agreement</a>
+              <a href="{{ route('admin.agreements.print', $agreement->id) }}" class="admin-btn admin-btn-gold" target="_blank" rel="noopener">Print View</a>
             @else
               <p class="co-hint">This agreement is blocked until it is investigated.</p>
             @endif
@@ -209,7 +209,7 @@
   <div>
     {{-- Design image and the customer's words, beside the actions --}}
     <div class="admin-panel">
-      <div class="admin-panel-header"><div class="admin-panel-title">Selected design</div></div>
+      <div class="admin-panel-header"><div class="admin-panel-title">Selected Design</div></div>
       <div class="admin-panel-body">
         @php $designImage = $r->previewImageUrl(true); @endphp
         <div class="co-design-summary co-design-summary--stack">
@@ -222,11 +222,11 @@
           <div class="co-noimage">No image generated</div>
         @endif
 
-        <div class="co-block-label">Customer's prompt</div>
+        <div class="co-block-label">Customer's Prompt</div>
         <div class="co-quote">{{ $r->description }}</div>
 
         @if($r->modification_notes)
-          <div class="co-block-label">Customer's customization idea</div>
+          <div class="co-block-label">Customer's Customization Idea</div>
           <div class="co-quote">{{ $r->modification_notes }}</div>
         @endif
         </div>
@@ -236,14 +236,14 @@
     </div>
 
     <div class="admin-panel">
-      <div class="admin-panel-header"><div class="admin-panel-title">This request</div></div>
+      <div class="admin-panel-header"><div class="admin-panel-title">This Request</div></div>
       <div class="admin-panel-body">
         <div class="co-status-row">
           <span class="co-chip co-chip--{{ $r->pipeline_status }}">{{ $labels[$r->pipeline_status] ?? $r->pipeline_status }}</span>
         </div>
 
         <div class="co-lastcall">
-          <div class="co-lastcall-label">Last call update</div>
+          <div class="co-lastcall-label">Last Call Update</div>
           @if($lastCall)
             <div class="co-lastcall-value">
               {{ $lastCall['label'] }}@if($lastCall['attempts']), {{ \App\Support\CallUpdateMessage::times((int) $lastCall['attempts']) }} called @endif
@@ -258,18 +258,18 @@
         </div>
 
         @if($isOpen)
-          <button type="button" class="admin-btn admin-btn-gold co-wide" id="co-open-call">Send call update</button>
+          <button type="button" class="admin-btn admin-btn-gold co-wide" id="co-open-call">Send Call Update</button>
 
           <details class="co-more">
-            <summary>More actions</summary>
+            <summary>More Actions</summary>
             <form method="POST" action="{{ route('admin.custom-orders.decline', $r->id) }}" class="co-action-form"
                   onsubmit="return confirm('Decline this request? The customer will be notified and this cannot be undone.')">
               @csrf
               <input type="hidden" name="lock_version" value="{{ $r->lock_version }}"/>
-              <div class="co-action-title">Decline request</div>
+              <div class="co-action-title">Decline Request</div>
               <textarea name="reason" class="form-input" rows="3" maxlength="1000" required
                         placeholder="Reason (shown to the customer)">{{ old('reason') }}</textarea>
-              <button type="submit" class="admin-btn admin-btn-danger co-wide" data-loading="Declining...">Decline request</button>
+              <button type="submit" class="admin-btn admin-btn-danger co-wide" data-loading="Declining...">Decline Request</button>
             </form>
           </details>
         @else
@@ -283,13 +283,13 @@
           <div class="co-action-title">Quote</div>
           @if($draft)
             <p class="co-hint">Version {{ $draft->version }} is a draft.</p>
-            <a href="{{ route('admin.custom-orders.quotes.confirm', [$r->id, $draft->id]) }}" class="admin-btn admin-btn-gold" style="width:100%;margin-bottom:8px;">Review and send</a>
-            <a href="{{ route('admin.custom-orders.quotes.edit', [$r->id, $draft->id]) }}" class="admin-btn admin-btn-outline" style="width:100%;margin-bottom:8px;">Edit draft</a>
+            <a href="{{ route('admin.custom-orders.quotes.confirm', [$r->id, $draft->id]) }}" class="admin-btn admin-btn-gold" style="width:100%;margin-bottom:8px;">Review and Send</a>
+            <a href="{{ route('admin.custom-orders.quotes.edit', [$r->id, $draft->id]) }}" class="admin-btn admin-btn-outline" style="width:100%;margin-bottom:8px;">Edit Draft</a>
             <form method="POST" action="{{ route('admin.custom-orders.quotes.delete', [$r->id, $draft->id]) }}"
                   onsubmit="return confirm('Delete this draft?')">
               @csrf
               <input type="hidden" name="lock_version" value="{{ $r->lock_version }}"/>
-              <button type="submit" class="admin-btn admin-btn-danger" style="width:100%;">Delete draft</button>
+              <button type="submit" class="admin-btn admin-btn-danger" style="width:100%;">Delete Draft</button>
             </form>
           @elseif(in_array($r->pipeline_status, ['accepted', 'ordered'], true))
             <p class="co-hint">
@@ -297,11 +297,11 @@
             </p>
           @elseif($quoteBlocker)
             <p class="co-hint">{{ $quoteBlocker }}</p>
-            <button type="button" class="admin-btn admin-btn-outline co-btn-disabled" disabled>Create quote</button>
+            <button type="button" class="admin-btn admin-btn-outline co-btn-disabled" disabled>Create Quote</button>
           @else
             @php $hasQuotes = $quotes->isNotEmpty(); @endphp
             <a href="{{ route('admin.custom-orders.quotes.create', $r->id) }}" class="admin-btn admin-btn-gold" style="width:100%;">
-              {{ $hasQuotes ? 'Create new version' : 'Create quote' }}
+              {{ $hasQuotes ? 'Create New Version' : 'Create Quote' }}
             </a>
           @endif
         </div>
@@ -309,7 +309,7 @@
     </div>
 
     <div class="admin-panel">
-      <div class="admin-panel-header"><div class="admin-panel-title">Call log</div></div>
+      <div class="admin-panel-header"><div class="admin-panel-title">Call Log</div></div>
       <div class="admin-panel-body">
         @if($r->callLogs->isEmpty())
           <p class="co-note-closed">No calls logged yet.</p>
@@ -337,7 +337,7 @@
 <div class="co-modal" id="co-call-modal" hidden role="dialog" aria-modal="true" aria-labelledby="co-call-title">
   <div class="co-modal-box">
     <div class="co-modal-head">
-      <h2 id="co-call-title">Send call update</h2>
+      <h2 id="co-call-title">Send Call Update</h2>
       <button type="button" class="co-modal-x" id="co-call-close" aria-label="Close">&times;</button>
     </div>
     <form method="POST" action="{{ route('admin.custom-orders.call-update', $r->id) }}" id="co-call-form">
@@ -352,14 +352,14 @@
       </select>
 
       <div id="co-attempts-wrap">
-        <label class="co-modal-label" for="co-attempts">Call attempts</label>
+        <label class="co-modal-label" for="co-attempts">Call Attempts</label>
         <input type="number" name="attempts" id="co-attempts" class="form-input" min="1" max="20" value="1"/>
       </div>
 
       <label class="co-modal-label" for="co-note">Extra note (optional, added as a separate line)</label>
       <textarea name="note" id="co-note" class="form-input" rows="2" maxlength="500"></textarea>
 
-      <div class="co-modal-label">The customer will receive</div>
+      <div class="co-modal-label">The Customer Will Receive</div>
       <div class="co-preview" aria-live="polite">
         <div class="co-preview-title" id="co-preview-title"></div>
         <div id="co-preview" style="white-space:pre-line;"></div>
@@ -367,7 +367,7 @@
 
       <div class="co-modal-actions">
         <button type="button" class="admin-btn admin-btn-outline" id="co-call-cancel">Cancel</button>
-        <button type="submit" class="admin-btn admin-btn-gold" id="co-call-send" data-loading="Sending...">Send notification</button>
+        <button type="submit" class="admin-btn admin-btn-gold" id="co-call-send" data-loading="Sending...">Send Notification</button>
       </div>
     </form>
   </div>

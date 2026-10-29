@@ -194,7 +194,7 @@ class NotificationTemplatesTest extends TestCase
         }
 
         $html = $this->actingAs($admin, 'admin')->get(route('admin.custom-orders.show', $request->id))->assertOk()
-            ->assertSee('The customer will receive')->assertSee('id="co-preview-title"', false)->getContent();
+            ->assertSee('The Customer Will Receive')->assertSee('id="co-preview-title"', false)->getContent();
         $this->assertStringContainsString('Custom Furniture — Rence', $html);
         $this->assertStringContainsString('0917-555-0100', $html);
     }

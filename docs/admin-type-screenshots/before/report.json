@@ -1,0 +1,4103 @@
+{
+ "tag": "before",
+ "base": "http://127.0.0.1:8012",
+ "pages": {
+  "login@1440": {
+   "url": "/admin/login",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.password-toggle \"Show\"",
+    "button.lp-btn.lp-btn--glass-primary \"Sign in\""
+   ],
+   "offscreen": [],
+   "arrows": [
+    "button.lp-btn.lp-btn--glass-primary \"Sign in\" [icon]",
+    "a.lp-link.lp-link--tap \"Back to main site\" [icon]"
+   ],
+   "lowContrast": [],
+   "buttonContrast": {
+    "count": 2,
+    "failures": []
+   }
+  },
+  "login@1001": {
+   "url": "/admin/login",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.password-toggle \"Show\"",
+    "button.lp-btn.lp-btn--glass-primary \"Sign in\""
+   ],
+   "offscreen": [],
+   "arrows": [
+    "button.lp-btn.lp-btn--glass-primary \"Sign in\" [icon]",
+    "a.lp-link.lp-link--tap \"Back to main site\" [icon]"
+   ],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "login@390": {
+   "url": "/admin/login",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.password-toggle \"Show\"",
+    "button.lp-btn.lp-btn--glass-primary \"Sign in\""
+   ],
+   "offscreen": [],
+   "arrows": [
+    "button.lp-btn.lp-btn--glass-primary \"Sign in\" [icon]",
+    "a.lp-link.lp-link--tap \"Back to main site\" [icon]"
+   ],
+   "lowContrast": [],
+   "buttonContrast": null
+  },
+  "dashboard@1440": {
+   "url": "/admin/dashboard",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [
+    "a.admin-btn.admin-btn-outline \"View All →\"",
+    "a.admin-btn.admin-btn-outline \"View All →\""
+   ],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "th \"Customer\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Email\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Submitted\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Order #\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Total\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Status\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    }
+   ],
+   "buttonContrast": {
+    "count": 10,
+    "failures": []
+   }
+  },
+  "dashboard@1001": {
+   "url": "/admin/dashboard",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [
+    "a.admin-btn.admin-btn-outline \"View All →\"",
+    "a.admin-btn.admin-btn-outline \"View All →\""
+   ],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "th \"Customer\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Email\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Submitted\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Order #\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Total\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Status\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "dashboard@390": {
+   "url": "/admin/dashboard",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [
+    "a.admin-btn.admin-btn-outline \"View All →\"",
+    "a.admin-btn.admin-btn-outline \"View All →\""
+   ],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "orders@1440": {
+   "url": "/admin/orders",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "th \"Order #\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Customer\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Items\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Total\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Status\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    }
+   ],
+   "buttonContrast": {
+    "count": 18,
+    "failures": []
+   }
+  },
+  "orders@1001": {
+   "url": "/admin/orders",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "th \"Order #\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Customer\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Items\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Total\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Status\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "orders@390": {
+   "url": "/admin/orders",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\"",
+    "span.lp-btn.lp-btn--secondary \"Previous\"",
+    "a.lp-btn.lp-btn--secondary \"Next\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "order-view@1440": {
+   "url": "/admin/orders/1",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": {
+    "count": 5,
+    "failures": []
+   }
+  },
+  "order-view@1001": {
+   "url": "/admin/orders/1",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "order-view@390": {
+   "url": "/admin/orders/1",
+   "overflowX": 0,
+   "clipped": [
+    "div.admin-topbar-title \"Order LP-2026-00001\""
+   ],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\"",
+    "button.lp-btn.lp-btn--secondary \"Send update only (stage stays)\"",
+    "button.lp-btn.lp-btn--secondary \"Correct last step\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "products@1440": {
+   "url": "/admin/products",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "th \"Image\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Product\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Category\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Price\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Stock\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Status\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Actions\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "button.admin-btn.admin-btn-danger \"Delete\"",
+     "ratio": 4.36,
+     "need": 4.5,
+     "color": "rgb(192, 57, 43)"
+    }
+   ],
+   "buttonContrast": {
+    "count": 6,
+    "failures": [
+     {
+      "text": "",
+      "cls": "admin-quick-stock-btn",
+      "height": 26,
+      "default": 4.67,
+      "visited": 4.67,
+      "hover": 2.71,
+      "focus": 4.67,
+      "active": 4.67,
+      "min": 2.71,
+      "pass": false
+     },
+     {
+      "text": "Delete",
+      "cls": "admin-btn admin-btn-danger",
+      "height": 36,
+      "default": 4.36,
+      "visited": 4.36,
+      "hover": 3.41,
+      "focus": 4.36,
+      "active": 4.36,
+      "min": 3.41,
+      "pass": false
+     }
+    ]
+   }
+  },
+  "products@1001": {
+   "url": "/admin/products",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "th \"Image\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Product\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Category\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Price\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Stock\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Status\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Actions\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "button.admin-btn.admin-btn-danger \"Delete\"",
+     "ratio": 4.36,
+     "need": 4.5,
+     "color": "rgb(192, 57, 43)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "products@390": {
+   "url": "/admin/products",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "button.admin-btn.admin-btn-danger \"Delete\"",
+     "ratio": 4.36,
+     "need": 4.5,
+     "color": "rgb(192, 57, 43)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "add-product@1440": {
+   "url": "/admin/products/create",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [
+    "a.admin-btn.admin-btn-outline \"← Back to Products\""
+   ],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": {
+    "count": 3,
+    "failures": []
+   }
+  },
+  "add-product@1001": {
+   "url": "/admin/products/create",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [
+    "a.admin-btn.admin-btn-outline \"← Back to Products\""
+   ],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "add-product@390": {
+   "url": "/admin/products/create",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [
+    "a.admin-btn.admin-btn-outline \"← Back to Products\""
+   ],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "customers@1440": {
+   "url": "/admin/customers",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "th \"Name\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Email\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Phone\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Orders\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Total Spent\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Status\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Joined\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    }
+   ],
+   "buttonContrast": {
+    "count": 13,
+    "failures": []
+   }
+  },
+  "customers@1001": {
+   "url": "/admin/customers",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [
+    "table.admin-table \"NameEmailPhoneOrdersTotal SpentStatusJoi\"",
+    "thead \"NameEmailPhoneOrdersTotal SpentStatusJoi\"",
+    "tr \"NameEmailPhoneOrdersTotal SpentStatusJoi\"",
+    "th \"Status\"",
+    "tbody \"Unchecked Customer unvalidated-21j@examp\"",
+    "tr \"Unchecked Customer unvalidated-21j@examp\"",
+    "td \"Unverified\"",
+    "span.admin-pill.pending \"Unverified\"",
+    "tr \"New Customer new.customer@example.test 0\"",
+    "td \"Unverified\"",
+    "span.admin-pill.pending \"Unverified\"",
+    "tr \"Sample Customer C sample.customerc@examp\"",
+    "td \"Verified\"",
+    "span.admin-pill.approved \"Verified\"",
+    "tr \"Sample Customer D sample.customerd@examp\"",
+    "td \"Unverified\"",
+    "span.admin-pill.pending \"Unverified\"",
+    "tr \"Sample Customer F sample.customerf@examp\"",
+    "td \"Unverified\"",
+    "span.admin-pill.pending \"Unverified\"",
+    "tr \"Sample Customer E sample.customere@examp\"",
+    "td \"Unverified\"",
+    "span.admin-pill.pending \"Unverified\"",
+    "tr \"Sample Customer A sample.customera@examp\"",
+    "td \"Verified\"",
+    "span.admin-pill.approved \"Verified\"",
+    "tr \"Sample Customer B sample.customerb@examp\"",
+    "td \"Verified\"",
+    "span.admin-pill.approved \"Verified\"",
+    "tr \"Test User test.user@example.test 0917000\"",
+    "td \"Unverified\"",
+    "span.admin-pill.pending \"Unverified\"",
+    "tr \"Rence Samontanez ot-customer@example.tes\"",
+    "td \"Verified\"",
+    "span.admin-pill.approved \"Verified\"",
+    "tr \"Maria Demo demo-customer-5549eb@example.\"",
+    "td \"Verified\"",
+    "span.admin-pill.approved \"Verified\""
+   ],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "th \"Name\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Email\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Phone\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Orders\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Total Spent\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Status\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Joined\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "customers@390": {
+   "url": "/admin/customers",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "custom-orders@1440": {
+   "url": "/admin/custom-orders",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "th \"Design\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Customer\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Contact\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Call window\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Submitted\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Status\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    }
+   ],
+   "buttonContrast": {
+    "count": 3,
+    "failures": []
+   }
+  },
+  "custom-orders@1001": {
+   "url": "/admin/custom-orders",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [
+    "table.admin-table \"DesignCustomerContactCall windowSubmitte\"",
+    "thead \"DesignCustomerContactCall windowSubmitte\"",
+    "tr \"DesignCustomerContactCall windowSubmitte\"",
+    "th \"Status\"",
+    "tbody \"Custom Furniture — Maria Special woodOwn\"",
+    "tr \"Custom Furniture — Maria Special woodOwn\"",
+    "td \"Submitted\""
+   ],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "th \"Design\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Customer\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Contact\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Call window\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Submitted\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Status\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "custom-orders@390": {
+   "url": "/admin/custom-orders",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "custom-order-view@1440": {
+   "url": "/admin/custom-orders/1",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [
+    "a.admin-btn.admin-btn-outline \"← Back to Custom Orders\""
+   ],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "a \"09171234567\"",
+     "ratio": 4.4,
+     "need": 4.5,
+     "color": "rgb(146, 96, 12)"
+    },
+    {
+     "el": "button.admin-btn.admin-btn-danger \"Decline request\"",
+     "ratio": 4.36,
+     "need": 4.5,
+     "color": "rgb(192, 57, 43)"
+    }
+   ],
+   "buttonContrast": {
+    "count": 7,
+    "failures": [
+     {
+      "text": "",
+      "cls": "admin-btn admin-btn-danger co-wide",
+      "height": 34,
+      "default": 4.36,
+      "visited": 4.36,
+      "hover": 3.41,
+      "focus": 4.36,
+      "active": 4.36,
+      "min": 3.41,
+      "pass": false
+     }
+    ]
+   }
+  },
+  "custom-order-view@1001": {
+   "url": "/admin/custom-orders/1",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [
+    "a.admin-btn.admin-btn-outline \"← Back to Custom Orders\""
+   ],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "a \"09171234567\"",
+     "ratio": 4.4,
+     "need": 4.5,
+     "color": "rgb(146, 96, 12)"
+    },
+    {
+     "el": "button.admin-btn.admin-btn-danger \"Decline request\"",
+     "ratio": 4.36,
+     "need": 4.5,
+     "color": "rgb(192, 57, 43)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "custom-order-view@390": {
+   "url": "/admin/custom-orders/1",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [
+    "a.admin-btn.admin-btn-outline \"← Back to Custom Orders\""
+   ],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "a \"09171234567\"",
+     "ratio": 4.4,
+     "need": 4.5,
+     "color": "rgb(146, 96, 12)"
+    },
+    {
+     "el": "button.admin-btn.admin-btn-danger \"Decline request\"",
+     "ratio": 4.36,
+     "need": 4.5,
+     "color": "rgb(192, 57, 43)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "service-request@1440": {
+   "url": "/admin/service-inquiries/1",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [
+    "a.lp-btn.lp-btn--secondary \"← Back to Other Services\""
+   ],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": {
+    "count": 7,
+    "failures": []
+   }
+  },
+  "service-request@1001": {
+   "url": "/admin/service-inquiries/1",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [
+    "a.lp-btn.lp-btn--secondary \"← Back to Other Services\""
+   ],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "service-request@390": {
+   "url": "/admin/service-inquiries/1",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [
+    "a.lp-btn.lp-btn--secondary \"← Back to Other Services\""
+   ],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "refunds@1440": {
+   "url": "/admin/refund-requests",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link.active \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "th \"Reference\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Customer\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Paid\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Work\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Refund by\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Status\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    }
+   ],
+   "buttonContrast": {
+    "count": 10,
+    "failures": []
+   }
+  },
+  "refunds@1001": {
+   "url": "/admin/refund-requests",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link.active \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\"",
+    "a.lp-btn.lp-btn--secondary \"Open\"",
+    "a.lp-btn.lp-btn--secondary \"Open\"",
+    "a.lp-btn.lp-btn--secondary \"Open\"",
+    "a.lp-btn.lp-btn--secondary \"Open\"",
+    "a.lp-btn.lp-btn--secondary \"Open\"",
+    "a.lp-btn.lp-btn--secondary \"Open\"",
+    "a.lp-btn.lp-btn--secondary \"Open\"",
+    "a.lp-btn.lp-btn--secondary \"Open\""
+   ],
+   "offscreen": [
+    "table.admin-table \"ReferenceCustomerPaidWorkRefund byStatus\"",
+    "thead \"ReferenceCustomerPaidWorkRefund byStatus\"",
+    "tr \"ReferenceCustomerPaidWorkRefund byStatus\"",
+    "tbody \"REF-2026-0008 Oct 29, 2026 07:26 PM Mari\"",
+    "tr \"REF-2026-0008 Oct 29, 2026 07:26 PM Mari\"",
+    "td \"Open\"",
+    "tr \"REF-2026-0007 Oct 29, 2026 07:26 PM Mari\"",
+    "td \"Open\"",
+    "tr.rf-overdue \"REF-2026-0006 Oct 29, 2026 07:26 PM Mari\"",
+    "td \"Open\"",
+    "tr \"REF-2026-0005 Oct 29, 2026 07:26 PM Mari\"",
+    "td \"Open\"",
+    "tr \"REF-2026-0004 Oct 29, 2026 07:26 PM Mari\"",
+    "td \"Open\"",
+    "tr \"REF-2026-0003 Oct 29, 2026 07:26 PM Mari\"",
+    "td \"Open\"",
+    "tr \"REF-2026-0002 Oct 29, 2026 07:26 PM Mari\"",
+    "td \"Open\"",
+    "tr \"REF-2026-0001 Oct 29, 2026 07:26 PM Mari\"",
+    "td \"Open\""
+   ],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "th \"Reference\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Customer\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Paid\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Work\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Refund by\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Status\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "refunds@390": {
+   "url": "/admin/refund-requests",
+   "overflowX": 0,
+   "clipped": [
+    "div.admin-topbar-title \"Cancellations & Refunds\""
+   ],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link.active \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "notifications@1440": {
+   "url": "/admin/notifications",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": {
+    "count": 2,
+    "failures": []
+   }
+  },
+  "notifications@1001": {
+   "url": "/admin/notifications",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "notifications@390": {
+   "url": "/admin/notifications",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "contact-settings@1440": {
+   "url": "/admin/settings/contact",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": {
+    "count": 2,
+    "failures": []
+   }
+  },
+  "contact-settings@1001": {
+   "url": "/admin/settings/contact",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "contact-settings@390": {
+   "url": "/admin/settings/contact",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "luma-unanswered@1440": {
+   "url": "/admin/chatbot",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "th \"Keywords\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Response Preview\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Category\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Status\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Actions\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "button.admin-btn.admin-btn-danger \"Delete\"",
+     "ratio": 4.36,
+     "need": 4.5,
+     "color": "rgb(192, 57, 43)"
+    }
+   ],
+   "buttonContrast": {
+    "count": 9,
+    "failures": [
+     {
+      "text": "Delete",
+      "cls": "admin-btn admin-btn-danger",
+      "height": 34,
+      "default": 4.36,
+      "visited": 4.36,
+      "hover": 3.41,
+      "focus": 4.36,
+      "active": 4.36,
+      "min": 3.41,
+      "pass": false
+     }
+    ]
+   }
+  },
+  "luma-unanswered@1001": {
+   "url": "/admin/chatbot",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "th \"Keywords\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Response Preview\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Category\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Status\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Actions\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "button.admin-btn.admin-btn-danger \"Delete\"",
+     "ratio": 4.36,
+     "need": 4.5,
+     "color": "rgb(192, 57, 43)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "luma-unanswered@390": {
+   "url": "/admin/chatbot",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "button.admin-btn.admin-btn-danger \"Delete\"",
+     "ratio": 4.36,
+     "need": 4.5,
+     "color": "rgb(192, 57, 43)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "system-health@1440": {
+   "url": "/admin/system-health",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "th \"Folder\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Files\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Size\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    }
+   ],
+   "buttonContrast": {
+    "count": 2,
+    "failures": []
+   }
+  },
+  "system-health@1001": {
+   "url": "/admin/system-health",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "a.admin-nav-link \"Identity Validation 2\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "th \"Folder\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Files\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    },
+    {
+     "el": "th \"Size\"",
+     "ratio": 3.83,
+     "need": 4.5,
+     "color": "rgb(138, 123, 108)"
+    }
+   ],
+   "buttonContrast": null
+  },
+  "system-health@390": {
+   "url": "/admin/system-health",
+   "overflowX": 0,
+   "clipped": [],
+   "wrapped": [
+    "button.admin-sidebar-close \"✕\"",
+    "a.admin-nav-link \"Cancellations & Refunds 3\"",
+    "a.admin-nav-link \"Customize Requests 1\""
+   ],
+   "offscreen": [],
+   "arrows": [],
+   "lowContrast": [
+    {
+     "el": "div.admin-nav-group-label \"Overview\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Operations\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Customers\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "span.admin-nav-badge \"2\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"1\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"6\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"13\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "span.admin-nav-badge \"3\"",
+     "ratio": 3.41,
+     "need": 4.5,
+     "color": "rgb(255, 255, 255)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Staff\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+     "el": "div.admin-nav-group-label \"Feedback\"",
+     "ratio": 3.75,
+     "need": 4.5,
+     "color": "rgba(255, 255, 255, 0.4)"
+    }
+   ],
+   "buttonContrast": null
+  }
+ },
+ "styles": {
+  "orders": {
+   "pageTitle": {
+    "family": "Playfair Display",
+    "size": "19px",
+    "weight": "600",
+    "numeric": "normal",
+    "text": "Orders"
+   },
+   "tableHeader": {
+    "family": "DM Sans",
+    "size": "11px",
+    "weight": "700",
+    "numeric": "normal",
+    "text": "Order #"
+   },
+   "tableCell": {
+    "family": "DM Sans",
+    "size": "13.5px",
+    "weight": "500",
+    "numeric": "normal",
+    "text": "LP-UI21J-001"
+   },
+   "number": {
+    "family": "DM Sans",
+    "size": "13.5px",
+    "weight": "500",
+    "numeric": "normal",
+    "text": "₱1,600.00"
+   },
+   "button": {
+    "family": "DM Sans",
+    "size": "12.5px",
+    "weight": "700",
+    "numeric": "normal",
+    "text": "View"
+   },
+   "formLabel": null,
+   "sidebarItem": {
+    "family": "DM Sans",
+    "size": "14px",
+    "weight": "600",
+    "numeric": "normal",
+    "text": "Dashboard"
+   },
+   "panelTitle": null
+  },
+  "order-view": {
+   "pageTitle": {
+    "family": "Playfair Display",
+    "size": "19px",
+    "weight": "600",
+    "numeric": "normal",
+    "text": "Order LP-2026-00001"
+   },
+   "tableHeader": null,
+   "tableCell": null,
+   "number": null,
+   "button": {
+    "family": "DM Sans",
+    "size": "14px",
+    "weight": "600",
+    "numeric": "normal",
+    "text": "Add a photo"
+   },
+   "formLabel": {
+    "family": "DM Sans",
+    "size": "14px",
+    "weight": "500",
+    "numeric": "normal",
+    "text": "Message to the customer (optio"
+   },
+   "sidebarItem": {
+    "family": "DM Sans",
+    "size": "14px",
+    "weight": "600",
+    "numeric": "normal",
+    "text": "Dashboard"
+   },
+   "panelTitle": null
+  },
+  "add-product": {
+   "pageTitle": {
+    "family": "Playfair Display",
+    "size": "19px",
+    "weight": "600",
+    "numeric": "normal",
+    "text": "Add Product"
+   },
+   "tableHeader": null,
+   "tableCell": null,
+   "number": null,
+   "button": {
+    "family": "DM Sans",
+    "size": "12.5px",
+    "weight": "700",
+    "numeric": "normal",
+    "text": "← Back to Products"
+   },
+   "formLabel": {
+    "family": "DM Sans",
+    "size": "13px",
+    "weight": "500",
+    "numeric": "normal",
+    "text": "Product Name"
+   },
+   "sidebarItem": {
+    "family": "DM Sans",
+    "size": "14px",
+    "weight": "600",
+    "numeric": "normal",
+    "text": "Dashboard"
+   },
+   "panelTitle": {
+    "family": "Playfair Display",
+    "size": "16px",
+    "weight": "700",
+    "numeric": "normal",
+    "text": "Product Details"
+   }
+  }
+ }
+}

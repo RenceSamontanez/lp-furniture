@@ -64,7 +64,7 @@
               <td data-label="Threshold">{{ $material->low_stock_threshold }} {{ $material->unit }}</td>
               <td data-label="Status">
                 <span class="admin-pill {{ $material->inventory_status === 'in_stock' ? 'approved' : ($material->inventory_status === 'low_stock' ? 'pending' : 'rejected') }}">
-                  {{ str_replace('_',' ',$material->inventory_status) }}
+                  @titlecase(str_replace('_',' ',$material->inventory_status))
                 </span>
               </td>
               <td data-label="Last Updated">{{ \Carbon\Carbon::parse($material->last_updated)->diffForHumans() }}</td>

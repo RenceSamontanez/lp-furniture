@@ -263,7 +263,7 @@ class LumaMatchingTest extends TestCase
 
         // the admin list groups the repeats of one normalised question (see LumaUnansweredQuestionsTest for the details)
         $page = $this->actingAs($this->makeUser('admin'), 'admin')->get(route('admin.chatbot.index'));
-        $page->assertOk()->assertSee('Questions Luma could not answer')->assertSee('Do you make boats?')->assertSee('Asked 2 times');
+        $page->assertOk()->assertSee('Questions Luma Could Not Answer')->assertSee('Do you make boats?')->assertSee('Asked 2 times');
         $page->assertDontSee('Asked 1 time');   // 'hello' was answered, so it is not in the list
     }
 

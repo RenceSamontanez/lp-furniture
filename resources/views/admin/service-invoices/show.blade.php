@@ -17,7 +17,7 @@
 @endphp
 <div class="co-page">
 
-<a href="{{ route('admin.service-inquiries.show', $ticket->id) }}" class="lp-btn lp-btn--secondary" style="margin-bottom:20px;">← Back to ticket {{ $ticket->reference_number }}</a>
+<a href="{{ route('admin.service-inquiries.show', $ticket->id) }}" class="lp-btn lp-btn--secondary" style="margin-bottom:20px;">Back to Ticket {{ $ticket->reference_number }}</a>
 
 @if($errors->any())
   <div class="co-error" role="alert">{{ $errors->has('invoice') ? $errors->first('invoice') : $errors->first() }}</div>
@@ -30,7 +30,7 @@
 @elseif($openRequest)
   <x-notice variant="blocked" title="On hold: cancellation requested">
     Request {{ $openRequest->reference }} is {{ strtolower($openRequest->statusLabel()) }}. Payments are paused until it is decided.
-    <x-slot:actions><a href="{{ route('admin.refunds.show', $openRequest->id) }}" class="lp-btn lp-btn--primary">Open the request</a></x-slot:actions>
+    <x-slot:actions><a href="{{ route('admin.refunds.show', $openRequest->id) }}" class="lp-btn lp-btn--primary">Open the Request</a></x-slot:actions>
   </x-notice>
 @elseif($work === 'started' || $work === 'done')
   <x-notice variant="info" title="{{ $work === 'done' ? 'Service done' : 'Work started' }}">
@@ -42,7 +42,7 @@
     <div class="admin-panel">
       <div class="admin-panel-header">
         <div class="admin-panel-title">{{ $i->invoice_number ?: 'Draft invoice #' . $i->id }}</div>
-        <span class="co-chip inv-status--{{ $i->status }}">{{ $i->statusLabel() }}</span>
+        <span class="co-chip inv-status--{{ $i->status }}">@titlecase($i->statusLabel())</span>
       </div>
       <div class="admin-panel-body">
         <dl class="co-dl">
@@ -77,7 +77,7 @@
         </table>
 
         @if($i->notes)
-          <div class="co-block-label">Note on the invoice</div>
+          <div class="co-block-label">Note on the Invoice</div>
           <div class="co-quote si-concern">{{ $i->notes }}</div>
         @endif
       </div>
@@ -88,14 +88,14 @@
     <div class="admin-panel">
       <div class="admin-panel-header"><div class="admin-panel-title">Actions</div></div>
       <div class="admin-panel-body inv-actions">
-        <a href="{{ route('admin.service-invoices.print', $i->id) }}" class="lp-btn lp-btn--secondary lp-btn--block" target="_blank" rel="noopener">Open printable invoice</a>
+        <a href="{{ route('admin.service-invoices.print', $i->id) }}" class="lp-btn lp-btn--secondary lp-btn--block" target="_blank" rel="noopener">Open Printable Invoice</a>
 
         @if($i->status === 'draft')
           <p class="si-hint inv-draft-note">This is a draft. The customer cannot see it. You can edit it as many times as you need.</p>
-          <a href="{{ route('admin.service-invoices.edit', $i->id) }}" class="lp-btn lp-btn--secondary lp-btn--block">Edit draft</a>
-          <button type="button" class="lp-btn lp-btn--primary lp-btn--block" data-open-send>Send to customer</button>
+          <a href="{{ route('admin.service-invoices.edit', $i->id) }}" class="lp-btn lp-btn--secondary lp-btn--block">Edit Draft</a>
+          <button type="button" class="lp-btn lp-btn--primary lp-btn--block" data-open-send>Send to Customer</button>
           <form method="POST" action="{{ route('admin.service-invoices.issue', $i->id) }}" id="inv-send-form">@csrf</form>
-          <button type="button" class="lp-btn lp-btn--danger lp-btn--block inv-delete" data-lp-modal-open="inv-delete-modal">Delete draft</button>
+          <button type="button" class="lp-btn lp-btn--danger lp-btn--block inv-delete" data-lp-modal-open="inv-delete-modal">Delete Draft</button>
           <p class="si-hint">Sending gives the invoice its number{{ $i->user_id ? ' and notifies the customer' : '' }}.</p>
         @endif
 
@@ -107,10 +107,10 @@
           @if($i->hasPayment())
             <x-notice variant="blocked" title="This invoice has a payment on it">
               Open a cancellation request so the refund is recorded.
-              <x-slot:actions><a href="{{ route('admin.service-inquiries.show', $ticket->id) }}#cancellation-request" class="lp-btn lp-btn--primary">Open a cancellation request</a></x-slot:actions>
+              <x-slot:actions><a href="{{ route('admin.service-inquiries.show', $ticket->id) }}#cancellation-request" class="lp-btn lp-btn--primary">Open a Cancellation Request</a></x-slot:actions>
             </x-notice>
           @else
-            <button type="button" class="lp-btn lp-btn--danger lp-btn--block inv-delete" id="inv-open-cancel">Cancel invoice</button>
+            <button type="button" class="lp-btn lp-btn--danger lp-btn--block inv-delete" id="inv-open-cancel">Cancel Invoice</button>
           @endif
         @endif
 
@@ -133,7 +133,7 @@
 <div class="admin-panel inv-pay-panel" id="payments">
   <div class="admin-panel-header">
     <div class="admin-panel-title">Payments</div>
-    <span class="co-chip inv-pay--{{ strtolower(str_replace(' ', '-', $i->paymentStateLabel())) }}">{{ $i->paymentStateLabel() }}</span>
+    <span class="co-chip inv-pay--{{ strtolower(str_replace(' ', '-', $i->paymentStateLabel())) }}">@titlecase($i->paymentStateLabel())</span>
   </div>
   <div class="admin-panel-body">
     <dl class="co-dl">
@@ -160,7 +160,7 @@
     </table>
 
     @if($i->payments->isNotEmpty())
-      <div class="co-block-label">Payment records</div>
+      <div class="co-block-label">Payment Records</div>
       <table class="inv-table">
         <thead><tr><th>When</th><th>How</th><th>Amount</th><th>Status</th></tr></thead>
         <tbody>
@@ -169,7 +169,7 @@
               <td>{{ $when($p->paid_at ?? $p->created_at) }}</td>
               <td>{{ $p->methodLabel() }}@if(count($slots) > 1) · {{ $p->installment === 1 ? 'first half' : 'remaining' }}@endif @if($p->recorder)<span class="inv-kind">recorded by {{ $p->recorder->first_name }}</span>@endif</td>
               <td>{{ $peso($p->amount) }}</td>
-              <td>{{ ucfirst($p->status) }}@if($p->note)<span class="inv-kind">{{ $p->note }}</span>@endif</td>
+              <td>@titlecase($p->status)@if($p->note)<span class="inv-kind">{{ $p->note }}</span>@endif</td>
             </tr>
           @endforeach
         </tbody>
@@ -178,17 +178,17 @@
 
     @if($i->status === 'paid' && !$i->service_done_at)
       <div class="inv-pay-actions">
-        <button type="button" class="lp-btn lp-btn--primary" data-lp-modal-open="inv-done-modal">Service done</button>
+        <button type="button" class="lp-btn lp-btn--primary" data-lp-modal-open="inv-done-modal">Service Done</button>
       </div>
     @endif
 
     @if($i->status === 'issued')
       <div class="inv-pay-actions">
         @if(!$i->service_done_at)
-          <button type="button" class="lp-btn lp-btn--primary" data-lp-modal-open="inv-done-modal">Service done</button>
+          <button type="button" class="lp-btn lp-btn--primary" data-lp-modal-open="inv-done-modal">Service Done</button>
         @endif
         @if($due['installment'] !== null)
-          <button type="button" class="lp-btn lp-btn--secondary" id="inv-open-cash" @disabled(!$due['available'])>Record cash payment</button>
+          <button type="button" class="lp-btn lp-btn--secondary" id="inv-open-cash" @disabled(!$due['available'])>Record Cash Payment</button>
         @endif
       </div>
       @if($due['installment'] !== null && !$due['available'])
@@ -197,7 +197,7 @@
     @endif
 
     @if($i->refundNotes->isNotEmpty())
-      <div class="co-block-label" style="margin-top:22px;">Earlier refund notes</div>
+      <div class="co-block-label" style="margin-top:22px;">Earlier Refund Notes</div>
       <p class="si-hint">Read only. These were written before cancellations and refunds had their own screen.</p>
       <ul class="inv-refunds">
         @foreach($i->refundNotes as $r)
@@ -207,7 +207,7 @@
     @endif
 
     @foreach($i->refundRequests as $rr)
-      <div class="co-block-label" style="margin-top:22px;">Cancellation request</div>
+      <div class="co-block-label" style="margin-top:22px;">Cancellation Request</div>
       <p class="si-hint"><a href="{{ route('admin.refunds.show', $rr->id) }}" class="lp-link">{{ $rr->reference }}</a> · {{ $rr->statusLabel() }}</p>
     @endforeach
   </div>
@@ -218,18 +218,18 @@
 <div class="co-modal" id="inv-cash-modal" hidden role="dialog" aria-modal="true" aria-labelledby="inv-cash-title">
   <div class="co-modal-box">
     <div class="co-modal-head">
-      <h2 id="inv-cash-title">Record cash payment</h2>
+      <h2 id="inv-cash-title">Record Cash Payment</h2>
       <button type="button" class="co-modal-x" data-close-cash aria-label="Close">&times;</button>
     </div>
     <form method="POST" action="{{ route('admin.service-invoices.cash', $i->id) }}">
       @csrf
       <p class="inv-confirm-text">This records cash taken in person for <strong>{{ $due['label'] === 'Pay in full' ? 'the full amount' : strtolower(str_replace('Pay ', '', $due['label'])) }}</strong>. The amount must be exactly <strong>{{ $peso($due['cents'] / 100) }}</strong>.</p>
-      <label class="co-modal-label" for="inv-cash-amount">Cash received (₱)</label>
+      <label class="co-modal-label" for="inv-cash-amount">Cash Received (₱)</label>
       <input type="text" inputmode="decimal" name="amount" id="inv-cash-amount" class="form-input inv-money" required value="{{ old('amount', number_format($due['cents'] / 100, 2, '.', '')) }}"/>
       <label class="inv-check"><input type="checkbox" name="confirm" value="1" required/> I received this cash in person.</label>
       <div class="co-modal-actions">
-        <button type="button" class="lp-btn lp-btn--secondary" data-close-cash>Go back</button>
-        <button type="submit" class="lp-btn lp-btn--primary" data-loading="Saving...">Record cash payment</button>
+        <button type="button" class="lp-btn lp-btn--secondary" data-close-cash>Go Back</button>
+        <button type="submit" class="lp-btn lp-btn--primary" data-loading="Saving...">Record Cash Payment</button>
       </div>
     </form>
   </div>
@@ -240,7 +240,7 @@
 <div class="co-modal" id="inv-cancel-modal" hidden role="alertdialog" aria-modal="true" aria-labelledby="inv-cancel-title" aria-describedby="inv-cancel-text">
   <div class="co-modal-box">
     <div class="co-modal-head">
-      <h2 id="inv-cancel-title">Cancel invoice</h2>
+      <h2 id="inv-cancel-title">Cancel Invoice</h2>
       <button type="button" class="co-modal-x" data-close-cancel aria-label="Close">&times;</button>
     </div>
     <form method="POST" action="{{ route('admin.service-invoices.void', $i->id) }}">
@@ -251,8 +251,8 @@
                 placeholder="e.g. Wrong amount. A new invoice will be sent." aria-describedby="inv-cancel-help">{{ old('reason') }}</textarea>
       <p class="si-hint" id="inv-cancel-help" style="margin:6px 0 0;">The customer will see this reason.</p>
       <div class="co-modal-actions">
-        <button type="button" class="lp-btn lp-btn--secondary" data-close-cancel>Go back</button>
-        <button type="submit" class="lp-btn lp-btn--danger" data-loading="Cancelling...">Cancel invoice</button>
+        <button type="button" class="lp-btn lp-btn--secondary" data-close-cancel>Go Back</button>
+        <button type="submit" class="lp-btn lp-btn--danger" data-loading="Cancelling...">Cancel Invoice</button>
       </div>
     </form>
   </div>
@@ -263,21 +263,21 @@
 @endif
 
 @if($i->status === 'draft')
-<x-modal id="inv-delete-modal" title="Delete this draft?">
+<x-modal id="inv-delete-modal" title="Delete This Draft?">
   <p>Drafts have no invoice number, so nothing is lost from the numbering.</p>
   <x-slot:footer>
-    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
-    <button type="submit" form="inv-delete-form" class="lp-btn lp-btn--danger" data-lp-confirm>Delete draft</button>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
+    <button type="submit" form="inv-delete-form" class="lp-btn lp-btn--danger" data-lp-confirm>Delete Draft</button>
   </x-slot:footer>
 </x-modal>
 <form method="POST" action="{{ route('admin.service-invoices.delete', $i->id) }}" id="inv-delete-form">@csrf</form>
 @endif
 @if(in_array($i->status, ['issued', 'paid'], true) && !$i->service_done_at)
-<x-modal id="inv-done-modal" title="Mark the service as done?">
+<x-modal id="inv-done-modal" title="Mark the Service as Done?">
   <p>{{ $i->isHalfHalf() && $i->balanceCents() > 0 ? 'The customer will be told the remaining balance of ' . \App\Support\ServiceInvoiceDesk::peso($i->balanceCents() / 100) . ' is now due.' : 'This is recorded on the ticket.' }}</p>
   <x-slot:footer>
-    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
-    <button type="submit" form="inv-done-form" class="lp-btn lp-btn--primary" data-lp-confirm>Mark service done</button>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
+    <button type="submit" form="inv-done-form" class="lp-btn lp-btn--primary" data-lp-confirm>Mark Service Done</button>
   </x-slot:footer>
 </x-modal>
 <form method="POST" action="{{ route('admin.service-invoices.service-done', $i->id) }}" id="inv-done-form">@csrf</form>

@@ -11,8 +11,8 @@
 @section('content')
 <div class="co-page">
 <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
-  <a href="{{ route('admin.custom-orders.show', $agreement->request_id) }}" class="admin-btn admin-btn-outline">← Back to Custom Order</a>
-  <a href="{{ route('admin.agreements.print', $agreement->id) }}" class="admin-btn admin-btn-gold" target="_blank" rel="noopener">Print view</a>
+  <a href="{{ route('admin.custom-orders.show', $agreement->request_id) }}" class="admin-btn admin-btn-outline">Back to Custom Order</a>
+  <a href="{{ route('admin.agreements.print', $agreement->id) }}" class="admin-btn admin-btn-gold" target="_blank" rel="noopener">Print View</a>
 </div>
 
 <div class="admin-panel">

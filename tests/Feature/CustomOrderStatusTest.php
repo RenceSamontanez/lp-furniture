@@ -280,7 +280,7 @@ class CustomOrderStatusTest extends TestCase
         $order = $this->catalog('pending');
 
         $page = $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))->assertOk();
-        $page->assertDontSee('name="order_status"', false)->assertSee('Update progress')->assertDontSee('Customized Order');
+        $page->assertDontSee('name="order_status"', false)->assertSee('Update Progress')->assertDontSee('Customized Order');
 
         // the old route refuses a catalog order whatever status is posted
         foreach (['completed', 'cancelled', 'confirmed'] as $s) {
@@ -321,7 +321,7 @@ class CustomOrderStatusTest extends TestCase
             ->assertSee(route('admin.agreements.show', $order->design_agreement_id), false)
             ->assertSee(route('admin.custom-orders.show', $order->design_request_id), false)
             ->assertSee('about Nov 20, 2026')
-            ->assertSee('Record payment');   // the ledger panel works for these orders
+            ->assertSee('Record Payment');   // the ledger panel works for these orders
 
         $this->actingAs($admin, 'admin')->get(route('admin.custom-orders.show', $order->design_request_id))
             ->assertOk()->assertSee($order->order_number)->assertSee(route('admin.orders.show', $order->id), false);
@@ -332,12 +332,12 @@ class CustomOrderStatusTest extends TestCase
         $admin = $this->admin();
         $order = $this->customized('pending', false);
 
-        $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))->assertOk()->assertDontSee('Overdue, unpaid');
+        $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))->assertOk()->assertDontSee('Overdue, Unpaid');
 
         CustomDesignRequest::find($order->design_request_id)->forceFill(['payment_due_at' => now()->subHour()])->save();
 
-        $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))->assertOk()->assertSee('Overdue, unpaid');
-        $this->actingAs($admin, 'admin')->get(route('admin.orders.index'))->assertOk()->assertSee('Overdue, unpaid');
+        $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))->assertOk()->assertSee('Overdue, Unpaid');
+        $this->actingAs($admin, 'admin')->get(route('admin.orders.index'))->assertOk()->assertSee('Overdue, Unpaid');
         $this->assertSame('pending', $order->fresh()->order_status, 'never cancelled automatically');
 
         // once something is paid it is no longer overdue-unpaid

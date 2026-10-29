@@ -311,7 +311,7 @@ class ProductExtraPhotosTest extends TestCase
 
         $this->extra($bare, 2);
         $this->actingAs($admin, 'admin')->get(route('admin.products.edit', $bare->id))->assertOk()
-            ->assertSee('4 more allowed')->assertSee('Remove photo');
+            ->assertSee('4 more allowed')->assertSee('Remove Photo');
         $this->actingAs($admin, 'admin')->get(route('admin.products.index'))->assertOk();
     }
 

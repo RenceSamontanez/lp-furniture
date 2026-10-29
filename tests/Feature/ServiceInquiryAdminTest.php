@@ -51,7 +51,7 @@ class ServiceInquiryAdminTest extends TestCase
 
         $res = $this->actingAs($admin, 'admin')->get(route('admin.service-inquiries.index'))->assertOk();
         $res->assertSee('Other Services')->assertSee($a->reference_number)->assertSee('Anna Reyes')
-            ->assertSee($b->reference_number)->assertSee('All tickets');
+            ->assertSee($b->reference_number)->assertSee('All Tickets');
         $res->assertSee('admin-nav-badge', false); // one new ticket
     }
 
@@ -95,7 +95,7 @@ class ServiceInquiryAdminTest extends TestCase
         $this->actingAs($admin, 'admin')->get(route('admin.service-inquiries.show', $t->id))->assertOk()
             ->assertSee($t->reference_number)->assertSee('Juan Dela Cruz')->assertSee('09171234567')
             ->assertSee('Build a table from my own narra planks.')->assertSee('Labor only (I bring my own wood)')
-            ->assertSee('Send call update')->assertSee('Close this ticket');
+            ->assertSee('Send Call Update')->assertSee('Close This Ticket');
 
         $this->get(route('admin.service-inquiries.show', 999999))->assertNotFound();
     }
@@ -186,7 +186,7 @@ class ServiceInquiryAdminTest extends TestCase
             $body = \App\Support\NotificationTemplates::TEMPLATES[$key]['body'];
             $this->assertStringContainsString(substr(json_encode($body), 1, 40), $html);
         }
-        $this->assertStringContainsString('The customer will receive', $html);
+        $this->assertStringContainsString('The Customer Will Receive', $html);
     }
 
     /* ───────────── notes and close ───────────── */
@@ -228,7 +228,7 @@ class ServiceInquiryAdminTest extends TestCase
         $this->post(route('admin.service-inquiries.call-update', $t->id), ['outcome' => 'answered'])->assertSessionHasErrors('ticket');
         $this->post(route('admin.service-inquiries.close', $t->id), ['reason' => 'Again'])->assertSessionHasErrors('ticket');
         $this->assertSame('closed', $t->fresh()->status);
-        $this->get(route('admin.service-inquiries.show', $t->id))->assertSee('This ticket is closed')->assertDontSee('Send call update');
+        $this->get(route('admin.service-inquiries.show', $t->id))->assertSee('This ticket is closed')->assertDontSee('Send Call Update');
     }
 
     /* ───────────── admin-created ticket ───────────── */
@@ -295,7 +295,7 @@ class ServiceInquiryAdminTest extends TestCase
         $customer = $this->makeUser();
         $this->actingAs($admin, 'admin');
 
-        $this->get(route('admin.service-inquiries.create'))->assertOk()->assertSee('Link an existing customer account');
+        $this->get(route('admin.service-inquiries.create'))->assertOk()->assertSee('Link an Existing Customer Account');
 
         $this->post(route('admin.service-inquiries.store'), [
             'service_type' => 'repair', 'concern' => 'Wobbly chair leg, walk-in customer.',

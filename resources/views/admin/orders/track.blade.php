@@ -27,7 +27,7 @@
 <div class="ot" data-ot-admin>
 <div class="ot-wrap">
 
-  <div class="top"><a class="back" href="{{ route('admin.orders.index') }}">&larr; Back to orders</a></div>
+  <div class="top"><a class="back" href="{{ route('admin.orders.index') }}">Back to Orders</a></div>
 
   <section class="glass card" aria-labelledby="ot-h1">
     <div class="head">
@@ -36,11 +36,11 @@
         <div class="meta">{{ $cust->first_name }} {{ $cust->last_name }} &middot; Placed {{ $order->created_at->timezone('Asia/Manila')->format('M j, Y') }} &middot; {{ $pickup ? 'Pickup' : 'Delivery' }}</div>
       </div>
       <div class="badges">
-        @unless($cancelled && $pay['paid'] <= 0)<span class="badge {{ $payBadge }}">{{ $pay['label'] }}</span>@endunless
+        @unless($cancelled && $pay['paid'] <= 0)<span class="badge {{ $payBadge }}">@titlecase($pay['label'])</span>@endunless
         @if($cancelled)
           <span class="badge b-bad">Cancelled</span>
         @else
-          <span class="badge b-stage">{{ OrderStages::labelFor($order) }}</span>
+          <span class="badge b-stage">@titlecase(OrderStages::labelFor($order))</span>
         @endif
       </div>
     </div>
@@ -52,7 +52,7 @@
           @foreach($stages as $i => $key)
             <li class="{{ $i < $idx ? 'done' : ($i === $idx ? 'current' : '') }}" @if($i === $idx) aria-current="step" @endif>
               <span class="dot">{{ $i < $idx ? '✓' : $i + 1 }}</span>
-              <span>{{ OrderStages::label($key, $pickup) }}</span>
+              <span>@titlecase(OrderStages::label($key, $pickup))</span>
             </li>
           @endforeach
         </ol>
@@ -64,15 +64,15 @@
     {{-- ───────── left: history, items, payments ───────── --}}
     <div>
       <section class="glass card" aria-labelledby="ot-hist-t">
-        <h2 id="ot-hist-t">Order history</h2>
+        <h2 id="ot-hist-t">Order History</h2>
         <p class="sub">Everything that happened to this order. Corrections stay here and are never shown to the customer.</p>
         <ul class="hist">
           @foreach($order->events as $e)
             <li>
               <span class="pin {{ $e->type === 'correction' ? 'fix' : (in_array($e->type, ['placed', 'payment'], true) || !$e->admin_user_id ? 'sys' : '') }}"></span>
               <div>
-                <h3>{{ $e->title ?: ucfirst($e->type) }}
-                  @if($e->customer_notified)<span class="tag t-sent">Customer notified</span>@else<span class="tag t-int">Internal only</span>@endif
+                <h3>@titlecase($e->title ?: $e->type)
+                  @if($e->customer_notified)<span class="tag t-sent">Customer Notified</span>@else<span class="tag t-int">Internal Only</span>@endif
                 </h3>
                 <div class="when">{{ $e->created_at->timezone('Asia/Manila')->format('M j, g:i A') }}@if($e->admin) &middot; {{ $e->admin->first_name }} {{ $e->admin->last_name }}@endif</div>
                 @if($e->note)<p class="note">{{ $e->note }}</p>@endif
@@ -84,7 +84,7 @@
       </section>
 
       <section class="glass card" aria-labelledby="ot-items-t">
-        <h2 id="ot-items-t">Order items</h2>
+        <h2 id="ot-items-t">Order Items</h2>
         <div class="scroll">
           <table>
             <thead><tr><th>Product</th><th>Qty</th><th>Price</th><th>Subtotal</th></tr></thead>
@@ -104,11 +104,11 @@
 
       @if($order->needs_review)
         <section class="glass card" aria-labelledby="ot-rev-t">
-          <h2 id="ot-rev-t">Needs review</h2>
+          <h2 id="ot-rev-t">Needs Review</h2>
           <p class="sub">{{ $order->review_reason }}</p>
           <form method="POST" action="{{ route('admin.orders.review', $order->id) }}">
             @csrf
-            <button type="submit" class="lp-btn lp-btn--primary">Mark reviewed</button>
+            <button type="submit" class="lp-btn lp-btn--primary">Mark Reviewed</button>
           </form>
           <p class="hint">Refunds are handled outside the system. Write what was done in the order note.</p>
         </section>
@@ -117,9 +117,9 @@
       @endif
 
       <section class="glass card" aria-labelledby="ot-pay-t">
-        <h2 id="ot-pay-t">Payments received
+        <h2 id="ot-pay-t">Payments Received
           @if($order->payment && $order->payment->payment_method === 'onsite' && $ledger->isEmpty())
-            <span class="badge b-warn" style="font-family:'DM Sans',sans-serif;vertical-align:middle;" title="Cash order with no payment recorded yet">Unrecorded</span>
+            <span class="badge b-warn" style="vertical-align:middle;" title="Cash order with no payment recorded yet">Unrecorded</span>
           @endif
         </h2>
         @if($errors->has('payment'))
@@ -155,7 +155,7 @@
 
         @if($pay['remaining'] > 0 && !$cancelled && $order->payment)
           <hr>
-          <h3 style="font-size:17px;margin-bottom:10px;">Record a payment</h3>
+          <h3 style="font-size:17px;margin-bottom:10px;">Record a Payment</h3>
           <form method="POST" action="{{ route('admin.orders.payments.store', $order->id) }}" id="record-payment-form">
             @csrf
             <input type="hidden" name="form_token" value="{{ $formToken }}"/>
@@ -173,13 +173,13 @@
                 </select>
               </div>
               <div style="flex:1;min-width:130px;">
-                <label for="rp-date">Paid on</label>
+                <label for="rp-date">Paid On</label>
                 <input id="rp-date" name="paid_on" type="date" required max="{{ now('Asia/Manila')->toDateString() }}" value="{{ old('paid_on', now('Asia/Manila')->toDateString()) }}"/>
               </div>
             </div>
             @if($unpaidRows->isNotEmpty())
               <div class="field" style="margin-top:12px;">
-                <label for="rp-inst">Applies to installment (optional)</label>
+                <label for="rp-inst">Applies to Installment (Optional)</label>
                 <select id="rp-inst" name="installment_id">
                   <option value="">Not linked</option>
                   @foreach($unpaidRows as $row)
@@ -189,10 +189,10 @@
               </div>
             @endif
             <div class="field" style="margin-top:12px;">
-              <label for="rp-note">Note (optional)</label>
+              <label for="rp-note">Note (Optional)</label>
               <textarea id="rp-note" name="note" rows="2" maxlength="1000">{{ old('note') }}</textarea>
             </div>
-            <button type="submit" class="lp-btn lp-btn--primary" id="rp-submit">Record payment</button>
+            <button type="submit" class="lp-btn lp-btn--primary" id="rp-submit">Record Payment</button>
           </form>
           <p class="hint">Refunds are not handled in the system. Handle them outside it and write what was done in the order note.</p>
         @elseif($pay['remaining'] <= 0)
@@ -201,30 +201,30 @@
       </section>
 
       @if($order->customization_note)
-        <section class="glass card"><h2>Customer instructions</h2><p class="sub" style="margin:0;white-space:pre-line;">{{ $order->customization_note }}</p></section>
+        <section class="glass card"><h2>Customer Instructions</h2><p class="sub" style="margin:0;white-space:pre-line;">{{ $order->customization_note }}</p></section>
       @endif
       @if($order->notes)
-        <section class="glass card"><h2>Admin notes</h2><p class="sub" style="margin:0;white-space:pre-line;">{{ $order->notes }}</p></section>
+        <section class="glass card"><h2>Admin Notes</h2><p class="sub" style="margin:0;white-space:pre-line;">{{ $order->notes }}</p></section>
       @endif
     </div>
 
     {{-- ───────── right: update card, summary ───────── --}}
     <div class="side">
       <section class="glass card" aria-labelledby="ot-up-t">
-        <h2 id="ot-up-t">Update progress</h2>
+        <h2 id="ot-up-t">Update Progress</h2>
         <p class="sub">This is how you keep the customer informed. Each update reaches their Notifications and email.</p>
 
         @if($cancelled)
           <div class="cancelled-box">This order was cancelled.@if($cancelEvent?->note) Reason: {{ $cancelEvent->note }}@endif</div>
         @else
-          <div class="next"><small>Now</small><strong>{{ OrderStages::labelFor($order) }}</strong></div>
+          <div class="next"><small>Now</small><strong>@titlecase(OrderStages::labelFor($order))</strong></div>
 
           @if($locked)
             <div class="lock"><b>Waiting for payment.</b> The next step unlocks when the customer pays, or when you record a payment below.</div>
           @elseif(!$next)
             <div class="done-box">This order is completed. The customer has been notified.</div>
           @else
-            <div class="next"><small>Next step</small><strong>{{ OrderStages::labelFor($order, $next) }}</strong></div>
+            <div class="next"><small>Next step</small><strong>@titlecase(OrderStages::labelFor($order, $next))</strong></div>
             @if($needsBalance)
               <div class="lock"><b>Balance not paid.</b> ₱{{ number_format($pay['remaining'], 2) }} is still owed. Record it before completing this order.</div>
             @endif
@@ -237,16 +237,16 @@
               <input type="hidden" name="confirmed" id="ot-confirmed" value="0">
 
               <div class="field">
-                <label for="ot-msg">Message to the customer <span style="font-weight:400">(optional)</span><span class="count" id="ot-cnt">0/300</span></label>
+                <label for="ot-msg">Message to the Customer <span style="font-weight:400">(Optional)</span><span class="count" id="ot-cnt">0/300</span></label>
                 <textarea id="ot-msg" name="message" maxlength="300" placeholder="Example: The frame is assembled. Sanding and staining are next.">{{ old('message') }}</textarea>
                 <p class="hint">Shown on their tracking page and in the email.</p>
               </div>
 
               <div class="field">
-                <label for="ot-photo">Progress photo <span style="font-weight:400">(optional)</span></label>
+                <label for="ot-photo">Progress Photo <span style="font-weight:400">(Optional)</span></label>
                 <div class="photo">
                   <span id="ot-thumb"></span>
-                  <button type="button" class="lp-btn lp-btn--secondary" id="ot-add-photo">Add a photo</button>
+                  <button type="button" class="lp-btn lp-btn--secondary" id="ot-add-photo">Add a Photo</button>
                   <input type="file" id="ot-photo" name="photo" accept="image/jpeg,image/png" hidden>
                 </div>
                 <p class="hint">JPG or PNG, up to 5 MB.</p>
@@ -257,27 +257,27 @@
                 <div class="preview"><small>The customer will read</small>{{ OrderStages::customerCopy($order, $next) }}<span id="ot-pv-msg"></span></div>
                 <button type="button" class="lp-btn lp-btn--primary lp-btn--block" data-ot-open data-ot-kind="advance"
                         data-ot-url="{{ route('admin.orders.stage.advance', $order->id) }}"
-                        data-ot-title="{{ OrderStages::buttonLabel($order, $next) }}?"
+                        data-ot-title="@titlecase(OrderStages::buttonLabel($order, $next) . '?')"
                         data-ot-question="{{ OrderStages::question($order, $next) }}"
                         data-ot-check="Yes, this is correct. Notify the customer."
-                        data-ot-yes="Yes, {{ lcfirst(OrderStages::buttonLabel($order, $next)) }}"
+                        data-ot-yes="@titlecase('Yes, ' . lcfirst(OrderStages::buttonLabel($order, $next)))"
                         data-ot-copy="{{ OrderStages::customerCopy($order, $next) }}"
                         @disabled($needsBalance)>
-                  {{ OrderStages::buttonLabel($order, $next) }}
+                  @titlecase(OrderStages::buttonLabel($order, $next))
                 </button>
               @endif
 
               <div class="actions-row">
-                <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" id="ot-send-only" data-ot-url="{{ route('admin.orders.stage.update', $order->id) }}" disabled>Send update only (stage stays)</button>
+                <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" id="ot-send-only" data-ot-url="{{ route('admin.orders.stage.update', $order->id) }}" disabled>Send Update Only (Stage Stays)</button>
                 @php $canFix = !in_array($status, ['pending', 'confirmed'], true); @endphp
                 <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" data-ot-open data-ot-kind="correct"
                         data-ot-url="{{ route('admin.orders.stage.correct', $order->id) }}"
-                        data-ot-title="Correct last step?"
+                        data-ot-title="Correct Last Step?"
                         data-ot-question="This moves the order back from {{ OrderStages::labelFor($order) }} to {{ OrderStages::previous($order) ? OrderStages::labelFor($order, OrderStages::previous($order)) : '' }}."
                         data-ot-reason="1" data-ot-danger="1"
                         data-ot-check="I understand the customer is not notified and this is saved in the history."
-                        data-ot-yes="Correct last step"
-                        @if(!$canFix) disabled title="The first stages can't be undone" @endif>Correct last step</button>
+                        data-ot-yes="Correct Last Step"
+                        @if(!$canFix) disabled title="The first stages can't be undone" @endif>Correct Last Step</button>
               </div>
             </form>
           @endunless
@@ -286,11 +286,11 @@
             <div class="row" style="justify-content:flex-end;margin-top:8px;">
               <button type="button" class="lp-btn lp-btn--danger lp-btn--chip" data-ot-open data-ot-kind="cancel"
                       data-ot-url="{{ route('admin.orders.stage.cancel', $order->id) }}"
-                      data-ot-title="Cancel this order?"
+                      data-ot-title="Cancel This Order?"
                       data-ot-question="The order will be closed and the customer is told it was cancelled. They will see the reason you write. The ordered items are returned to stock."
                       data-ot-reason="1" data-ot-danger="1"
                       data-ot-check="Yes, cancel this order. Refunds are handled outside the system."
-                      data-ot-yes="Cancel order">Cancel order</button>
+                      data-ot-yes="Cancel Order">Cancel Order</button>
             </div>
           @endif
         @endif
@@ -333,14 +333,14 @@
       <h3 id="ot-dlg-title"></h3>
       <p class="q" id="ot-dlg-q"></p>
       <div id="ot-dlg-reason-wrap" hidden>
-        <label for="ot-dlg-reason">Reason (required, saved in the order history)</label>
+        <label for="ot-dlg-reason">Reason (Required, Saved in the Order History)</label>
         <textarea id="ot-dlg-reason" maxlength="300"></textarea>
         <div class="err" id="ot-dlg-reason-err" hidden>Write between 8 and 300 characters so the team knows why.</div>
       </div>
       <div class="preview" id="ot-dlg-prev" hidden></div>
       <label class="chk" for="ot-dlg-chk"><input type="checkbox" id="ot-dlg-chk"><span id="ot-dlg-chk-text"></span></label>
       <div class="row">
-        <button type="button" class="lp-btn lp-btn--secondary" id="ot-dlg-no">Go back</button>
+        <button type="button" class="lp-btn lp-btn--secondary" id="ot-dlg-no">Go Back</button>
         <button type="button" class="lp-btn lp-btn--primary" id="ot-dlg-yes" disabled>Confirm</button>
       </div>
     </div>

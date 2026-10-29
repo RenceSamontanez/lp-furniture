@@ -207,7 +207,7 @@ class Stage12FixesTest extends TestCase
         $this->recordCash($admin, $order->fresh(), '10250.00')->assertSessionHasNoErrors();
         $page = $this->asAdmin($admin)->get(route('admin.orders.show', $order->id))->assertOk();
         $html = $page->getContent();
-        $this->assertStringContainsString('Partially paid', $html);
+        $this->assertStringContainsString('Partially Paid', $html);
         $this->assertMatchesRegularExpression('/Method<\/span>\s*<span[^>]*>\s*Cash\s*</', $html);
         $this->assertDoesNotMatchRegularExpression('/Method<\/span>\s*<span[^>]*>\s*stripe\s*</i', $html);
 

@@ -51,7 +51,7 @@
 <div class="admin-panel">
   <div class="admin-panel-header">
     <div class="admin-panel-title">Pending Identity Validations</div>
-    <a href="{{ route('admin.validations.index') }}" class="admin-btn admin-btn-outline">View All →</a>
+    <a href="{{ route('admin.validations.index') }}" class="admin-btn admin-btn-outline">View All</a>
   </div>
   <div class="admin-panel-body" style="padding:0;">
     @if($recentValidations->isEmpty())
@@ -81,7 +81,7 @@
 <div class="admin-panel">
   <div class="admin-panel-header">
     <div class="admin-panel-title">Recent Orders</div>
-    <a href="{{ route('admin.orders.index') }}" class="admin-btn admin-btn-outline">View All →</a>
+    <a href="{{ route('admin.orders.index') }}" class="admin-btn admin-btn-outline">View All</a>
   </div>
   <div class="admin-panel-body" style="padding:0;">
     @if($recentOrders->isEmpty())
@@ -97,7 +97,7 @@
               <td data-label="Order #">{{ $order->order_number }}</td>
               <td data-label="Customer">{{ $order->user->first_name }} {{ $order->user->last_name }}</td>
               <td data-label="Total">₱{{ number_format($order->total_amount, 2) }}</td>
-              <td data-label="Status"><span class="admin-pill {{ $order->order_status }}">{{ str_replace('_',' ',$order->order_status) }}</span></td>
+              <td data-label="Status"><span class="admin-pill {{ $order->order_status }}">@titlecase(str_replace('_',' ',$order->order_status))</span></td>
               <td data-label=""><a href="{{ route('admin.orders.show', $order->id) }}" class="admin-btn admin-btn-gold">View</a></td>
             </tr>
           @endforeach

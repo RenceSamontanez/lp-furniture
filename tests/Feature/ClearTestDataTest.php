@@ -425,11 +425,11 @@ class ClearTestDataTest extends TestCase
 
         $this->actingAs($this->makeUser('admin'), 'admin')->get(route('admin.system-health.index'))
             ->assertOk()
-            ->assertSee('Disk used by uploads')
-            ->assertSee('Orphan files')
-            ->assertSee('Last storage cleanup')
+            ->assertSee('Disk Used by Uploads')
+            ->assertSee('Orphan Files')
+            ->assertSee('Last Storage Cleanup')
             ->assertSee('Never')
-            ->assertSee('Clear cache');
+            ->assertSee('Clear Cache');
     }
 
     public function test_clear_cache_button_is_post_only_and_admin_only(): void

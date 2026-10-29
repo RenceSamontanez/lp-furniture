@@ -261,7 +261,7 @@ class OrderTrackingTest extends TestCase
         $this->assertSame('pending', $order->fresh()->order_status);
 
         $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))
-            ->assertOk()->assertSee('Waiting for payment')->assertSee('Awaiting payment');
+            ->assertOk()->assertSee('Waiting for payment')->assertSee('Awaiting Payment');
     }
 
     public function test_recording_a_payment_confirms_automatically_with_history_notification_and_email(): void
@@ -284,7 +284,7 @@ class OrderTrackingTest extends TestCase
         Mail::assertSent(OrderStageMail::class, fn ($m) => $m->hasSubject('Your LP Furniture order ' . $order->order_number . ' is now Confirmed')
             && str_contains($m->render(), 'Payment received and your order is confirmed.'));
 
-        $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))->assertOk()->assertSee('Paid in full')->assertSee('Payment received');
+        $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))->assertOk()->assertSee('Paid in Full')->assertSee('Payment Received');
     }
 
     public function test_a_partial_payment_keeps_the_normal_payment_notice_and_the_confirming_one_is_combined(): void
@@ -331,7 +331,7 @@ class OrderTrackingTest extends TestCase
         $order->refresh();
         $this->assertSame('confirmed', $order->order_status);
 
-        $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))->assertSee('Partly paid');
+        $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))->assertSee('Partly Paid');
 
         foreach (['in_production', 'ready'] as $expected) {
             $this->advance($admin, $order)->assertSessionHas('success');
@@ -492,7 +492,7 @@ class OrderTrackingTest extends TestCase
         $this->actingAs($order->user)->get(route('orders.show', $order->id))->assertOk()
             ->assertDontSee('Marked ready by mistake')->assertDontSee('Corrected');
         // admin sees it, tagged internal
-        $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))->assertSee('Marked ready by mistake')->assertSee('Internal only');
+        $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))->assertSee('Marked ready by mistake')->assertSee('Internal Only');
     }
 
     public function test_correction_is_not_allowed_from_pending_or_confirmed(): void
@@ -574,7 +574,7 @@ class OrderTrackingTest extends TestCase
             $this->assertFalse($line->customer_notified, 'internal line: the customer page never shows it');
         }
 
-        $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))->assertSee('Items returned to stock (2 units)');
+        $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))->assertSee('Items Returned to Stock (2 Units)');
     }
 
     public function test_the_cancel_dialog_says_the_items_are_returned_to_stock(): void
@@ -809,10 +809,10 @@ class OrderTrackingTest extends TestCase
 
         $this->actingAs($order->user)->get(route('orders.show', $order->id))->assertOk()
             ->assertSee('Our craftsmen have started building your furniture piece.')->assertSee('Paid in full')->assertSee('Frame assembled')
-            ->assertDontSee('Customer notified')->assertDontSee('Internal only');
+            ->assertDontSee('Customer Notified')->assertDontSee('Internal Only');
 
         $this->actingAs($admin, 'admin')->get(route('admin.orders.show', $order->id))->assertOk()
-            ->assertSee('Customer notified')->assertSee('Update progress')->assertSee('Mark as ready');
+            ->assertSee('Customer Notified')->assertSee('Update Progress')->assertSee('Mark as Ready');
     }
 
     public function test_customized_orders_are_not_moved_by_the_new_routes(): void

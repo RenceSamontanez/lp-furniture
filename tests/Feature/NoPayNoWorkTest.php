@@ -195,7 +195,7 @@ class NoPayNoWorkTest extends TestCase
     {
         $t = $this->ticket();
         $this->asAdmin()->get(route('admin.service-inquiries.show', $t->id))
-            ->assertSee('Create an invoice first')->assertDontSee('Start work')->assertDontSee('Not started');
+            ->assertSee('Create an invoice first')->assertDontSee('Start Work')->assertDontSee('Not started');
 
         $i = $this->sent($t, '4000', 'half_half');
         $this->get(route('admin.service-inquiries.show', $t->id))
@@ -208,7 +208,7 @@ class NoPayNoWorkTest extends TestCase
 
         $this->post(route('admin.service-inquiries.work-started', $t->id));
         $this->get(route('admin.service-inquiries.show', $t->id))
-            ->assertSee('Work started')->assertSee('Mark service done')->assertDontSee('Start work');
+            ->assertSee('Work started')->assertSee('Mark Service Done')->assertDontSee('Start Work');
     }
 
     public function test_ready_to_start_counter_and_filter(): void
@@ -222,7 +222,7 @@ class NoPayNoWorkTest extends TestCase
         $this->post(route('admin.service-inquiries.work-started', $started->id));
 
         $this->asAdmin()->get(route('admin.service-inquiries.index', ['ready' => 1]))
-            ->assertOk()->assertSee('Ready to start (1)')->assertSee($paid->reference_number)
+            ->assertOk()->assertSee('Ready to Start (1)')->assertSee($paid->reference_number)
             ->assertDontSee($unpaid->reference_number)->assertDontSee($started->reference_number);
     }
 

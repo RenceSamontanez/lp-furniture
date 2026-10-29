@@ -74,7 +74,7 @@
               </td>
               <td data-label="Status">
                 <span class="admin-pill {{ $product->product_status === 'available' ? 'approved' : 'rejected' }}">
-                  {{ ucfirst($product->product_status) }}
+                  @titlecase($product->product_status)
                 </span>
               </td>
               <td data-label="Actions">
@@ -129,10 +129,10 @@
    DELETE PRODUCT MODAL
    Two visual variants depending on whether the
    product has order history:
-   - order history exists → amber/warning treatment,
+   - order history exists : amber/warning treatment,
      mentions the exact order count (deletion is safe,
      orders keep their own snapshot — just informing)
-   - no order history → red/danger treatment
+   - no order history : red/danger treatment
      (no safety net, plain irreversible delete)
 ══════════════════════════════════════════ */
 function openDeleteProductModal(actionUrl, productName, orderCount) {

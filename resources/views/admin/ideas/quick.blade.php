@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'Quick ideas — Admin')
-@section('page-title', 'Quick ideas')
+@section('page-title', 'Quick Ideas')
 
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/admin-custom-orders.css') }}"/>
@@ -9,7 +9,7 @@
 @endpush
 
 @php
-  $sections = ['type' => 'By furniture type', 'style' => 'By style', 'general' => 'Anything else'];
+  $sections = ['type' => 'By Furniture Type', 'style' => 'By Style', 'general' => 'Anything Else'];
 @endphp
 
 @section('content')
@@ -33,7 +33,7 @@
             <div class="qi-row {{ $idea->is_active ? '' : 'is-off' }}">
               <form method="POST" action="{{ route('admin.quick-ideas.update', $idea->id) }}" class="qi-edit">
                 @csrf
-                <label class="cz-sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)" for="qi-{{ $idea->id }}">Idea wording</label>
+                <label class="cz-sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)" for="qi-{{ $idea->id }}">Idea Wording</label>
                 <input type="text" id="qi-{{ $idea->id }}" name="text" value="{{ $idea->text }}" maxlength="{{ $max }}" class="qi-input" required/>
                 <button type="submit" class="lp-btn lp-btn--secondary lp-btn--chip">Save</button>
               </form>
@@ -64,7 +64,7 @@
     </div>
   @endforeach
 
-  <h2 class="qi-section">&ldquo;Something else&rdquo; quick picks</h2>
+  <h2 class="qi-section">&ldquo;Something else&rdquo; Quick Picks</h2>
   <p class="ir-lead qi-lead">Chips inside the customer's &ldquo;Something else&rdquo; box. Tapping one fills the text box, so the request is still saved as &ldquo;Something else&rdquo;. The page shows the first {{ $chipsShown }} that are on; keep the list short. Furniture types customers ask for often can be added from Ideas to review.</p>
   <div class="qi-grid">
     <section class="qi-card" aria-label="Something else quick picks">
@@ -72,7 +72,7 @@
         <div class="qi-row {{ $type->is_active ? '' : 'is-off' }}">
           <form method="POST" action="{{ route('admin.extra-types.update', $type->id) }}" class="qi-edit">
             @csrf
-            <label style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)" for="et-{{ $type->id }}">Furniture name</label>
+            <label style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)" for="et-{{ $type->id }}">Furniture Name</label>
             <input type="text" id="et-{{ $type->id }}" name="name" value="{{ $type->name }}" maxlength="{{ $typeMax }}" class="qi-input" required/>
             <button type="submit" class="lp-btn lp-btn--secondary lp-btn--chip">Save</button>
           </form>
@@ -91,7 +91,7 @@
       @endforelse
       <form method="POST" action="{{ route('admin.extra-types.store') }}" class="qi-add">
         @csrf
-        <label style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)" for="et-new">New furniture name</label>
+        <label style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)" for="et-new">New Furniture Name</label>
         <input type="text" id="et-new" name="name" class="qi-input" maxlength="{{ $typeMax }}" placeholder="Add a furniture name, e.g. Pergola" required/>
         <button type="submit" class="lp-btn lp-btn--primary lp-btn--chip">Add</button>
       </form>
@@ -105,7 +105,7 @@
           <p>&ldquo;{{ $idea->text }}&rdquo; is removed for good. To keep it but hide it from customers, turn it Off instead.</p>
           <form method="POST" action="{{ route('admin.quick-ideas.delete', $idea->id) }}" id="qi-del-form-{{ $idea->id }}">@csrf</form>
           <x-slot:footer>
-            <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+            <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
             <button type="submit" form="qi-del-form-{{ $idea->id }}" class="lp-btn lp-btn--danger" data-lp-confirm>Delete</button>
           </x-slot:footer>
         </x-modal>
@@ -117,7 +117,7 @@
       <p>&ldquo;{{ $type->name }}&rdquo; is removed from the &ldquo;Something else&rdquo; box. Requests already made with it are not changed.</p>
       <form method="POST" action="{{ route('admin.extra-types.delete', $type->id) }}" id="et-del-form-{{ $type->id }}">@csrf</form>
       <x-slot:footer>
-        <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go back</button>
+        <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Go Back</button>
         <button type="submit" form="et-del-form-{{ $type->id }}" class="lp-btn lp-btn--danger" data-lp-confirm>Delete</button>
       </x-slot:footer>
     </x-modal>

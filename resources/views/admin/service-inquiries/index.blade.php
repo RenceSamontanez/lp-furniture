@@ -13,17 +13,17 @@
 @php $labels = \App\Models\ServiceInquiry::STATUSES; @endphp
 
 <div style="display:flex;justify-content:flex-end;margin-bottom:14px;">
-  <a href="{{ route('admin.service-inquiries.create') }}" class="lp-btn lp-btn--primary">New ticket</a>
+  <a href="{{ route('admin.service-inquiries.create') }}" class="lp-btn lp-btn--primary">New Ticket</a>
 </div>
 
 <div class="co-counts">
   <a href="{{ route('admin.service-inquiries.index', array_filter(['q' => $search])) }}" class="co-count {{ !$status && !$ready ? 'active' : '' }}">
     <div class="co-count-num">{{ $total }}</div>
-    <div class="co-count-label">All tickets</div>
+    <div class="co-count-label">All Tickets</div>
   </a>
   <a href="{{ route('admin.service-inquiries.index', array_filter(['ready' => 1, 'q' => $search])) }}" class="co-count {{ $ready ? 'active' : '' }}">
     <div class="co-count-num">{{ $readyCount }}</div>
-    <div class="co-count-label">Ready to start ({{ $readyCount }})</div>
+    <div class="co-count-label">Ready to Start ({{ $readyCount }})</div>
   </a>
   @foreach($labels as $key => $label)
     <a href="{{ route('admin.service-inquiries.index', array_filter(['status' => $key, 'q' => $search])) }}" class="co-count {{ $status === $key ? 'active' : '' }}">
@@ -49,7 +49,7 @@
       <div class="admin-empty"><p>No tickets match.</p></div>
     @else
       <table class="admin-table">
-        <thead><tr><th>Reference</th><th>Customer</th><th>Service</th><th>Call time</th><th>Received</th><th>Status</th><th></th></tr></thead>
+        <thead><tr><th>Reference</th><th>Customer</th><th>Service</th><th>Call Time</th><th>Received</th><th>Status</th><th></th></tr></thead>
         <tbody>
           @foreach($tickets as $t)
             <tr>
@@ -65,9 +65,9 @@
                 <div>{{ $t->serviceLabel() }}</div>
                 @if($t->furniture_type)<div style="font-size:11.5px;color:var(--text-muted);">{{ $t->furniture_type }}</div>@endif
               </td>
-              <td data-label="Call time">{{ $t->callTimeSummary() ?? 'Any time' }}</td>
+              <td data-label="Call Time">{{ $t->callTimeSummary() ?? 'Any time' }}</td>
               <td data-label="Received">{{ $t->created_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}</td>
-              <td data-label="Status"><span class="co-chip co-chip--{{ $t->status }}">{{ $t->statusLabel() }}</span></td>
+              <td data-label="Status"><span class="co-chip co-chip--{{ $t->status }}">@titlecase($t->statusLabel())</span></td>
               <td data-label="">
                 <a href="{{ route('admin.service-inquiries.show', $t->id) }}" class="lp-btn lp-btn--secondary">Open</a>
               </td>

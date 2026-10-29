@@ -118,7 +118,7 @@ class Stage13FlowTest extends TestCase
         // ── 6. quote page: image, heading, customer name in proper case; then create and send
         $this->asAdmin($admin)->get(route('admin.custom-orders.quotes.create', $legacy->id))->assertOk()
             ->assertSee($this->flowImage, false)
-            ->assertSee('Customized order: Rence Samontanez')
+            ->assertSee('Customized Order: Rence Samontanez')
             ->assertSee('Make it 30 cm longer and add two drawers');
 
         // a quote can be sent straight from "submitted" on the other request (no call needed)

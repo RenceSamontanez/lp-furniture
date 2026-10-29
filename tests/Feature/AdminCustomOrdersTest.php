@@ -154,8 +154,8 @@ class AdminCustomOrdersTest extends TestCase
             ->assertSee('A six-seater narra table')
             ->assertSee('No image generated')
             ->assertSee('Customer sent the request to the team')
-            ->assertSee('Send call update')
-            ->assertSee('Create quote');
+            ->assertSee('Send Call Update')
+            ->assertSee('Create Quote');
     }
 
     /* ───────────── call log ───────────── */

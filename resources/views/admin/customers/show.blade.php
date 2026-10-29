@@ -5,7 +5,7 @@
 
 @section('content')
 
-<a href="{{ route('admin.customers.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">← Back to Customers</a>
+<a href="{{ route('admin.customers.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">Back to Customers</a>
 
 <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:flex-start;">
 
@@ -23,7 +23,7 @@
                 <tr>
                   <td data-label="Order #">{{ $order->order_number }}</td>
                   <td data-label="Total">₱{{ number_format($order->total_amount, 2) }}</td>
-                  <td data-label="Status"><span class="admin-pill {{ $order->order_status }}">{{ str_replace('_',' ',$order->order_status) }}</span></td>
+                  <td data-label="Status"><span class="admin-pill {{ $order->order_status }}">@titlecase(str_replace('_',' ',$order->order_status))</span></td>
                   <td data-label="Date">{{ $order->created_at->format('M d, Y') }}</td>
                   <td data-label=""><a href="{{ route('admin.orders.show', $order->id) }}" class="admin-btn admin-btn-outline">View</a></td>
                 </tr>
@@ -35,21 +35,21 @@
     </div>
 
     <div class="admin-panel" id="name-history" style="margin-top:20px;">
-      <div class="admin-panel-header"><div class="admin-panel-title">Name changes</div></div>
+      <div class="admin-panel-header"><div class="admin-panel-title">Name Changes</div></div>
       <div class="admin-panel-body" style="padding:0;">
         @if($nameChanges->isEmpty())
           <div class="admin-empty" style="padding:24px;"><p>This customer has not changed their name.</p></div>
         @else
           <p style="margin:0;padding:14px 20px 0;font-size:13px;color:#6B5D52;">Changing a name does not reset identity verification. Check that the new name still matches the ID photo.</p>
           <table class="admin-table">
-            <thead><tr><th>When</th><th>Old name</th><th>New name</th><th>Verified then</th></tr></thead>
+            <thead><tr><th>When</th><th>Old Name</th><th>New Name</th><th>Verified Then</th></tr></thead>
             <tbody>
               @foreach($nameChanges as $c)
                 <tr>
                   <td data-label="When">{{ $c->created_at->format('M d, Y g:i A') }}</td>
-                  <td data-label="Old name">{{ $c->oldName() }}</td>
-                  <td data-label="New name">{{ $c->newName() }}</td>
-                  <td data-label="Verified then">{{ $c->was_verified ? 'Yes' : 'No' }}</td>
+                  <td data-label="Old Name">{{ $c->oldName() }}</td>
+                  <td data-label="New Name">{{ $c->newName() }}</td>
+                  <td data-label="Verified Then">{{ $c->was_verified ? 'Yes' : 'No' }}</td>
                 </tr>
               @endforeach
             </tbody>

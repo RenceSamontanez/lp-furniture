@@ -3,7 +3,6 @@
 @section('title', 'Admin Login — LP Furniture')
 
 @push('styles')
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="{{ asset('assets/css/password-toggle.css') }}"/>
   <link rel="stylesheet" href="{{ asset('assets/css/admin-login.css') }}"/>
 @endpush
@@ -45,7 +44,7 @@
       @csrf
 
       <div class="al-field">
-        <label for="admin-email">Admin email</label>
+        <label for="admin-email">Admin Email</label>
         <div class="al-input-wrap">
           <svg {!! $icon !!}><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7.5l8.5 6 8.5-6"/></svg>
           <input type="email" name="email" id="admin-email" class="al-input" value="{{ old('email') }}"
@@ -70,13 +69,11 @@
       </label>
 
       <button type="submit" class="lp-btn lp-btn--glass-primary lp-btn--block al-submit">
-        Sign in
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        Sign In
       </button>
     </form>
 
     <a href="{{ route('home') }}" class="lp-link lp-link--tap al-back">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
       Back to main site
     </a>
   </section>

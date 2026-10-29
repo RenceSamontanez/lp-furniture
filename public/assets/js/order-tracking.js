@@ -74,7 +74,7 @@
       if (['image/jpeg', 'image/png'].indexOf(f.type) < 0) { if (photoErr) { photoErr.textContent = 'Photo must be a JPG or PNG.'; } return clearPhoto(); }
       if (f.size > 5 * 1024 * 1024) { if (photoErr) { photoErr.textContent = 'Photo must be 5 MB or smaller.'; } return clearPhoto(); }
       var url = URL.createObjectURL(f);
-      thumbWrap.innerHTML = '<img src="' + url + '" alt="Photo to send"> <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" id="ot-rm-photo">Remove photo</button>';
+      thumbWrap.innerHTML = '<img src="' + url + '" alt="Photo to send"> <button type="button" class="lp-btn lp-btn--secondary lp-btn--chip" id="ot-rm-photo">Remove Photo</button>';
       addBtn.hidden = true;
       document.getElementById('ot-rm-photo').addEventListener('click', clearPhoto);
       refresh();

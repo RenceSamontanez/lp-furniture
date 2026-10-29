@@ -47,7 +47,7 @@
       </div>
 
       <div style="margin-bottom:20px;">
-        <label class="form-label" for="tiktok_url">TikTok Page URL (optional)</label>
+        <label class="form-label" for="tiktok_url">TikTok Page URL (Optional)</label>
         <input type="url" id="tiktok_url" name="tiktok_url" class="form-input" maxlength="255"
                placeholder="https://www.tiktok.com/@yourshop"
                value="{{ old('tiktok_url', $settings->tiktok_url) }}"/>
@@ -59,7 +59,7 @@
 
       <div style="margin:26px 0 8px;font-weight:700;font-size:14px;">Shop location (website footer)</div>
       <div style="margin-bottom:16px;">
-        <label class="form-label" for="shop_address">Shop address</label>
+        <label class="form-label" for="shop_address">Shop Address</label>
         <input type="text" id="shop_address" name="shop_address" class="form-input" maxlength="255"
                placeholder="e.g. Sitio Pulo Ilaya, Calit-calit, San Juan, Batangas"
                value="{{ old('shop_address', $settings->shop_address) }}"/>
@@ -67,7 +67,7 @@
         <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Leave empty to use the address built into the website.</div>
       </div>
       <div style="margin-bottom:16px;">
-        <label class="form-label" for="shop_landmarks">Nearby places</label>
+        <label class="form-label" for="shop_landmarks">Nearby Places</label>
         <input type="text" id="shop_landmarks" name="shop_landmarks" class="form-input" maxlength="500"
                placeholder="e.g. San Juan Doctors Hospital, Calit-calit Barangay Hall"
                value="{{ old('shop_landmarks', $settings->shop_landmarks) }}"/>
@@ -75,13 +75,13 @@
       </div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px;">
         <div style="flex:1 1 200px;">
-          <label class="form-label" for="map_lat">Map latitude (optional)</label>
+          <label class="form-label" for="map_lat">Map Latitude (Optional)</label>
           <input type="text" inputmode="decimal" id="map_lat" name="map_lat" class="form-input" maxlength="20" placeholder="e.g. 13.8123456"
                  value="{{ old('map_lat', $settings->map_lat) }}"/>
           @error('map_lat')<div style="font-size:12px;color:#B3261E;margin-top:4px;">{{ $message }}</div>@enderror
         </div>
         <div style="flex:1 1 200px;">
-          <label class="form-label" for="map_lng">Map longitude (optional)</label>
+          <label class="form-label" for="map_lng">Map Longitude (Optional)</label>
           <input type="text" inputmode="decimal" id="map_lng" name="map_lng" class="form-input" maxlength="20" placeholder="e.g. 121.3912345"
                  value="{{ old('map_lng', $settings->map_lng) }}"/>
           @error('map_lng')<div style="font-size:12px;color:#B3261E;margin-top:4px;">{{ $message }}</div>@enderror

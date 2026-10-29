@@ -4,7 +4,7 @@
 <div class="co-modal" id="inv-send-modal" hidden role="alertdialog" aria-modal="true" aria-labelledby="inv-send-title" aria-describedby="inv-send-text">
   <div class="co-modal-box">
     <div class="co-modal-head">
-      <h2 id="inv-send-title">Send to customer</h2>
+      <h2 id="inv-send-title">Send to Customer</h2>
       <button type="button" class="co-modal-x" data-close-send aria-label="Close">&times;</button>
     </div>
     <p id="inv-send-text" class="inv-confirm-text">{{ \App\Models\ServiceInvoice::SEND_CONFIRMATION }}</p>
@@ -13,8 +13,8 @@
       <label class="inv-detail-tick"><input type="checkbox" name="details_ok" value="1" form="{{ $formId }}" required/> <span>I have enough details to do this work</span></label>
     @endif
     <div class="co-modal-actions">
-      <button type="button" class="lp-btn lp-btn--secondary" data-close-send>Go back</button>
-      <button type="submit" form="{{ $formId }}" name="then" value="send" class="lp-btn lp-btn--primary" data-loading="Sending...">Send invoice</button>
+      <button type="button" class="lp-btn lp-btn--secondary" data-close-send>Go Back</button>
+      <button type="submit" form="{{ $formId }}" name="then" value="send" class="lp-btn lp-btn--primary" data-loading="Sending...">Send Invoice</button>
     </div>
   </div>
 </div>

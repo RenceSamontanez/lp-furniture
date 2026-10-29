@@ -9,7 +9,7 @@
 
 @section('content')
 
-<a href="{{ route('admin.design-requests.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">← Back to Design Requests</a>
+<a href="{{ route('admin.design-requests.index') }}" class="admin-btn admin-btn-outline" style="margin-bottom:20px;">Back to Design Requests</a>
 
 
 @if($designRequest->pipeline_status !== null)
@@ -31,7 +31,7 @@
       <div class="admin-panel-header">
         <div class="admin-panel-title">Customer's Request</div>
         <span class="admin-pill {{ $designRequest->status === 'declined' ? 'rejected' : 'approved' }}">
-          {{ ucfirst($designRequest->status) }}
+          @titlecase($designRequest->status)
         </span>
       </div>
       <div class="admin-panel-body">
