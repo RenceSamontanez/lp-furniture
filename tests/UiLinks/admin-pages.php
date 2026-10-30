@@ -6,7 +6,7 @@ return [
     '/admin/products', '/admin/products/create', '/admin/products/1/edit', '/admin/customers', '/admin/customers/1',
     '/admin/custom-orders', '/admin/custom-orders/1', '/admin/custom-orders/1/quotes/create',
     '/admin/design-requests', '/admin/design-requests/1',
-    '/admin/service-inquiries', '/admin/service-inquiries/create', '/admin/service-inquiries/1', '/admin/service-inquiries/2',
+    '/admin/service-inquiries', '/admin/service-inquiries/1', '/admin/service-inquiries/2',
     '/admin/service-inquiries/1/invoices/create', '/admin/service-invoices/1', '/admin/service-invoices/1/edit',
     '/admin/refund-requests', '/admin/refund-requests/1', '/admin/refund-requests/2',
     '/admin/validations', '/admin/validations/1', '/admin/validations/9',

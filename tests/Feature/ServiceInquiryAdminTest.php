@@ -239,7 +239,7 @@ class ServiceInquiryAdminTest extends TestCase
         $other = $this->admin();
         $this->actingAs($admin, 'admin');
 
-        $this->get(route('admin.service-inquiries.create'))->assertOk()->assertSee('walk-in or phone customer');
+        $this->get(route('admin.service-inquiries.index', ['new' => 1]))->assertOk()->assertSee('walk-in or phone customer');
 
         $res = $this->post(route('admin.service-inquiries.store'), [
             'service_type' => 'repair', 'concern' => 'Wobbly chair leg, walk-in customer.',
@@ -295,7 +295,7 @@ class ServiceInquiryAdminTest extends TestCase
         $customer = $this->makeUser();
         $this->actingAs($admin, 'admin');
 
-        $this->get(route('admin.service-inquiries.create'))->assertOk()->assertSee('Link an Existing Customer Account');
+        $this->get(route('admin.service-inquiries.index', ['new' => 1]))->assertOk()->assertSee('Link an Existing Customer Account');
 
         $this->post(route('admin.service-inquiries.store'), [
             'service_type' => 'repair', 'concern' => 'Wobbly chair leg, walk-in customer.',

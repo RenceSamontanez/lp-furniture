@@ -3,6 +3,13 @@
 @section('title', 'Materials Inventory — Admin')
 @section('page-title', 'Materials Inventory')
 
+@push('styles')
+  <link rel="stylesheet" href="{{ asset('assets/css/admin-modals.css') }}?v={{ @filemtime(public_path('assets/css/admin-modals.css')) }}"/>
+@endpush
+@push('scripts')
+  <script src="{{ asset('assets/js/admin-modal-forms.js') }}?v={{ @filemtime(public_path('assets/js/admin-modal-forms.js')) }}"></script>
+@endpush
+
 @section('content')
 
 <div class="admin-stats-grid">
@@ -33,10 +40,10 @@
     <a href="{{ route('admin.inventory.index', ['status'=>'low_stock']) }}" class="admin-filter-tab {{ $status==='low_stock'?'active':'' }}">Low Stock</a>
     <a href="{{ route('admin.inventory.index', ['status'=>'out_of_stock']) }}" class="admin-filter-tab {{ $status==='out_of_stock'?'active':'' }}">Out of Stock</a>
   </div>
-  <a href="{{ route('admin.inventory.create') }}" class="admin-btn admin-btn-gold">
+  <button type="button" class="admin-btn admin-btn-gold" data-lp-modal-open="material-add">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     Add Material
-  </a>
+  </button>
 </div>
 
 
@@ -54,7 +61,7 @@
               <td data-label="Quantity">
                 <form method="POST" action="{{ route('admin.inventory.adjust', $material->id) }}" class="admin-quick-stock-form">
                   @csrf
-                  <input type="number" step="0.01" name="quantity" value="{{ $material->material_quantity }}" min="0" class="admin-quick-stock-input" style="width:70px;"/>
+                  <input type="number" step="0.01" name="quantity" value="{{ $material->material_quantity }}" min="0" class="admin-quick-stock-input" aria-label="Quantity of {{ $material->material_name }}"/>
                   <span style="font-size:11px;color:var(--text-muted);">{{ $material->unit }}</span>
                   <button type="submit" class="admin-quick-stock-btn" title="Update quantity">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
@@ -70,7 +77,7 @@
               <td data-label="Last Updated">{{ \Carbon\Carbon::parse($material->last_updated)->diffForHumans() }}</td>
               <td data-label="Actions">
                 <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                  <a href="{{ route('admin.inventory.edit', $material->id) }}" class="admin-btn admin-btn-outline">Edit</a>
+                  <button type="button" class="admin-btn admin-btn-outline" data-lp-modal-open="material-edit-{{ $material->id }}">Edit</button>
                   <form method="POST" action="{{ route('admin.inventory.destroy', $material->id) }}" onsubmit="return confirm('Remove this material record?')">
                     @csrf
                     @method('DELETE')
@@ -87,5 +94,10 @@
 </div>
 
 <div style="margin-top:16px;">{{ $materials->appends(request()->query())->links() }}</div>
+
+@include('admin.inventory._modal', ['material' => new \App\Models\Inventory(), 'modalId' => 'material-add'])
+@foreach($modalMaterials as $material)
+  @include('admin.inventory._modal', ['material' => $material, 'modalId' => 'material-edit-' . $material->id])
+@endforeach
 
 @endsection

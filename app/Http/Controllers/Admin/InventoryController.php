@@ -23,12 +23,21 @@ class InventoryController extends Controller
             'out_of_stock' => Inventory::where('inventory_status', 'out_of_stock')->count(),
         ];
 
-        return view('admin.inventory.index', compact('materials', 'status', 'stats'));
+        // The old Edit URL lands here as ?edit=ID: that material's modal opens even when it is not on this page of the list.
+        $modalMaterials = $materials->getCollection()->keyBy('id');
+        $editId = (int) $request->get('edit');
+        if ($editId > 0 && ! $modalMaterials->has($editId) && ($target = Inventory::find($editId))) {
+            $modalMaterials->put($target->id, $target);
+        }
+        $openModal = old('_modal') ?: ($editId > 0 && $modalMaterials->has($editId) ? 'material-edit-' . $editId : ($request->boolean('add') ? 'material-add' : null));
+
+        return view('admin.inventory.index', compact('materials', 'status', 'stats', 'modalMaterials', 'openModal'));
     }
 
+    /** The Add page is now a modal on the list; the old URL still works and opens it. */
     public function create()
     {
-        return view('admin.inventory.form', ['material' => new Inventory()]);
+        return redirect()->route('admin.inventory.index', ['add' => 1]);
     }
 
     public function store(Request $request)
@@ -41,10 +50,12 @@ class InventoryController extends Controller
         return redirect()->route('admin.inventory.index')->with('success', 'Material added.');
     }
 
+    /** The Edit page is now a modal on the list; the old URL still works and opens it. */
     public function edit($id)
     {
-        $material = Inventory::findOrFail($id);
-        return view('admin.inventory.form', compact('material'));
+        Inventory::findOrFail($id);
+
+        return redirect()->route('admin.inventory.index', ['edit' => (int) $id]);
     }
 
     public function update(Request $request, $id)

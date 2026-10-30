@@ -6,6 +6,10 @@
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/admin-custom-orders.css') }}"/>
   <link rel="stylesheet" href="{{ asset('assets/css/admin-service-inquiries.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/admin-modals.css') }}?v={{ @filemtime(public_path('assets/css/admin-modals.css')) }}"/>
+@endpush
+@push('scripts')
+  <script src="{{ asset('assets/js/admin-modal-forms.js') }}?v={{ @filemtime(public_path('assets/js/admin-modal-forms.js')) }}"></script>
 @endpush
 
 @section('content')
@@ -13,7 +17,7 @@
 @php $labels = \App\Models\ServiceInquiry::STATUSES; @endphp
 
 <div style="display:flex;justify-content:flex-end;margin-bottom:14px;">
-  <a href="{{ route('admin.service-inquiries.create') }}" class="lp-btn lp-btn--primary">New Ticket</a>
+  <button type="button" class="lp-btn lp-btn--primary" data-lp-modal-open="ticket-new">New Ticket</button>
 </div>
 
 <div class="co-counts">
@@ -81,4 +85,6 @@
 
 <div style="margin-top:16px;">{{ $tickets->links() }}</div>
 </div>
+
+@include('admin.service-inquiries._new-ticket-modal')
 @endsection

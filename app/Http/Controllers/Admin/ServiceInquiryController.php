@@ -63,7 +63,14 @@ class ServiceInquiryController extends Controller
 
         $counts = ServiceInquiry::selectRaw('status, COUNT(*) as total')->groupBy('status')->pluck('total', 'status');
 
+        // A rejected "New Ticket" submit (or the old create URL, ?new=1) reopens the modal; the linked account is shown again.
+        $openModal = old('_modal') ?: ($request->boolean('new') ? 'ticket-new' : null);
+        $linkedId = (int) old('customer_id');
+        $linkedCustomer = $linkedId > 0 ? User::where('role', 'customer')->find($linkedId) : null;
+
         return view('admin.service-inquiries.index', [
+            'openModal' => $openModal,
+            'linkedCustomer' => $linkedCustomer,
             'tickets' => $tickets,
             'status'  => $status,
             'search'  => $search,
@@ -101,9 +108,10 @@ class ServiceInquiryController extends Controller
         return $response;
     }
 
+    /** The New Ticket page is now a modal on the list; the old URL still works and opens it. */
     public function create()
     {
-        return view('admin.service-inquiries.create');
+        return redirect()->route('admin.service-inquiries.index', ['new' => 1]);
     }
 
     public function store(Request $request)

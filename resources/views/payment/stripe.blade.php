@@ -3,7 +3,7 @@
 @section('title', 'Card Payment — LP Furniture')
 
 @push('styles')
-  <link rel="stylesheet" href="{{ asset('assets/css/payment.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/payment.css') }}?v={{ @filemtime(public_path('assets/css/payment.css')) }}"/>
 @endpush
 
 @section('content')
