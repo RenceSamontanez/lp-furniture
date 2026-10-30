@@ -288,47 +288,36 @@ class AdminController extends Controller
     ════════════════════════════════ */
     public function customersIndex(Request $request)
     {
-        $search = $request->get('search');
-        $filter = $request->get('filter', 'all');
+        $f = \App\Support\AdminCustomers::filtersFrom($request->query());
 
-        $customers = User::where('role', 'customer')
-            ->withCount('orders')
-            ->when($search, fn($q) => $q->where(function($sub) use ($search) {
-                $sub->where('first_name', 'like', "%{$search}%")
-                    ->orWhere('last_name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
-            }))
-            ->when($filter === 'verified', fn($q) => $q->where('is_validated', true))
-            ->when($filter === 'unverified', fn($q) => $q->where('is_validated', false))
-            ->latest()
-            ->paginate(15);
+        $customers = \App\Support\AdminCustomers::listQuery($f)
+            ->paginate(\App\Support\AdminCustomers::PER_PAGE)
+            ->appends(\App\Support\AdminCustomers::queryFor($f));
 
-        // Total spent per customer (completed orders only)
-        foreach ($customers as $customer) {
-            $customer->total_spent = Order::where('user_id', $customer->id)
-                ->where('order_status', 'completed')
-                ->sum('total_amount');
-        }
-
-        $stats = [
-            'total'      => User::where('role', 'customer')->count(),
-            'verified'   => User::where('role', 'customer')->where('is_validated', true)->count(),
-            'unverified' => User::where('role', 'customer')->where('is_validated', false)->count(),
-        ];
-
-        return view('admin.customers.index', compact('customers', 'search', 'filter', 'stats'));
+        return view('admin.customers.index', [
+            'customers' => $customers,
+            'f'         => $f,
+            'stats'     => \App\Support\AdminCustomers::stats(),
+            'chips'     => \App\Support\AdminCustomers::chips($f),
+        ]);
     }
 
-    public function customerShow($id)
+    public function customerShow(Request $request, $id)
     {
         $customer = User::where('role', 'customer')->findOrFail($id);
 
-        $orders = Order::where('user_id', $id)->latest()->get();
-        $totalSpent = $orders->where('order_status', 'completed')->sum('total_amount');
+        // Back to Customers keeps the list's search, filters and sort; rebuilt from known keys only, never a raw URL
+        $back = \App\Support\AdminCustomers::queryFor(\App\Support\AdminCustomers::filtersFrom($request->query()));
+        if ((int) $request->query('page') > 1) {
+            $back['page'] = (int) $request->query('page');
+        }
 
-        $nameChanges = $customer->nameChanges()->get();
-
-        return view('admin.customers.show', compact('customer', 'orders', 'totalSpent', 'nameChanges'));
+        return view('admin.customers.show', [
+            'customer' => $customer,
+            'p'        => \App\Support\AdminCustomers::profile($customer),
+            'back'     => $back,
+            'tab'      => in_array($request->query('tab'), ['orders', 'designs', 'activity', 'names'], true) ? $request->query('tab') : 'orders',
+        ]);
     }
 
 
