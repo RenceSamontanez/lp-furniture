@@ -28,7 +28,7 @@
     ]],
     ['id' => 'catalog', 'name' => 'Catalog & Stock', 'items' => [
       ['Products', 'admin.products.index', 'admin.products.*', 0],
-      ['Materials Inventory', 'admin.inventory.index', 'admin.inventory.*', 0],
+      ['Materials Inventory', 'admin.inventory.index', ['admin.inventory.*', 'admin.material-estimates.*'], 0],
     ]],
     ['id' => 'customers', 'name' => 'Customers', 'items' => [
       ['Customers', 'admin.customers.index', 'admin.customers.*', 0],

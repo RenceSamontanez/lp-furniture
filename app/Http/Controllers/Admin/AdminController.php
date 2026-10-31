@@ -279,7 +279,8 @@ class AdminController extends Controller
     {
         return view('admin.reports', [
             'r' => \App\Support\AdminReports::build((string) $request->query('period', 'm')),
-            'tab' => in_array($request->query('tab'), ['sales', 'prod', 'svc', 'luma', 'cust'], true) ? $request->query('tab') : 'sales',
+            'tab' => in_array($request->query('tab'), ['sales', 'prod', 'svc', 'luma', 'cust', 'materials'], true) ? $request->query('tab') : 'sales',
+            'mt' => \App\Support\AdminReports::materials($request->query('mperiod', 30)),
         ]);
     }
 

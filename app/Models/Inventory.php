@@ -28,6 +28,16 @@ class Inventory extends Model
         return $this->hasMany(MaterialUsage::class);
     }
 
+    public function movements()
+    {
+        return $this->hasMany(InventoryMovement::class);
+    }
+
+    public function isShort(): bool
+    {
+        return (float) $this->material_quantity < 0;
+    }
+
     public function isLow(): bool
     {
         return $this->inventory_status === 'low_stock';

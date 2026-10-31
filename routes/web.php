@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Admin\MaterialEstimateController;
 use App\Http\Controllers\Admin\ChatbotIntentController;
 use App\Http\Controllers\Admin\DesignRequestController;
 use App\Http\Controllers\Admin\CustomOrderController;
@@ -449,8 +450,16 @@ Route::get('/inventory/create', [InventoryController::class, 'create'])->name('i
 Route::post('/inventory', [InventoryController::class, 'store'])->name('inventory.store');
 Route::get('/inventory/{id}/edit', [InventoryController::class, 'edit'])->name('inventory.edit');
 Route::put('/inventory/{id}', [InventoryController::class, 'update'])->name('inventory.update');
-Route::post('/inventory/{id}/adjust', [InventoryController::class, 'adjustQuantity'])->name('inventory.adjust');
+Route::post('/inventory/{id}/restock', [InventoryController::class, 'restock'])->name('inventory.restock');
 Route::delete('/inventory/{id}', [InventoryController::class, 'destroy'])->name('inventory.destroy');
+
+// Material Estimates (the furniture-type library)
+Route::get('/material-estimates', [MaterialEstimateController::class, 'index'])->name('material-estimates.index');
+Route::get('/material-estimates/create', [MaterialEstimateController::class, 'create'])->name('material-estimates.create');
+Route::post('/material-estimates', [MaterialEstimateController::class, 'store'])->name('material-estimates.store');
+Route::get('/material-estimates/{id}/edit', [MaterialEstimateController::class, 'edit'])->name('material-estimates.edit');
+Route::put('/material-estimates/{id}', [MaterialEstimateController::class, 'update'])->name('material-estimates.update');
+Route::post('/material-estimates/{id}/reset', [MaterialEstimateController::class, 'reset'])->name('material-estimates.reset');
 
 // Chatbot Training
 Route::get('/chatbot', [ChatbotIntentController::class, 'index'])->name('chatbot.index');

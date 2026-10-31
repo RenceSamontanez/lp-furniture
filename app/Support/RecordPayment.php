@@ -151,6 +151,7 @@ class RecordPayment
                     'status_updated_by' => $admin->id,
                     'status_updated_at' => now(),
                 ])->save();
+                \App\Support\MaterialDeduction::deduct($order);
                 $confirmed = true;
 
                 if ($order->design_request_id) {

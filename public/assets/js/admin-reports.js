@@ -13,6 +13,7 @@
       t.tabIndex = on ? 0 : -1;
       if (on && focus) { t.focus(); }
     });
+    var root = document.querySelector('.rp'); if (root) { root.classList.toggle('rp--materials', key === 'materials'); }
     [].forEach.call(document.querySelectorAll('.rp-pane'), function (p) { p.classList.toggle('is-on', p.id === 'rp-' + key); });
     [].forEach.call(document.querySelectorAll('.rp-seg a'), function (a) {
       var u = new URL(a.href, location.href);

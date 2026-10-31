@@ -195,7 +195,7 @@ class ProductPhotoImportTest extends TestCase
         $this->get(route('catalog'))->assertOk()->assertSee($url, false)->assertDontSee('stale.jpg');
         $admin = $this->makeUser('admin');
         $this->actingAs($admin, 'admin')->get(route('admin.products.index'))->assertOk()->assertSee($url, false)->assertDontSee('stale.jpg');
-        $this->actingAs($admin, 'admin')->get(route('admin.products.edit', $p->id))->assertOk()->assertSee($url, false);
+        $this->actingAs($admin, 'admin')->get(route('admin.products.index', ['edit' => $p->id]))->assertOk()->assertSee($url, false);
         $this->getJson("/product/{$p->id}/quick-view")->assertJsonPath('gallery_images.0', $url);
     }
 
@@ -212,7 +212,7 @@ class ProductPhotoImportTest extends TestCase
         $this->getJson("/product/{$p->id}/quick-view")->assertOk()->assertJsonPath('gallery_images', [$ph]);
         $admin = $this->makeUser('admin');
         $this->actingAs($admin, 'admin')->get(route('admin.products.index'))->assertOk()->assertSee($ph, false);
-        $this->actingAs($admin, 'admin')->get(route('admin.products.edit', $p->id))->assertOk()->assertSee($ph, false);
+        $this->actingAs($admin, 'admin')->get(route('admin.products.index', ['edit' => $p->id]))->assertOk()->assertSee($ph, false);
     }
 
     public function test_a_past_order_still_shows_its_old_snapshot_image(): void

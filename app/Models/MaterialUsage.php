@@ -5,6 +5,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class MaterialUsage extends Model
 {
+    protected $table = 'material_usage';
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -12,11 +14,14 @@ class MaterialUsage extends Model
         'inventory_id',
         'quantity_used',
         'notes',
+        'used_at',
+        'reversed_at',
     ];
 
     protected $casts = [
         'quantity_used' => 'decimal:2',
         'used_at'       => 'datetime',
+        'reversed_at'   => 'datetime',
     ];
 
     // Belongs to an order

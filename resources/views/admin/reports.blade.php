@@ -5,10 +5,11 @@
 
 @push('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/admin-reports.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/admin-materials.css') }}?v={{ @filemtime(public_path('assets/css/admin-materials.css')) }}"/>
 @endpush
 
 @php
-  $tabs = ['sales' => 'Sales', 'prod' => 'Products', 'svc' => 'Services & AI', 'luma' => 'Luma', 'cust' => 'Customers'];
+  $tabs = ['sales' => 'Sales', 'prod' => 'Products', 'svc' => 'Services & AI', 'luma' => 'Luma', 'cust' => 'Customers', 'materials' => 'Materials'];
   $money = fn ($v) => \App\Support\AdminReports::peso($v === null ? null : (float) $v);
   $up = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1l4 7H1z"/></svg>';
   $dn = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 9L1 2h8z"/></svg>';
@@ -254,6 +255,88 @@
         </div></div>
       </div>
     </div>
+  </section>
+
+  {{-- MATERIALS: from the inventory history; no prices anywhere --}}
+  <section class="rp-pane {{ $tab === 'materials' ? 'is-on' : '' }}" id="rp-materials" role="tabpanel" aria-labelledby="rp-t-materials">
+    <div class="rp-top">
+      <div class="rp-seg" role="group" aria-label="Materials period">
+        @foreach($mt['periods'] as $key => $label)
+          <a href="{{ route('admin.reports', ['period' => $r['period'], 'tab' => 'materials', 'mperiod' => $key]) }}" data-mperiod="{{ $key }}" class="{{ $mt['days'] === $key ? 'is-on' : '' }}" @if($mt['days'] === $key) aria-current="true" @endif>{{ $label }}</a>
+        @endforeach
+      </div>
+    </div>
+    <div class="mt-rp">
+      @foreach($mt['kpis'] as $k)
+        <div class="kpi {{ $k['tone'] }}"><div class="l">{{ $k['label'] }}</div><div class="v">{{ $k['value'] }}</div><div class="d">{{ $k['note'] }}</div></div>
+      @endforeach
+    </div>
+    <div class="rp-grid">
+      <div>
+        <div class="rp-card"><h2>Most Needed Right Now <span class="mt-smp">Closest to running out first</span></h2><div class="rp-body">
+          @forelse($mt['needs'] as $n)
+            <div class="mt-need">
+              <div class="t"><span>{{ $n['name'] }}</span><span class="mt-chip {{ $n['tone'] }}">{{ $n['chip'] }}</span></div>
+              <div class="mt-trk {{ in_array($n['tone'], ['short', 'out'], true) ? 'red' : ($n['tone'] === 'low' ? '' : 'green') }}"><i style="width: {{ $n['pct'] }}%"></i></div>
+              <div class="m">{{ $n['left'] }} &middot; {{ $n['pace'] }}{{ in_array($n['pace'], ['Out', 'No recent use'], true) ? '' : ' at the current pace' }}</div>
+              @if($n['buy'] > 0)<div class="buy">Buy about <b>{{ number_format($n['buy']) }} {{ $n['unit'] }}</b> to cover the next 30 days.</div>@endif
+            </div>
+          @empty <p class="rp-empty">No materials yet.</p> @endforelse
+        </div></div>
+        <div class="rp-card"><h2>Wood Used And Restocked By Week</h2><div class="rp-body">
+          <div class="mt-keyl"><span><i style="background:#c8963e"></i>Used</span><span><i style="background:#1d4e89"></i>Restocked</span></div>
+          @php $anyWeek = collect($mt['weeks'])->contains(fn ($w) => $w['used'] > 0 || $w['restocked'] > 0); @endphp
+          @if(! $anyWeek)
+            <p class="rp-empty">No materials were used in this period.</p>
+          @else
+            <div class="mt-wk">
+              @foreach($mt['weeks'] as $w)
+                <div class="wc">
+                  <div class="pair">
+                    <div class="pc"><span class="val">{{ $w['used'] ?: '' }}</span><div class="bar" style="height: {{ $w['used'] / $mt['weekMax'] * 120 }}px"></div></div>
+                    <div class="pc"><span class="val">{{ $w['restocked'] ?: '' }}</span><div class="bar rs" style="height: {{ $w['restocked'] / $mt['weekMax'] * 120 }}px; min-height: {{ $w['restocked'] ? 4 : 0 }}px"></div></div>
+                  </div>
+                  <span class="wl">{{ $w['label'] }}</span>
+                </div>
+              @endforeach
+            </div>
+          @endif
+          <p class="rp-empty" style="margin-top:8px;">All wood types together, in sqft.</p>
+        </div></div>
+      </div>
+      <div>
+        <div class="rp-card"><h2>Recent Movements</h2><div class="rp-body">
+          @forelse($mt['recent'] as $v)
+            <div class="rp-li"><span><b>{{ $v['name'] }}</b><br><span class="mt-smp">{{ $v['reason'] }} &middot; {{ $v['date'] }}</span></span><span class="{{ $v['positive'] ? 'mt-mv-in' : 'mt-mv-out' }}">{{ $v['change'] }}</span></div>
+          @empty <p class="rp-empty">Nothing has moved yet.</p> @endforelse
+        </div></div>
+        <div class="rp-card"><h2>Things To Know</h2><div class="rp-body">
+          <div class="rp-li"><span>Orders with wood you don't stock{{ $mt['unmappedNames'] ? ' (' . implode(', ', $mt['unmappedNames']) . ')' : '' }}</span><b>{{ $mt['unmappedOrders'] }}</b></div>
+          <div class="rp-li"><span>Orders where the customer supplied the wood</span><b>{{ $mt['customerWoodOrders'] }}</b></div>
+          <p class="rp-empty" style="margin-top:8px;">Wood you don't stock is not deducted. Add it as a material so it can be tracked. When the customer supplies the wood, only finish, nails, sandpaper and glue are deducted.</p>
+        </div></div>
+      </div>
+    </div>
+    <div class="rp-card" style="margin-top:14px;"><h2>Used And Restocked By Material</h2><div class="rp-body rp-flush">
+      @if(! $mt['anyActivity'])
+        <p class="rp-empty rp-pad">No materials were used in this period.</p>
+      @else
+        <table class="rp-mini rp-stack">
+          <thead><tr><th>Material</th><th class="r">Used</th><th class="r">Restocked</th><th class="r">Net Change</th><th class="r">Remaining</th></tr></thead>
+          <tbody>
+            @foreach($mt['table'] as $row)
+              <tr>
+                <td><b>{{ $row['name'] }}</b></td>
+                <td class="r" data-l="Used">{{ \App\Support\MaterialStock::number($row['used']) }} {{ $row['unit'] }}</td>
+                <td class="r" data-l="Restocked">{{ \App\Support\MaterialStock::number($row['restocked']) }} {{ $row['unit'] }}</td>
+                <td class="r" data-l="Net Change">{{ ($row['net'] > 0 ? '+' : '') . \App\Support\MaterialStock::number($row['net']) }}</td>
+                <td class="r" data-l="Remaining">@if($row['short'])<span class="mt-short">{{ $row['remaining'] }}</span>@else{{ $row['remaining'] }}@endif</td>
+              </tr>
+            @endforeach
+          </tbody>
+        </table>
+      @endif
+    </div></div>
   </section>
 </div>
 @endsection

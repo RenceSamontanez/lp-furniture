@@ -99,6 +99,9 @@ class OrderTracking
             'status_updated_at' => now(),
         ])->save();
 
+        // Pending -> Confirmed: the estimated materials come off the inventory (own savepoint; never blocks the confirmation).
+        MaterialDeduction::deduct($order);
+
         $event = OrderStatusEvent::create([
             'order_id' => $order->id, 'admin_user_id' => $admin?->id, 'type' => 'stage',
             'title' => 'Order confirmed automatically', 'from_status' => 'pending', 'to_status' => 'confirmed',
@@ -149,6 +152,10 @@ class OrderTracking
                 $order->forceFill([
                     'order_status' => $next, 'status_updated_by' => $admin->id, 'status_updated_at' => now(),
                 ])->save();
+
+                if ($from === 'pending' && $next === 'confirmed') {
+                    MaterialDeduction::deduct($order);
+                }
 
                 $event = OrderStatusEvent::create([
                     'order_id' => $order->id, 'admin_user_id' => $admin->id, 'type' => 'stage',
@@ -252,6 +259,7 @@ class OrderTracking
 
             // Catalog items go back into stock, in this same transaction and once only (the payment is not touched).
             $units = StockRestorer::restore($order);
+            MaterialDeduction::restore($order);
             if ($units > 0) {
                 OrderStatusEvent::create([
                     'order_id' => $order->id, 'admin_user_id' => $admin->id, 'type' => 'stock',
@@ -339,6 +347,7 @@ class OrderTracking
             ]);
 
             $units = StockRestorer::restore($order);
+            MaterialDeduction::restore($order);
             if ($units > 0) {
                 OrderStatusEvent::create([
                     'order_id' => $order->id, 'admin_user_id' => null, 'type' => 'stock',
@@ -367,7 +376,8 @@ class OrderTracking
     /** The abandoned-order sweep and other system cancellations; no admin, no form. */
     public function systemCancel(Order $order, string $reason): void
     {
-        // The sweep sends its own notification text; only the history row is added here.
+        // The sweep sends its own notification text; only the history row is added here (and any materials taken are put back).
+        MaterialDeduction::restore($order);
         OrderStatusEvent::create([
             'order_id' => $order->id, 'type' => 'cancel', 'title' => 'Order cancelled',
             'from_status' => 'pending', 'to_status' => 'cancelled',

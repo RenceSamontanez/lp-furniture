@@ -111,7 +111,7 @@ class ProductDimensionsTest extends TestCase
     public function test_the_form_has_length_width_height_unit_and_the_measuring_help(): void
     {
         $admin = $this->admin();
-        $html = $this->actingAs($admin, 'admin')->get(route('admin.products.create'))->assertOk()->getContent();
+        $html = $this->actingAs($admin, 'admin')->get(route('admin.products.index', ['add' => 1]))->assertOk()->getContent();
 
         foreach (['dimension_length', 'dimension_width', 'dimension_height', 'dimension_unit'] as $name) {
             $this->assertStringContainsString('name="' . $name . '"', $html);
@@ -137,10 +137,10 @@ class ProductDimensionsTest extends TestCase
         $this->assertSame(['length' => 120.0, 'width' => 60.0, 'height' => 75.0], $p->dimensions_cm);
         $this->assertSame('120 x 60 x 75 cm (47.2 x 23.6 x 29.5 in)', $p->dimensions_label);
 
-        $html = $this->actingAs($this->admin(), 'admin')->get(route('admin.products.edit', $p->id))->assertOk()->getContent();
-        $this->assertMatchesRegularExpression('/id="pf-dim-length"[^>]*value="120"/', $html);
-        $this->assertMatchesRegularExpression('/id="pf-dim-width"[^>]*value="60"/', $html);
-        $this->assertMatchesRegularExpression('/id="pf-dim-height"[^>]*value="75"/', $html);
+        $html = $this->actingAs($this->admin(), 'admin')->get(route('admin.products.index', ['edit' => $p->id]))->assertOk()->getContent();
+        $this->assertMatchesRegularExpression('/id="product-edit-' . $p->id . '-form-dim-length"[^>]*value="120"/', $html);
+        $this->assertMatchesRegularExpression('/id="product-edit-' . $p->id . '-form-dim-width"[^>]*value="60"/', $html);
+        $this->assertMatchesRegularExpression('/id="product-edit-' . $p->id . '-form-dim-height"[^>]*value="75"/', $html);
         $this->assertStringContainsString('<option value="cm" selected', $html);
         $this->assertSame('120 x 60 x 75 cm', $p->fresh()->dimensions, 'viewing changes nothing');
 
@@ -157,8 +157,8 @@ class ProductDimensionsTest extends TestCase
 
         $this->assertNull($p->dimensions_cm);
         $this->assertSame('big and heavy', $p->dimensions_label, 'shown as it was stored');
-        $html = $this->actingAs($this->admin(), 'admin')->get(route('admin.products.edit', $p->id))->assertOk()->getContent();
-        $this->assertMatchesRegularExpression('/id="pf-dim-length"[^>]*value=""/', $html);
+        $html = $this->actingAs($this->admin(), 'admin')->get(route('admin.products.index', ['edit' => $p->id]))->assertOk()->getContent();
+        $this->assertMatchesRegularExpression('/id="product-edit-' . $p->id . '-form-dim-length"[^>]*value=""/', $html);
         $this->get(route('product.show', $p->id))->assertOk()->assertSee('big and heavy');
     }
 
@@ -230,9 +230,9 @@ class ProductDimensionsTest extends TestCase
         $offenders = array_values(array_filter($offenders, fn ($f) => !str_ends_with($f, 'Dimensions.php')));
 
         $this->assertSame([], $offenders);
-        $this->assertDoesNotMatchRegularExpression('/\bdepth\b/i', file_get_contents(resource_path('views/admin/products/form.blade.php')));
+        $this->assertDoesNotMatchRegularExpression('/\bdepth\b/i', file_get_contents(resource_path('views/admin/products/_modal.blade.php')));
         $this->assertStringNotContainsStringIgnoringCase('depth', $this->get('/guide')->assertOk()->getContent());
-        $this->assertStringNotContainsStringIgnoringCase('depth', $this->actingAs($this->admin(), 'admin')->get(route('admin.products.create'))->getContent());
+        $this->assertStringNotContainsStringIgnoringCase('depth', $this->actingAs($this->admin(), 'admin')->get(route('admin.products.index', ['add' => 1]))->getContent());
     }
 
     public function test_existing_order_items_and_agreement_snapshots_are_unchanged_by_editing_a_product(): void

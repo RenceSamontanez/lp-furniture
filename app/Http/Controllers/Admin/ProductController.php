@@ -24,7 +24,7 @@ class ProductController extends Controller
         $category = $request->get('category', 'all');
 
         $products = Product::query()
-            ->with('primaryImage')->withCount('orderItems')
+            ->with('primaryImage', 'materialEstimate')->withCount('orderItems')
             ->when($search, fn($q) => $q->where('product_name', 'like', "%{$search}%"))
             ->when($category !== 'all', fn($q) => $q->where('category', $category))
             ->latest()
@@ -32,7 +32,20 @@ class ProductController extends Controller
 
         $categories = Product::select('category')->distinct()->whereNotNull('category')->pluck('category');
 
-        return view('admin.products.index', compact('products', 'categories', 'search', 'category'));
+        // One Edit modal per product on this page. The old Edit URL lands here as ?edit=ID and opens that product's modal.
+        $modalProducts = $products->getCollection()->keyBy('id');
+        $editId = (int) $request->get('edit');
+        if ($editId > 0 && ! $modalProducts->has($editId) && ($target = Product::with('materialEstimate')->find($editId))) {
+            $modalProducts->put($target->id, $target);
+        }
+        $openModal = old('_modal') ?: ($editId > 0 && $modalProducts->has($editId) ? 'product-edit-' . $editId : ($request->boolean('add') ? 'product-add' : null));
+
+        $woodRows = \App\Models\Inventory::where('material_name', 'like', 'Wood (%')->pluck('material_name');
+
+        return view('admin.products.index', array_merge(
+            compact('products', 'categories', 'search', 'category', 'modalProducts', 'openModal', 'woodRows'),
+            $this->dropdownOptions()
+        ));
     }
 
     /* ════════════════════════════════
@@ -40,10 +53,8 @@ class ProductController extends Controller
     ════════════════════════════════ */
     public function create()
     {
-        return view('admin.products.form', array_merge(
-            ['product' => new Product(), 'lengthVal' => null, 'widthVal' => null, 'heightVal' => null],
-            $this->dropdownOptions()
-        ));
+        // The Add page is now a modal on the list; the old URL still works and opens it.
+        return redirect()->route('admin.products.index', ['add' => 1]);
     }
 
     /* ════════════════════════════════
@@ -55,7 +66,10 @@ class ProductController extends Controller
         $validated['is_customizable'] = $request->boolean('is_customizable');
         $validated['is_featured']     = $request->boolean('is_featured');
 
+        $estimate = $this->estimateInput($request);
+        unset($validated['est_type'], $validated['est_wood'], $validated['est_varnish'], $validated['est_lacquer'], $validated['est_nails'], $validated['est_sand'], $validated['est_glue']);
         $product = Product::create($validated);
+        \App\Support\MaterialEstimator::createProductEstimate($product, $estimate['type'], $estimate['values']);
 
         if ($request->hasFile('product_image')) {
             $this->setMainPhoto($product, ProductPhotos::store($request->file('product_image')));
@@ -69,11 +83,9 @@ class ProductController extends Controller
     ════════════════════════════════ */
     public function edit($id)
     {
-        $product = Product::findOrFail($id);
-        return view('admin.products.form', array_merge(
-            compact('product'),
-            $this->dropdownOptions()
-        ));
+        Product::findOrFail($id);
+
+        return redirect()->route('admin.products.index', ['edit' => (int) $id]);
     }
 
     /* ════════════════════════════════
@@ -87,7 +99,10 @@ class ProductController extends Controller
         $validated['is_customizable'] = $request->boolean('is_customizable');
         $validated['is_featured']     = $request->boolean('is_featured');
 
+        $estimate = $this->estimateInput($request);
+        unset($validated['est_type'], $validated['est_wood'], $validated['est_varnish'], $validated['est_lacquer'], $validated['est_nails'], $validated['est_sand'], $validated['est_glue']);
         $product->update($validated);
+        $this->saveEstimate($product, $estimate);
 
         if ($request->hasFile('product_image')) {
             $this->setMainPhoto($product, ProductPhotos::store($request->file('product_image')));
@@ -207,6 +222,46 @@ class ProductController extends Controller
         return count($files);
     }
 
+    /** The estimate posted with the form: the type it began from and the six numbers (null values = not posted). */
+    private function estimateInput(Request $request): array
+    {
+        $type = trim((string) $request->input('est_type'));
+        $type = \App\Models\MaterialEstimate::where('name', $type)->exists() ? $type : null;
+
+        $values = [];
+        foreach (array_keys(\App\Support\MaterialLibrary::FIELDS) as $k) {
+            $v = $request->input('est_' . $k);
+            if ($v === null || $v === '') {
+                return ['type' => $type, 'values' => null];
+            }
+            $values[$k] = (float) $v;
+        }
+
+        return ['type' => $type, 'values' => $values];
+    }
+
+    /**
+     * Keeps the product's saved numbers unless the form changed them. "Edited" means different from the starter of the type it began from;
+     * a form that did not touch the numbers leaves the flag alone (the library may have moved on since).
+     */
+    private function saveEstimate(Product $product, array $estimate): void
+    {
+        $existing = $product->materialEstimate;
+        if (! $existing) {
+            \App\Support\MaterialEstimator::createProductEstimate($product, $estimate['type'], $estimate['values']);
+            return;
+        }
+        if ($estimate['values'] === null) {
+            return;
+        }
+
+        $unchanged = collect($estimate['values'])->every(fn ($v, $k) => abs($v - (float) $existing->{$k}) < 0.005);
+        if ($unchanged) {
+            return;
+        }
+        \App\Support\MaterialEstimator::createProductEstimate($product, $estimate['type'] ?? $existing->type_name, $estimate['values']);
+    }
+
     /* ════════════════════════════════
        DROPDOWN OPTIONS — distinct existing values for the
        Category / Material / Finish "select + add new" fields
@@ -260,6 +315,15 @@ class ProductController extends Controller
             'dimension_unit'   => ['nullable', 'string', 'max:4'],
 
             'product_status' => ['required', 'in:available,unavailable'],
+
+            // Materials Needed: the six numbers of one piece. Optional (a missing set means "use the starter").
+            'est_type'    => ['nullable', 'string', 'max:120'],
+            'est_wood'    => ['nullable', 'numeric', 'min:0', 'max:99999'],
+            'est_varnish' => ['nullable', 'numeric', 'min:0', 'max:99999'],
+            'est_lacquer' => ['nullable', 'numeric', 'min:0', 'max:99999'],
+            'est_nails'   => ['nullable', 'numeric', 'min:0', 'max:99999'],
+            'est_sand'    => ['nullable', 'numeric', 'min:0', 'max:99999'],
+            'est_glue'    => ['nullable', 'numeric', 'min:0', 'max:99999'],
             'product_image'  => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120', new \App\Rules\RealJpegOrPng()],
 
             'extra_images'   => ['nullable', 'array', 'max:' . Product::MAX_EXTRA_IMAGES],

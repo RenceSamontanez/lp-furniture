@@ -127,6 +127,13 @@ class CustomOrderStatus
             }
             $order->forceFill($update)->save();
 
+            // pending -> confirmed takes the estimated materials off the inventory; a cancellation puts back what was taken.
+            if ($to === 'confirmed' && $from === 'pending') {
+                MaterialDeduction::deduct($order);
+            } elseif ($to === 'cancelled') {
+                MaterialDeduction::restore($order);
+            }
+
             $request = $order->design_request_id
                 ? CustomDesignRequest::lockForUpdate()->find($order->design_request_id)
                 : null;

@@ -439,4 +439,135 @@ final class AdminReports
 
         return self::shares($counts);
     }
+
+    /* ───────────────── Materials tab ───────────────── */
+
+    public const MATERIAL_PERIODS = [30 => 'Last 30 Days', 90 => 'Last 3 Months'];
+
+    /**
+     * The Materials tab, from the inventory history (inventory_movements) and the orders that were deducted. No prices anywhere.
+     * Used = consumed minus restored (a cancelled order's materials are not "used"); restocked = 'restocked' movements only.
+     * Days left = remaining / (net use of the last 30 days / 30), whatever period is shown; short or out of stock ranks first.
+     */
+    public static function materials(int|string|null $days = 30): array
+    {
+        $days = (int) $days === 90 ? 90 : 30;
+        $since = now()->subDays($days);
+
+        $isWood = fn ($name) => str_starts_with((string) $name, 'Wood (');
+
+        $usedBy = [];       // material_name => net used in the period
+        $restockedBy = [];
+        $restockEntries = 0;
+        foreach (DB::table('inventory_movements')->where('created_at', '>=', $since)->get(['material_name', 'type', 'quantity_change']) as $m) {
+            if (in_array($m->type, ['consumed', 'restored'], true)) {
+                $usedBy[$m->material_name] = ($usedBy[$m->material_name] ?? 0) - (float) $m->quantity_change;
+            } elseif ($m->type === 'restocked') {
+                $restockedBy[$m->material_name] = ($restockedBy[$m->material_name] ?? 0) + (float) $m->quantity_change;
+                $restockEntries++;
+            }
+        }
+
+        $woodUsed = collect($usedBy)->filter(fn ($v, $k) => $isWood($k))->sum();
+        $woodRestocked = collect($restockedBy)->filter(fn ($v, $k) => $isWood($k))->sum();
+
+        $materials = \App\Models\Inventory::orderBy('material_name')->get();
+        $used30 = MaterialStock::usedSince(30);
+
+        $ordersCounted = Order::where('materials_deducted_at', '>=', $since)->count();
+        $short = $materials->filter(fn ($m) => (float) $m->material_quantity <= 0)->count();
+        $low = $materials->filter(fn ($m) => (float) $m->material_quantity > 0
+            && MaterialStock::statusFor($m->material_quantity, $m->low_stock_threshold) === MaterialStock::LOW)->count();
+
+        $kpis = [
+            ['label' => 'Orders Counted', 'value' => number_format($ordersCounted), 'note' => 'confirmed orders', 'tone' => ''],
+            ['label' => 'Wood Used', 'value' => number_format(round($woodUsed)) . ' sqft', 'note' => 'estimated', 'tone' => ''],
+            ['label' => 'Wood Restocked', 'value' => number_format(round($woodRestocked)) . ' sqft', 'note' => 'added to stock', 'tone' => ''],
+            ['label' => 'Materials Short', 'value' => (string) $short, 'note' => $short ? 'restock soon' : 'none', 'tone' => $short ? 'bad' : 'good'],
+            ['label' => 'Running Low', 'value' => (string) $low, 'note' => 'at or below the limit', 'tone' => $low ? '' : 'good'],
+            ['label' => 'Restock Entries', 'value' => number_format($restockEntries), 'note' => 'in this period', 'tone' => ''],
+        ];
+
+        // Most needed: days left ascending, short or out first (the most short first), materials with no recent use last.
+        $ranked = $materials->map(function ($m) use ($used30) {
+            $u = (float) ($used30[$m->id] ?? 0);
+            $q = (float) $m->material_quantity;
+            $d = MaterialStock::daysLeft($m, $u);
+            $sort = $q <= 0 ? -1000000 + $q : ($d ?? 1000000);
+            $need = max(0.0, $u - max($q, 0));
+            $buy = $need <= 0 ? 0 : (in_array($m->unit, ['sqft', 'pieces'], true) ? (int) (ceil($need / 10) * 10) : (int) ceil($need));
+
+            return [
+                'name' => $m->material_name, 'unit' => $m->unit, 'tone' => MaterialStock::chipTone($m),
+                'chip' => MaterialStock::chipLabel($m),
+                'left' => $q < 0 ? 'Short by ' . MaterialStock::number(-$q) . ' ' . $m->unit : MaterialStock::number($q) . ' ' . $m->unit . ' left',
+                'pace' => MaterialStock::lastsAbout($m, $u),
+                'pct' => $q <= 0 ? 2 : ($u > 0 ? max(2, min(100, $q / $u * 100)) : 100),
+                'buy' => $buy, 'sort' => $sort,
+            ];
+        })->sortBy('sort')->take(5)->values()->all();
+
+        // Wood used vs restocked, last 4 weeks, all wood rows together.
+        $weeks = [];
+        for ($i = 0; $i < 4; $i++) {
+            $from = now()->subDays(7 * (4 - $i));
+            $to = now()->subDays(7 * (3 - $i));
+            $rows = DB::table('inventory_movements')->where('material_name', 'like', 'Wood (%')->where('created_at', '>=', $from)->where('created_at', '<', $to)
+                ->get(['type', 'quantity_change']);
+            $weeks[] = [
+                'label' => 'Week ' . ($i + 1),
+                'used' => round(-$rows->whereIn('type', ['consumed', 'restored'])->sum('quantity_change')),
+                'restocked' => round($rows->where('type', 'restocked')->sum('quantity_change')),
+            ];
+        }
+        $max = max(1, collect($weeks)->max(fn ($w) => max($w['used'], $w['restocked'])));
+
+        $recent = DB::table('inventory_movements as mv')->leftJoin('orders as o', 'o.id', '=', 'mv.order_id')->leftJoin('inventory as i', 'i.id', '=', 'mv.inventory_id')
+            ->orderByDesc('mv.id')->limit(8)
+            ->get(['mv.material_name', 'mv.type', 'mv.quantity_change', 'mv.created_at', 'mv.note', 'o.order_number', 'i.unit'])
+            ->map(function ($r) {
+                $reason = match ($r->type) {
+                    'consumed' => 'Order ' . ($r->order_number ?? '') . ' confirmed',
+                    'restored' => 'Order ' . ($r->order_number ?? '') . ' cancelled, put back',
+                    'restocked' => 'Restocked',
+                    'corrected' => 'Counted by admin',
+                    default => 'Material added',
+                };
+                $n = (float) $r->quantity_change;
+                $change = $r->type === 'corrected' ? ($r->note ?: 'Count corrected') : ($n > 0 ? '+' : '-') . MaterialStock::number(abs($n)) . ($r->unit ? ' ' . $r->unit : '');
+
+                return ['name' => $r->material_name, 'reason' => preg_replace('/\s+/', ' ', $reason), 'date' => Carbon::parse($r->created_at)->format('M j'), 'change' => $change, 'positive' => $n >= 0];
+            })->all();
+
+        $unmappedNames = [];
+        $unmappedOrders = 0;
+        $customerWood = 0;
+        foreach (Order::where('materials_deducted_at', '>=', $since)->whereNotNull('materials_note')->pluck('materials_note') as $note) {
+            $parts = explode('|', (string) $note);
+            $hit = false;
+            foreach ($parts as $part) {
+                if (str_starts_with($part, 'unmapped_wood:')) {
+                    $hit = true;
+                    $unmappedNames[] = substr($part, 14);
+                }
+            }
+            $unmappedOrders += $hit ? 1 : 0;
+            $customerWood += in_array('customer_wood', $parts, true) ? 1 : 0;
+        }
+
+        $table = $materials->map(function ($m) use ($usedBy, $restockedBy) {
+            $used = (float) ($usedBy[$m->material_name] ?? 0);
+            $rs = (float) ($restockedBy[$m->material_name] ?? 0);
+
+            return ['name' => $m->material_name, 'unit' => $m->unit, 'used' => $used, 'restocked' => $rs, 'net' => $rs - $used,
+                'remaining' => MaterialStock::remainingText($m), 'short' => (float) $m->material_quantity < 0];
+        })->all();
+
+        return [
+            'days' => $days, 'periods' => self::MATERIAL_PERIODS, 'kpis' => $kpis, 'needs' => $ranked,
+            'weeks' => $weeks, 'weekMax' => $max, 'recent' => $recent, 'table' => $table,
+            'anyActivity' => $usedBy !== [] || $restockedBy !== [],
+            'unmappedOrders' => $unmappedOrders, 'unmappedNames' => array_values(array_unique($unmappedNames)), 'customerWoodOrders' => $customerWood,
+        ];
+    }
 }

@@ -43,7 +43,7 @@ class AdminInventoryTicketModalTest extends TestCase
         $this->assertStringContainsString('id="material-add"', $html);
         $this->assertSame(2, preg_match_all('/id="material-edit-\d+"/', $html));
         $this->assertStringContainsString('lp-modal lp-modal--mid', $html);
-        foreach (['Add Material', 'Edit Material', 'Material Name', 'Current Quantity', 'Unit', 'Low Stock Threshold', 'Save Material'] as $text) {
+        foreach (['Add Material', 'Edit Material', 'Material Name', 'Starting Quantity', 'Correct The Count', 'Unit', 'Low Stock At', 'Save Material'] as $text) {
             $this->assertStringContainsString($text, $html, $text);
         }
         $this->assertStringContainsString('assets/css/admin-modals.css', $html);

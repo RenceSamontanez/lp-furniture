@@ -124,7 +124,7 @@ class AdminTypographyTest extends TestCase
         $admin = $this->makeUser('admin');
         $customer = $this->makeUser();
         $order = $this->makeOrder($customer);
-        foreach (['/admin/dashboard', '/admin/orders', '/admin/orders/' . $order->id, '/admin/customers/' . $customer->id, '/admin/products/create', '/admin/reports'] as $url) {
+        foreach (['/admin/dashboard', '/admin/orders', '/admin/orders/' . $order->id, '/admin/customers/' . $customer->id, '/admin/products?add=1', '/admin/reports'] as $url) {
             $html = $this->actingAs($admin, 'admin')->get($url)->assertOk()->getContent();
             preg_match_all('~<(button|a)\b[^>]*>(.*?)</\1>~s', $html, $m);
             foreach ($m[2] as $inner) {
@@ -154,7 +154,7 @@ class AdminTypographyTest extends TestCase
         $this->assertStringNotContainsString('Oak Dining Table By Juan', $products);
         $this->assertSame('oak dining table by juan', Product::first()->product_name);
 
-        $form = $this->actingAs($admin, 'admin')->get('/admin/products/create')->assertOk()->getContent();
+        $form = $this->actingAs($admin, 'admin')->get('/admin/products?add=1')->assertOk()->getContent();
         $this->assertStringContainsString('Sale Price (₱)', $form);
         $this->assertStringContainsString('(Optional)', $form);
         $this->assertStringNotContainsString('(optional)</span>', $form);

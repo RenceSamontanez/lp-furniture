@@ -391,6 +391,7 @@ class PaymentController extends Controller
                 $combined = app(OrderTracking::class)->autoConfirm($order, null, true);
             } else {
                 $order->update(['order_status' => 'confirmed']);
+                \App\Support\MaterialDeduction::deduct($order);
             }
 
             if ($order->design_request_id) {

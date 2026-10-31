@@ -305,12 +305,15 @@ class ProductExtraPhotosTest extends TestCase
         $admin = $this->admin();
         $bare = $this->product(['material' => null, 'finish' => null, 'dimensions' => null]);
 
-        $this->actingAs($admin, 'admin')->get(route('admin.products.create'))->assertOk()->assertDontSee('Extra Photos');
-        $this->actingAs($admin, 'admin')->get(route('admin.products.edit', $bare->id))->assertOk()
-            ->assertSee('Extra Photos')->assertSee('5 more allowed');
+        // the Add modal has no Extra Photos block (a product must exist first); the product's Edit modal has
+        $html = $this->actingAs($admin, 'admin')->get(route('admin.products.index', ['add' => 1]))->assertOk()->getContent();
+        $add = substr($html, strpos($html, 'id="product-add"'), strpos($html, 'id="product-edit-' . $bare->id . '"') - strpos($html, 'id="product-add"'));
+        $this->assertStringNotContainsString('Extra Photos', $add);
+        $this->assertStringContainsString('Extra Photos', $html);
+        $this->assertStringContainsString('5 more allowed', $html);
 
         $this->extra($bare, 2);
-        $this->actingAs($admin, 'admin')->get(route('admin.products.edit', $bare->id))->assertOk()
+        $this->actingAs($admin, 'admin')->get(route('admin.products.index', ['edit' => $bare->id]))->assertOk()
             ->assertSee('4 more allowed')->assertSee('Remove Photo');
         $this->actingAs($admin, 'admin')->get(route('admin.products.index'))->assertOk();
     }

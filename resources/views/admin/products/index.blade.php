@@ -3,7 +3,16 @@
 @section('title', 'Products — Admin')
 @section('page-title', 'Products')
 
+@push('styles')
+  <link rel="stylesheet" href="{{ asset('assets/css/guide.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/design.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/admin-modals.css') }}?v={{ @filemtime(public_path('assets/css/admin-modals.css')) }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/admin-materials.css') }}?v={{ @filemtime(public_path('assets/css/admin-materials.css')) }}"/>
+@endpush
+
 @section('content')
+
+<p class="mt-sub">Every product carries its own material estimate. New products start from the closest furniture type and you can change the numbers when you add or edit them.</p>
 
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
   <form method="GET" action="{{ route('admin.products.index') }}" style="display:flex;gap:8px;flex:1;min-width:260px;">
@@ -17,10 +26,7 @@
     <button type="submit" class="admin-btn admin-btn-outline">Search</button>
   </form>
 
-  <a href="{{ route('admin.products.create') }}" class="admin-btn admin-btn-gold">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    Add Product
-  </a>
+  <button type="button" class="lp-btn lp-btn--primary" data-lp-modal-open="product-add">Add Product</button>
 </div>
 
 
@@ -36,7 +42,7 @@
       </div>
     @else
       <table class="admin-table">
-        <thead><tr><th>Image</th><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Image</th><th>Product</th><th>Category</th><th>Wood</th><th>Price</th><th>Materials Estimate</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
         <tbody>
           @foreach($products as $product)
             <tr>
@@ -51,6 +57,7 @@
                 <div style="font-weight:600;color:#2A1810;">{{ $product->product_name }}</div>
               </td>
               <td data-label="Category">{{ $product->category ?? '—' }}</td>
+              <td data-label="Wood">{{ $product->material ?: '—' }}</td>
               <td data-label="Price">
                 @if($product->sale_price)
                   <span style="text-decoration:line-through;color:#A69A8A;font-size:12px;">₱{{ number_format($product->price, 2) }}</span><br>
@@ -58,6 +65,10 @@
                 @else
                   ₱{{ number_format($product->price, 2) }}
                 @endif
+              </td>
+              <td data-label="Materials Estimate">
+                @php $pe = $product->materialEstimate; @endphp
+                @if($pe)<span class="mt-chip {{ $pe->is_edited ? 'edit' : 'start' }}">{{ $pe->is_edited ? 'Edited' : 'Starter' }}</span> <span class="mt-sub-line" style="display:inline;">{{ $pe->type_name }}</span>@else<span class="mt-sub-line">Starter on first use</span>@endif
               </td>
               <td data-label="Stock">
                 <form method="POST" action="{{ route('admin.products.stock', $product->id) }}" class="admin-quick-stock-form">
@@ -79,7 +90,7 @@
               </td>
               <td data-label="Actions">
                 <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                  <a href="{{ route('admin.products.edit', $product->id) }}" class="admin-btn admin-btn-outline">Edit</a>
+                  <button type="button" class="admin-btn admin-btn-outline" data-lp-modal-open="product-edit-{{ $product->id }}">Edit</button>
                   <button type="button" class="admin-btn admin-btn-danger"
                           onclick="openDeleteProductModal(@js(route('admin.products.destroy', $product->id)), @js($product->product_name), {{ (int) $product->order_items_count }})">
                     Delete
@@ -95,6 +106,17 @@
 </div>
 
 <div style="margin-top:16px;">{{ $products->appends(request()->query())->links() }}</div>
+
+@include('admin.products._modal', ['product' => new \App\Models\Product(), 'modalId' => 'product-add'])
+@foreach($modalProducts as $product)
+  @include('admin.products._modal', ['product' => $product, 'modalId' => 'product-edit-' . $product->id])
+  @foreach($product->extraImages()->get() as $extra)
+    <form id="remove-photo-form-{{ $extra->id }}" method="POST" action="{{ route('admin.products.images.destroy', [$product->id, $extra->id]) }}">@csrf @method('DELETE')</form>
+  @endforeach
+@endforeach
+
+<script type="application/json" id="mt-matcher">@json(\App\Support\MaterialEstimator::matcherData())</script>
+<script type="application/json" id="mt-woods">@json($woodRows)</script>
 
 {{-- ══════════════════════════════════════════
      DELETE PRODUCT MODAL — variant (warning/danger)
@@ -124,7 +146,52 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('assets/js/admin-modal-forms.js') }}?v={{ @filemtime(public_path('assets/js/admin-modal-forms.js')) }}"></script>
+<script src="{{ asset('assets/js/admin-materials.js') }}?v={{ @filemtime(public_path('assets/js/admin-materials.js')) }}"></script>
 <script>
+/* Product modals: price commas, the "+ Add New" selects, the photo preview, inline photo removal and the size-unit converter. */
+function formatPriceInput(input) {
+  var raw = input.value.replace(/[^0-9.]/g, '');
+  var firstDot = raw.indexOf('.');
+  if (firstDot !== -1) { raw = raw.slice(0, firstDot + 1) + raw.slice(firstDot + 1).replace(/\./g, ''); }
+  var parts = raw.split('.');
+  var formattedInt = parts[0] ? Number(parts[0]).toLocaleString('en-US') : '';
+  input.value = parts[1] !== undefined ? formattedInt + '.' + parts[1] : formattedInt;
+}
+function stripPriceCommasOnSubmit(form) {
+  form.querySelectorAll('.price-formatted').forEach(function (i) { i.value = i.value.replace(/,/g, ''); });
+}
+(function () {
+  var factors = @json(\App\Support\Dimensions::FACTORS);
+  document.querySelectorAll('form[data-product-form]').forEach(function (form) {
+    form.querySelectorAll('.price-formatted').forEach(formatPriceInput);
+    form.querySelectorAll('select[data-add-new]').forEach(function (sel) {
+      var wrap = sel.parentNode.querySelector('[data-new-wrap]');
+      function sync() { var n = sel.value === '__new__'; wrap.style.display = n ? 'block' : 'none'; if (!n) { wrap.querySelector('input').value = ''; } }
+      sel.addEventListener('change', sync); sync();
+    });
+    var photo = form.querySelector('[data-photo-input]');
+    if (photo) { photo.addEventListener('change', function () {
+      var f = photo.files[0]; if (!f) { return; }
+      var rd = new FileReader(); rd.onload = function (e) { form.querySelector('[data-photo-preview]').src = e.target.result; }; rd.readAsDataURL(f);
+    }); }
+    form.querySelectorAll('[data-inline-confirm]').forEach(function (box) {
+      var ask = box.querySelector('[data-ic-ask]'), row = box.querySelector('[data-ic-row]');
+      ask.addEventListener('click', function () { ask.style.display = 'none'; row.hidden = false; row.style.display = 'flex'; });
+      box.querySelector('[data-ic-keep]').addEventListener('click', function () { row.hidden = true; row.style.display = 'none'; ask.style.display = ''; });
+    });
+    var unit = form.querySelector('[data-dim-unit]');
+    if (unit) { unit.addEventListener('change', function () {
+      var from = unit.getAttribute('data-prev') || 'cm', to = unit.value;
+      form.querySelectorAll('[data-dim]').forEach(function (input) {
+        var raw = input.value.trim().replace(',', '.');
+        if (raw === '' || isNaN(Number(raw))) { return; }
+        input.value = String(Math.round(Number(raw) * factors[from] / factors[to] * 100) / 100);
+      });
+      unit.setAttribute('data-prev', to);
+    }); }
+  });
+})();
 /* ══════════════════════════════════════════
    DELETE PRODUCT MODAL
    Two visual variants depending on whether the

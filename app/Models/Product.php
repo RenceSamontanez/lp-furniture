@@ -64,6 +64,11 @@ class Product extends Model
         return $d ? \App\Support\Dimensions::cmWithInches($d['length'], $d['width'], $d['height']) : (string) $this->dimensions;
     }
 
+    public function materialEstimate()
+    {
+        return $this->hasOne(ProductMaterialEstimate::class);
+    }
+
     /** Most extra photos (beyond the main one) the admin may attach to one product. */
     public const MAX_EXTRA_IMAGES = 5;
 
