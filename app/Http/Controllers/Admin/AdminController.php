@@ -77,6 +77,8 @@ class AdminController extends Controller
 
             $request->session()->regenerate();
 
+            \App\Support\ActivityLog::signedIn(Auth::guard('admin')->user());
+
             return redirect(SafeIntendedUrl::resolve($request, route('admin.dashboard'), adminArea: true))
                 ->with('success', 'Welcome back, ' . Auth::guard('admin')->user()->first_name . '.');
         }
@@ -103,6 +105,7 @@ class AdminController extends Controller
     public function logout(Request $request)
     {
         \App\Support\Luma\ChatState::forget();
+        \App\Support\ActivityLog::signedOut(Auth::guard('admin')->user());
         // logout() also replaces the remember token and expires the cookie.
         Auth::guard('admin')->logout();
         $request->session()->invalidate();
@@ -232,6 +235,9 @@ class AdminController extends Controller
             return back()->withErrors(['status' => $e->getMessage()]);
         }
 
+        $order->refresh();
+        \App\Support\ActivityLog::record('custom_order_status', 'Moved custom order ' . $order->order_number . ' to ' . \App\Support\OrderStages::labelFor($order), 'orders', $order, 'Order ' . $order->order_number);
+
         return back()->with('success', 'Order status updated.');
     }
 
@@ -360,6 +366,9 @@ class AdminController extends Controller
         } catch (\App\Support\PaymentRecordException $e) {
             return back()->withErrors(['payment' => $e->getMessage()]);
         }
+
+        $order = $installment->order;
+        \App\Support\ActivityLog::record('payment_recorded', 'Marked an installment as paid for order ' . $order?->order_number, 'orders', $order, 'Order ' . $order?->order_number);
 
         return back()->with('success', 'Installment marked as paid and recorded in the ledger.');
     }

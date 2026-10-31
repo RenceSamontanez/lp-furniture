@@ -29,7 +29,7 @@
       <h2 class="cp-name">{{ $customer->first_name }} {{ $customer->last_name }}</h2>
       <div class="cp-meta">
         <span class="cu-vchip {{ $customer->is_validated ? 'is-v' : 'is-u' }}">{{ $customer->is_validated ? 'Verified' : 'Unverified' }}</span>
-        <span>Last activity {{ AC::when($p['lastActivity']) }}</span>
+        <span>{{ $p['lastLogin'] ? 'Last active' : 'Last activity' }} {{ AC::when($p['lastActivity']) }}</span>
       </div>
     </div>
     <span class="cp-grow"></span>
@@ -147,7 +147,7 @@
           <div class="cp-kv"><dt>Email Verified</dt><dd><span class="cu-vchip {{ $customer->email_verified_at ? 'is-v' : 'is-u' }}">{{ $customer->email_verified_at ? 'Yes' : 'No' }}</span></dd></div>
           <div class="cp-kv"><dt>Identity</dt><dd>{{ $p['identity']['label'] }}@if($p['identity']['date'])<span class="cp-soft">{{ $p['identity']['date']->format('M j, Y') }}</span>@endif</dd></div>
           <div class="cp-kv"><dt>Joined</dt><dd>{{ $customer->created_at->format('M j, Y') }}</dd></div>
-          <div class="cp-kv"><dt>Last Activity</dt><dd>{{ AC::when($p['lastActivity']) }}</dd></div>
+          <div class="cp-kv"><dt>{{ $p['lastLogin'] ? 'Last Active' : 'Last Activity' }}</dt><dd>{{ AC::when($p['lastActivity']) }}</dd></div>
         </dl>
       </div>
     </div>

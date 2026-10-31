@@ -82,7 +82,7 @@ class AdminMenuIdeasReportsTest extends TestCase
         $items = [
             'Dashboard', 'Notifications', 'Orders', 'Custom Orders', 'Customize Requests', 'Other Services', 'Installments', 'Cancellations & Refunds',
             'Products', 'Materials Inventory', 'Customers', 'Identity Validation', 'Reviews', 'Chatbot Training', 'Ideas to Review', 'Quick Ideas',
-            'Employees', 'Reports', 'Contact Settings', 'System Health',
+            'Employees', 'Activity Log', 'Reports', 'Contact Settings', 'System Health',
         ];
         preg_match_all('#class="[^"]*mnu-i[^"]*" data-label="(.*?)"#', $side, $labels);
         $this->assertSame($items, array_map('html_entity_decode', $labels[1]), 'same items as before, only regrouped');

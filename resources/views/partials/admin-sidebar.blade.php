@@ -42,6 +42,7 @@
     ]],
     ['id' => 'team', 'name' => 'Team & Reports', 'items' => [
       ['Employees', 'admin.employees.index', 'admin.employees.*', 0],
+      ['Activity Log', 'admin.activity-log', 'admin.activity-log*', 0],
       ['Reports', 'admin.reports', 'admin.reports', 0],
     ]],
     ['id' => 'site', 'name' => 'Site Settings', 'items' => [

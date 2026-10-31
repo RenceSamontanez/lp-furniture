@@ -60,6 +60,9 @@ class PaymentRecordController extends Controller
                 ->withErrors(['payment' => $e->getMessage()]);
         }
 
+        $order = Order::find($orderId);
+        \App\Support\ActivityLog::record('payment_recorded', 'Recorded a ' . str_replace('_', ' ', $data['method']) . ' payment for order ' . $order?->order_number, 'orders', $order, 'Order ' . $order?->order_number);
+
         return redirect()->route('admin.orders.show', $orderId)
             ->with('success', 'Payment of ₱' . number_format((float) $record->amount, 2) . ' recorded.');
     }

@@ -43,7 +43,8 @@ class MaterialEstimateController extends Controller
         $data = $this->validated($request);
 
         $next = (int) MaterialEstimate::max('sort_order') + 1;
-        MaterialEstimate::create($data + ['sort_order' => $next, 'is_edited' => false]);
+        $type = MaterialEstimate::create($data + ['sort_order' => $next, 'is_edited' => false]);
+        \App\Support\ActivityLog::record('estimate_added', 'Added the estimate for ' . $type->name, 'catalog', $type, 'Furniture type: ' . $type->name);
 
         return redirect()->route('admin.material-estimates.index')->with('success', 'Furniture type added.');
     }
@@ -68,6 +69,8 @@ class MaterialEstimateController extends Controller
         }
         $type->save();
 
+        \App\Support\ActivityLog::record('estimate_edited', 'Edited the estimate for ' . $type->name, 'catalog', $type, 'Furniture type: ' . $type->name);
+
         return redirect()->route('admin.material-estimates.index')->with('success', 'Estimate saved.');
     }
 
@@ -83,6 +86,8 @@ class MaterialEstimateController extends Controller
         }
         $type->is_edited = false;
         $type->save();
+
+        \App\Support\ActivityLog::record('estimate_edited', 'Reset the estimate for ' . $type->name . ' to the starter values', 'catalog', $type, 'Furniture type: ' . $type->name);
 
         return redirect()->route('admin.material-estimates.index')->with('success', 'Reset to starter values.');
     }

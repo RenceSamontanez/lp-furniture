@@ -44,7 +44,9 @@ class InventoryController extends Controller
     {
         $validated = $this->validateMaterial($request);
 
-        MaterialStock::create($validated, Auth::guard('admin')->user());
+        $row = MaterialStock::create($validated, Auth::guard('admin')->user());
+
+        \App\Support\ActivityLog::record('material_added', 'Added material ' . $row->material_name, 'catalog', $row, 'Material: ' . $row->material_name);
 
         return redirect()->route('admin.inventory.index')->with('success', 'Material added.');
     }
@@ -68,6 +70,9 @@ class InventoryController extends Controller
             throw \Illuminate\Validation\ValidationException::withMessages(['material_quantity' => 'A count cannot be below zero.']);
         }
 
+        $countChanged = abs((float) $validated['material_quantity'] - (float) $material->material_quantity) >= 0.005;
+        $oldName = $material->material_name;
+
         DB::transaction(function () use ($material, $validated) {
             $row = Inventory::lockForUpdate()->findOrFail($material->id);
             $row->update([
@@ -79,6 +84,13 @@ class InventoryController extends Controller
                 MaterialStock::correct($row->id, (float) $validated['material_quantity'], Auth::guard('admin')->user());
             }
         });
+
+        $label = 'Material: ' . $validated['material_name'];
+        if ($countChanged) {
+            \App\Support\ActivityLog::record('material_corrected', 'Corrected the count of ' . $validated['material_name'] . ' to ' . MaterialStock::number($validated['material_quantity']), 'catalog', $material, $label);
+        } else {
+            \App\Support\ActivityLog::record('material_edited', 'Edited material ' . $oldName, 'catalog', $material, $label);
+        }
 
         return redirect()->route('admin.inventory.index')->with('success', 'Material updated.');
     }
@@ -94,6 +106,7 @@ class InventoryController extends Controller
 
         $note = isset($data['note']) ? trim(\App\Support\TextSanitizer::line($data['note'])) : null;
         MaterialStock::change($material->id, round((float) $data['add_quantity'], 2), 'restocked', null, Auth::guard('admin')->user(), $note !== '' ? $note : null);
+        \App\Support\ActivityLog::record('material_restocked', 'Restocked ' . $material->material_name . ' by ' . MaterialStock::number($data['add_quantity']) . ' ' . $material->unit, 'catalog', $material, 'Material: ' . $material->material_name);
 
         return redirect()->route('admin.inventory.index')
             ->with('success', 'Restocked ' . MaterialStock::number($data['add_quantity']) . ' ' . $material->unit . ' of ' . $material->material_name . '.');
@@ -107,6 +120,7 @@ class InventoryController extends Controller
             MaterialUsage::where('inventory_id', $material->id)->delete();
             $material->delete();
         });
+        \App\Support\ActivityLog::record('material_removed', 'Removed material ' . $material->material_name, 'catalog', 'material', 'Material: ' . $material->material_name);
 
         return back()->with('success', 'Material removed.');
     }

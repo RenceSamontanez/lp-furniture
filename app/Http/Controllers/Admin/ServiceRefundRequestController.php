@@ -73,21 +73,21 @@ class ServiceRefundRequestController extends Controller
 
     public function approve($id)
     {
-        return $this->act($id, fn ($admin) => $this->service->approve((int) $id, $admin), 'Approved. The customer was told when to expect the refund.');
+        return $this->act($id, fn ($admin) => $this->service->approve((int) $id, $admin), 'Approved. The customer was told when to expect the refund.', ['refund_approved', 'Approved the refund request']);
     }
 
     public function approveException(Request $request, $id)
     {
         $data = $request->validate(['reason' => 'required|string|max:1000'], ['reason.required' => 'Write the reason for this exception.']);
 
-        return $this->act($id, fn ($admin) => $this->service->approveAsException((int) $id, $admin, $data['reason']), 'Approved as an exception and logged.');
+        return $this->act($id, fn ($admin) => $this->service->approveAsException((int) $id, $admin, $data['reason']), 'Approved as an exception and logged.', ['refund_approved', 'Approved the refund request as an exception']);
     }
 
     public function decline(Request $request, $id)
     {
         $data = $request->validate(['explanation' => 'required|string|max:1000'], ['explanation.required' => 'Write an explanation for the customer.']);
 
-        return $this->act($id, fn ($admin) => $this->service->decline((int) $id, $admin, $data['explanation']), 'Declined. The customer was sent your explanation and payments are open again.');
+        return $this->act($id, fn ($admin) => $this->service->decline((int) $id, $admin, $data['explanation']), 'Declined. The customer was sent your explanation and payments are open again.', ['refund_declined', 'Declined the refund request']);
     }
 
     public function askInfo(Request $request, $id)
@@ -113,7 +113,7 @@ class ServiceRefundRequestController extends Controller
             'sent_on.required'            => 'Enter the date the refund was sent.',
         ]);
 
-        return $this->act($id, fn ($admin) => $this->service->markRefunded((int) $id, $admin, $data), 'Refund recorded. The service request and invoice are now cancelled and the customer was told.');
+        return $this->act($id, fn ($admin) => $this->service->markRefunded((int) $id, $admin, $data), 'Refund recorded. The service request and invoice are now cancelled and the customer was told.', ['refund_recorded', 'Recorded the refund for']);
     }
 
     public function refundFailed(Request $request, $id)
@@ -152,14 +152,19 @@ class ServiceRefundRequestController extends Controller
         return $this->ticketAct($id, fn ($admin) => $this->service->undoStartWork((int) $id, $admin), 'Work started was undone.');
     }
 
-    private function act($id, callable $action, string $message)
+    /** @param array{0: string, 1: string}|null $log Activity Log event and wording; recorded only after the action succeeded */
+    private function act($id, callable $action, string $message, ?array $log = null)
     {
-        ServiceRefundRequest::findOrFail($id);
+        $req = ServiceRefundRequest::findOrFail($id);
 
         try {
             $action(Auth::guard('admin')->user());
         } catch (PipelineException $e) {
             return redirect()->route('admin.refunds.show', $id)->withErrors(['request' => $e->getMessage()]);
+        }
+
+        if ($log) {
+            \App\Support\ActivityLog::record($log[0], $log[1] . ' ' . $req->reference, 'orders', $req, 'Request: ' . $req->reference);
         }
 
         return redirect()->route('admin.refunds.show', $id)->with('success', $message);

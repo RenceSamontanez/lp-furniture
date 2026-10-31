@@ -131,6 +131,7 @@ class ServiceInquiryController extends Controller
         }
 
         $ticket = $this->desk->create($data, $customer, Auth::guard('admin')->user());
+        \App\Support\ActivityLog::record('ticket_created', 'Created service ticket ' . $ticket->reference_number, 'orders', $ticket, 'Ticket: ' . $ticket->reference_number);
 
         return redirect()->route('admin.service-inquiries.show', $ticket->id)
             ->with('success', "Ticket {$ticket->reference_number} created.");

@@ -36,7 +36,14 @@ class OrderTrackingController extends Controller
                 ($data['confirmed'] ?? '0') === '1', $data['message'] ?? null, $request->file('photo')
             );
 
-            return 'Order moved to ' . OrderStages::labelFor($order) . '. Customer notified.';
+            $stage = OrderStages::labelFor($order);
+            \App\Support\ActivityLog::record(
+                $order->order_status === 'confirmed' ? 'order_confirmed' : 'order_advanced',
+                $order->order_status === 'confirmed' ? 'Confirmed order ' . $order->order_number : 'Moved order ' . $order->order_number . ' to ' . $stage,
+                'orders', $order, 'Order ' . $order->order_number
+            );
+
+            return 'Order moved to ' . $stage . '. Customer notified.';
         });
     }
 
@@ -71,6 +78,8 @@ class OrderTrackingController extends Controller
             }
             $order = $this->tracking->correct((int) $id, Auth::guard('admin')->user(), $data['current_status'], $data['reason'] ?? null);
 
+            \App\Support\ActivityLog::record('order_corrected', 'Moved order ' . $order->order_number . ' back to ' . OrderStages::labelFor($order), 'orders', $order, 'Order ' . $order->order_number);
+
             return 'Order moved back to ' . OrderStages::labelFor($order) . '. Customer was not notified.';
         });
     }
@@ -87,7 +96,8 @@ class OrderTrackingController extends Controller
             if (($data['confirmed'] ?? '0') !== '1') {
                 throw new OrderTrackingException('Tick the confirmation box to continue.');
             }
-            $this->tracking->cancel((int) $id, Auth::guard('admin')->user(), $data['current_status'], $data['reason'] ?? null);
+            $order = $this->tracking->cancel((int) $id, Auth::guard('admin')->user(), $data['current_status'], $data['reason'] ?? null);
+            \App\Support\ActivityLog::record('order_cancelled', 'Cancelled order ' . $order->order_number, 'orders', $order, 'Order ' . $order->order_number);
 
             return 'Order cancelled. Customer notified.';
         });

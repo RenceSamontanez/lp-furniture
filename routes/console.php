@@ -15,3 +15,9 @@ Schedule::command('storage:cleanup --force --sessions --failed-jobs')
     ->dailyAt('03:00')
     ->timezone('Asia/Manila')
     ->withoutOverlapping();
+
+// Activity Log keeps 180 days; older records are removed every night.
+Schedule::command('activity-log:prune')
+    ->dailyAt('03:15')
+    ->timezone('Asia/Manila')
+    ->withoutOverlapping();

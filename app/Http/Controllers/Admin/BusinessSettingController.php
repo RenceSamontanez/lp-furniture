@@ -75,6 +75,8 @@ class BusinessSettingController extends Controller
         // Re-saving identical values still counts as a save for the audit fields
         $settings->isDirty() ? $settings->save() : $settings->touch();
 
+        \App\Support\ActivityLog::record('settings_saved', 'Saved Contact Settings', 'settings', 'settings', 'Contact Settings');
+
         return redirect()->route('admin.settings.contact.edit')
             ->with('success', 'Contact settings saved.');
     }

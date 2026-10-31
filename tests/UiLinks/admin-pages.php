@@ -12,5 +12,5 @@ return [
     '/admin/validations', '/admin/validations/1', '/admin/validations/9',
     '/admin/chatbot', '/admin/chatbot/create', '/admin/chatbot/1/edit', '/admin/ideas-to-review', '/admin/quick-ideas',
     '/admin/employees', '/admin/employees/create', '/admin/inventory', '/admin/inventory/create', '/admin/installments',
-    '/admin/reports', '/admin/reviews', '/admin/settings/contact', '/admin/system-health',
+    '/admin/reports', '/admin/activity-log', '/admin/reviews', '/admin/settings/contact', '/admin/system-health',
 ];

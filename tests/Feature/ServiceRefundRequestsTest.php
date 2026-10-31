@@ -471,6 +471,11 @@ class ServiceRefundRequestsTest extends TestCase
         $this->assertSame('Work has already started on this service.', $r->decision_note);
         $n = Notification::where('user_id', $this->owner->id)->where('title', 'Your Request Was Not Approved')->sole();
         $this->assertStringContainsString('Work has already started on this service.', $n->message);
+
+        // Activity Log: the decline is recorded once (the refused attempt above recorded nothing)
+        $log = \App\Models\ActivityLog::where('event', 'refund_declined')->sole();
+        $this->assertSame(['orders', 'Request: ' . $r->reference], [$log->category, $log->subject_label]);
+        $this->assertStringNotContainsString('Work has already started', $log->description);
     }
 
     public function test_mark_refunded_needs_a_transaction_number_and_a_note_when_the_amount_differs(): void

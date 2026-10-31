@@ -114,6 +114,8 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
+            \App\Support\ActivityLog::signedIn($user);
+
             return redirect(SafeIntendedUrl::resolve($request, route('home')))
                 ->with('success', 'Welcome back, ' . Auth::user()->first_name . '!');
         }
@@ -235,6 +237,7 @@ return redirect($intended)
     public function logout(Request $request)
     {
         \App\Support\Luma\ChatState::forget();   // Luma's conversation never outlives the sign-in
+        \App\Support\ActivityLog::signedOut(Auth::guard('web')->user());
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -580,6 +583,8 @@ return redirect($intended)
         Auth::guard('admin')->logout();
 
         request()->session()->regenerate();
+
+        \App\Support\ActivityLog::signedIn($user);
 
         // New Google users go to validation, existing go to home
         if (!$user->is_validated) {

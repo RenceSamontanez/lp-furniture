@@ -129,6 +129,19 @@ class CustomOrderStatusTest extends TestCase
             ], fn ($v) => $v !== null));
     }
 
+    public function test_a_custom_order_status_change_is_recorded_in_the_activity_log_once(): void
+    {
+        $order = $this->customized('confirmed', true);
+        $this->setStatus($this->admin(), $order, 'in_production')->assertSessionHas('success');
+
+        $log = \App\Models\ActivityLog::where('event', 'custom_order_status')->sole();
+        $this->assertSame(['orders', 'admin', 'Order ' . $order->order_number], [$log->category, $log->role, $log->subject_label]);
+
+        // a refused move records nothing
+        $this->setStatus($this->admin(), $order->fresh(), 'pending');
+        $this->assertSame(1, \App\Models\ActivityLog::where('event', 'custom_order_status')->count());
+    }
+
     /* ───────────── forward-only map ───────────── */
 
     public static function everyMove(): array

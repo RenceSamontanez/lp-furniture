@@ -58,10 +58,12 @@ class IdentityValidationController extends Controller
         }
 
         try {
-            IdentityReview::approve((int) $id, $confirmed, (int) Auth::guard('admin')->id());
+            $row = IdentityReview::approve((int) $id, $confirmed, (int) Auth::guard('admin')->id());
         } catch (IdentityReviewException $e) {
             return $this->refused($request, $e, (int) $id);
         }
+
+        $this->logDecision('identity_approved', 'Approved an ID check for ', $row);
 
         return redirect()->route('admin.validations.show', $id)->with('success', 'Customer verified. They have been notified.');
     }
@@ -77,12 +79,22 @@ class IdentityValidationController extends Controller
         ]);
 
         try {
-            IdentityReview::reject((int) $id, $request->input('rejection_reason'), (int) Auth::guard('admin')->id());
+            $row = IdentityReview::reject((int) $id, $request->input('rejection_reason'), (int) Auth::guard('admin')->id());
         } catch (IdentityReviewException $e) {
             return $this->refused($request, $e, (int) $id);
         }
 
+        $this->logDecision('identity_rejected', 'Rejected an ID check for ', $row);
+
         return redirect()->route('admin.validations.show', $id)->with('success', 'Verification rejected. The customer has been notified.');
+    }
+
+    /** One Activity Log line naming the customer (never the reason text or the photos). */
+    private function logDecision(string $event, string $text, $row): void
+    {
+        $customer = $row?->user;
+        $name = $customer ? trim($customer->first_name . ' ' . $customer->last_name) : 'a customer';
+        \App\Support\ActivityLog::record($event, $text . $name, 'people', $customer, 'Customer: ' . $name);
     }
 
     public function requestNewSubmission(Request $request, $id)

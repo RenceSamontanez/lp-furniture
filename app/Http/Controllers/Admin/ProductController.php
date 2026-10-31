@@ -75,6 +75,8 @@ class ProductController extends Controller
             $this->setMainPhoto($product, ProductPhotos::store($request->file('product_image')));
         }
 
+        \App\Support\ActivityLog::record('product_added', 'Added product ' . $product->product_name, 'catalog', $product, 'Product: ' . $product->product_name);
+
         return redirect()->route('admin.products.index')
             ->with('success', 'Product created successfully.');
     }
@@ -109,6 +111,8 @@ class ProductController extends Controller
         }
 
         $added = $this->storeExtraImages($request, $product);
+
+        \App\Support\ActivityLog::record('product_edited', 'Edited product ' . $product->product_name, 'catalog', $product, 'Product: ' . $product->product_name);
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Product updated successfully.' . ($added ? " {$added} extra photo" . ($added > 1 ? 's' : '') . ' added.' : ''));
@@ -169,6 +173,8 @@ class ProductController extends Controller
             ProductPhotos::deleteIfUnused($path);
         }
 
+        \App\Support\ActivityLog::record('product_removed', 'Removed product ' . $product->product_name, 'catalog', 'product', 'Product: ' . $product->product_name);
+
         return back()->with('success', 'Product deleted.');
     }
     /* ════════════════════════════════
@@ -182,6 +188,8 @@ class ProductController extends Controller
 
         $product = Product::findOrFail($id);
         $product->update(['stock_quantity' => $request->stock_quantity]);
+
+        \App\Support\ActivityLog::record('product_edited', 'Updated the stock of ' . $product->product_name, 'catalog', $product, 'Product: ' . $product->product_name);
 
         return back()->with('success', 'Stock updated.');
     }

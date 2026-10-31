@@ -73,6 +73,10 @@ class ChatbotIntentController extends Controller
             }
         });
 
+        if ($answered > 0) {
+            \App\Support\ActivityLog::record('luma_answered', 'Answered a Luma question', 'settings', 'luma', 'Luma question');
+        }
+
         return redirect()->route('admin.chatbot.index', $answered > 0 ? ['tab' => 'unanswered'] : [])->with('success', 'Intent added successfully.');
     }
 

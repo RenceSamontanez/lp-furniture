@@ -89,6 +89,8 @@ class IdeasReviewController extends Controller
             'answered_at' => now(), 'handled_by' => Auth::guard('admin')->id(), 'handled_at' => now(),
         ])->save();
 
+        $this->log('idea_answered', 'Answered the idea "' . \App\Support\ActivityLog::clip($row->text) . '"', $row);
+
         return $this->back('Saved. The next customer who types this gets your answer.');
     }
 
@@ -123,6 +125,8 @@ class IdeasReviewController extends Controller
                 $this->markAdded($row);
             });
 
+            $this->log('idea_added_option', 'Added "' . \App\Support\ActivityLog::clip($data['wording']) . '" as a quick pick under Something Else', $row);
+
             return $this->back('Added "' . $data['wording'] . '" as a quick pick under "Something else".');
         }
 
@@ -154,6 +158,8 @@ class IdeasReviewController extends Controller
             $this->markAdded($row);
         });
 
+        $this->log('idea_added_option', 'Added "' . \App\Support\ActivityLog::clip($data['wording']) . '" to the quick ideas for ' . $data['key'], $row);
+
         return $this->back('Added "' . $data['wording'] . '" to the quick ideas for ' . $data['key'] . '.');
     }
 
@@ -166,6 +172,7 @@ class IdeasReviewController extends Controller
                 'previous_status' => $row->status, 'status' => UnansweredIdea::STATUS_DISMISSED,
                 'handled_by' => Auth::guard('admin')->id(), 'handled_at' => now(),
             ])->save();
+            $this->log('idea_dismissed', 'Dismissed the idea "' . \App\Support\ActivityLog::clip($row->text) . '"', $row);
         }
 
         return $this->back('Dismissed "' . $row->text . '".')->with('undo_idea', $row->id);
@@ -194,6 +201,11 @@ class IdeasReviewController extends Controller
         $row->delete();
 
         return $this->back('Deleted "' . $text . '".');
+    }
+
+    private function log(string $event, string $description, UnansweredIdea $row): void
+    {
+        \App\Support\ActivityLog::record($event, $description, 'settings', $row, 'Idea: ' . \App\Support\ActivityLog::clip($row->text));
     }
 
     private function markAdded(UnansweredIdea $row): void

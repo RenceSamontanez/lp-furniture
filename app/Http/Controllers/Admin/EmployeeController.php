@@ -48,7 +48,8 @@ class EmployeeController extends Controller
     {
         $validated = $this->validateEmployee($request);
 
-        Employee::create($validated);
+        $employee = Employee::create($validated);
+        \App\Support\ActivityLog::record('employee_added', 'Added employee ' . $employee->full_name, 'people', $employee, 'Employee: ' . $employee->full_name);
 
         return redirect()->route('admin.employees.index')
             ->with('success', 'Employee added successfully.');
@@ -72,6 +73,7 @@ class EmployeeController extends Controller
         $validated = $this->validateEmployee($request);
 
         $employee->update($validated);
+        \App\Support\ActivityLog::record('employee_edited', 'Edited employee ' . $employee->full_name, 'people', $employee, 'Employee: ' . $employee->full_name);
 
         return redirect()->route('admin.employees.index')
             ->with('success', 'Employee updated successfully.');
@@ -99,6 +101,7 @@ class EmployeeController extends Controller
     {
         $employee = Employee::findOrFail($id);
         $employee->delete();
+        \App\Support\ActivityLog::record('employee_removed', 'Removed employee ' . $employee->full_name, 'people', 'employee', 'Employee: ' . $employee->full_name);
 
         return back()->with('success', 'Employee removed.');
     }

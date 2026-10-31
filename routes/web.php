@@ -429,6 +429,10 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     // ────────────────
     Route::get('/reports', [AdminController::class, 'reports'])->name('reports'); // Admin Reports (Analytics, etc.)
 
+    // Activity Log (read only): who signed in and what the team changed. Filters are GET parameters; the export uses the same ones.
+    Route::get('/activity-log',        [\App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('activity-log');
+    Route::get('/activity-log/export', [\App\Http\Controllers\Admin\ActivityLogController::class, 'export'])->name('activity-log.export');
+
     // ────────────────
     // Customer Management (View only)
     // ────────────────
