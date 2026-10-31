@@ -33,6 +33,8 @@ class RecordPayment
         'bank_transfer'  => 'Bank transfer',
         'stripe'         => 'Stripe',
         'gcash_paymongo' => 'GCash (PayMongo)',
+        'card_paymongo'  => 'Card (PayMongo)',
+        'card_sandbox'   => 'Card (Sandbox, Simulated)',
     ];
 
     /** Same payment from the same admin for the same amount inside this window is a double submit. */
@@ -136,6 +138,7 @@ class RecordPayment
                 $covered = round((float) PaymentRecord::where('installment_schedule_id', $installment->id)->sum('amount'), 2);
                 if ($covered + 0.001 >= (float) $installment->amount_due) {
                     $installment->update(['status' => 'paid', 'paid_at' => now()]);
+                    app(\App\Support\Installments\InstallmentPayments::class)->afterManualPayment($installment);
                 }
             }
 
@@ -168,6 +171,15 @@ class RecordPayment
 
                 if ($ready = app(AgreementCheckout::class)->expectedReadyDate($order, $date)) {
                     $order->forceFill(['expected_ready_date' => $ready->toDateString()])->save();
+                }
+            }
+
+            // The first required amount of an installment order (the down payment) starts the plan.
+            if ($installment === null && $paid + 0.001 >= (float) $payment->amount && $order->order_status !== 'cancelled') {
+                try {
+                    app(\App\Support\Installments\InstallmentPlanStarter::class)->start($order);
+                } catch (\Throwable $e) {
+                    \Log::error("Installment plan could not be started for order {$order->id}: " . $e->getMessage());
                 }
             }
 

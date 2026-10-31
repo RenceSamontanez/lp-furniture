@@ -333,36 +333,20 @@ class AdminController extends Controller
     ════════════════════════════════ */
     public function installmentsIndex(Request $request)
     {
-        $status = $request->get('status', 'pending');
-
-        $installments = \App\Models\InstallmentSchedule::with('order.user')
-            ->when($status !== 'all', fn($q) => $q->where('status', $status))
-            ->orderBy('due_date')
-            ->paginate(15);
-
-        // Auto-flag overdue ones that are still marked pending
-        \App\Models\InstallmentSchedule::where('status', 'pending')
-            ->where('due_date', '<', now()->toDateString())
-            ->update(['status' => 'overdue']);
-
-        $stats = [
-            'pending'  => \App\Models\InstallmentSchedule::where('status', 'pending')->count(),
-            'overdue'  => \App\Models\InstallmentSchedule::where('status', 'overdue')->count(),
-            'paid'     => \App\Models\InstallmentSchedule::where('status', 'paid')->count(),
-        ];
-
-        return view('admin.installments.index', compact('installments', 'status', 'stats'));
+        // Overdue is set by the daily job (installments:run), never by viewing this page.
+        return app(\App\Http\Controllers\Admin\InstallmentAdminController::class)->index($request);
     }
 
-    public function installmentMarkPaid($id)
+    public function installmentMarkPaid(Request $request, $id)
     {
+        $method = in_array($request->input('method'), \App\Support\RecordPayment::ADMIN_METHODS, true) ? $request->input('method') : 'cash';
         $installment = \App\Models\InstallmentSchedule::findOrFail($id);
 
         // Same ledger path as Record Payment: amount, method (cash by
         // default) and the admin are recorded, and the parent payment
         // status follows. The customer is told by that service.
         try {
-            app(\App\Support\RecordPayment::class)->recordInstallment($installment, Auth::guard('admin')->user());
+            app(\App\Support\RecordPayment::class)->recordInstallment($installment, Auth::guard('admin')->user(), $method);
         } catch (\App\Support\PaymentRecordException $e) {
             return back()->withErrors(['payment' => $e->getMessage()]);
         }

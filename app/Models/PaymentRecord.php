@@ -13,7 +13,7 @@ class PaymentRecord extends Model
 {
     public const UPDATED_AT = null;
 
-    public const METHODS = ['cash', 'gcash_direct', 'bank_transfer', 'stripe', 'gcash_paymongo'];
+    public const METHODS = ['cash', 'gcash_direct', 'bank_transfer', 'stripe', 'gcash_paymongo', 'card_paymongo', 'card_sandbox'];
 
     protected $fillable = [
         'order_id',

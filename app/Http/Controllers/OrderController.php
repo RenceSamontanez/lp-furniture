@@ -11,6 +11,7 @@ use App\Models\Product;
 use App\Models\Notification;
 use App\Models\User;
 use App\Support\InstallmentScheduler;
+use App\Support\Installments\InstallmentEligibility;
 use App\Support\OrderContact;
 use App\Support\PhoneNumber;
 use Illuminate\Http\Request;
@@ -34,7 +35,7 @@ class OrderController extends Controller
             $subtotal = $cartItems->sum(fn($item) => $item->product->price * $item->quantity);
             $buyNow   = session('buy_now');
 
-            return view('checkout', compact('cartItems', 'subtotal', 'buyNow'));
+            return view('checkout', ['cartItems' => $cartItems, 'subtotal' => $subtotal, 'buyNow' => $buyNow, 'installment' => $this->installmentSummary()]);
         }
 
         $cartItems = CartItem::with('product')
@@ -49,7 +50,7 @@ class OrderController extends Controller
         $subtotal = $cartItems->sum(fn($item) => $item->product->price * $item->quantity);
         $buyNow = null;
 
-        return view('checkout', compact('cartItems', 'subtotal', 'buyNow'));
+        return view('checkout', ['cartItems' => $cartItems, 'subtotal' => $subtotal, 'buyNow' => $buyNow, 'installment' => $this->installmentSummary()]);
     }
 
     // ── PLACE ORDER ──
@@ -63,9 +64,16 @@ class OrderController extends Controller
             // number of installment payments — see InstallmentScheduler::createSchedule().
             'installment_duration'   => 'required_if:payment_type,installment|nullable|integer|in:1,2,3',
             'installment_frequency'  => 'required_if:payment_type,installment|nullable|integer|in:15,30',
-            'payment_method'         => 'required|in:stripe,gcash,onsite',
+            'payment_method'         => 'required|in:stripe,gcash,onsite,paymongo_card',
             'customization_note'     => 'nullable|string',
         ]);
+
+        // Installments: verified ID, within the customer's Installment Standing, PayMongo (Card or GCash) only, terms accepted.
+        // The same checks run here whatever the page showed.
+        $planError = $this->installmentProblem($request);
+        if ($planError) {
+            return back()->withInput()->withErrors(['payment_type' => $planError]);
+        }
 
         // Every order needs a valid phone; a delivery order also needs the complete structured address (pickup at our shop
         // needs none). Checked here, on the server, whatever the page did; redirects back with the field errors.
@@ -184,6 +192,10 @@ class OrderController extends Controller
                     'installment_duration_months' => $isInstallment ? $request->installment_duration : null,
                     'installment_frequency_days' => $isInstallment ? $request->installment_frequency : null,
                     'payment_status' => 'pending',
+                    // Terms version, time of acceptance and the card auto-charge consent are stored per plan.
+                    'terms_version'          => $isInstallment ? config('installments.terms_version') : null,
+                    'terms_accepted_at'      => $isInstallment ? now() : null,
+                    'auto_charge_consent_at' => $isInstallment && $request->payment_method === 'paymongo_card' ? now() : null,
                 ]);
 
                 if ($isInstallment) {
@@ -194,6 +206,10 @@ class OrderController extends Controller
                         (int) $request->installment_duration,
                         (int) $request->installment_frequency
                     );
+                }
+
+                if ($isInstallment) {
+                    \App\Support\ActivityLog::record('installment_terms_accepted', 'Accepted the Installment Terms (version ' . config('installments.terms_version') . ') for order ' . $orderNumber, 'orders', $order, 'Order ' . $orderNumber, Auth::user());
                 }
 
                 // Create delivery record if delivery option chosen
@@ -236,6 +252,51 @@ class OrderController extends Controller
         return $this->redirectForOrder($order);
     }
 
+    /** What the checkout page needs to show the customer's Installment Standing (the numbers come from config/installments.php). */
+    private function installmentSummary(): array
+    {
+        $c = InstallmentEligibility::check(Auth::user(), 0);
+
+        return ['level' => $c['level'], 'score' => $c['score'], 'months' => $c['months'], 'cap' => $c['cap'], 'idVerified' => $c['id_verified']];
+    }
+
+    /**
+     * Why this checkout may not use the chosen payment type/method, or null when it may. Needs the delivery
+     * option and the cart total, so it recomputes the total the same way placeOrder() does.
+     */
+    private function installmentProblem(Request $request): ?string
+    {
+        $isInstallment = $request->payment_type === 'installment';
+
+        if (!$isInstallment) {
+            return $request->payment_method === 'paymongo_card' ? 'Choose Card (Stripe), GCash or Cash for a full payment.' : null;
+        }
+
+        if (!in_array($request->payment_method, config('installments.methods'), true)) {
+            return 'Installments are paid with Card or GCash. Pay On-Site is not available for installments.';
+        }
+
+        $cartItems = $request->filled('buy_now_product_id')
+            ? $this->getBuyNowItemsFromRequest($request)
+            : CartItem::with('product')->where('user_id', Auth::id())->get();
+        $total = $cartItems->sum(fn ($item) => $item->product->price * $item->quantity) + ($request->delivery_option === 'delivery' ? 500 : 0);
+
+        if (!InstallmentEligibility::allows(Auth::user(), (float) $total, (int) $request->installment_duration, (int) $request->installment_frequency)) {
+            $check = InstallmentEligibility::check(Auth::user(), (float) $total);
+
+            return $check['reason'] ?? 'Your Installment Standing does not allow that many months. Choose a shorter plan or pay in full.';
+        }
+
+        if (!$request->boolean('accept_installment_terms')) {
+            return 'Please accept the Installment Terms to continue.';
+        }
+        if ($request->payment_method === 'paymongo_card' && !$request->boolean('accept_auto_charge')) {
+            return 'Please allow automatic charges to continue with card installments.';
+        }
+
+        return null;
+    }
+
     // ── Redirect target for a placed order, based on its payment
     //    method — shared by both the normal success path and the
     //    double-submit guard, so a duplicate redirect behaves
@@ -246,6 +307,10 @@ class OrderController extends Controller
 
         if ($paymentMethod === 'stripe') {
             return redirect()->route('payment.stripe', $order->id);
+        }
+
+        if ($paymentMethod === 'paymongo_card') {
+            return redirect()->route('payment.card.paymongo', $order->id);
         }
 
         if ($paymentMethod === 'gcash') {
@@ -386,12 +451,21 @@ class OrderController extends Controller
     public function updatePaymentMethod(Request $request, $id)
     {
         $request->validate([
-            'payment_method' => 'required|in:stripe,gcash,onsite',
+            'payment_method' => 'required|in:stripe,gcash,onsite,paymongo_card',
         ]);
 
         $order = Order::where('user_id', Auth::id())
             ->where('id', $id)
             ->firstOrFail();
+
+        // Installment plans go through PayMongo only (Card or GCash); a card via PayMongo is for installments only.
+        $isInstallmentOrder = $order->design_agreement_id === null && $order->payment && $order->payment->payment_type === 'installment';
+        if ($isInstallmentOrder && !in_array($request->payment_method, config('installments.methods'), true)) {
+            return redirect()->route('orders.show', $order->id)->withErrors(['payment_method' => 'Installments are paid with Card or GCash.']);
+        }
+        if (!$isInstallmentOrder && $request->payment_method === 'paymongo_card' && $order->design_agreement_id === null) {
+            abort(403);
+        }
 
         // order_status (not just payment_status) is checked
         // deliberately: onsite/cash payment_status never becomes

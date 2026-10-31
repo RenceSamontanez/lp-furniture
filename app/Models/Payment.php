@@ -27,9 +27,22 @@ class Payment extends Model
         'qr_hash',
         'qr_is_active',
         'paid_at',
+        'paymongo_customer_id',
+        'installment_card_method_id',
+        'card_brand',
+        'card_last4',
+        'card_simulated',
+        'installments_started_at',
+        'terms_version',
+        'terms_accepted_at',
+        'auto_charge_consent_at',
     ];
 
     protected $casts = [
+        'installments_started_at' => 'datetime',
+        'terms_accepted_at'       => 'datetime',
+        'auto_charge_consent_at'  => 'datetime',
+        'card_simulated' => 'boolean',
         'amount'       => 'decimal:2',
         'qr_is_active' => 'boolean',
         'paid_at'      => 'datetime',

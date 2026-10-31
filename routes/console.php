@@ -21,3 +21,10 @@ Schedule::command('activity-log:prune')
     ->dailyAt('03:15')
     ->timezone('Asia/Manila')
     ->withoutOverlapping();
+
+// Installments: reminders, card charges, Pay Now links, retries and Overdue, every morning at 08:00 Manila time.
+// Overdue is set here, never by viewing an admin page. Needs the usual `* * * * * php artisan schedule:run` cron.
+Schedule::command('installments:run')
+    ->dailyAt(config('installments.schedule_time', '08:00'))
+    ->timezone(config('installments.timezone', 'Asia/Manila'))
+    ->withoutOverlapping();

@@ -1,0 +1,50 @@
+/* Checkout: the "Action needed" banner, the unticked-consent highlight, and the payment type cards.
+   Customer styling only. No fonts are set here: everything inherits the page's. */
+
+/* ── Alert banner ── */
+.ckn-alert {
+  display: flex; align-items: flex-start; gap: 12px;
+  box-sizing: border-box; width: 100%; max-width: 100%; min-width: 0;
+  margin: 0 0 20px; padding: 14px 16px;
+  background: #fdecea; border: 1px solid #f3b8b2; border-left: 5px solid #b42318; border-radius: 12px;
+  color: #6f1710; scroll-margin-top: 96px;
+}
+.ckn-alert[hidden] { display: none; }
+.ckn-alert:focus { outline: 3px solid rgba(180, 35, 24, .45); outline-offset: 2px; }
+.ckn-alert-icon { flex: none; margin-top: 1px; color: #b42318; }
+.ckn-alert-text { flex: 1 1 auto; min-width: 0; }
+.ckn-alert-title { display: block; font-weight: 700; font-size: 15px; line-height: 1.3; color: #8a1717; }
+.ckn-alert-list p { margin: 3px 0 0; font-size: 14px; line-height: 1.45; overflow-wrap: anywhere; }
+.ckn-alert-list p:first-child { margin-top: 4px; }
+
+/* ── Unticked consent box ── */
+.ckn-consent.has-error { border-color: #b42318; box-shadow: 0 0 0 2px rgba(180, 35, 24, .35); background: #fdecea; }
+.ckn-consent.has-error input[type=checkbox] { outline: 2px solid #b42318; outline-offset: 2px; }
+.ckn-consent-error { margin: 8px 0 0 28px; font-size: 13px; font-weight: 600; line-height: 1.4; color: #8a1717; }
+.ckn-consent-error[hidden] { display: none; }
+.ckn-consent-error::before { content: "! "; font-weight: 800; }
+
+/* ── Payment type cards (Full Payment / Installment Plan) ── */
+.cx-cards-row--paytype { align-items: flex-start; }                 /* the Full Payment card is only as tall as its text */
+.cx-cards-row--paytype .payment-type-card { box-sizing: border-box; min-width: 0; max-width: 100%; }
+.cx-cards-row--paytype .payment-type-info { min-width: 0; flex: 1 1 0; }
+.payment-type-card { max-width: 100%; }
+.payment-type-info { min-width: 0; }
+
+/* summary rows wrap cleanly: label left (may wrap), amount right and never split */
+.installment-summary-box { box-sizing: border-box; max-width: 100%; overflow: hidden; }
+.installment-summary-row { flex-wrap: wrap; row-gap: 2px; align-items: baseline; }
+.installment-summary-row > span { flex: 1 1 150px; min-width: 0; overflow-wrap: anywhere; }
+.installment-summary-row > strong { flex: 0 0 auto; margin-left: auto; white-space: nowrap; }
+
+/* option buttons: durations share a row when they fit; frequencies take a full row each, so the text never squeezes */
+.installment-grid { grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); }
+.installment-grid--freq { grid-template-columns: 1fr; }
+.installment-chip { box-sizing: border-box; padding: 10px 10px; line-height: 1.3; min-width: 0; }
+.installment-grid--freq .installment-chip { white-space: normal; text-align: center; }
+
+/* phones: the two cards stack */
+@media (max-width: 768px) {
+  .cx-cards-row--paytype { flex-direction: column; flex-wrap: nowrap; align-items: stretch; }
+  .cx-cards-row--paytype .payment-type-card { width: 100%; flex: 0 0 auto; }
+}

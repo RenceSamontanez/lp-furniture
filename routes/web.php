@@ -37,6 +37,8 @@ Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.s
 Route::get('/product/{id}/quick-view', [ProductController::class, 'quickView'])->name('product.quickview');
 Route::get('/reviews', [FeedbackController::class, 'index'])->name('feedback.index');
 Route::get('/terms', [\App\Http\Controllers\TermsController::class, 'show'])->name('terms');
+// The Installment Terms: public, linked from checkout and the order page.
+Route::get('/installment-terms', [\App\Http\Controllers\InstallmentController::class, 'terms'])->name('installments.terms');
 // Other Services terms (Stage 21f): separate from the main terms; furniture order acceptance is not touched.
 Route::get('/services/terms', [\App\Http\Controllers\TermsController::class, 'services'])->name('services.terms');
 Route::get('/guide', [\App\Http\Controllers\GuideController::class, 'show'])->name('guide');
@@ -177,6 +179,18 @@ Route::middleware(['auth', \App\Http\Middleware\SignOutOnPasswordChange::class])
              ->name('payment.gcash.paymongo.checkout');
         Route::get('/payment/gcash/paymongo/{orderId}/success', [PaymentController::class, 'paymongoSuccess'])
              ->name('payment.gcash.paymongo.success');
+
+        // ── CARD VIA PAYMONGO (down payment of a card installment plan) ──
+        Route::get('/payment/card/paymongo/{orderId}', [PaymentController::class, 'cardForm'])->name('payment.card.paymongo');
+        Route::post('/payment/card/paymongo/{orderId}/checkout', [PaymentController::class, 'cardCheckout'])->name('payment.card.paymongo.checkout')->middleware('throttle:20,1');
+        Route::get('/payment/card/paymongo/{orderId}/success', [PaymentController::class, 'cardSuccess'])->name('payment.card.paymongo.success');
+
+        // ── INSTALLMENT PLANS (customer): Pay Now, pay the balance, update the card ──
+        Route::post('/orders/{order}/installments/{installment}/pay', [\App\Http\Controllers\InstallmentController::class, 'pay'])->name('installments.pay')->whereNumber(['order', 'installment'])->middleware('throttle:10,1');
+        Route::post('/orders/{order}/installments/pay-full', [\App\Http\Controllers\InstallmentController::class, 'payFull'])->name('installments.payFull')->whereNumber('order')->middleware('throttle:10,1');
+        Route::get('/orders/{order}/installments/return', [\App\Http\Controllers\InstallmentController::class, 'paymentReturn'])->name('installments.return')->whereNumber('order');
+        Route::get('/orders/{order}/installments/card', [\App\Http\Controllers\InstallmentController::class, 'cardForm'])->name('installments.card')->whereNumber('order');
+        Route::post('/orders/{order}/installments/card', [\App\Http\Controllers\InstallmentController::class, 'cardStore'])->name('installments.card.store')->whereNumber('order')->middleware('throttle:10,1');
 
         // ── PAYMENT CONFIRMED ──
         Route::get('/payment/confirmed/{orderId}', [PaymentController::class, 'confirmed'])
@@ -443,6 +457,9 @@ Route::middleware(['admin', 'admin.timeout'])->prefix('admin')->name('admin.')->
     // Installments
 Route::get('/installments', [AdminController::class, 'installmentsIndex'])->name('installments.index');
 Route::post('/installments/{id}/paid', [AdminController::class, 'installmentMarkPaid'])->name('installments.markPaid');
+Route::post('/installments/{id}/simulate', [\App\Http\Controllers\Admin\InstallmentAdminController::class, 'simulate'])->name('installments.simulate')->whereNumber('id');
+Route::get('/installments/customers/{id}', [\App\Http\Controllers\Admin\InstallmentAdminController::class, 'customer'])->name('installments.customer')->whereNumber('id');
+Route::post('/installments/customers/{id}/adjust', [\App\Http\Controllers\Admin\InstallmentAdminController::class, 'adjust'])->name('installments.adjust')->whereNumber('id');
 
 // Customers
 Route::get('/customers', [AdminController::class, 'customersIndex'])->name('customers.index');

@@ -1,76 +1,143 @@
 @extends('layouts.admin')
 
 @section('title', 'Installments — Admin')
-@section('page-title', 'Installment Schedules')
+@section('page-title', 'Installments')
+
+@push('styles')
+  <link rel="stylesheet" href="{{ asset('assets/css/admin-modals.css') }}?v={{ @filemtime(public_path('assets/css/admin-modals.css')) }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/admin-installments.css') }}?v={{ @filemtime(public_path('assets/css/admin-installments.css')) }}"/>
+@endpush
+@push('scripts')
+  <script src="{{ asset('assets/js/admin-installments.js') }}?v={{ @filemtime(public_path('assets/js/admin-installments.js')) }}"></script>
+@endpush
 
 @section('content')
+@php
+  use App\Http\Controllers\Admin\InstallmentAdminController as IA;
+  $cls = ['pending' => 'i-pending', 'paid' => 'i-paid', 'failed' => 'i-failed', 'processing' => 'i-link', 'link_sent' => 'i-link', 'overdue' => 'i-over'];
+  $peso = fn ($n) => '₱' . number_format((float) $n, 2);
+@endphp
+<div class="ia">
 
-<div class="admin-stats-grid">
-  <div class="admin-stat-card">
-    <div class="admin-stat-icon gold">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
-    </div>
-    <div><div class="admin-stat-value">{{ $stats['pending'] }}</div><div class="admin-stat-label">Upcoming</div></div>
-  </div>
-  <div class="admin-stat-card accent-red">
-    <div class="admin-stat-icon red">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    </div>
-    <div><div class="admin-stat-value">{{ $stats['overdue'] }}</div><div class="admin-stat-label">Overdue</div></div>
-  </div>
-  <div class="admin-stat-card accent-green">
-    <div class="admin-stat-icon green">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
-    </div>
-    <div><div class="admin-stat-value">{{ $stats['paid'] }}</div><div class="admin-stat-label">Paid</div></div>
-  </div>
-</div>
+  @if($testMode)
+    <div class="ia-tmode"><span><b>Test mode is on.</b> PayMongo test keys are active, so no real money moves. <b>Simulate</b> buttons are for demos and disappear in live mode.@if($sandbox) <b>Sandbox gateway:</b> card installments are charged by a simulated saved card, not by PayMongo.@endif</span></div>
+  @endif
+  @if($errors->has('simulate') || $errors->has('payment'))
+    <div class="ia-err" role="alert">{{ $errors->first('simulate') ?: $errors->first('payment') }}</div>
+  @endif
 
-<div class="admin-filter-tabs">
-  <a href="{{ route('admin.installments.index', ['status'=>'pending']) }}" class="admin-filter-tab {{ $status==='pending'?'active':'' }}">Upcoming</a>
-  <a href="{{ route('admin.installments.index', ['status'=>'overdue']) }}" class="admin-filter-tab {{ $status==='overdue'?'active':'' }}">Overdue</a>
-  <a href="{{ route('admin.installments.index', ['status'=>'paid']) }}" class="admin-filter-tab {{ $status==='paid'?'active':'' }}">Paid</a>
-  <a href="{{ route('admin.installments.index', ['status'=>'all']) }}" class="admin-filter-tab {{ $status==='all'?'active':'' }}">All</a>
-</div>
+  <p class="ia-sub">Installments are charged automatically on their due date. A declined card is retried the next day, then the customer gets a Pay Now link, and after 3 days it becomes Overdue.</p>
 
-<div class="admin-panel">
-  <div class="admin-panel-body" style="padding:0;">
-    @if($installments->isEmpty())
-      <div class="admin-empty">
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-        <p>No {{ $status !== 'all' ? $status : '' }} installments found.</p>
-      </div>
+  <div class="ia-sumc">
+    <div><b>{{ $counts['up'] }}</b><span>Upcoming</span></div>
+    <div class="lo"><b>{{ $counts['at'] }}</b><span>Needs Attention</span></div>
+    <div class="sh"><b>{{ $overdue }}</b><span>Overdue</span></div>
+    <div class="ok"><b>{{ $counts['pd'] }}</b><span>Paid</span></div>
+  </div>
+
+  <div class="ia-tabs" role="tablist">
+    @foreach($tabs as $k => [$label])
+      <a class="ia-tab {{ $tab === $k ? 'on' : '' }}" role="tab" aria-selected="{{ $tab === $k ? 'true' : 'false' }}" href="{{ route('admin.installments.index', ['tab' => $k]) }}">{{ $label }}<span class="c">{{ $counts[$k] }}</span></a>
+    @endforeach
+  </div>
+
+  <div class="admin-panel"><div class="admin-panel-body" style="padding:0;overflow-x:auto;">
+    @if($rows->isEmpty())
+      <div class="ia-empty"><b>Nothing here</b>No installments match this tab.</div>
     @else
-      <table class="admin-table">
-        <thead><tr><th>Order #</th><th>Customer</th><th>Installment #</th><th>Amount Due</th><th>Due Date</th><th>Status</th><th></th></tr></thead>
+      <table class="admin-table ia-table" id="ia-rows">
+        <thead><tr><th>Order</th><th>Customer</th><th>Installment</th><th>Amount</th><th>Due</th><th>Method</th><th>Status</th><th>Actions</th></tr></thead>
         <tbody>
-          @foreach($installments as $inst)
-            <tr>
-              <td data-label="Order #">{{ $inst->order->order_number ?? 'N/A' }}</td>
-              <td data-label="Customer">{{ $inst->order->user->first_name ?? 'N/A' }} {{ $inst->order->user->last_name ?? '' }}</td>
-              <td data-label="Installment #">#{{ $inst->installment_no }}</td>
-              <td data-label="Amount Due">₱{{ number_format($inst->amount_due, 2) }}</td>
-              <td data-label="Due Date">{{ \Carbon\Carbon::parse($inst->due_date)->format('M d, Y') }}</td>
-              <td data-label="Status"><span class="admin-pill {{ $inst->status === 'paid' ? 'approved' : ($inst->status === 'overdue' ? 'rejected' : 'pending') }}">{{ $inst->status }}</span></td>
-              <td data-label="">
-                @if($inst->status !== 'paid')
-                  <form method="POST" action="{{ route('admin.installments.markPaid', $inst->id) }}"
-                        onsubmit="return confirm('Mark this installment as paid?')">
-                    @csrf
-                    <button type="submit" class="admin-btn admin-btn-success">✓ Mark Paid</button>
-                  </form>
-                @else
-                  <span style="font-size:12px;color:var(--text-muted);">Paid {{ $inst->paid_at ? \Carbon\Carbon::parse($inst->paid_at)->format('M d, Y') : '' }}</span>
+        @foreach($rows as $r)
+          @php
+            $of = $totals[$r->payment_id] ?? 1;
+            $cust = trim(($r->order->user->first_name ?? '') . ' ' . ($r->order->user->last_name ?? ''));
+            $canSim = $testMode && $r->payment?->installments_started_at && in_array($r->status, ['pending', 'failed', 'link_sent'], true);
+            $simLabel = ['pending' => 'Simulate Due Date', 'failed' => 'Simulate Next Day', 'link_sent' => 'Simulate What Happens'][$r->status] ?? '';
+            $detail = [
+              'title' => ($r->order->order_number ?? '') . ', installment ' . $r->installment_no . ' of ' . $of,
+              'line' => $cust . ' · ' . $peso($r->amount_due) . ' · due ' . $r->due_date->format('M d, Y'),
+              'method' => IA::methodLabel($r->payment), 'status' => $r->statusLabel(), 'statusClass' => $cls[$r->status] ?? '',
+              'due' => $r->due_date->format('M d, Y'),
+              'steps' => $r->attemptsLog->map(fn ($a) => ['k' => $a->result === 'ok' ? 'ok' : ($a->result === 'failed' ? 'bad' : ''), 't' => $a->message . ($a->simulated ? ($sandbox ? ' · Sandbox: simulated charge' : ' (simulated)') : ''), 'w' => $a->created_at->timezone('Asia/Manila')->format('M d, Y g:i A')])->values(),
+              'canMark' => $r->status !== 'paid',
+            ];
+          @endphp
+          <tr>
+            <td data-l="Order"><b>{{ $r->order->order_number ?? 'N/A' }}</b></td>
+            <td data-l="Customer"><a class="ia-link" href="{{ route('admin.installments.customer', $r->user_id) }}">{{ $cust ?: 'N/A' }}</a></td>
+            <td data-l="Installment">{{ $r->installment_no }} of {{ $of }}</td>
+            <td data-l="Amount">{{ $peso($r->amount_due) }}</td>
+            <td data-l="Due">{{ $r->due_date->format('M d, Y') }}</td>
+            <td data-l="Method">{{ IA::methodLabel($r->payment) }}@if(\App\Support\Installments\PlanMode::showSandboxLabel($r->payment)) <span class="ia-sbx">Sandbox: simulated charge</span>@endif</td>
+            <td data-l="Status"><span class="ist {{ $cls[$r->status] ?? '' }}">{{ $r->statusLabel() }}</span></td>
+            <td>
+              <div class="ia-acts">
+                @if($canSim)
+                  <button type="button" class="admin-btn admin-btn-gold" data-lp-modal-open="ia-sim" data-ia-sim="{{ route('admin.installments.simulate', $r->id) }}" data-ia-title="{{ $simLabel }}" data-ia-outcome="{{ $sandbox && in_array($r->status, ['pending', 'failed'], true) && \App\Support\Installments\PlanMode::autoCharges($r->payment) ? '1' : '0' }}" data-ia-info="{{ $detail['title'] . '|' . $detail['line'] }}">@titlecase($simLabel)</button>
                 @endif
-              </td>
-            </tr>
-          @endforeach
+                @if($r->status === 'overdue')
+                  <button type="button" class="admin-btn admin-btn-success" data-lp-modal-open="ia-mark" data-ia-mark="{{ route('admin.installments.markPaid', $r->id) }}" data-ia-info="{{ $detail['title'] . '|' . $detail['line'] }}">Mark Paid</button>
+                @endif
+                <button type="button" class="admin-btn admin-btn-outline" data-lp-modal-open="ia-det" data-ia-detail="{{ json_encode($detail) }}" data-ia-mark="{{ route('admin.installments.markPaid', $r->id) }}">Details</button>
+              </div>
+            </td>
+          </tr>
+        @endforeach
         </tbody>
       </table>
     @endif
-  </div>
+  </div></div>
+
+  <div style="margin-top:16px;">{{ $rows->links() }}</div>
+
+  <p class="ia-cnote"><b>How a charge works:</b> every day at 8:00 AM (Manila time) the system finds installments due today. Cards are charged from the saved card. GCash installments get a notification with a Pay Now button. Results arrive by webhook, update the order, and send the customer a receipt.</p>
 </div>
 
-<div style="margin-top:16px;">{{ $installments->links() }}</div>
+@if($testMode)
+<x-modal id="ia-sim" title="Simulate Due Date" size="mid">
+  <form method="POST" id="ia-sim-form" action="#">
+    @csrf
+    <div class="ia-ex" data-ia-info-box></div>
+    @if($sandbox)
+    <fieldset class="ia-outcome" data-ia-outcome-box>
+      <legend class="form-label">How Should The Charge End?</legend>
+      @foreach(\App\Support\Installments\SandboxInstallmentGateway::OUTCOMES as $key => $label)
+        <label class="ia-oc"><input type="radio" name="outcome" value="{{ $key }}" {{ $loop->first ? 'checked' : '' }}><span>{{ $label }}</span></label>
+      @endforeach
+      <p class="ia-hint">Sandbox: simulated charge. The result is recorded like a real one, but PayMongo is not called and no money moves.</p>
+    </fieldset>
+    @endif
+    <p class="ia-hint">This runs the same charge job that runs every day, for this installment only. Only available in test mode.</p>
+  </form>
+  <x-slot:footer>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Cancel</button>
+    <button type="submit" form="ia-sim-form" class="lp-btn lp-btn--primary">Run It</button>
+  </x-slot:footer>
+</x-modal>
 
+@endif
+
+<x-modal id="ia-mark" title="Mark Paid" size="mid">
+  <form method="POST" id="ia-mark-form" action="#">
+    @csrf
+    <div class="ia-ex" data-ia-info-box></div>
+    <label class="form-label" for="ia-mark-method">How Was It Paid?</label>
+    <select id="ia-mark-method" name="method" class="form-input">
+      <option value="cash">Cash</option><option value="gcash_direct">GCash (Direct)</option><option value="bank_transfer">Bank Transfer</option>
+    </select>
+  </form>
+  <x-slot:footer>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Cancel</button>
+    <button type="submit" form="ia-mark-form" class="lp-btn lp-btn--primary">Mark As Paid</button>
+  </x-slot:footer>
+</x-modal>
+
+<x-modal id="ia-det" title="Installment Details" size="mid">
+  <div id="ia-det-body"></div>
+  <x-slot:footer>
+    <button type="button" class="lp-btn lp-btn--secondary" id="ia-det-mark" data-lp-modal-open="ia-mark" hidden>Mark Paid</button>
+    <button type="button" class="lp-btn lp-btn--secondary" data-lp-modal-close>Close</button>
+  </x-slot:footer>
+</x-modal>
 @endsection

@@ -56,6 +56,44 @@ final class NotificationTemplates
             'body'  => 'We are unable to take on your request for {order}.{reason_line} If you would like to talk about other options, we are happy to help. {contact}',
         ],
 
+        /* ── customer and admin: installment plans (App\Support\InstallmentNotifier) ── */
+        'installment_plan_started' => [
+            'title' => 'Installment Plan Started',
+            'body'  => 'Your plan for order {order_number}: {count} installments of {each_text}, every {every} days. Your down payment of {down_text} was received. The first installment is due {first_due}{method_line}. We will remind you {reminder_days} days before each date. {contact}',
+        ],
+        'installment_reminder' => [
+            'title' => 'Payment Reminder',
+            'body'  => 'Your installment {no} of {of} for order {order_number} ({amount_text}) is due on {due_date}{method_line}. Nothing to do unless you want to pay early. {contact}',
+        ],
+        'installment_receipt' => [
+            'title' => 'Payment Received',
+            'body'  => 'We received {amount_text} for installment {no} of {of} on order {order_number}. Remaining balance: {balance_text}. Thank you. {contact}',
+        ],
+        'installment_charge_failed' => [
+            'title' => 'Payment Failed, We Will Try Again',
+            'body'  => 'We could not charge your card for installment {no} of {of} on order {order_number}. We will try again tomorrow. You can also pay now. {contact}',
+        ],
+        'installment_pay_link' => [
+            'title' => 'Please Pay Your Installment',
+            'body'  => 'Your second attempt did not go through. Pay {amount_text} for installment {no} of {of} on order {order_number} with Card or GCash to keep your plan on track. {contact}',
+        ],
+        'installment_gcash_due' => [
+            'title' => 'Pay Now With GCash',
+            'body'  => 'Your GCash installment {no} of {of} for order {order_number} ({amount_text}) is due today. Tap Pay Now and approve it in GCash. {contact}',
+        ],
+        'installment_overdue' => [
+            'title' => 'Installment Overdue',
+            'body'  => 'Installment {no} of {of} for order {order_number} is overdue. Please pay as soon as you can or contact us. {contact}',
+        ],
+        'admin_installment_attention' => [
+            'title' => 'Installment Needs Attention',
+            'body'  => '{customer}: installment {no} of {of} on order {order_number} could not be charged twice. A Pay Now link was sent to the customer.',
+        ],
+        'admin_installment_overdue' => [
+            'title' => 'Installment Overdue',
+            'body'  => '{customer}: installment {no} of {of} on order {order_number} is now Overdue.',
+        ],
+
         /* ── customer: quotes and agreements ── */
         'quote_sent' => [
             'title' => 'Your Custom Quote Is Ready',

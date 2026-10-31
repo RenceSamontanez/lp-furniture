@@ -6,6 +6,8 @@
   <link rel="stylesheet" href="{{ asset('assets/css/cart.css') }}"/>
   <link rel="stylesheet" href="{{ asset('assets/css/checkout.css') }}"/>
   <link rel="stylesheet" href="{{ asset('assets/css/checkout-preparing.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/installments.css') }}?v={{ @filemtime(public_path('assets/css/installments.css')) }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/checkout-alert.css') }}?v={{ @filemtime(public_path('assets/css/checkout-alert.css')) }}"/>
 @endpush
 
 @section('content')
@@ -35,13 +37,7 @@
     </div>
   </div>
 
-  @if($errors->any())
-    <div class="auth-errors" style="margin-bottom:24px;">
-      @foreach($errors->all() as $error)
-        <div class="auth-error-item">{{ $error }}</div>
-      @endforeach
-    </div>
-  @endif
+  @include('partials.checkout-alert', ['id' => 'ckn-alert', 'messages' => $errors->all()])
 
   @if(session('stock_error'))
     <div class="stock-error-banner">
@@ -123,6 +119,7 @@
               </button>
 
               <div class="checkout-screen-body">
+@include('partials.checkout-alert', ['id' => 'ckn-alert-review'])
 
                 @foreach($cartItems as $item)
                   <div class="ckn-product-card">
@@ -302,7 +299,8 @@
               </button>
 
               <div class="checkout-screen-body">
-                <div class="cx-cards-row">
+                <div class="ckn-elig" id="ckn-elig" role="status"></div>
+                <div class="cx-cards-row cx-cards-row--paytype">
                   <label class="payment-type-card selected" id="label-full">
                     <input type="radio" name="payment_type" value="full" checked onchange="selectPaymentType('full')"/>
                     <div class="payment-type-info">
@@ -312,7 +310,7 @@
                   </label>
 
                   <label class="payment-type-card" id="label-installment">
-                    <input type="radio" name="payment_type" value="installment" onchange="selectPaymentType('installment')"/>
+                    <input type="radio" name="payment_type" value="installment" id="pt-installment" onchange="selectPaymentType('installment')"/>
                     <div class="payment-type-info">
                       <div class="payment-type-title">Installment Plan</div>
                       <div class="payment-type-desc">Pay 50% now, split the rest into payments you choose.</div>
@@ -329,7 +327,7 @@
                         </div>
 
                         <div class="installment-group-label" style="margin-top:14px;">Payment Frequency</div>
-                        <div class="installment-grid">
+                        <div class="installment-grid installment-grid--freq">
                           @foreach([15 => 'Every 15 Days', 30 => 'Every 1 Month (30 Days)'] as $days => $label)
                             <label class="installment-chip {{ $days === 15 ? 'selected' : '' }}">
                               <input type="radio" name="installment_frequency" value="{{ $days }}" {{ $days === 15 ? 'checked' : '' }} onchange="selectInstallmentChip(this)"/>
@@ -397,6 +395,17 @@
                     </div>
                   </label>
 
+                  <label class="payment-method-card" id="label-card" style="display:none;">
+                    <input type="radio" name="payment_method" value="paymongo_card" onchange="selectPaymentMethod('paymongo_card')"/>
+                    <div class="payment-method-icon stripe">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    </div>
+                    <div class="payment-method-info">
+                      <div class="payment-method-title">Card</div>
+                      <div class="payment-method-desc">Visa or Mastercard. Charged automatically on each due date.</div>
+                    </div>
+                  </label>
+
                   <label class="payment-method-card" id="label-gcash">
                     <input type="radio" name="payment_method" value="gcash" onchange="selectPaymentMethod('gcash')"/>
                     <div class="payment-method-icon gcash">
@@ -420,10 +429,27 @@
                   </label>
                 </div>
 
+                @include('partials.checkout-alert', ['id' => 'ckn-alert-local'])
+
+                <div class="ckn-consent" id="ckn-consent-card" style="display:none;">
+                  <label><input type="checkbox" name="accept_auto_charge" value="1" id="accept-auto-charge" aria-describedby="err-accept-auto-charge" @checked(old('accept_auto_charge'))/>
+                    <span><b>Charge my card automatically.</b> I allow LP Furniture to charge this card for each installment on its due date. I can pay early at any time, and I will get a reminder 3 days before every charge.</span></label>
+                  <p class="ckn-consent-error" id="err-accept-auto-charge" hidden>Please allow automatic charges to continue with card installments.</p>
+                </div>
+                <div class="ckn-consent ckn-consent--info" id="ckn-consent-gcash" style="display:none;">
+                  <span><b>GCash installments.</b> On each due date we will send you a notification with a Pay Now button. You approve each payment in GCash.</span>
+                </div>
+                <div class="ckn-consent" id="ckn-consent-terms" style="display:none;">
+                  <label><input type="checkbox" name="accept_installment_terms" value="1" id="accept-installment-terms" aria-describedby="err-accept-terms" @checked(old('accept_installment_terms'))/>
+                    <span>I accept the <button type="button" class="ckn-linkbtn" data-lp-modal-open="inst-terms">Installment Terms</button>, including automatic charges, what happens when a payment is late, and how my Installment Standing works.</span></label>
+                  <p class="ckn-consent-error" id="err-accept-terms" hidden>Please accept the Installment Terms to continue.</p>
+                  <p class="ckn-consent-note">The down payment is charged right away. Due dates start counting after it is confirmed.</p>
+                </div>
+
                 <div class="ckn-continue-wrap">
                   <div class="ckn-actions">
                     <x-back-link named type="button" label="Payment Type" class="ckn-back-btn" onclick="goBackTo('paytype')" />
-                    <button type="button" class="ckn-continue-btn" onclick="goNext('paymethod')">Continue to Special Instructions</button>
+                    <button type="button" class="ckn-continue-btn" onclick="if (cknConsentsOk()) goNext('paymethod')">Continue to Special Instructions</button>
                   </div>
                 </div>
               </div>
@@ -432,7 +458,7 @@
 
           <div class="checkout-screen-footer">
             <x-back-link named type="button" label="Payment Type" onclick="pushBackToScreen('paymethod','paytype')"  class="checkout-screen-prev" />
-            <button type="button" class="checkout-screen-continue" onclick="pushToScreen('paymethod','notes')">Next: Instructions</button>
+            <button type="button" class="checkout-screen-continue" onclick="if (cknConsentsOk()) pushToScreen('paymethod','notes')">Next: Instructions</button>
           </div>
         </div>
 
@@ -666,9 +692,11 @@
   </form>
 
 </div>
+@include('installments._terms-modal')
 @endsection
 
 @push('scripts')
+@php $cknOld = collect(['delivery_option', 'payment_type', 'installment_duration', 'installment_frequency', 'payment_method'])->mapWithKeys(fn ($k) => [$k => old($k)])->all(); @endphp
 <script src="{{ asset('assets/js/checkout-preparing.js') }}"></script>
 <script src="{{ asset('assets/js/checkout-guard.js') }}?v={{ @filemtime(public_path('assets/js/checkout-guard.js')) }}"></script>
 <script>
@@ -721,7 +749,70 @@ function selectPaymentType(type) {
   document.getElementById('label-installment').classList.toggle('selected', type === 'installment');
   document.getElementById('installment-period-wrap').classList.toggle('visible', type === 'installment');
   if (type === 'installment') updateInstallmentSummary();
+  applyMethodRules();
   updateSectionSummaries();
+}
+
+/* ── INSTALLMENT RULES (the server checks all of this again) ──
+   Installments: verified ID, within the customer's Installment Standing, Card or GCash only (Stripe and Pay On-Site are
+   for full payments). A card plan needs the auto-charge consent box; every plan needs the terms box. */
+const INST = @json($installment);
+
+function currentTotal() {
+  return SUBTOTAL + (currentDelivery === 'delivery' ? DELIVERY_FEE : 0);
+}
+
+function installmentReason(total) {
+  if (!INST.idVerified) return 'Verify your ID in your account to use installments.';
+  if (INST.months <= 0) return 'Installments are not available right now because of late payments. You can pay in full.';
+  if (INST.cap !== null && total > INST.cap) return 'Your Installment Standing (' + INST.level + ') allows installments on orders up to ₱' + INST.cap.toLocaleString('en-PH', { minimumFractionDigits: 2 }) + '. You can pay in full.';
+  return '';
+}
+
+function applyEligibility() {
+  const reason = installmentReason(currentTotal());
+  const box = document.getElementById('ckn-elig');
+  const radio = document.getElementById('pt-installment');
+  const card = document.getElementById('label-installment');
+  if (!box || !radio) return;
+
+  box.innerHTML = '<div class="ckn-elig-row"><b>Your Installment Standing</b><span class="ckn-lvl ckn-lvl-' + INST.level + '">' + INST.level + '</span>' +
+    (INST.idVerified ? '<span class="ckn-chip ok">ID Verified</span>' : '<span class="ckn-chip bad">ID Not Verified</span>') + '</div>' +
+    (reason ? '<p class="ckn-elig-note bad">' + reason + '</p>' : '<p class="ckn-elig-note">You can split this order over up to ' + INST.months + ' month' + (INST.months > 1 ? 's' : '') + '.</p>');
+
+  radio.disabled = !!reason;
+  card.classList.toggle('is-disabled', !!reason);
+  if (reason && radio.checked) { document.querySelector('input[name="payment_type"][value="full"]').checked = true; selectPaymentType('full'); return; }
+
+  // Months longer than the customer's level allows can not be chosen.
+  document.querySelectorAll('input[name="installment_duration"]').forEach(function (r) {
+    const off = !reason && parseInt(r.value, 10) > INST.months;
+    r.disabled = off;
+    r.closest('.installment-chip').classList.toggle('is-disabled', off);
+    if (off && r.checked) {
+      const ok = document.querySelector('input[name="installment_duration"]:not(:disabled)');
+      if (ok) { ok.checked = true; selectInstallmentChip(ok); }
+    }
+  });
+}
+
+function applyMethodRules() {
+  const inst = document.querySelector('input[name="payment_type"]:checked')?.value === 'installment';
+  const show = (id, on) => { const el = document.getElementById(id); if (el) el.style.display = on ? '' : 'none'; };
+  show('label-stripe', !inst); show('label-onsite', !inst); show('label-card', inst);
+
+  let method = document.querySelector('input[name="payment_method"]:checked')?.value;
+  if (inst && (method === 'stripe' || method === 'onsite')) { setMethod('paymongo_card'); method = 'paymongo_card'; }
+  if (!inst && method === 'paymongo_card') { setMethod('stripe'); method = 'stripe'; }
+
+  show('ckn-consent-card', inst && method === 'paymongo_card');
+  show('ckn-consent-gcash', inst && method === 'gcash');
+  show('ckn-consent-terms', inst);
+}
+
+function setMethod(value) {
+  const r = document.querySelector('input[name="payment_method"][value="' + value + '"]');
+  if (r) { r.checked = true; selectPaymentMethod(value); }
 }
 
 function installmentPlanLabel() {
@@ -791,8 +882,9 @@ function updateInstallmentSummary() {
 }
 
 function selectPaymentMethod(method) {
-  ['stripe', 'gcash', 'onsite'].forEach(m => document.getElementById('label-' + m)?.classList.remove('selected'));
-  document.getElementById('label-' + method)?.classList.add('selected');
+  ['stripe', 'gcash', 'onsite', 'card'].forEach(m => document.getElementById('label-' + m)?.classList.remove('selected'));
+  document.getElementById('label-' + (method === 'paymongo_card' ? 'card' : method))?.classList.add('selected');
+  applyMethodRules();
   updateSectionSummaries();
 }
 
@@ -822,6 +914,8 @@ function updateTotal() {
   const rTotalEl = document.getElementById('review-total');
   if (rTotalEl) rTotalEl.textContent = formatted;
 
+  applyEligibility();
+
   // Delivery option affects the total, which affects the 50%
   // downpayment and per-payment amounts — keep the summary in sync.
   const installmentChecked = document.querySelector('input[name="payment_type"]:checked')?.value === 'installment';
@@ -847,7 +941,7 @@ function updateSectionSummaries() {
 
   const payMethodChecked = document.querySelector('input[name="payment_method"]:checked');
   if (payMethodChecked) {
-    const labels = { stripe: 'Card (Stripe)', gcash: 'GCash', onsite: 'Cash' };
+    const labels = { stripe: 'Card (Stripe)', paymongo_card: 'Card', gcash: 'GCash', onsite: 'Cash' };
     const el = document.getElementById('ckn-summary-paymethod');
     if (el) el.textContent = labels[payMethodChecked.value] || '';
   }
@@ -909,7 +1003,7 @@ function updateReviewScreen() {
   const payMethodChecked = document.querySelector('input[name="payment_method"]:checked');
   const payMethodEl = document.getElementById('review-paymethod-value');
   if (payMethodChecked) {
-    const labels = { stripe: 'Credit / Debit Card (Stripe)', gcash: 'GCash', onsite: 'Cash on Pickup / Delivery' };
+    const labels = { stripe: 'Credit / Debit Card (Stripe)', paymongo_card: 'Card', gcash: 'GCash', onsite: 'Cash on Pickup / Delivery' };
     payMethodEl.textContent = labels[payMethodChecked.value] || '';
   }
 
@@ -921,6 +1015,7 @@ function updateReviewScreen() {
 
 document.addEventListener('DOMContentLoaded', () => {
   updateTotal();
+  applyMethodRules();
   updateSectionSummaries();
 
   // Desktop only: Review Your Order opens immediately via the
@@ -939,6 +1034,105 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+/* ── CONSENT CHECKS + "ACTION NEEDED" BANNER ──
+   The server checks the same boxes again (OrderController::installmentProblem); this just tells the person early and
+   exactly what to tick: a banner (focused and scrolled into view), a red outline on the box and the message under it. */
+const CKN_MSG = {
+  terms: 'Please accept the Installment Terms to continue.',
+  auto: 'Please allow automatic charges to continue with card installments.',
+};
+
+function cknConsentProblems() {
+  if (document.querySelector('input[name="payment_type"]:checked')?.value !== 'installment') return [];
+  const out = [];
+  if (!document.getElementById('accept-installment-terms').checked) out.push('terms');
+  const method = document.querySelector('input[name="payment_method"]:checked')?.value;
+  if (method === 'paymongo_card' && !document.getElementById('accept-auto-charge').checked) out.push('auto');
+  return out;
+}
+
+function cknMark(key, on) {
+  const input = document.getElementById(key === 'terms' ? 'accept-installment-terms' : 'accept-auto-charge');
+  const box = input.closest('.ckn-consent');
+  const msg = document.getElementById(key === 'terms' ? 'err-accept-terms' : 'err-accept-auto-charge');
+  box.classList.toggle('has-error', on);
+  msg.hidden = !on;
+  if (on) input.setAttribute('aria-invalid', 'true'); else input.removeAttribute('aria-invalid');
+}
+
+function cknShowAlert(id, messages) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.querySelector('[data-ckn-alert-list]').innerHTML = messages.map(function (m) { const p = document.createElement('p'); p.textContent = m; return p.outerHTML; }).join('');
+  el.hidden = false;
+  el.scrollIntoView({ block: 'center', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  el.focus({ preventScroll: true });
+  // The step panels above are still sliding open/closed while this runs, so look again once they have settled.
+  setTimeout(function () {
+    const r = el.getBoundingClientRect();
+    if (r.top < 0 || r.bottom > window.innerHeight) el.scrollIntoView({ block: 'center', behavior: 'auto' });
+  }, 700);
+}
+
+function cknConsentsOk() {
+  const bad = cknConsentProblems();
+  ['terms', 'auto'].forEach(function (k) { cknMark(k, bad.includes(k)); });
+  const local = document.getElementById('ckn-alert-local');
+  if (!bad.length) { if (local) local.hidden = true; return true; }
+  cknShowAlert('ckn-alert-local', bad.map(function (k) { return CKN_MSG[k]; }));
+  return false;
+}
+
+['accept-installment-terms', 'accept-auto-charge'].forEach(function (id) {
+  // Ticking a box only clears what is now fixed; it never pops the banner up by itself.
+  document.getElementById(id)?.addEventListener('change', function () {
+    const bad = cknConsentProblems();
+    ['terms', 'auto'].forEach(function (k) { if (!bad.includes(k)) cknMark(k, false); });
+    const local = document.getElementById('ckn-alert-local');
+    if (!bad.length && local) local.hidden = true;
+  });
+});
+
+document.getElementById('checkout-form').addEventListener('submit', function (e) {
+  if (cknConsentsOk()) return;
+  e.preventDefault();
+  e.stopImmediatePropagation(); // the double-submit guard below must not lock the buttons
+  if (isDesktop()) openSection('paymethod');
+});
+
+/* Back from the server with errors: restore what was chosen, show the banner, and point at the unticked box. */
+(function () {
+  const banner = document.getElementById('ckn-alert');
+  if (!banner || banner.hidden) return;
+  const OLD = @json($cknOld);
+  document.addEventListener('DOMContentLoaded', function () {
+    ['delivery_option', 'payment_type', 'installment_duration', 'installment_frequency', 'payment_method'].forEach(function (name) {
+      if (OLD[name] == null) return;
+      const r = document.querySelector('input[name="' + name + '"][value="' + OLD[name] + '"]');
+      if (r && !r.disabled && !r.checked) { r.checked = true; r.dispatchEvent(new Event('change', { bubbles: true })); }
+    });
+    const text = banner.textContent;
+    if (text.indexOf(CKN_MSG.terms) !== -1) cknMark('terms', true);
+    if (text.indexOf(CKN_MSG.auto) !== -1) cknMark('auto', true);
+    const consent = text.indexOf(CKN_MSG.terms) !== -1 || text.indexOf(CKN_MSG.auto) !== -1;
+    const msgs = Array.from(banner.querySelectorAll('[data-ckn-alert-list] p')).map(function (p) { return p.textContent; });
+    if (isDesktop()) {
+      if (consent) openSection('paymethod');
+      cknShowAlert('ckn-alert', msgs);
+      return;
+    }
+    // Phone: the steps are full-screen panels that would hide the banner at the top of the page, and the "Preparing
+    // your order" panel comes first. Skip it and show the banner inside the panel that holds the problem.
+    const prep = document.getElementById('ckn-preparing');
+    if (prep) prep.style.display = 'none';
+    const target = consent ? 'paymethod' : 'review';
+    document.getElementById('screen-' + target).classList.add('open');
+    document.body.style.overflow = 'hidden';
+    banner.hidden = true;
+    cknShowAlert(consent ? 'ckn-alert-local' : 'ckn-alert-review', msgs);
+  });
+})();
 
 /* ── DOUBLE-SUBMIT GUARD ──
    Both "Place Order" buttons (desktop sidebar + mobile review

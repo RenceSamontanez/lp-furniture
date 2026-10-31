@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Installments Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--side:#2a1611;--side2:#3a2218;--gold:#c8963e;--gold2:#e0b25a;--bg:#f5f0e8;--card:#fdfaf5;--line:#e4d9c5;--ink:#2d1810;--muted:#6e6157;--red:#b3261e;--green:#2e6b3a}
+*{box-sizing:border-box}
+body{margin:0;font-family:Montserrat,system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;font-size:14px}
+button,input,select,textarea{font:inherit;color:inherit}
+.app{display:grid;grid-template-columns:268px 1fr;min-height:100vh}
+/* sidebar */
+.side{background:var(--side);color:#f3e7da;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;z-index:50}
+.brand{padding:20px 22px;font:600 22px "Cormorant Garamond",serif;border-bottom:1px solid #ffffff14;display:flex;justify-content:space-between;align-items:center}.brand em{color:var(--gold);font-style:italic}
+.close-side{display:none;background:none;border:0;color:#f3e7da;font-size:26px;line-height:1;cursor:pointer;padding:4px 8px}
+.find{padding:14px 14px 4px}
+.find input{width:100%;background:#ffffff0f;border:1px solid #ffffff1f;border-radius:10px;padding:9px 12px 9px 36px;color:#f3e7da;font-size:13px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23d3bfae' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.3-4.3'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:11px center}
+.find input::placeholder{color:#cdb9a8}
+.nav{padding:8px 12px 14px;overflow:auto;flex:1}
+.g{margin-top:6px}
+.g-h{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--side2);border:1px solid #ffffff14;border-radius:10px;color:#ecdccb;font-weight:600;font-size:12.5px;padding:7px 8px 7px 12px;cursor:pointer;text-align:left;transition:background .15s,border-color .15s}
+.g-h:hover{background:#47291d;border-color:#c8963e88;color:#fff}
+.g-h .tail{display:flex;gap:8px;align-items:center}
+.g-pill{display:none}.g.shut .g-pill{display:inline-block}
+.chev{width:24px;height:24px;border-radius:50%;background:#c8963e33;border:1px solid #c8963e88;display:grid;place-items:center;transition:background .15s}
+.g-h:hover .chev{background:#c8963e66}
+.chev svg{width:14px;height:14px;stroke:#e0b25a;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .22s}
+.g.shut .chev svg{transform:rotate(-90deg)}
+.g-list{display:grid;grid-template-rows:1fr;transition:grid-template-rows .22s ease;margin-top:4px}
+.gi{overflow:hidden;min-height:0;transition:visibility .22s}
+.g.shut .g-list{grid-template-rows:0fr;margin-top:0}.g.shut .gi{visibility:hidden}
+.nav a{display:flex;gap:11px;align-items:center;padding:8px 12px 8px 14px;margin:1px 0;border-radius:9px;color:#f3e7da;text-decoration:none;font-weight:500;font-size:13.5px;cursor:pointer;border:1px solid transparent;position:relative}
+.nav a:hover{background:#ffffff1a}
+.nav a svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.nav a span.t{flex:1}
+.nav a.on{background:var(--gold);color:#2d1810;font-weight:600}
+.pill{background:#b3261e;color:#fff;border-radius:999px;font-size:11.5px;font-weight:600;padding:1px 8px;min-width:22px;text-align:center}
+.nav a.on .pill{background:#2d1810;color:#fff}
+.none{color:#cdb9a8;font-size:13px;padding:14px 12px}
+.signout{margin:10px 12px 14px;padding:11px 14px;border:1px solid #e58b7e;border-radius:10px;background:#4a1f1a;color:#ffd9d3;font-size:13.5px;font-weight:600;display:flex;gap:10px;align-items:center;justify-content:center;cursor:pointer}
+.signout:hover{background:#5e2720;color:#fff}
+.signout svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.scrim{display:none}
+/* main */
+.top{background:#fff;border-bottom:1px solid var(--line);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.top-l{display:flex;align-items:center;gap:12px;min-width:0}
+.menu-btn{display:none;background:var(--side);color:var(--gold2);border:0;border-radius:10px;width:42px;height:42px;cursor:pointer;align-items:center;justify-content:center;flex:none}
+.menu-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.top h1{font:600 28px/1.2 "Cormorant Garamond",serif;margin:0}
+.who{font-weight:600;font-size:13px;display:flex;gap:10px;align-items:center;white-space:nowrap}.av{width:34px;height:34px;border-radius:50%;background:var(--side);color:var(--gold2);display:grid;place-items:center;font:600 13px "Cormorant Garamond",serif}
+.page{padding:26px 28px 48px;max-width:1280px}
+.pg{display:none}.pg.on{display:block}
+.sub{color:var(--muted);margin:0 0 20px;max-width:780px;font-size:14.5px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.btn{border:1px solid var(--gold);background:transparent;color:#7a4f0a;border-radius:999px;padding:10px 20px;font-weight:600;font-size:13.5px;cursor:pointer}
+.btn:hover{background:#fff6e6}.btn.g2{background:var(--gold);color:#2d1810}.btn.g2:hover{background:#d4a04a}
+.btn.sm{padding:7px 14px;font-size:12.5px}
+.btn.plain{border-color:#cdbfa9;color:var(--ink)}
+.btn.del{border-color:#d9a19c;color:var(--red)}
+.btn.red{background:#b3261e;border-color:#b3261e;color:#fff}
+:focus-visible{outline:2px solid #1d4ed8;outline-offset:2px}
+/* ideas */
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-bottom:22px}
+.how .st{padding:18px 20px;border-right:1px solid var(--line)}.how .st:last-child{border-right:0}
+.how .n{width:26px;height:26px;border-radius:50%;background:var(--side);color:var(--gold2);display:grid;place-items:center;font-weight:600;font-size:13px;margin-bottom:8px}
+.how h3{margin:0 0 4px;font-size:14px;font-weight:600}.how p{margin:0;color:var(--muted);font-size:13.5px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tab{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-weight:600;font-size:13px;cursor:pointer;display:flex;gap:8px;align-items:center}
+.tab .c{background:#eee6da;border-radius:999px;padding:0 8px;font-size:12px}
+.tab.on{background:var(--side);color:#fff;border-color:var(--side)}.tab.on .c{background:var(--gold);color:#2d1810}
+.tools{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.tools input,.tools select,.f input,.f textarea{border:1px solid #cdbfa9;border-radius:10px;padding:10px 14px;background:#fff;font-size:14px}
+.tools input{flex:1;min-width:200px;max-width:340px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:12.5px;color:var(--muted);font-weight:600;padding:13px 18px;background:#f8f2e8;border-bottom:1px solid var(--line)}
+td{padding:15px 18px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.idea{font-weight:600;font-size:15px}
+.chip{display:inline-block;padding:3px 11px;border-radius:999px;font-size:12px;font-weight:600;background:#eee6da;color:#5a4a3d}
+.st-new{background:#fbe9c7;color:#6d4a05}.st-ans{background:#e3f2e4;color:#1f5a2b}.st-opt{background:#e1ecf8;color:#1d3f6e}.st-dis{background:#eee6da;color:#5a4a3d}
+.acts{display:flex;gap:8px;align-items:center}
+.more{display:inline-flex;align-items:center;gap:7px}.more svg{width:16px;height:16px;fill:currentColor}
+.menu{position:fixed;z-index:150;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px #2a161133;padding:6px;min-width:190px;display:none}
+.menu.on{display:block}
+.menu button{display:block;width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:10px 12px;font-weight:600;font-size:13.5px;cursor:pointer}
+.menu button:hover,.menu button:focus-visible{background:#f8f2e8}
+.menu button.d{color:var(--red)}.menu hr{border:0;border-top:1px solid var(--line);margin:4px 0}
+.empty{padding:40px 20px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
+/* modal */
+.mod{position:fixed;inset:0;background:#2a161199;display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+.mod.open{display:flex}
+.sheet{background:#fff;border-radius:18px;width:100%;max-width:560px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px #0004}
+.sheet header{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.sheet h2{margin:0;font:600 22px "Cormorant Garamond",serif}
+.x{background:none;border:0;font-size:26px;line-height:1;cursor:pointer;color:var(--muted)}
+.sheet .bd{padding:20px 22px;overflow:auto}
+.sheet footer{padding:14px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px}
+.f label{display:block;font-weight:600;font-size:13.5px;margin-bottom:6px}.f textarea{width:100%;min-height:110px;resize:vertical}
+.hint{color:var(--muted);font-size:13px;margin:6px 0 0}
+.ex{background:#f8f2e8;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13.5px;margin-bottom:16px}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.opt{text-align:left;background:#fff;border:1.5px solid #cdbfa9;border-radius:12px;padding:10px 12px;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.opt b{font-size:13px}.opt small{color:var(--muted);font-size:12px;line-height:1.35}
+.opt:hover{border-color:var(--gold)}.opt[aria-checked=true]{border-color:var(--gold);background:#fff6e6;box-shadow:0 0 0 2px #c8963e55}
+.soft{color:var(--muted);font-weight:400;font-size:12.5px}
+.tips{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:13px}
+.bubble{background:#f8f2e8;border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:14px;min-height:46px;white-space:pre-wrap}
+.lnk{display:block;max-width:100%;background:none;border:0;padding:0;font:600 16px/1.35 Montserrat,sans-serif;color:var(--ink);cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lnk:hover{color:#7a4f0a}
+#pg-ideas td.i{max-width:340px;width:34%}
+#pg-ideas .subline{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.quote{background:#fff;border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:10px;padding:12px 16px;font-size:15.5px;font-weight:600;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+.rsep{border:0;border-top:1px solid var(--line);margin:4px 0 18px}
+.subline{color:var(--muted);font-size:12.5px;margin-top:2px}
+.crumbs{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0 0}
+.crumb{background:#eee6da;border-radius:8px;padding:3px 10px;font-size:12.5px;font-weight:600}.crumb.hl{background:#fbe9c7;color:#6d4a05}.sep{color:var(--muted);font-size:12px}
+.sec{margin:0 0 18px}.sec h3{margin:0 0 6px;font-size:13.5px;font-weight:600}
+.reqs{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.rq{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--line);font-size:13.5px;flex-wrap:wrap}.rq:last-child{border-bottom:0}
+.rq b{font-weight:600}.rq .m{color:var(--muted);font-size:12.5px}
+.tip{background:#fff6e6;border:1px solid #ecd49a;border-radius:12px;padding:10px 14px;font-size:13.5px;margin-bottom:18px}
+.cho{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cho div{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fdfaf5;font-size:13px}.cho b{display:block;margin-bottom:2px;font-size:13.5px}.cho span{color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 0}
+.chp{background:#fff;border:1px dashed #b89a5a;border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:600;cursor:pointer;color:#6d4a05}.chp:hover{background:#fff6e6;border-style:solid}
+.ctx{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;padding:12px;background:#f8f2e8;border:1px solid var(--line);border-radius:12px}
+.pl{border:1.5px solid #cdbfa9;background:#fff;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600}.pl.new{border-color:var(--gold);background:#fff6e6;box-shadow:0 0 0 2px #c8963e55}.pl.new i{font-style:normal;font-size:11px;background:var(--gold);color:#2d1810;border-radius:999px;padding:1px 7px;margin-left:6px}
+.f input[type=text],.f select{width:100%;border:1px solid #cdbfa9;border-radius:10px;padding:10px 14px;background:#fff;font-size:14px;margin-bottom:12px}
+.f .bad2 input{border-color:var(--red)}
+.hl2{background:#fbe9c7}
+main{min-width:0}.rg>div{min-width:0}.rc{min-width:0}.rc .rb{overflow-x:auto}
+.rp-top{display:flex;justify-content:flex-end;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:12px}
+@media(max-width:1380px){.kpis{grid-template-columns:repeat(3,1fr)}}
+.kpi{background:var(--card);border:1px solid var(--line);border-top:4px solid #cdbfa9;border-radius:14px;padding:12px 15px 14px}.kpi.good{border-top-color:#2e6b3a}.kpi.bad{border-top-color:#b3261e}
+.kpi .l{font-size:12.5px;color:var(--muted);font-weight:600}
+.kpi .v{font:600 23px/1.25 Montserrat,sans-serif;margin:2px 0 2px;font-variant-numeric:lining-nums tabular-nums}
+.kpi .d{font-size:12.5px;color:var(--muted)}.up{color:#1f5a2b;font-weight:600}.dn{color:#a3221b;font-weight:600}
+.attn{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px;background:#fff6e6;border:1px solid #ecd49a;border-radius:14px;padding:10px 14px}
+.attn b{font-size:13px;margin-right:4px}
+.ach{background:#fff;border:1px solid #d9bd7a;border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:600;cursor:pointer}
+.ach:hover{background:#fff0d0}.ach em{font-style:normal;color:#a3221b;margin-left:4px}
+.rtabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:14px;overflow-x:auto}
+.rtab{background:none;border:0;border-bottom:3px solid transparent;padding:10px 16px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;white-space:nowrap;margin-bottom:-1px}
+.rtab.on{color:var(--ink);border-bottom-color:var(--gold)}
+.rpane{display:none}.rpane.on{display:block}
+.rg{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;align-items:start}
+.rc{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:14px}.rg>div>.rc:last-child{margin-bottom:0}
+.rc h2{margin:0;font:600 14.5px Montserrat,sans-serif;padding:13px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.rc .rb{padding:14px 18px}
+.rc .note{font-size:12.5px;color:var(--muted);margin:10px 0 0}
+.chart{display:flex;align-items:flex-end;gap:14px;height:190px;padding-top:22px}
+.col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px}
+.col .bar{width:100%;max-width:56px;background:var(--gold);border-radius:8px 8px 4px 4px;min-height:4px}
+.col .val{font-size:12px;font-weight:600}.col .mo{font-size:12px;color:var(--muted)}
+.col.zero .bar{background:#e4d9c5}
+.seg{display:flex;height:20px;border-radius:10px;overflow:hidden;gap:2px}.seg i{display:block}
+.leg{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
+.leg div{font-size:12.5px}.leg b{display:block;font-size:17px;font-weight:600}.leg span.sq{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+.hb{margin-bottom:11px}.hb:last-child{margin-bottom:0}
+.hb .t{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;gap:8px}.hb .t b{font-weight:600}.hb .t span{color:var(--muted)}
+.trk{height:9px;background:#efe6d6;border-radius:6px;overflow:hidden}.trk i{display:block;height:100%;background:var(--gold);border-radius:6px}
+.trk.blue i{background:#1d4e89}.trk.red i{background:#b3261e}.trk.green i{background:#2e6b3a}
+.mini{width:100%;border-collapse:collapse;font-size:13px}
+.mini th{font-size:12px;padding:8px 10px;text-align:left;color:var(--muted);background:#f8f2e8}
+.mini td{padding:9px 10px;border-bottom:1px solid var(--line)}.mini tr:last-child td{border-bottom:0}
+.mini td.r,.mini th.r{text-align:right}
+.cust4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.cust4 div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px}.cust4 b{display:block;font-size:22px;font-weight:600}.cust4 span{font-size:12.5px;color:var(--muted)}
+.rank{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--side);color:var(--gold2);font-size:12px;font-weight:600;margin-right:10px}
+.li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}.li:last-child{border-bottom:0}
+.low{background:#fde8e6;color:#8f1f18;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600}
+.smp{font-size:12px;color:var(--muted);font-weight:400}
+.trend{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:2px 10px 2px 8px;font-size:12.5px;font-weight:600;margin:4px 0 4px}
+.trend svg{width:10px;height:10px;fill:currentColor}
+.trend.good{background:#e3f2e4;color:#1f5a2b}.trend.bad{background:#fde8e6;color:#8f1f18}.trend.flat{background:#eee6da;color:#5a4a3d}
+.seg2{display:inline-flex;background:#efe6d6;border-radius:999px;padding:3px}
+.seg2 button{border:0;background:none;border-radius:999px;padding:7px 14px;font-weight:600;font-size:12.5px;cursor:pointer;color:var(--muted)}
+.seg2 button.on{background:var(--side);color:#fff}
+.keyl{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);align-items:center;margin:0 0 12px}
+.keyl .trend{margin:0}
+.mv{font-size:11.5px;font-weight:600;border-radius:999px;padding:1px 7px;white-space:nowrap}
+.mv.good{background:#e3f2e4;color:#1f5a2b}.mv.bad{background:#fde8e6;color:#8f1f18}.mv.flat{color:var(--muted)}
+#pg-customers .card,#pg-cdetail .card{overflow-x:auto}
+.st3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;max-width:760px}
+.st3 button{text-align:left;background:var(--card);border:1px solid var(--line);border-top:4px solid #cdbfa9;border-radius:14px;padding:12px 16px;cursor:pointer}
+.st3 button.v{border-top-color:#2e6b3a}.st3 button.u{border-top-color:#b3261e}.st3 button:hover{background:#fff}
+.st3 b{display:block;font-size:24px;font-weight:600}.st3 span{font-size:13px;color:var(--muted)}
+.ctool{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.ctool input[type=search]{flex:1;min-width:220px;max-width:360px;border:1px solid #cdbfa9;border-radius:10px;padding:10px 14px;background:#fff;font-size:14px}
+.ctool select{border:1px solid #cdbfa9;border-radius:10px;padding:10px 14px;background:#fff;font-size:14px}
+.ctool .sp{flex:1}
+.fbtn{position:relative}.fbtn .n{background:var(--gold);color:#2d1810;border-radius:999px;font-size:11.5px;padding:0 7px;margin-left:6px}
+.act{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.ac{background:#fff6e6;border:1px solid #ecd49a;border-radius:999px;padding:4px 6px 4px 12px;font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.ac button{background:#ecd49a;border:0;border-radius:50%;width:20px;height:20px;line-height:1;cursor:pointer;font-size:14px}
+.clr{background:none;border:0;color:#7a4f0a;font-weight:600;font-size:12.5px;text-decoration:underline;cursor:pointer}
+.cnt{color:var(--muted);font-size:13px;margin:0 0 8px}
+.sortb{background:none;border:0;font:inherit;font-weight:600;color:inherit;cursor:pointer;padding:0;display:inline-flex;align-items:center;gap:6px}
+.sortb svg{width:9px;height:9px;fill:currentColor;opacity:.25}.sortb.on svg{opacity:1;color:#7a4f0a}
+.fc{border:1.5px solid #cdbfa9;background:#fff;border-radius:999px;padding:7px 14px;font-weight:600;font-size:13px;cursor:pointer}
+.fc[aria-pressed=true]{border-color:var(--gold);background:#fff6e6;box-shadow:0 0 0 2px #c8963e55}
+.fchips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px}
+.vchip{display:inline-block;padding:3px 11px;border-radius:999px;font-size:12px;font-weight:600}.vchip.v{background:#e3f2e4;color:#1f5a2b}.vchip.u{background:#fbe9c7;color:#6d4a05}
+.cdh{display:flex;gap:18px;align-items:center;flex-wrap:wrap;padding:18px 22px;margin-bottom:14px}
+.cav{width:64px;height:64px;border-radius:50%;background:var(--side);color:var(--gold2);display:grid;place-items:center;font:600 26px "Cormorant Garamond",serif;flex:none}
+.cdh .nm{font:600 28px/1.15 "Cormorant Garamond",serif;margin:0}
+.cdh .meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px;color:var(--muted);font-size:13px}
+.cdh .sp{flex:1}
+.cds{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.cds div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px}.cds b{display:block;font-size:22px;font-weight:600}.cds span{font-size:12.5px;color:var(--muted)}
+.cdg{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;align-items:start}
+.cdg>*{min-width:0}
+.dtabs{display:flex;gap:6px;border-bottom:1px solid var(--line);overflow-x:auto}
+.dtab{background:none;border:0;border-bottom:3px solid transparent;padding:12px 16px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;white-space:nowrap;margin-bottom:-1px}
+.dtab.on{color:var(--ink);border-bottom-color:var(--gold)}.dtab i{font-style:normal;background:#eee6da;border-radius:999px;padding:0 8px;font-size:12px;margin-left:6px}
+.dpane{display:none}.dpane.on{display:block}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px;align-items:center}.kv:last-child{border-bottom:0}
+.kv span{color:var(--muted)}.kv b{font-weight:600;text-align:right;overflow-wrap:anywhere}
+.sh{font-size:12.5px;font-weight:600;color:var(--muted);margin:0 0 2px;padding-top:4px}
+.pst{display:inline-block;padding:3px 11px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.p-pending{background:#fbe9c7;color:#6d4a05}.p-confirmed{background:#e1ecf8;color:#1d3f6e}.p-completed{background:#e3f2e4;color:#1f5a2b}.p-cancelled{background:#fde8e6;color:#8f1f18}.p-paid{background:#e3f2e4;color:#1f5a2b}.p-partial{background:#fbe9c7;color:#6d4a05}.p-unpaid{background:#eee6da;color:#5a4a3d}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;padding:16px}
+.dz{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.dz .im{height:84px;display:grid;place-items:center;font:600 24px "Cormorant Garamond",serif;color:#fff}
+.dz .tx{padding:10px 12px;font-size:13px}.dz b{display:block;font-size:13.5px;margin-bottom:2px}.dz span{color:var(--muted)}
+.tl{list-style:none;margin:0;padding:6px 20px 14px}.tl li{position:relative;padding:11px 0 11px 22px;border-left:2px solid var(--line);margin-left:5px;font-size:13.5px}
+.tl li::before{content:"";position:absolute;left:-7px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--gold);border:2px solid #fff}
+.tl li span{display:block;color:var(--muted);font-size:12.5px}
+.cdn{padding:26px 20px;text-align:center;color:var(--muted)}.cdn b{display:block;color:var(--ink);font-size:14.5px;margin-bottom:2px}
+.cdfoot{padding:12px 18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.vlink{background:none;border:0;padding:0;font-weight:600;color:var(--ink);cursor:pointer;text-decoration:underline;text-decoration-color:#c8963e;text-underline-offset:3px;font-size:inherit}
+.err{color:var(--red);font-size:13px;margin-top:6px;display:none}.bad textarea{border-color:var(--red)}.bad .err{display:block}
+.toast{position:fixed;right:20px;bottom:20px;background:#1f5a2b;color:#fff;border-radius:12px;padding:12px 18px;font-weight:600;font-size:13.5px;display:none;z-index:200}
+.toast.on{display:block}
+.ph{padding:36px 28px}.ph h2{margin:0 0 6px;font-size:18px}.ph p{margin:0;color:var(--muted)}
+@media(max-width:1000px){
+ .app{grid-template-columns:1fr}
+ .side{position:fixed;left:0;top:0;width:290px;max-width:86vw;transform:translateX(-100%);transition:transform .22s;box-shadow:0 0 40px #0006}
+ .side.open{transform:none}
+ .close-side{display:block}.menu-btn{display:flex}
+ .scrim{position:fixed;inset:0;background:#2a161188;z-index:40}.scrim.on{display:block}
+ .top{padding:12px 16px}.top h1{font-size:23px}.who span.nm{display:none}
+ .page{padding:18px 16px 40px}
+  .cdg{grid-template-columns:1fr}.cds{grid-template-columns:1fr 1fr}.cdh .nm{font-size:24px}
+ .st3{gap:8px}.st3 button{padding:10px 12px}.st3 b{font-size:20px}.st3 span{font-size:12px}.fgrid{grid-template-columns:1fr}
+ .ctool input[type=search]{flex:1 1 100%;max-width:none}.ctool .sp,.ctool label{display:none}.ctool select{flex:1;min-width:0}
+ .kpis{grid-template-columns:1fr 1fr}.rg{grid-template-columns:1fr}.cust4{grid-template-columns:1fr 1fr}.leg{grid-template-columns:repeat(2,1fr)}
+ .how{grid-template-columns:1fr}.how .st{border-right:0;border-bottom:1px solid var(--line)}.how .st:last-child{border-bottom:0}
+}
+@media(max-width:700px){
+ #pg-ideas thead{display:none}
+ #pg-ideas table,#pg-ideas tbody,#pg-ideas tr,#pg-ideas td{display:block;width:100%}
+ #pg-ideas tr{padding:14px 16px;border-bottom:1px solid var(--line)}#pg-ideas tr:last-child{border-bottom:0}
+ #pg-ideas td{padding:4px 0;border:0}
+ #pg-ideas td[data-l]::before{content:attr(data-l) ": ";color:var(--muted);font-size:12.5px}
+ #pg-ideas td.i::before,#pg-ideas td.a::before{content:none}
+ #pg-ideas td.i{max-width:none;width:100%}#pg-ideas .lnk{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+ .mini{min-width:460px}.mini td,.mini th{white-space:nowrap}
+ .acts{margin-top:10px}.acts .g2{flex:1;text-align:center}.more{flex:none}
+ .mod{align-items:flex-end;padding:0}.sheet{max-width:none;border-radius:18px 18px 0 0;max-height:92vh}
+ .sheet footer{flex-wrap:wrap}.sheet footer .btn{flex:1 1 30%;white-space:nowrap}.sheet footer .g2,.sheet footer .red{flex:1 1 100%;order:-1}
+ .opts,.cho{grid-template-columns:1fr}
+}
+@media(max-width:1380px){
+ #pg-customers thead{display:none}
+ #pg-customers table,#pg-customers tr,#pg-customers td{display:block;width:100%}
+ #pg-customers tbody{display:grid;grid-template-columns:1fr 1fr}
+ #pg-customers tr{padding:14px 16px;border-bottom:1px solid var(--line);min-width:0}
+ #pg-customers tr:nth-child(odd){border-right:1px solid var(--line)}
+ #pg-customers td{padding:3px 0;border:0;overflow-wrap:anywhere}
+ #pg-customers td[data-l]::before{content:attr(data-l) ": ";color:var(--muted);font-size:12.5px}
+ #pg-customers td .btn{margin-top:8px;width:100%}
+}
+@media(max-width:700px){
+ #dp-o .mini{min-width:0}#dp-o .mini td,#dp-o .mini th{white-space:normal}
+ #dp-o thead{display:none}#dp-o table,#dp-o tbody,#dp-o tr{display:block;width:100%}
+ #dp-o tr{padding:12px 16px;border-bottom:1px solid var(--line)}#dp-o tr:last-child{border-bottom:0}
+ #dp-o td{display:inline-block;padding:3px 10px 3px 0;border:0;text-align:left!important}#dp-o td:first-child{display:block;width:100%}
+ #pg-customers tbody{grid-template-columns:1fr}#pg-customers tr:nth-child(odd){border-right:0}
+}
+/* consistency pass */
+.cust4 span{display:block}.cust4 .trend{display:inline-flex;margin:6px 0 0}.cust4>div{min-height:92px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;line-height:1.3;text-align:center}
+.btn.sm{min-height:36px}
+.tab{min-height:40px}.rtab,.dtab{height:48px;padding:0 16px;display:inline-flex;align-items:center}
+.rc h2{flex-wrap:wrap}.rc h2 .btn{white-space:nowrap}
+.seg2 button{min-height:34px;white-space:nowrap}
+.mini .dn{}
+@media(max-width:1380px){
+ .mini .dn{display:none}
+ #pg-ideas thead{display:none}
+ #pg-ideas table,#pg-ideas tr,#pg-ideas td{display:block;width:100%}
+ #pg-ideas tbody{display:grid;grid-template-columns:1fr 1fr}
+ #pg-ideas tr{padding:14px 16px;border-bottom:1px solid var(--line);min-width:0}
+ #pg-ideas tr:nth-child(odd){border-right:1px solid var(--line)}
+ #pg-ideas td{padding:3px 0;border:0}
+ #pg-ideas td[data-l]::before{content:attr(data-l) ": ";color:var(--muted);font-size:12.5px}
+ #pg-ideas td.i::before,#pg-ideas td.a::before{content:none}
+ #pg-ideas td.i{max-width:none;width:100%}
+ #pg-ideas .lnk{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+ #pg-ideas .acts{margin-top:10px}#pg-ideas .acts .g2{flex:1}
+}
+@media(max-width:700px){
+ .btn.sm{min-height:40px}
+ .seg2{display:flex;width:100%}.seg2 button{flex:1;padding:8px 6px;font-size:12px;line-height:1.25;white-space:normal}
+ .chart{gap:6px}.col .mv{font-size:10.5px;padding:1px 5px}.col .val{font-size:11px}
+ #pg-ideas tbody{grid-template-columns:1fr}#pg-ideas tr:nth-child(odd){border-right:0}
+ .mini.stk{min-width:0}.mini.stk thead{display:none}.mini.stk,.mini.stk tbody,.mini.stk tr{display:block;width:100%}
+ .mini.stk tr{padding:12px 16px;border-bottom:1px solid var(--line)}.mini.stk tr:last-child{border-bottom:0}
+ .mini.stk td{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:3px 0;border:0;white-space:normal;text-align:right!important}
+ .mini.stk td[data-l]::before{content:attr(data-l);color:var(--muted);font-size:12.5px;text-align:left}
+ .mini.stk td:first-child{display:block;text-align:left!important}.mini.stk td:first-child::before{content:none}
+ .mini.stk td:last-child:not([data-l]){display:block;padding-top:8px}.mini.stk td:last-child .btn{width:100%}
+ .mini.stk .dn{display:flex}
+}
+</style></head><body>
+<style>
+.demo{position:sticky;top:0;z-index:300;background:#1b0f0b;color:#f3e7da;display:flex;gap:6px;align-items:center;padding:8px 14px;overflow-x:auto;font-size:12.5px}
+.demo b{color:var(--gold2);margin-right:6px;white-space:nowrap}
+.demo button{background:#ffffff14;border:1px solid #ffffff22;color:#f3e7da;border-radius:999px;padding:6px 14px;font-weight:600;font-size:12.5px;cursor:pointer;white-space:nowrap;min-height:34px}
+.demo button.on{background:var(--gold);color:#2d1810;border-color:var(--gold)}
+.hide{display:none!important}
+#pg-ins td:first-child,#pg-ins td:nth-child(5){white-space:nowrap}
+.view{display:none}.view.on{display:block}
+.app.view.on{display:grid}
+/* customer shell */
+.cus{min-height:100vh;background:var(--bg)}
+.chead{background:#fff;border-bottom:1px solid var(--line);padding:14px 28px;display:flex;justify-content:space-between;align-items:center}
+.chead .lg{font:600 24px "Cormorant Garamond",serif}.chead .lg em{color:var(--gold);font-style:italic}
+.chead nav{display:flex;gap:18px;font-weight:600;font-size:13.5px;color:var(--muted)}
+.cwrap{max-width:980px;margin:0 auto;padding:26px 20px 60px}
+.cwrap h1{font:600 32px/1.2 "Cormorant Garamond",serif;margin:0 0 4px}
+.cwrap .lead{color:var(--muted);margin:0 0 20px}
+.pm{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pmo{border:1.5px solid #cdbfa9;background:#fff;border-radius:14px;padding:14px 16px;cursor:pointer;text-align:left;display:flex;gap:12px;align-items:flex-start;min-height:72px}
+.pmo[aria-checked=true]{border-color:var(--gold);background:#fff6e6;box-shadow:0 0 0 2px #c8963e55}
+.pmo[aria-disabled=true]{opacity:.5;cursor:not-allowed;background:#f6f1e7}
+.pmo b{display:block;font-size:14px}.pmo small{color:var(--muted);font-size:12.5px;line-height:1.4}
+.rad{width:18px;height:18px;border-radius:50%;border:2px solid #b8a78c;flex:none;margin-top:2px;background:#fff}
+.pmo[aria-checked=true] .rad{border:5px solid var(--gold)}
+.sel2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.sel2 label{display:block;font-weight:600;font-size:13px;margin-bottom:5px}
+.sel2 select{width:100%;border:1px solid #cdbfa9;border-radius:10px;padding:10px 14px;background:#fff;font-size:14px;min-height:42px}
+.csec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:16px}
+.csec h2{margin:0 0 4px;font-size:16px;font-weight:600}.csec .hh{color:var(--muted);font-size:13.5px;margin:0 0 12px}
+.consent{display:flex;gap:10px;align-items:flex-start;background:#fff6e6;border:1px solid #ecd49a;border-radius:12px;padding:12px 14px;margin-top:14px;font-size:13.5px}
+.consent input{margin-top:3px;width:18px;height:18px;flex:none}
+.plan{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:12px}
+.plan th{text-align:left;color:var(--muted);font-size:12.5px;padding:8px 10px;background:#f8f2e8}.plan td{padding:10px;border-bottom:1px solid var(--line)}.plan td.r,.plan th.r{text-align:right}
+.plan tr:last-child td{border-bottom:0}
+.sumline{display:flex;justify-content:space-between;padding:6px 0;font-size:14px}.sumline.t{font-weight:600;font-size:16px;border-top:1px solid var(--line);margin-top:6px;padding-top:10px}
+.note2{color:var(--muted);font-size:12.5px;margin:8px 0 0}
+.cta{width:100%;min-height:48px;font-size:15px}
+.stk{display:flex;gap:16px;flex-wrap:wrap}
+.pbar{height:12px;background:#efe6d6;border-radius:8px;overflow:hidden;margin:8px 0 6px}.pbar i{display:block;height:100%;background:#2e6b3a;border-radius:8px}
+.next{display:flex;gap:16px;justify-content:space-between;align-items:center;flex-wrap:wrap;background:#fff6e6;border:1px solid #ecd49a;border-radius:14px;padding:14px 18px;margin-top:14px}
+.next b{font-size:22px;display:block}.next span{color:var(--muted);font-size:13px}
+.card-on{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff;margin-top:12px;font-size:13.5px}
+.nt{background:#fff;border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:12px;padding:14px 16px;margin-bottom:12px;display:flex;gap:12px;align-items:flex-start}
+.nt.bad{border-left-color:#b3261e}.nt.ok{border-left-color:#2e6b3a}
+.nt .ic{width:34px;height:34px;border-radius:50%;background:var(--side);color:var(--gold2);display:grid;place-items:center;flex:none;font-weight:600}
+.nt b{display:block;font-size:14.5px}.nt p{margin:3px 0 8px;color:var(--muted);font-size:13.5px}.nt time{color:var(--muted);font-size:12px}
+.ist{display:inline-block;padding:3px 11px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.i-pending{background:#eee6da;color:#5a4a3d}.i-paid{background:#e3f2e4;color:#1f5a2b}.i-failed{background:#fde8e6;color:#8f1f18}.i-link{background:#fbe9c7;color:#6d4a05}.i-over{background:#8f1f18;color:#fff}
+.tmode{display:flex;gap:10px;align-items:flex-start;background:#e1ecf8;border:1px solid #b9d0ea;color:#1d3f6e;border-radius:12px;padding:10px 14px;font-size:13.5px;margin-bottom:14px}
+.sumc{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.sumc div{background:var(--card);border:1px solid var(--line);border-top:4px solid #cdbfa9;border-radius:14px;padding:12px 16px}
+.sumc .ok{border-top-color:#2e6b3a}.sumc .lo{border-top-color:#c8963e}.sumc .sh{border-top-color:#b3261e}
+.sumc b{display:block;font-size:24px;font-weight:600}.sumc span{font-size:13px;color:var(--muted)}
+.meth{font-size:12.5px;color:var(--muted)}
+.fl{display:flex;gap:0;margin:0 0 6px;font-size:13px}
+.step{border-left:3px solid var(--gold);padding:2px 0 10px 12px;margin-left:6px;font-size:13.5px}.step span{display:block;color:var(--muted);font-size:12.5px}
+.step.bad{border-left-color:#b3261e}.step.ok{border-left-color:#2e6b3a}
+.opt3{display:grid;gap:8px;margin:6px 0 12px}
+.opt3 label{display:flex;gap:10px;align-items:flex-start;border:1.5px solid #cdbfa9;border-radius:12px;padding:10px 12px;cursor:pointer;font-size:13.5px}
+.opt3 input{margin-top:3px}
+.sheet.md{max-width:520px}.sheet.lg{max-width:620px}
+.cnote{background:#f8f2e8;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:13.5px;margin-top:14px}
+@media(max-width:1380px){
+ .sumc{grid-template-columns:1fr 1fr}
+ #pg-ins thead{display:none}
+ #pg-ins table,#pg-ins tr,#pg-ins td{display:block;width:100%}
+ #pg-ins tbody{display:grid;grid-template-columns:1fr 1fr}
+ #pg-ins tr{padding:14px 16px;border-bottom:1px solid var(--line);min-width:0}
+ #pg-ins tr:nth-child(odd){border-right:1px solid var(--line)}
+ #pg-ins td{padding:3px 0;border:0;text-align:left!important}
+ #pg-ins td[data-l]::before{content:attr(data-l) ": ";color:var(--muted);font-size:12.5px}
+ #pg-ins .acts{margin-top:8px;flex-wrap:wrap}#pg-ins .acts .btn{flex:1}
+}
+@media(max-width:700px){
+ #pg-ins tbody{grid-template-columns:1fr}#pg-ins tr:nth-child(odd){border-right:0}
+ .pm,.sel2{grid-template-columns:1fr}.sumc b{font-size:20px}.chead{padding:12px 16px}.chead nav{display:none}.cwrap h1{font-size:26px}
+ .plan{font-size:12.5px}.plan td,.plan th{padding:8px 6px}
+}
+.stand{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.lvl{display:inline-block;border-radius:999px;padding:3px 12px;font-size:12.5px;font-weight:600}
+.l-Excellent{background:#d7ecd9;color:#17481f}.l-Good{background:#e3f2e4;color:#1f5a2b}.l-Fair{background:#fbe9c7;color:#6d4a05}.l-Limited{background:#fbd9b8;color:#7a3a05}.l-Suspended{background:#fde8e6;color:#8f1f18}
+.gauge{position:relative;height:14px;border-radius:8px;background:linear-gradient(90deg,#b3261e 0 20%,#d98a2b 20% 40%,#e0b25a 40% 60%,#6fae77 60% 85%,#2e6b3a 85% 100%);margin:10px 0 4px;min-width:200px;flex:1}
+.gauge i{position:absolute;top:-4px;width:6px;height:22px;background:#2d1810;border-radius:3px;transform:translateX(-3px);border:2px solid #fff}
+.gl{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted)}
+.ptp{color:#1f5a2b;font-weight:600}.ptm{color:#8f1f18;font-weight:600}
+.elbad{display:flex;gap:10px;align-items:flex-start;color:#8f1f18}
+.cdh{display:flex;gap:18px;align-items:center;flex-wrap:wrap;padding:18px 22px;margin-bottom:14px}
+.cdh .cav{width:64px;height:64px;border-radius:50%;background:var(--side);color:var(--gold2);display:grid;place-items:center;font:600 26px "Cormorant Garamond",serif;flex:none}
+.cdh .nm{font:600 28px/1.15 "Cormorant Garamond",serif;margin:0}
+.cdh .sp{flex:1}
+.cds{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.cds div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px}.cds b{display:block;font-size:22px;font-weight:600}.cds span{font-size:12.5px;color:var(--muted)}
+.cpt table{min-width:640px}
+@media(max-width:1000px){.cds{grid-template-columns:1fr}}
+</style>
+<div class="demo"><b>Prototype View</b><button class="on" data-v="v-co">Customer: Checkout</button><button data-v="v-op">Customer: My Order</button><button data-v="v-nt">Customer: Notifications</button><button data-v="v-ad">Admin: Installments</button><button data-v="v-cp">Admin: Customer Profile</button></div>
+
+<!-- ===== CUSTOMER CHECKOUT ===== -->
+<div class="view cus on" id="v-co">
+ <div class="chead"><span class="lg">LP <em>Furniture</em></span><nav><span>Shop</span><span>Customize</span><span>My Orders</span></nav></div>
+ <div class="cwrap">
+  <h1>Payment</h1><p class="lead">Order total: <b>₱38,500.00</b> (King Bed Frame, Narra)</p>
+  <div class="csec" style="background:#f3efe6;border-style:dashed"><div class="sel2" style="margin:0"><div><label for="demoSit">Prototype only: pretend the customer is</label><select id="demoSit"><option value="good">Good standing, ID verified</option><option value="excellent">Excellent standing, ID verified</option><option value="fair">Fair standing (order cap applies)</option><option value="susp">Suspended (late payments)</option><option value="noid">ID not verified</option></select></div></div></div>
+  <div class="csec" id="elig" style="display:none"></div>
+  <div class="csec"><h2>How Do You Want To Pay?</h2><p class="hh">Installments split the rest into smaller payments after a 50% down payment.</p>
+   <div class="pm" id="ptype" role="radiogroup"><button class="pmo" role="radio" aria-checked="true" data-t="full"><span class="rad"></span><span><b>Pay In Full</b><small>One payment today.</small></span></button><button class="pmo" role="radio" aria-checked="false" data-t="inst"><span class="rad"></span><span><b>Pay In Installments</b><small>50% down payment today, the rest in equal payments.</small></span></button></div>
+   <div class="sel2 hide" id="plansel" style="margin-top:12px"><div><label for="dur">Pay Over</label><select id="dur"><option value="1">1 Month</option><option value="2">2 Months</option><option value="3" selected>3 Months</option></select></div><div><label for="frq">Every</label><select id="frq"><option value="15" selected>15 Days</option><option value="30">30 Days</option></select></div></div>
+  </div>
+  <div class="csec"><h2>Payment Method</h2><p class="hh" id="pmh">Choose how you want to pay.</p>
+   <div class="pm" id="pmeth" role="radiogroup">
+    <button class="pmo" role="radio" aria-checked="true" data-m="card"><span class="rad"></span><span><b>Card</b><small id="cardsm">Visa, Mastercard. Secure card payment.</small></span></button>
+    <button class="pmo" role="radio" aria-checked="false" data-m="gcash"><span class="rad"></span><span><b>GCash</b><small id="gcsm">Pay with your GCash wallet.</small></span></button>
+    <button class="pmo" role="radio" aria-checked="false" data-m="onsite"><span class="rad"></span><span><b>Pay On-Site</b><small>Pay the shop in person.</small></span></button></div>
+   <label class="consent hide" id="consent"><input type="checkbox" id="cons"><span><b>Charge my card automatically.</b> I allow LP Furniture to charge this card for each installment on its due date. I can pay early at any time, and I will get a reminder 3 days before every charge.</span></label>
+   <div class="consent hide" id="gcnote" style="background:#eaf4ea;border-color:#b9d9bb"><span><b>GCash installments.</b> On each due date we will send you a notification with a Pay Now button. You approve each payment in GCash.</span></div>
+  </div>
+  <div class="csec" id="plancard"><h2>Order Summary</h2>
+   <div class="sumline"><span>Order total</span><b>₱38,500.00</b></div><div class="sumline"><span id="dpl">Pay today</span><b id="dpv">₱38,500.00</b></div>
+   <div id="plant"></div>
+   <label class="consent hide" id="termsb"><input type="checkbox" id="terms"><span>I accept the <button class="vlink" id="tlink" type="button">Installment Terms</button>, including automatic charges, what happens when a payment is late, and how my Installment Standing works.</span></label>
+   <p class="note2 hide" id="dnote">The down payment is charged right away. Due dates start counting after it is confirmed.</p>
+  </div>
+  <button class="btn g2 cta" id="pay">Continue To Payment</button>
+  <p class="note2" id="payerr" style="color:var(--red);display:none;text-align:center"></p>
+ </div>
+</div>
+
+<!-- ===== CUSTOMER ORDER ===== -->
+<div class="view cus" id="v-op">
+ <div class="chead"><span class="lg">LP <em>Furniture</em></span><nav><span>Shop</span><span>Customize</span><span>My Orders</span></nav></div>
+ <div class="cwrap">
+  <h1>Order LP-1058</h1><p class="lead">King Bed Frame, Narra. <span class="ist i-paid">Confirmed</span></p>
+  <div class="csec"><h2>Payment Plan</h2><p class="hh">3 months, every 15 days. 6 payments after the down payment.</p>
+   <div class="sumline"><span>Order total</span><b>₱38,500.00</b></div><div class="sumline"><span>Paid so far</span><b id="paidsf">₱25,666.66</b></div>
+   <div class="pbar"><i id="pbi" style="width:66%"></i></div><div class="note2" id="pbt" style="margin:0 0 4px"></div>
+   <div class="next" id="nextbox"></div>
+   <p style="margin:12px 0 0"><button class="btn plain" id="payfull">Pay Remaining Balance In Full</button></p>
+   <div class="card-on"><span><b>Card On File:</b> Visa ending 4345</span><span><button class="btn sm plain" id="chcard">Update Card</button></span></div>
+   <table class="plan" id="myplan"></table>
+   <p class="note2">Your card is charged automatically on each due date. You can pay any unpaid installment early with Pay Now.</p>
+  </div>
+ <div class="csec"><h2>Your Installment Standing</h2><p class="hh">It decides which installment plans you can use on future orders.</p><div id="mystand"></div><p class="note2">Pay on time or early, and finishing a plan, raise it. A late or overdue payment lowers it and can limit or remove installments on later orders. You can always pay the full balance. <button class="vlink" id="tlink2" type="button">Read The Installment Terms</button></p></div>
+ </div>
+</div>
+
+<!-- ===== CUSTOMER NOTIFICATIONS ===== -->
+<div class="view cus" id="v-nt">
+ <div class="chead"><span class="lg">LP <em>Furniture</em></span><nav><span>Shop</span><span>Customize</span><span>My Orders</span></nav></div>
+ <div class="cwrap"><h1>Notifications</h1><p class="lead">What customers receive for installments.</p>
+  <div class="nt ok"><div class="ic">&#10003;</div><div><b>Installment Plan Started</b><p>Your plan for order LP-1058: 6 installments of ₱3,208.33, every 15 days. Your down payment of ₱19,250.00 was received. First installment is due Oct 31, 2026, charged automatically to your Visa ending 4345. We will remind you 3 days before each date.</p><time>Right after the down payment is confirmed</time></div></div>
+  <div class="nt"><div class="ic">!</div><div><b>Payment Reminder</b><p>Your installment 3 of 6 for order LP-1058 (₱3,208.33) will be charged to your Visa ending 4345 on Nov 29, 2026. Nothing to do unless you want to pay early.</p><time>3 days before the due date</time></div></div>
+  <div class="nt ok"><div class="ic">&#10003;</div><div><b>Payment Received</b><p>We received ₱3,208.33 for installment 3 of 6 on order LP-1058. Remaining balance: ₱9,625.01. Thank you.</p><time>On the due date, after a successful charge</time></div></div>
+  <div class="nt bad"><div class="ic">!</div><div><b>Payment Failed, We Will Try Again</b><p>We could not charge your card for installment 3 of 6 on order LP-1058. We will try again tomorrow. You can also pay now.</p><button class="btn sm g2">Pay Now</button><br><time>First failed attempt</time></div></div>
+  <div class="nt bad"><div class="ic">!</div><div><b>Please Pay Your Installment</b><p>Your second attempt did not go through. Pay ₱3,208.33 for order LP-1058 with Card or GCash to keep your plan on track.</p><button class="btn sm g2">Pay Now</button><br><time>Second failed attempt, a pay link is sent</time></div></div>
+  <div class="nt"><div class="ic">!</div><div><b>Pay Now With GCash</b><p>Your GCash installment 1 of 3 for order LP-1061 (₱8,500.00) is due today. Tap Pay Now and approve it in GCash.</p><button class="btn sm g2">Pay Now</button><br><time>On the due date for GCash plans</time></div></div>
+  <div class="nt bad"><div class="ic">!</div><div><b>Installment Overdue</b><p>Installment 2 of 4 for order LP-1049 is overdue. Please pay as soon as you can or contact us.</p><button class="btn sm g2">Pay Now</button><br><time>After the grace period</time></div></div>
+ </div>
+</div>
+
+<!-- ===== ADMIN ===== -->
+<div class="app view" id="v-ad">
+<aside class="side" id="side" aria-label="Admin menu">
+ <div class="brand"><span>LP <em>Admin</em></span><button class="close-side" id="closeSide" aria-label="Close menu">&times;</button></div>
+ <nav class="nav" id="nav"></nav>
+ <div class="signout" role="button" tabindex="0">Sign Out</div>
+</aside>
+<div class="scrim" id="scrim"></div>
+<main>
+ <div class="top"><div class="top-l"><button class="menu-btn" id="openSide" aria-label="Open menu"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><h1 id="admTitle">Installments</h1></div><div class="who"><span class="nm">LP Admin</span><div class="av">LP</div></div></div>
+ <div class="page">
+  <section class="pg on" id="pg-ins">
+   <div class="tmode" id="tmode"><span><b>Test mode is on.</b> PayMongo test keys are active, so no real money moves. <b>Simulate</b> buttons are for demos and disappear in live mode.</span></div>
+   <p class="sub">Installments are charged automatically on their due date. A declined card is retried the next day, then the customer gets a Pay Now link, and after 3 days it becomes Overdue.</p>
+   <div class="sumc" id="sumc"></div>
+   <div class="tabs" id="tabs" role="tablist"></div>
+   <div class="card"><table><thead><tr><th>Order</th><th>Customer</th><th>Installment</th><th>Amount</th><th>Due</th><th>Method</th><th>Status</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table><div class="empty" id="empty" style="display:none"><b>Nothing here</b>No installments match this tab.</div></div>
+   <p class="cnote"><b>How a charge works:</b> every day the system finds installments due today. Cards are charged from the saved card. GCash installments get a notification with a Pay Now button. Results arrive by webhook, update the order, and send the customer a receipt.</p>
+  </section>
+  <section class="pg" id="pg-cp">
+   <p style="margin:0 0 12px"><button class="btn sm plain" id="cpBack">Back To Installments</button></p>
+   <div class="card cdh" id="cph"></div>
+   <div class="cds" id="cps"></div>
+   <div class="card"><div class="dtabs" role="tablist"><button class="dtab on" data-p="h">Installment History</button><button class="dtab" data-p="s">Standing History</button></div>
+    <div id="cpt" style="overflow-x:auto"></div></div>
+  </section>
+ </div>
+</main>
+</div>
+
+<!-- modals -->
+<div class="mod" id="m-sim" role="dialog" aria-modal="true" aria-labelledby="smT"><div class="sheet lg"><header><h2 id="smT">Simulate Due Date</h2><button class="x" data-close aria-label="Close">&times;</button></header>
+ <div class="bd"><div class="ex" id="smInfo"></div><div id="smOpts"></div><p class="hint" style="color:var(--muted);font-size:13px;margin:0">This runs the same charge job that runs every day. Only available in test mode.</p></div>
+ <footer><button class="btn plain" data-close>Cancel</button><button class="btn g2" id="smGo">Run It</button></footer></div></div>
+<div class="mod" id="m-det" role="dialog" aria-modal="true" aria-labelledby="dtT"><div class="sheet md"><header><h2 id="dtT">Installment Details</h2><button class="x" data-close aria-label="Close">&times;</button></header><div class="bd" id="dtB"></div><footer><button class="btn plain" data-close>Close</button></footer></div></div>
+<div class="mod" id="m-mp" role="dialog" aria-modal="true" aria-labelledby="mpT"><div class="sheet md"><header><h2 id="mpT">Mark Paid</h2><button class="x" data-close aria-label="Close">&times;</button></header><div class="bd f"><div class="ex" id="mpInfo"></div><div class="fld"><label for="mpm">How Was It Paid?</label><select id="mpm" style="width:100%;border:1px solid #cdbfa9;border-radius:10px;padding:10px 14px;min-height:42px"><option>Cash</option><option>GCash (Direct)</option><option>Bank Transfer</option></select></div></div><footer><button class="btn plain" data-close>Cancel</button><button class="btn g2" id="mpGo">Mark As Paid</button></footer></div></div>
+<div class="mod" id="m-pn" role="dialog" aria-modal="true" aria-labelledby="pnT"><div class="sheet md"><header><h2 id="pnT">Pay Now</h2><button class="x" data-close aria-label="Close">&times;</button></header><div class="bd"><div class="ex" id="pnInfo"></div><div class="opt3" id="pnOpts"><label><input type="radio" name="pnm" value="card" checked><span><b>Visa ending 4345</b><br><span class="meth">Charged right away from your saved card.</span></span></label><label><input type="radio" name="pnm" value="gcash"><span><b>GCash</b><br><span class="meth">You will approve the payment in GCash.</span></span></label></div></div><footer><button class="btn plain" data-close>Cancel</button><button class="btn g2" id="pnGo">Pay Now</button></footer></div></div>
+<div class="mod" id="m-cc" role="dialog" aria-modal="true" aria-labelledby="ccT"><div class="sheet md"><header><h2 id="ccT">Update Card</h2><button class="x" data-close aria-label="Close">&times;</button></header><div class="bd"><p style="margin:0 0 10px">You will enter your new card on PayMongo's secure page. We never see or store your card number. Future installments are charged to the new card.</p></div><footer><button class="btn plain" data-close>Cancel</button><button class="btn g2" id="ccGo">Continue To Secure Page</button></footer></div></div>
+<div class="mod" id="m-tr" role="dialog" aria-modal="true" aria-labelledby="trT"><div class="sheet lg"><header><h2 id="trT">Installment Terms</h2><button class="x" data-close aria-label="Close">&times;</button></header><div class="bd"><ul class="tips" style="margin:0;font-size:14px;line-height:1.7;color:var(--ink)"><li><b>Down payment.</b> 50% of the order is charged right away. The rest is split into equal installments. No interest, no late fees.</li><li><b>Automatic card charges.</b> We charge your saved card on each due date through PayMongo. We never store your card number. GCash installments get a Pay Now button instead.</li><li><b>Reminders.</b> A notification 3 days before every due date and a receipt after every payment.</li><li><b>Paying early.</b> You can pay any installment, or the whole balance, early at any time.</li><li><b>Late payments.</b> A declined charge is retried the next day, then you get a Pay Now link. After 3 days unpaid, it becomes Overdue.</li><li><b>Installment Standing.</b> Late or overdue payments lower your standing score and can limit or remove installments on future orders. On-time payments raise it.</li></ul><p class="hint" style="color:var(--muted);font-size:13px;margin:12px 0 0">This is a short summary. The full terms open as a page.</p></div><footer><button class="btn plain" data-close>Close</button><button class="btn g2" data-close>Read The Full Terms</button></footer></div></div>
+<div class="mod" id="m-pf" role="dialog" aria-modal="true" aria-labelledby="pfT"><div class="sheet md"><header><h2 id="pfT">Pay Remaining Balance</h2><button class="x" data-close aria-label="Close">&times;</button></header><div class="bd"><div class="ex" id="pfInfo"></div><div class="opt3"><label><input type="radio" name="pfm" value="card" checked><span><b>Visa ending 4345</b></span></label><label><input type="radio" name="pfm" value="gcash"><span><b>GCash</b></span></label></div><p class="hint" style="color:var(--muted);font-size:13px;margin:0">No fee. Paying the balance early counts in your favor.</p></div><footer><button class="btn plain" data-close>Cancel</button><button class="btn g2" id="pfGo">Pay In Full</button></footer></div></div>
+<div class="mod" id="m-adj" role="dialog" aria-modal="true" aria-labelledby="adT"><div class="sheet md"><header><h2 id="adT">Adjust Installment Standing</h2><button class="x" data-close aria-label="Close">&times;</button></header><div class="bd f"><div class="ex" id="adInfo"></div><div class="sel2" style="margin-top:0"><div><label for="adM">What To Do</label><select id="adM"><option value="add">Add Points</option><option value="sub">Remove Points</option><option value="set">Set Score To</option></select></div><div><label for="adV">Points</label><input id="adV" type="number" min="0" max="100" value="10" style="width:100%;border:1px solid #cdbfa9;border-radius:10px;padding:10px 14px;min-height:42px"></div></div><div class="fld" style="margin-top:12px"><label for="adR">Reason (Required)</label><textarea id="adR" placeholder="e.g. The card was declined because of a bank error on our side" style="width:100%;border:1px solid #cdbfa9;border-radius:10px;padding:10px 14px;min-height:80px"></textarea><p class="err" id="adE">Please write a reason. It is saved with the change.</p></div></div><footer><button class="btn plain" data-close>Cancel</button><button class="btn g2" id="adGo">Save Change</button></footer></div></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const peso=n=>'₱'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const IC={
+dash:'<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>',
+bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6"/>',
+clip:'<path d="M9 3h6v3H9zM7 5H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2M9 12h6M9 16h4"/>',
+spark:'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>',
+wrench:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/>',
+card:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
+undo:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/>',
+box:'<path d="M21 8l-9-5-9 5v8l9 5 9-5zM3.3 7L12 12l8.7-5M12 22V12"/>',
+hex:'<path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.7z"/>',
+user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+star:'<path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/>',
+chat:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z"/>',
+list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+users:'<circle cx="9" cy="7" r="4"/><path d="M2 21a7 7 0 0 1 14 0M17 3.1a4 4 0 0 1 0 7.8M22 21a7 7 0 0 0-5-6.7"/>',
+bars:'<path d="M12 20V10M18 20V4M6 20v-4"/>',
+phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',
+pulse:'<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>'};
+const GROUPS=[
+{id:'ov',name:'Overview',items:[['dash','Dashboard'],['bell','Notifications']]},
+{id:'or',name:'Orders & Payments',items:[['file','Orders'],['clip','Custom Orders'],['spark','Customize Requests',3],['wrench','Other Services',8],['card','Installments'],['undo','Cancellations & Refunds']]},
+{id:'ca',name:'Catalog & Stock',items:[['box','Products'],['hex','Materials Inventory']]},
+{id:'cu',name:'Customers',items:[['user','Customers'],['shield','Identity Validation',1],['star','Reviews']]},
+{id:'lu',name:'Luma & Customize Studio',items:[['chat','Chatbot Training'],['bulb','Ideas to Review',1],['list','Quick Ideas']]},
+{id:'st',name:'Team & Reports',items:[['users','Employees'],['bars','Reports']]},
+{id:'se',name:'Site Settings',items:[['phone','Contact Settings'],['pulse','System Health']]}];
+
+/* ---------- view switcher ---------- */
+function showV(id){const real=id==='v-cp'?'v-ad':id;$$('.view').forEach(v=>v.classList.toggle('on',v.id===real));if(real==='v-ad')admPage(id==='v-cp'?'cp':'ins');$$('.demo button').forEach(b=>b.classList.toggle('on',b.dataset.v===id));window.scrollTo(0,0);if(id==='v-op')drawOrder();if(id==='v-ad')drawAdmin();if(id==='v-cp')drawCp()}
+$('.demo').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(b)showV(b.dataset.v)});
+/* ---------- modal helpers ---------- */
+let lastBtn=null;
+function openM(id,b){lastBtn=b||null;$(id).classList.add('open');document.body.style.overflow='hidden';const f=$(id).querySelector('button.btn.g2');f&&f.focus()}
+function shutM(){$$('.mod.open').forEach(m=>m.classList.remove('open'));document.body.style.overflow='';lastBtn&&lastBtn.focus&&lastBtn.focus()}
+$$('.mod').forEach(m=>m.addEventListener('click',e=>{if(e.target===m||e.target.closest('[data-close]'))shutM()}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('.mod.open'))shutM()});
+function toast(t){const x=$('#toast');x.textContent=t;x.classList.add('on');setTimeout(()=>x.classList.remove('on'),3200)}
+/* ---------- checkout ---------- */
+let ptype='full',pmeth='card';
+const TOTAL=38500;
+function split(total,n){const base=Math.floor(total/n*100)/100,a=Array(n).fill(base);a[n-1]=Math.round((total-base*(n-1))*100)/100;return a}
+const CAP={Excellent:[3,Infinity],Good:[3,100000],Fair:[2,30000],Limited:[1,15000],Suspended:[0,0]};
+const SIT={good:{lvl:'Good',id:true},excellent:{lvl:'Excellent',id:true},fair:{lvl:'Fair',id:true},susp:{lvl:'Suspended',id:true},noid:{lvl:'Good',id:false}};
+function drawCo(){
+ const sit=SIT[$('#demoSit').value],cap=CAP[sit.lvl];let reason='';
+ if(!sit.id)reason='Verify your ID in your account to use installments.';
+ else if(cap[0]===0)reason='Installments are not available right now because of late payments. You can pay in full.';
+ else if(TOTAL>cap[1])reason=`Your Installment Standing (${sit.lvl}) allows installments on orders up to ${peso(cap[1])}. You can pay in full.`;
+ if(reason&&ptype==='inst')ptype='full';
+ const inst=ptype==='inst';
+ $('#elig').style.display='block';
+ $('#elig').innerHTML=`<div class="stand"><b>Your Installment Standing</b><span class="lvl l-${sit.lvl}">${sit.lvl}</span>${sit.id?'<span class="ist i-paid">ID Verified</span>':'<span class="ist i-failed">ID Not Verified</span>'}</div>`+(reason?`<p class="note2 elbad" style="margin:8px 0 0"><span>${reason}</span></p>`:`<p class="note2" style="margin:8px 0 0">You can split this order over up to ${cap[0]} month${cap[0]>1?'s':''}.</p>`);
+ const it=$('#ptype [data-t=inst]');it.setAttribute('aria-disabled',String(!!reason));it.querySelector('small').textContent=reason?'Not available for this order.':'50% down payment today, the rest in equal payments.';
+ $$('#dur option').forEach(o=>o.disabled=!reason&&+o.value>cap[0]);if(!reason&&+$('#dur').value>cap[0])$('#dur').value=String(cap[0]);
+ $('#plansel').classList.toggle('hide',!inst);
+ $$('#ptype .pmo').forEach(b=>b.setAttribute('aria-checked',String(b.dataset.t===ptype)));
+ const onsite=$('#pmeth [data-m=onsite]');onsite.setAttribute('aria-disabled',String(inst));onsite.querySelector('small').textContent=inst?'Not available for installments.':'Pay the shop in person.';
+ if(inst&&pmeth==='onsite')pmeth='card';
+ $$('#pmeth .pmo').forEach(b=>b.setAttribute('aria-checked',String(b.dataset.m===pmeth)));
+ $('#pmh').textContent=inst?'Installments are available with Card or GCash.':'Choose how you want to pay.';
+ $('#consent').classList.toggle('hide',!(inst&&pmeth==='card'));$('#gcnote').classList.toggle('hide',!(inst&&pmeth==='gcash'));
+ $('#termsb').classList.toggle('hide',!inst);$('#dnote').classList.toggle('hide',!inst);
+ if(!inst){$('#dpl').textContent='Pay today';$('#dpv').textContent=peso(TOTAL);$('#plant').innerHTML=''}
+ else{const m=+$('#dur').value,f=+$('#frq').value,n=Math.round(m*30/f),dp=TOTAL/2,a=split(TOTAL-dp,n);
+  $('#dpl').textContent='Pay today (50% down payment)';$('#dpv').textContent=peso(dp);
+  $('#plant').innerHTML='<table class="plan"><thead><tr><th>Payment</th><th>When</th><th class="r">Amount</th></tr></thead><tbody>'+a.map((x,i)=>`<tr><td>Installment ${i+1} of ${n}</td><td>${f*(i+1)} days after your down payment</td><td class="r">${peso(x)}</td></tr>`).join('')+'</tbody></table>'}
+ $('#payerr').style.display='none'}
+$('#demoSit').addEventListener('input',drawCo);
+$('#tlink').onclick=e=>openM('#m-tr',e.currentTarget);
+$('#ptype').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(b&&b.getAttribute('aria-disabled')!=='true'){ptype=b.dataset.t;drawCo()}});
+$('#pmeth').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b&&b.getAttribute('aria-disabled')!=='true'){pmeth=b.dataset.m;drawCo()}});
+['#dur','#frq'].forEach(s=>$(s).addEventListener('input',drawCo));
+$('#pay').onclick=()=>{const er=$('#payerr');const bad=m=>{er.textContent=m;er.style.display='block'};
+ if(ptype==='inst'&&pmeth==='card'&&!$('#cons').checked){bad('Please allow automatic charges to continue with card installments.');$('#cons').focus();return}
+ if(ptype==='inst'&&!$('#terms').checked){bad('Please accept the Installment Terms to continue.');$('#terms').focus();return}
+ toast('Continues to the secure PayMongo page')};
+/* ---------- installment data (shared by customer + admin views) ---------- */
+const D0=new Date(2026,9,31);
+const dt=(add)=>{const x=new Date(D0);x.setDate(x.getDate()+add);return x};
+const fd=x=>x.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+const A=split(19250,6);
+const INST=[];let id=1;
+A.forEach((amt,i)=>INST.push({id:id++,order:'LP-1058',cust:'Maria Santos',no:i+1,of:6,amt,due:dt(i*15),method:'card',card:'Visa ending 4345',status:i===0?'paid':'pending',att:i===0?[['ok','Charged '+peso(amt)+' to Visa ending 4345','Oct 31, 2026']]:[]}));
+INST.push({id:id++,order:'LP-1061',cust:'Jose Reyes',no:1,of:3,amt:8500,due:dt(5),method:'gcash',status:'pending',att:[]});
+INST.push({id:id++,order:'LP-1049',cust:'Ana Lopez',no:2,of:4,amt:4000,due:dt(-3),method:'gcash',status:'over',att:[['bad','Pay Now link sent','Oct 28, 2026'],['bad','Grace period ended, marked Overdue','Oct 31, 2026']]});
+INST.push({id:id++,order:'LP-1070',cust:'Mark Tan',no:2,of:2,amt:7000,due:dt(-1),method:'card',card:'Mastercard ending 0002',status:'failed',att:[['bad','Card declined (insufficient funds). Will retry tomorrow','Oct 30, 2026']]});
+INST.push({id:id++,order:'LP-1066',cust:'Liza Mendoza',no:1,of:3,amt:5500,due:dt(-10),method:'card',card:'Visa ending 1111',status:'paid',att:[['ok','Charged '+peso(5500)+' to Visa ending 1111','Oct 21, 2026']]});
+const CUST={
+'Maria Santos':{score:74,id:true,hist:[['Oct 31, 2026','Installment 1 of 6 paid on its due date by auto-debit',4,74],['Oct 16, 2026','Standing started at 70 (Good)',0,70]]},
+'Jose Reyes':{score:70,id:true,hist:[['Oct 20, 2026','Standing started at 70 (Good)',0,70]]},
+'Ana Lopez':{score:50,id:true,hist:[['Oct 31, 2026','Installment 2 of 4 became Overdue',-15,50],['Oct 21, 2026','Installment 1 of 4 paid after a failed charge, within the grace period',-5,65],['Sep 20, 2026','Standing started at 70 (Good)',0,70]]},
+'Mark Tan':{score:74,id:true,hist:[['Oct 15, 2026','Installment 1 of 2 paid on its due date by auto-debit',4,74],['Sep 30, 2026','Standing started at 70 (Good)',0,70]]},
+'Liza Mendoza':{score:74,id:true,hist:[['Oct 21, 2026','Installment 1 of 3 paid on its due date by auto-debit',4,74],['Oct 6, 2026','Standing started at 70 (Good)',0,70]]}};
+const level=s=>s>=85?'Excellent':s>=60?'Good':s>=40?'Fair':s>=20?'Limited':'Suspended';
+function standing(name,pts,text){const c=CUST[name];c.score=Math.max(0,Math.min(100,c.score+pts));c.hist.unshift([stamp(),text,pts,c.score])}
+const finished={};
+function checkFinish(x){const all=INST.filter(r=>r.order===x.order);if(all.every(r=>r.status==='paid')&&!finished[x.order]&&!all.some(r=>r.att.some(a=>/Overdue/.test(a[1])))){finished[x.order]=1;standing(x.cust,10,'Plan for order '+x.order+' finished with no Overdue installment')}}
+const ST={pending:['Pending','i-pending'],failed:['Failed, Will Retry','i-failed'],link:['Pay Link Sent','i-link'],over:['Overdue','i-over'],paid:['Paid','i-paid']};
+const methL=x=>x.method==='card'?'Card':'GCash';
+const TEST_MODE=true;$('#tmode').style.display=TEST_MODE?'flex':'none';
+function stamp(){return fd(D0)}
+/* ---------- customer order page ---------- */
+let payTarget=null;
+function drawOrder(){drawStand();
+ const mine=INST.filter(x=>x.order==='LP-1058'),paidAmt=19250+mine.filter(x=>x.status==='paid').reduce((a,x)=>a+x.amt,0);
+ $('#paidsf').textContent=peso(paidAmt);$('#pbi').style.width=(paidAmt/38500*100)+'%';
+ const nx=mine.find(x=>x.status!=='paid');
+ $('#pbt').textContent=`${mine.filter(x=>x.status==='paid').length} of ${mine.length} installments paid. Remaining: ${peso(38500-paidAmt)}`;
+ $('#nextbox').innerHTML=nx?`<div><span>Next payment: installment ${nx.no} of ${nx.of}</span><b>${peso(nx.amt)}</b><span>${nx.status==='over'?'Overdue since':'Due'} ${fd(nx.due)}${nx.status==='failed'?'. We will retry soon.':nx.status==='link'?'. Please pay now.':'. Charged to Visa ending 4345.'}</span></div><button class="btn g2" id="paynow" data-id="${nx.id}">Pay Now</button>`:`<div><b>All paid</b><span>Thank you. Your plan is complete.</span></div>`;
+ $('#myplan').innerHTML='<thead><tr><th>Payment</th><th>Due</th><th>Status</th><th class="r">Amount</th></tr></thead><tbody><tr><td>Down payment (50%)</td><td>Oct 16, 2026</td><td><span class="ist i-paid">Paid</span></td><td class="r">'+peso(19250)+'</td></tr>'+mine.map(x=>`<tr><td>Installment ${x.no} of ${x.of}</td><td>${fd(x.due)}</td><td><span class="ist ${ST[x.status][1]}">${x.status==='failed'?'Payment Failed':ST[x.status][0]}</span></td><td class="r">${peso(x.amt)}</td></tr>`).join('')+'</tbody>'}
+$('#nextbox').addEventListener('click',e=>{const b=e.target.closest('#paynow');if(!b)return;payTarget=INST.find(x=>x.id==b.dataset.id);$('#pnInfo').innerHTML=`<b>Installment ${payTarget.no} of ${payTarget.of}</b><br>${peso(payTarget.amt)} for order ${payTarget.order}`;openM('#m-pn',b)});
+$('#pnGo').onclick=()=>{const m=document.querySelector('input[name=pnm]:checked').value;shutM();if(m==='gcash'){toast('Continues to GCash to approve the payment');return}
+ const was=payTarget.status;payTarget.status='paid';payTarget.att.push(['ok','Paid early by the customer with Visa ending 4345',stamp()]);if(was==='pending')standing(payTarget.cust,5,'Installment '+payTarget.no+' of '+payTarget.of+' paid early with Pay Now');else if(was!=='over')standing(payTarget.cust,-5,'Installment '+payTarget.no+' of '+payTarget.of+' paid after a failed charge, within the grace period');checkFinish(payTarget);drawOrder();toast('Payment received. Thank you.')};
+function drawStand(){const c=CUST['Maria Santos'],l=level(c.score),cp=CAP[l];$('#mystand').innerHTML=`<div class="stand"><span class="lvl l-${l}" style="font-size:15px">${l}</span><span style="color:var(--muted);font-size:13.5px">${cp[0]?`Up to ${cp[0]} month${cp[0]>1?'s':''}${isFinite(cp[1])?', on orders up to '+peso(cp[1]):', any order amount'}`:'Installments are paused. You can pay in full.'}</span></div>`}
+$('#tlink2').onclick=e=>openM('#m-tr',e.currentTarget);
+$('#payfull').onclick=e=>{const rem=INST.filter(x=>x.order==='LP-1058'&&x.status!=='paid').reduce((a,x)=>a+x.amt,0);if(!rem){toast('Nothing left to pay');return}$('#pfInfo').innerHTML='<b>Remaining balance</b><br>'+peso(rem)+' for order LP-1058';openM('#m-pf',e.currentTarget)};
+$('#pfGo').onclick=()=>{const m=document.querySelector('input[name=pfm]:checked').value;shutM();if(m==='gcash'){toast('Continues to GCash to approve the payment');return}
+ INST.filter(x=>x.order==='LP-1058'&&x.status!=='paid').forEach(x=>{x.status='paid';x.att.push(['ok','Balance paid in full early by the customer',stamp()])});checkFinish(INST.find(x=>x.order==='LP-1058'));drawOrder();toast('Balance paid in full. Thank you.')};
+$('#chcard').onclick=e=>openM('#m-cc',e.currentTarget);$('#ccGo').onclick=()=>{shutM();toast('Opens the secure PayMongo card page')};
+/* ---------- admin ---------- */
+let active='Installments',tab='up';
+function drawNav(){$('#nav').innerHTML=GROUPS.map(g=>`<div class="g"><div class="g-h" style="cursor:default"><span>${g.name.replace('&','&amp;')}</span></div><div class="g-list"><div class="gi">`+g.items.map(i=>`<a tabindex="0" role="link" class="${i[1]===active?'on':''}"><span class="t">${i[1].replace('&','&amp;')}</span>${i[2]?`<span class="pill">${i[2]}</span>`:''}</a>`).join('')+`</div></div></div>`).join('')}
+function openSide(){$('#side').classList.add('open');$('#scrim').classList.add('on')}function closeSide(){$('#side').classList.remove('open');$('#scrim').classList.remove('on')}
+$('#openSide').onclick=openSide;$('#closeSide').onclick=closeSide;$('#scrim').onclick=closeSide;
+const att=x=>['failed','link','over'].includes(x.status);
+function simLabel(x){return x.status==='pending'?(x.method==='gcash'?'Simulate Due Date':'Simulate Due Date'):x.status==='failed'?'Simulate Next Day':x.status==='link'?'Simulate What Happens':null}
+function drawAdmin(){
+ const c={up:0,at:0,ov:0,pd:0};INST.forEach(x=>{if(x.status==='pending')c.up++;if(att(x))c.at++;if(x.status==='over')c.ov++;if(x.status==='paid')c.pd++});
+ $('#sumc').innerHTML=`<div><b>${c.up}</b><span>Upcoming</span></div><div class="lo"><b>${c.at}</b><span>Needs Attention</span></div><div class="sh"><b>${c.ov}</b><span>Overdue</span></div><div class="ok"><b>${c.pd}</b><span>Paid</span></div>`;
+ const T=[['up','Upcoming',c.up],['at','Needs Attention',c.at],['pd','Paid',c.pd],['all','All',INST.length]];
+ $('#tabs').innerHTML=T.map(([k,l,n])=>`<button class="tab${tab===k?' on':''}" data-t="${k}" role="tab" aria-selected="${tab===k}">${l}<span class="c">${n}</span></button>`).join('');
+ const L=INST.filter(x=>tab==='all'||(tab==='up'&&x.status==='pending')||(tab==='at'&&att(x))||(tab==='pd'&&x.status==='paid')).sort((a,b)=>a.due-b.due);
+ $('#rows').innerHTML=L.map(x=>{const sl=simLabel(x);return `<tr><td><b>${x.order}</b></td><td data-l="Customer"><button class="vlink" data-cp="${esc(x.cust)}">${esc(x.cust)}</button></td><td data-l="Installment">${x.no} of ${x.of}</td><td data-l="Amount" class="num">${peso(x.amt)}</td><td data-l="Due">${fd(x.due)}</td><td data-l="Method">${methL(x)}${x.card?`<div class="meth">${x.card}</div>`:''}</td><td data-l="Status"><span class="ist ${ST[x.status][1]}">${ST[x.status][0]}</span></td><td><div class="acts">${TEST_MODE&&sl?`<button class="btn sm g2" data-sim="${x.id}">${sl}</button>`:''}${x.status==='over'?`<button class="btn sm g2" data-mp="${x.id}">Mark Paid</button>`:''}<button class="btn sm plain" data-d="${x.id}">Details</button></div></td></tr>`}).join('');
+ $('#empty').style.display=L.length?'none':'block'}
+$('#tabs').addEventListener('click',e=>{const b=e.target.closest('.tab');if(b){tab=b.dataset.t;drawAdmin()}});
+let cur=null,cpName='Maria Santos',cpTab='h';
+$('#rows').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.cp){cpName=b.dataset.cp;showV('v-cp');return}
+ if(b.dataset.sim){cur=INST.find(x=>x.id==b.dataset.sim);openSim(b)}
+ if(b.dataset.d){cur=INST.find(x=>x.id==b.dataset.d);openDet(b)}
+ if(b.dataset.mp){cur=INST.find(x=>x.id==b.dataset.mp);openMp(b)}});
+function openSim(b){
+ const x=cur,card=x.method==='card';let info=`<b>${x.order}, installment ${x.no} of ${x.of}</b><br>${esc(x.cust)}. ${peso(x.amt)}. ${card?x.card:'GCash'}`,opts='';
+ const ok='<label><input type="radio" name="so" value="ok" checked><span><b>The charge succeeds</b><br><span class="meth">Test card 4120 0000 0000 0007</span></span></label>',no='<label><input type="radio" name="so" value="no"><span><b>The charge is declined</b><br><span class="meth">Test card 5100 0000 0000 0198 (insufficient funds)</span></span></label>';
+ if(x.status==='pending'){$('#smT').textContent='Simulate Due Date';info+='<br>Moves the due date to today and runs the daily charge job now.';opts=card?`<div class="opt3">${ok}${no}</div>`:'<div class="opt3"><label><input type="radio" name="so" value="link" checked><span><b>Send the Pay Now link</b><br><span class="meth">GCash cannot be charged without the customer. The customer gets a notification with a Pay Now button.</span></span></label></div>'}
+ else if(x.status==='failed'){$('#smT').textContent='Simulate Next Day';info+='<br>Runs tomorrow\'s retry.';opts=`<div class="opt3">${ok}${no}</div>`}
+ else{$('#smT').textContent='Simulate What Happens';info+='<br>A Pay Now link was sent to the customer.';opts='<div class="opt3"><label><input type="radio" name="so" value="paid" checked><span><b>The customer pays with the link</b></span></label><label><input type="radio" name="so" value="over"><span><b>3 days pass with no payment</b><br><span class="meth">It becomes Overdue.</span></span></label></div>'}
+ $('#smInfo').innerHTML=info;$('#smOpts').innerHTML=opts;openM('#m-sim',b)}
+$('#smGo').onclick=()=>{const v=document.querySelector('input[name=so]:checked').value,x=cur,d=stamp();
+ if(x.status==='pending'&&x.method==='gcash'){x.status='link';x.att.push(['bad','Pay Now link sent to the customer',d]);toast('Pay Now notification sent to '+x.cust)}
+ else if(x.status==='link'){if(v==='paid'){x.status='paid';x.att.push(['ok','Customer paid with GCash through the link',d]);standing(x.cust,-5,'Installment '+x.no+' of '+x.of+' paid after a failed charge, within the grace period');checkFinish(x);toast('Paid. Receipt sent to '+x.cust)}else{x.status='over';x.att.push(['bad','Grace period ended, marked Overdue',d]);standing(x.cust,-15,'Installment '+x.no+' of '+x.of+' became Overdue');toast('Marked Overdue')}}
+ else{const first=x.status==='pending';
+  if(v==='ok'){const wasFirst=x.status==='pending';x.status='paid';x.att.push(['ok','Charged '+peso(x.amt)+' to '+x.card,d]);standing(x.cust,wasFirst?4:-5,'Installment '+x.no+' of '+x.of+(wasFirst?' paid on its due date by auto-debit':' paid after a failed charge, within the grace period'));checkFinish(x);toast('Charged '+peso(x.amt)+' to '+x.card+'. Receipt sent.')}
+  else if(first){x.status='failed';x.att.push(['bad','Card declined (insufficient funds). Will retry tomorrow',d]);toast('Declined. It will retry tomorrow.')}
+  else{x.status='link';x.att.push(['bad','Retry declined. Pay Now link sent to the customer',d]);toast('Declined again. Pay Now link sent.')}}
+ shutM();drawAdmin()};
+function openDet(b){const x=cur;
+ $('#dtB').innerHTML=`<div class="ex"><b>${x.order}, installment ${x.no} of ${x.of}</b><br>${esc(x.cust)} &middot; ${peso(x.amt)} &middot; due ${fd(x.due)}<br>${methL(x)}${x.card?' &middot; '+x.card:''} &middot; <span class="ist ${ST[x.status][1]}">${ST[x.status][0]}</span></div><div class="sh" style="margin-top:6px">History</div><div class="step"><b>Scheduled</b><span>Due ${fd(x.due)}</span></div>`+x.att.map(([k,t,w])=>`<div class="step ${k}"><b>${esc(t)}</b><span>${w}</span></div>`).join('')+(x.status!=='paid'?`<p style="margin:10px 0 0"><button class="btn sm plain" id="dmp">Mark Paid</button></p>`:'');
+ openM('#m-det',b)}
+$('#dtB').addEventListener('click',e=>{if(e.target.id==='dmp'){shutM();openMp(null)}});
+function openMp(b){$('#mpInfo').innerHTML=`<b>${cur.order}, installment ${cur.no} of ${cur.of}</b><br>${esc(cur.cust)} &middot; ${peso(cur.amt)}`;openM('#m-mp',b)}
+$('#mpGo').onclick=()=>{cur.status='paid';cur.att.push(['ok','Marked paid by admin ('+$('#mpm').value+')',stamp()]);shutM();drawAdmin();toast('Marked as paid')};
+
+function admPage(p){$('#pg-ins').classList.toggle('on',p==='ins');$('#pg-cp').classList.toggle('on',p==='cp');$('#admTitle').textContent=p==='ins'?'Installments':'Customer Profile';active=p==='ins'?'Installments':'Customers';drawNav();window.scrollTo(0,0)}
+$('#cpBack').onclick=()=>showV('v-ad');
+const resOf=x=>x.status==='paid'?(x.att.some(a=>a[0]==='bad')?'Paid After Retry':x.att.some(a=>/early/i.test(a[1]))?'Paid Early':'Paid On Time'):x.status==='pending'?'Scheduled':ST[x.status][0];
+const resCls=r=>/Paid/.test(r)?(r==='Paid After Retry'?'i-link':'i-paid'):r==='Scheduled'?'i-pending':r==='Overdue'?'i-over':'i-failed';
+function drawCp(){
+ const c=CUST[cpName],l=level(c.score),cp=CAP[l],mine=INST.filter(x=>x.cust===cpName).sort((a,b)=>a.due-b.due);
+ const ini=cpName.split(' ').map(w=>w[0]).join('').slice(0,2);
+ $('#cph').innerHTML=`<div class="cav">${ini}</div><div style="min-width:240px"><h2 class="nm">${esc(cpName)}</h2><div class="stand" style="margin-top:6px"><span class="lvl l-${l}">${l}</span><span style="font-weight:600">${c.score} / 100</span><span class="ist i-paid">ID Verified</span></div></div><div style="flex:1;min-width:220px"><div class="gauge"><i style="left:${c.score}%"></i></div><div class="gl"><span>0 Suspended</span><span>20 Limited</span><span>40 Fair</span><span>60 Good</span><span>85 Excellent</span></div></div><div><button class="btn g2" id="adjB">Adjust Standing</button></div>`;
+ const paid=mine.filter(x=>x.status==='paid').length,ov=mine.filter(x=>x.status==='over').length;
+ $('#cps').innerHTML=`<div><b>${paid} of ${mine.length}</b><span>Installments Paid</span></div><div><b>${ov}</b><span>Overdue Now</span></div><div><b style="font-size:16px;line-height:1.5">${cp[0]?'Up to '+cp[0]+' month'+(cp[0]>1?'s':''):'Full payment only'}</b><span>${cp[0]?(isFinite(cp[1])?'Orders up to '+peso(cp[1]):'Any order amount'):'Installments paused'}</span></div>`;
+ $$('#pg-cp .dtab').forEach(b=>b.classList.toggle('on',b.dataset.p===cpTab));
+ if(cpTab==='h')$('#cpt').innerHTML='<table class="mini"><thead><tr><th>Order</th><th>Installment</th><th class="r">Amount</th><th>Due</th><th>Paid On</th><th>Method</th><th>Result</th></tr></thead><tbody>'+(mine.length?mine.map(x=>{const ok=[...x.att].reverse().find(a=>a[0]==='ok'),r=resOf(x);return `<tr><td><b>${x.order}</b></td><td>${x.no} of ${x.of}</td><td class="r">${peso(x.amt)}</td><td>${fd(x.due)}</td><td>${ok?ok[2]:'—'}</td><td>${methL(x)}${x.card?'<div class="meth">'+x.card+'</div>':''}</td><td><span class="ist ${resCls(r)}">${r}</span></td></tr>`}).join(''):'<tr><td colspan="7" class="cdn"><b>No installments yet</b></td></tr>')+'</tbody></table>';
+ else $('#cpt').innerHTML='<table class="mini"><thead><tr><th>Date</th><th>What Happened</th><th class="r">Points</th><th class="r">Score After</th></tr></thead><tbody>'+c.hist.map(h=>`<tr><td>${h[0]}</td><td>${esc(h[1])}</td><td class="r ${h[2]>0?'ptp':h[2]<0?'ptm':''}">${h[2]>0?'+':''}${h[2]||'—'}</td><td class="r">${h[3]}</td></tr>`).join('')+'</tbody></table>'}
+$('#pg-cp').addEventListener('click',e=>{const t=e.target.closest('.dtab');if(t){cpTab=t.dataset.p;drawCp();return}if(e.target.id==='adjB'){$('#adInfo').innerHTML='<b>'+esc(cpName)+'</b><br>Now '+CUST[cpName].score+' / 100 ('+level(CUST[cpName].score)+')';$('#adR').value='';$('#adE').parentElement.classList.remove('bad');openM('#m-adj',e.target)}});
+$('#adGo').onclick=()=>{const r=$('#adR').value.trim();if(!r){$('#adE').parentElement.classList.add('bad');$('#adR').focus();return}
+ const c=CUST[cpName],m=$('#adM').value,v=Math.max(0,Math.min(100,+$('#adV').value||0));const to=m==='add'?c.score+v:m==='sub'?c.score-v:v;const before=c.score;c.score=Math.max(0,Math.min(100,to));c.hist.unshift([stamp(),'Adjusted by admin: '+r,c.score-before,c.score]);shutM();drawCp();toast('Standing updated and recorded')};
+drawCo();drawNav();drawAdmin();drawOrder();drawCp();
+
+</script></body></html>

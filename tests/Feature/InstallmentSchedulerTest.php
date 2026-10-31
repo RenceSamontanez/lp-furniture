@@ -147,7 +147,8 @@ class InstallmentSchedulerTest extends TestCase
             $this->actingAs($customer)->post(route('order.place'), [
                 'delivery_option'       => 'pickup',
                 'payment_type'          => 'installment',
-                'payment_method'        => 'stripe',
+                'payment_method'        => 'gcash',
+                'accept_installment_terms' => 1,
                 'installment_duration'  => $months,
                 'installment_frequency' => $freq,
             ])->assertRedirect();

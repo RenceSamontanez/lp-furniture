@@ -98,12 +98,18 @@ class PaymentSafetyTest extends TestCase
         $this->actingAs($user)->post(route('order.place'), array_filter([
             'delivery_option'       => 'pickup',
             'payment_type'          => $type,
-            'payment_method'        => $method,
+            'payment_method'        => ($type === 'installment' && $method === 'stripe') ? 'gcash' : $method,
             'installment_duration'  => $months,
             'installment_frequency' => $freq,
+            'accept_installment_terms' => 1,
+            'accept_auto_charge'    => 1,
         ], fn ($v) => $v !== null))->assertRedirect();
 
         $order = Order::where('user_id', $user->id)->latest('id')->firstOrFail();
+        if ($type === 'installment' && $method === 'stripe') {
+            \App\Models\Payment::where('order_id', $order->id)->update(['payment_method' => 'stripe']);
+            $order = $order->fresh();
+        }
         $this->assertSame($method, $order->payment->payment_method);
 
         return $order;

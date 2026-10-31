@@ -56,12 +56,18 @@ class Stage12FixesTest extends TestCase
         $product = Product::create(['product_name' => 'Chair', 'price' => 1000, 'stock_quantity' => 5, 'product_status' => 'available']);
         DB::table('cart_items')->insert(['user_id' => $user->id, 'product_id' => $product->id, 'quantity' => 1, 'added_at' => now(), 'updated_at' => now()]);
         $this->asCustomer($user)->post(route('order.place'), array_filter([
-            'delivery_option' => 'pickup', 'payment_type' => $type, 'payment_method' => $method,
+            'delivery_option' => 'pickup', 'payment_type' => $type, 'payment_method' => ($type === 'installment' && $method === 'stripe') ? 'gcash' : $method,
             'installment_duration' => $type === 'installment' ? 2 : null,
             'installment_frequency' => $type === 'installment' ? 15 : null,
+            'accept_installment_terms' => 1, 'accept_auto_charge' => 1,
         ], fn ($v) => $v !== null))->assertRedirect();
 
-        return Order::where('user_id', $user->id)->latest('id')->firstOrFail();
+        $o = Order::where('user_id', $user->id)->latest('id')->firstOrFail();
+        if ($type === 'installment' && $method === 'stripe') {
+            \App\Models\Payment::where('order_id', $o->id)->update(['payment_method' => 'stripe']);
+        }
+
+        return $o->fresh();
     }
 
     private function ledger(Order $o): float

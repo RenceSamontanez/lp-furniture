@@ -375,6 +375,13 @@ class PaymentController extends Controller
                 return self::PAID_AGREEMENT_OUTDATED;
             }
 
+            // The down payment of an installment order is what starts the plan: due dates count from today.
+            try {
+                app(\App\Support\Installments\InstallmentPlanStarter::class)->start($order);
+            } catch (\Throwable $e) {
+                \Log::error("Installment plan could not be started for order {$order->id}: " . $e->getMessage());
+            }
+
             // A payment may only move an order pending -> confirmed. An order
             // that has already moved on (confirmed, in_production, ready,
             // out_for_delivery, completed) keeps its status and gets no
@@ -711,9 +718,12 @@ class PaymentController extends Controller
     ════════════════════════════════ */
     private function markGcashPaymentPaid(Order $order, string $intentId): string
     {
+        // The first payment of a card installment plan goes through PayMongo too; the ledger says which it was.
+        $ledgerMethod = $order->payment->payment_method === 'paymongo_card' ? 'card_paymongo' : 'gcash_paymongo';
+
         if ($order->payment->payment_status === 'paid') {
             // Same repair as for Stripe: paid but never ledgered.
-            return $this->healMissingLedger($order->id, 'gcash_paymongo', $intentId) ? self::PAID_CONFIRMED : self::PAID_ALREADY;
+            return $this->healMissingLedger($order->id, $ledgerMethod, $intentId) ? self::PAID_CONFIRMED : self::PAID_ALREADY;
         }
 
         return $this->recordPaymentArrived(
@@ -721,9 +731,122 @@ class PaymentController extends Controller
             ['paymongo_payment_intent_id' => $intentId],
             \App\Support\NotificationTemplates::message('payment_confirmed', ['order_number' => $order->order_number]),
             "PayMongo intent {$intentId}",
-            'gcash_paymongo',
+            $ledgerMethod,
             $intentId
         );
+    }
+
+    /* ════════════════════════════════
+       CARD VIA PAYMONGO — the down payment of a card installment plan.
+       The card number goes from the browser straight to PayMongo (public key); this server only ever receives the
+       resulting payment-method id. The card is vaulted to a PayMongo customer when the payment succeeds, which is what
+       the later automatic charges use (see PayMongoInstallmentGateway for what PayMongo does and does not allow).
+    ════════════════════════════════ */
+    public function cardForm($orderId)
+    {
+        $order = $this->cardOrder($orderId);
+        if ($order instanceof \Illuminate\Http\RedirectResponse) {
+            return $order;
+        }
+
+        return view('installments.card', [
+            'order'    => $order,
+            'title'    => 'Pay Your Down Payment',
+            'amount'   => (float) $order->payment->amount,
+            'postUrl'  => route('payment.card.paymongo.checkout', $order->id),
+            'backUrl'  => route('orders.show', $order->id),
+            'purpose'  => 'down payment',
+            'publicKey' => config('services.paymongo.public_key'),
+        ]);
+    }
+
+    public function cardCheckout(Request $request, $orderId, \App\Support\Installments\InstallmentGateway $gateway)
+    {
+        $order = $this->cardOrder($orderId);
+        if ($order instanceof \Illuminate\Http\RedirectResponse) {
+            return response()->json(['error' => 'This payment cannot be started.'], 409);
+        }
+        $data = $request->validate(['payment_method_id' => ['required', 'string', 'regex:/^pm_[A-Za-z0-9]+$/']]);
+
+        $payment = $order->payment;
+        // The PayMongo customer only matters for vaulting, so it must never stop the payment itself.
+        $customer = $payment->paymongo_customer_id;
+        if (!$customer) {
+            try {
+                $customer = $gateway->ensureCustomer(Auth::user());
+            } catch (\Throwable $e) {
+                \Log::warning("PayMongo customer unavailable for order {$order->id}; taking the card payment without it: " . $e->getMessage());
+                $customer = null;
+            }
+        }
+        try {
+            $result = $gateway->startCardPayment(
+                $customer, $data['payment_method_id'], (int) round((float) $payment->amount * 100),
+                'LP Furniture Order ' . $order->order_number . ' (Down Payment)',
+                ['kind' => 'installment_down', 'order_id' => $order->id, 'user_id' => Auth::id()],
+                route('payment.card.paymongo.success', $order->id),
+            );
+        } catch (\Throwable $e) {
+            \Log::error("Card down payment could not be started for order {$order->id}: " . $e->getMessage());
+
+            return response()->json(['error' => "We couldn't start the card payment. Please try again, or switch to GCash."], 502);
+        }
+
+        if ($result->failedNow()) {
+            return response()->json(['error' => 'Your card was declined. Please check the details or use another card.'], 422);
+        }
+
+        // Stored before the customer is sent anywhere, so the webhook can find this payment.
+        Payment::where('order_id', $order->id)->update([
+            'paymongo_customer_id'       => $customer,
+            'paymongo_payment_intent_id' => $result->reference,
+            'paymongo_payment_method_id' => $data['payment_method_id'],
+            'installment_card_method_id' => $data['payment_method_id'],
+        ]);
+
+        return response()->json(['redirect' => $result->redirectUrl ?: route('payment.card.paymongo.success', $order->id)]);
+    }
+
+    public function cardSuccess($orderId, \App\Support\Installments\InstallmentGateway $gateway)
+    {
+        $order = Order::where('user_id', Auth::id())->where('id', $orderId)->firstOrFail();
+        $payment = $order->payment;
+
+        if ($payment->payment_status === 'paid' && $this->ledgerHasRows($order->id)) {
+            return redirect()->route('payment.confirmed', $order->id)->with('success', 'Payment successful! Your order is confirmed.');
+        }
+        $intentId = $payment->paymongo_payment_intent_id;
+        if (!$intentId) {
+            return redirect()->route('payment.card.paymongo', $order->id)->withErrors(['payment' => 'No card payment was found for this order. Please try again.']);
+        }
+
+        $info = $gateway->lookupIntent($intentId);
+        if ($info && $info['status'] === 'succeeded' && $info['amount'] === (int) round((float) $payment->amount * 100)) {
+            $outcome = $this->markGcashPaymentPaid($order, $intentId);
+            if ($outcome === self::PAID_ORDER_CANCELLED) {
+                return $this->cancelledOrderPaymentRedirect($order);
+            }
+
+            return redirect()->route('payment.confirmed', $order->id)->with('success', 'Payment successful! Your order is confirmed.');
+        }
+        if ($info && $info['status'] === 'processing') {
+            return redirect()->route('orders.show', $order->id)->with('success', 'Your payment is being processed. We will confirm your order as soon as the bank answers.');
+        }
+
+        return redirect()->route('payment.card.paymongo', $order->id)->withErrors(['payment' => 'We could not verify your payment. Please try again or contact support.']);
+    }
+
+    /** The customer's own pending card-plan order, or a redirect back to the order page. */
+    private function cardOrder($orderId)
+    {
+        $order = Order::with('payment')->where('user_id', Auth::id())->where('id', $orderId)->firstOrFail();
+        $p = $order->payment;
+
+        if (!$p || $p->payment_method !== 'paymongo_card' || $p->payment_status === 'paid' || $order->order_status === 'cancelled') {
+            return redirect()->route('orders.show', $order->id);
+        }
+
+        return $order;
     }
 
     /* ════════════════════════════════
@@ -942,8 +1065,7 @@ class PaymentController extends Controller
        Signature verification follows PayMongo's documented scheme:
        header "Paymongo-Signature: t=<ts>,te=<test_sig>,li=<live_sig>",
        HMAC-SHA256 of "{timestamp}.{raw_body}" using the webhook
-       secret, compared with hash_equals(). Test mode only here, so
-       only the te= (test) signature is checked.
+       secret, compared with hash_equals(). te= is checked for test keys, li= for live keys.
     ════════════════════════════════ */
     public function paymongoWebhook(Request $request)
     {
@@ -960,6 +1082,12 @@ class PaymentController extends Controller
         $eventType = $payload['data']['attributes']['type'] ?? null;
 
         \Log::info('PayMongo webhook received: ' . $eventType);
+
+        // A later installment is matched through the intent we created for it (see InstallmentWebhook), never through payments.paymongo_payment_intent_id.
+        if (in_array($eventType, ['payment.paid', 'payment.failed'], true)
+            && app(\App\Support\Installments\InstallmentWebhook::class)->handle($eventType, $payload['data']['attributes']['data'] ?? [])) {
+            return response()->json(['status' => 'received']);
+        }
 
         // An intent we started for an Other Services invoice belongs to the invoice flow, not to an order.
         if (in_array($eventType, ['payment.paid', 'payment.failed'], true)) {
@@ -982,7 +1110,7 @@ class PaymentController extends Controller
                 $amount = ((int) ($resource['attributes']['amount'] ?? 0)) / 100;
 
                 if ($payment && $payment->order
-                    && ($payment->payment_method === 'gcash' || $payment->payment_status === 'paid')) {
+                    && (in_array($payment->payment_method, ['gcash', 'paymongo_card'], true) || $payment->payment_status === 'paid')) {
                     $this->markGcashPaymentPaid($payment->order, $intentId);
                 } elseif ($payment && $payment->order) {
                     $this->alertUnmatchedPayment('GCash (PayMongo)', $amount, $intentId,
@@ -1042,7 +1170,9 @@ class PaymentController extends Controller
 
         $expected = hash_hmac('sha256', "{$timestamp}.{$payload}", $webhookSecret);
 
-        // Test mode only — check the test signature.
-        return $testSignature && hash_equals($expected, $testSignature);
+        // The key mode decides which signature counts: te= for sk_test_ keys, li= for sk_live_ keys.
+        $signature = \App\Support\Installments\PayMongoMode::signatureField() === 'li' ? $liveSignature : $testSignature;
+
+        return $signature && hash_equals($expected, $signature);
     }
 }

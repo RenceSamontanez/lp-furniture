@@ -105,6 +105,8 @@
         </ul>
       </section>
 
+      @include('orders.partials.installment-plan')
+
       <section class="glass card" aria-labelledby="ot-items-t">
         <h2 id="ot-items-t">Order Items</h2>
         @foreach($order->items as $item)
